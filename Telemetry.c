@@ -7,6 +7,8 @@
 #include "Telecommand.h"
 #include "adcs_VarDeclarations.h"
 
+extern unsigned char NSP_addr_table[4];
+
 void rHAL_TM_Write(void)
 {
 
@@ -59,9 +61,16 @@ void rHAL_TM_HW_Status_Update(void)
 	//Hardware Status Update
 	//IMU,RW,TC,TM,GPS,EPS
 
+	int i;
+
 	//OBT Update
 	TM.Buffer.OBT = Major_Cycle_Count;
 	TM.Buffer.TC_cntr2=TC_count;
+
+	for(i= 0 ; i<RW_TM_MAX ; i++)
+	{
+		TM.Buffer.TM_NSP_addr_table[i] = NSP_addr_table[i];
+	}
 
 	//FDI_NMI_Count Update
 }
@@ -263,9 +272,17 @@ void rTM_Address_Table_Init()
 	TM_Table[TM_Table_Row_No].Length_Field = 1; // RX_AGC(pos-226)(added-22/10/19)
 	TM_Table_Row_No++;
 
-	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.gps_pulse_mic_counter; // Copy address of Orbit Elapsed time
-	TM_Table[TM_Table_Row_No].Length_Field = 2; // RX_AGC(pos-226)(added-22/10/19)
+	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.Payload_TM[0];//added(26/10/19)
+	TM_Table[TM_Table_Row_No].Length_Field = 16; // 16 bytes
 	TM_Table_Row_No++;
+
+	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_NSP_addr_table[0];//added(26/10/19)
+	TM_Table[TM_Table_Row_No].Length_Field = 4; // 4 bytes
+	TM_Table_Row_No++;
+
+/*	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.gps_pulse_mic_counter; // Copy address of Orbit Elapsed time
+	TM_Table[TM_Table_Row_No].Length_Field = 2; // RX_AGC(pos-226)(added-22/10/19)
+	TM_Table_Row_No++;*/
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = NULL;//End of Subframe1
 	TM_Table[TM_Table_Row_No].Length_Field = 0;
@@ -338,6 +355,10 @@ void rTM_Address_Table_Init()
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_Q_Sunmagad[0];//Copy address of DPM
 	TM_Table[TM_Table_Row_No].Length_Field = sizeof(TM.Buffer.TM_Q_Sunmagad);
+	TM_Table_Row_No++;
+
+	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_NSP_addr_table[0];//added(26/10/19)
+	TM_Table[TM_Table_Row_No].Length_Field = 4; // 4 bytes
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = NULL;//End of Subframe2

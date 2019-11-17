@@ -12,6 +12,8 @@
 #include "adcs_SensorDataProcs.h"
 //#include "HAL_Heater.h"
 
+
+extern unsigned char NSP_addr_table[4];
 BlkExe_Stat BlkExe_Status = BLK_Disabled;
 
 //Initialization of Function Table-------------------------
@@ -217,7 +219,7 @@ float Resol_Table[TC_data_command_MAX_LIMIT] =
 			1,              /*offset 60*/
 			1, 			    /*offset 61*/
 			1,              /*offset 62*/
-			1               /*offset 63*/
+			1              /*offset 63*/
 
        };
 
@@ -356,9 +358,15 @@ void rContingency_TC()
 	return;														// Decoded in hardware
 }
 
+unsigned short rw_data;
+unsigned short temp_data_rw;
  // Routine for Data_Commands Processing
 void rData_TC()
 {
+	int RW_number;
+	//unsigned short temp_data;
+
+
 	switch(u_TC.DataCommand.offset_addr)
 	{
 	case 0:   TC_data_command_Table.RW1_Speed =
@@ -401,120 +409,131 @@ void rData_TC()
 						(unsigned long int)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 			  break;
 	/************************** Added on 27 July 2019 **************************/
-	case 16: TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[0] 		= u_TC.DataCommand.Data;
+	case 16: 	temp_data_rw = u_TC.DataCommand.Data;
+				rw_data = temp_data_rw;
+				RW_number = ((temp_data_rw & 0x0300) >> 8);
+				NSP_addr_table[RW_number] = (temp_data_rw & 0x00FF);
+				break;
+
+	case 17: TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[0] 		= u_TC.DataCommand.Data;
 			 break;
-	case 17: TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[0]		    = u_TC.DataCommand.Data;
+	case 18: TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[0]		    = u_TC.DataCommand.Data;
 			     break;
-	case 18: TC_data_command_Table.TC_Gyro_Misalignment_IMU2 					= u_TC.DataCommand.Data;
+	case 19: TC_data_command_Table.TC_Gyro_Misalignment_IMU2 					= u_TC.DataCommand.Data;
 				 break;
-	case 19: TC_data_command_Table.TC_Gyro_Scale_Factor_IMU1 					= u_TC.DataCommand.Data;
+	case 20: TC_data_command_Table.TC_Gyro_Scale_Factor_IMU1 					= u_TC.DataCommand.Data;
 				 break;
-	case 20: TC_data_command_Table.TC_Gyro_Scale_Factor_IMU2 					= u_TC.DataCommand.Data;
+	case 21: TC_data_command_Table.TC_Gyro_Scale_Factor_IMU2 					= u_TC.DataCommand.Data;
 				 break;
-	case 21: TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[0] 		= u_TC.DataCommand.Data;
+	case 22: TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[0] 		= u_TC.DataCommand.Data;
 				 break;
-	case 22: TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[0] 		= u_TC.DataCommand.Data;
+	case 23: TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[0] 		= u_TC.DataCommand.Data;
 				 break;
-	case 23: TC_data_command_Table.TC_Mag_Misalignment_IMU1 					= u_TC.DataCommand.Data;
+	case 24: TC_data_command_Table.TC_Mag_Misalignment_IMU1 					= u_TC.DataCommand.Data;
 			     break;
-	case 24: TC_data_command_Table.TC_Mag_Misalignment_IMU2 					= u_TC.DataCommand.Data;
+	case 25: TC_data_command_Table.TC_Mag_Misalignment_IMU2 					= u_TC.DataCommand.Data;
 				break;
-	case 25: TC_data_command_Table.TC_Mag_Scale_Factor_IMU1  					= u_TC.DataCommand.Data;
+	case 26: TC_data_command_Table.TC_Mag_Scale_Factor_IMU1  					= u_TC.DataCommand.Data;
 				break;
-	case 26: TC_data_command_Table.TC_Mag_Scale_Factor_IMU2  					= u_TC.DataCommand.Data;
+	case 27: TC_data_command_Table.TC_Mag_Scale_Factor_IMU2  					= u_TC.DataCommand.Data;
 				break;
-	case 27: TC_data_command_Table.TC_ACC_Ang_RESET  							= u_TC.DataCommand.Data;
+	case 28: TC_data_command_Table.TC_ACC_Ang_RESET  							= u_TC.DataCommand.Data;
 				break;
-	case 28: TC_data_command_Table.TC_SS_misalnCM1256  							= u_TC.DataCommand.Data;
+	case 29: TC_data_command_Table.TC_SS_misalnCM1256  							= u_TC.DataCommand.Data;
 				break;
-	case 29: TC_data_command_Table.TC_SS_misalnCM2356  							= u_TC.DataCommand.Data;
+	case 30: TC_data_command_Table.TC_SS_misalnCM2356  							= u_TC.DataCommand.Data;
 				break;
-	case 30: TC_data_command_Table.TC_SS_misalnCM3456  							= u_TC.DataCommand.Data;
+	case 31: TC_data_command_Table.TC_SS_misalnCM3456  							= u_TC.DataCommand.Data;
 				break;
-	case 31: TC_data_command_Table.TC_SS_misalnCM4156  							= u_TC.DataCommand.Data;
+	case 32: TC_data_command_Table.TC_SS_misalnCM4156  							= u_TC.DataCommand.Data;
 				break;
-	case 32: TC_data_command_Table.TC_SS_Imax_ALPHA  							= u_TC.DataCommand.Data;
+	case 33: TC_data_command_Table.TC_SS_Imax_ALPHA  							= u_TC.DataCommand.Data;
 				break;
-	case 33: TC_data_command_Table.TC_eclipse_entrytime  						= u_TC.DataCommand.Data;
+	case 34: TC_data_command_Table.TC_eclipse_entrytime  						= u_TC.DataCommand.Data;
 				break;
-	case 34: TC_data_command_Table.TC_eclipse_exittime  						= u_TC.DataCommand.Data;
+	case 35: TC_data_command_Table.TC_eclipse_exittime  						= u_TC.DataCommand.Data;
 				break;
-	case 35: TC_data_command_Table.TC_elapsed_orbitTimer  						= u_TC.DataCommand.Data;
+	case 36: TC_data_command_Table.TC_elapsed_orbitTimer  						= u_TC.DataCommand.Data;
 				break;
-	case 36: TC_data_command_Table.TC_Sunlit_detctn_timer  						= u_TC.DataCommand.Data;
+	case 37: TC_data_command_Table.TC_Sunlit_detctn_timer  						= u_TC.DataCommand.Data;
 				break;
-	case 37: TC_data_command_Table.TC_Time_GPS2TLE 								= u_TC.DataCommand.Data;
+	case 38: TC_data_command_Table.TC_Time_GPS2TLE 								= u_TC.DataCommand.Data;
 				break;
-	case 38: TC_data_command_Table.TC_GPS_OFFSET_UTC 							= u_TC.DataCommand.Data;
+	case 39: TC_data_command_Table.TC_GPS_OFFSET_UTC 							= u_TC.DataCommand.Data;
 				break;
-	case 39: TC_data_command_Table.TC_delUT1_ECEF2ECI 							= u_TC.DataCommand.Data;
+	case 40: TC_data_command_Table.TC_delUT1_ECEF2ECI 							= u_TC.DataCommand.Data;
 				break;
-	case 40: TC_data_command_Table.TC_delAT_ECEF2ECI 							= u_TC.DataCommand.Data;
+	case 41: TC_data_command_Table.TC_delAT_ECEF2ECI 							= u_TC.DataCommand.Data;
 				break;
-	case 41: TC_data_command_Table.TC_xp_ECEF2ECI 								= u_TC.DataCommand.Data;
+	case 42: TC_data_command_Table.TC_xp_ECEF2ECI 								= u_TC.DataCommand.Data;
 				break;
-	case 42: TC_data_command_Table.TC_yp_ECEF2ECI 								= u_TC.DataCommand.Data;
+	case 43: TC_data_command_Table.TC_yp_ECEF2ECI 								= u_TC.DataCommand.Data;
 				break;
-	case 43: TC_data_command_Table.TC_JulianDay_at_OBT0						    = u_TC.DataCommand.Data;
+	case 44: TC_data_command_Table.TC_JulianDay_at_OBT0						    = u_TC.DataCommand.Data;
 				break;
-	case 44: TC_data_command_Table.TC_OBT_Drift_Corr 							= u_TC.DataCommand.Data;
+	case 45: TC_data_command_Table.TC_OBT_Drift_Corr 							= u_TC.DataCommand.Data;
 				break;
-	case 45: TC_data_command_Table.TC_TLE 										= u_TC.DataCommand.Data;
+	case 46: TC_data_command_Table.TC_TLE 										= u_TC.DataCommand.Data;
 				break;
-	case 46: TC_data_command_Table.TC_JulianDate_at_OrbitalEpoch 				= u_TC.DataCommand.Data;
+	case 47: TC_data_command_Table.TC_JulianDate_at_OrbitalEpoch 				= u_TC.DataCommand.Data;
 				break;
-	case 47: TC_data_command_Table.TC_OBT_with_TLE_Update 						= u_TC.DataCommand.Data;
+	case 48: TC_data_command_Table.TC_OBT_with_TLE_Update 						= u_TC.DataCommand.Data;
 				break;
-	case 48: TC_data_command_Table.TC_Wheel_Configuration_Index 				= u_TC.DataCommand.Data;
+	case 49: TC_data_command_Table.TC_Wheel_Configuration_Index 				= u_TC.DataCommand.Data;
 				break;
-	case 49: TC_data_command_Table.TC_Speed_Based_Dumping_Speed_Upper_Threshold = u_TC.DataCommand.Data;
+	case 50: TC_data_command_Table.TC_Speed_Based_Dumping_Speed_Upper_Threshold = u_TC.DataCommand.Data;
 				break;
-	case 50: TC_data_command_Table.TC_Speed_Based_Dumping_Speed_Lower_Threshold = u_TC.DataCommand.Data;
+	case 51: TC_data_command_Table.TC_Speed_Based_Dumping_Speed_Lower_Threshold = u_TC.DataCommand.Data;
 				break;
-	case 51: TC_data_command_Table.TC_Det_Bprev_Count 							= u_TC.DataCommand.Data;
+	case 52: TC_data_command_Table.TC_Det_Bprev_Count 							= u_TC.DataCommand.Data;
 				break;
-	case 52: TC_data_command_Table.TC_Det_BDOT_Compute_Count 					= u_TC.DataCommand.Data;
+	case 53: TC_data_command_Table.TC_Det_BDOT_Compute_Count 					= u_TC.DataCommand.Data;
 				break;
-	case 53: TC_data_command_Table.TC_Det_GYRO_Compute_Count			 		= u_TC.DataCommand.Data;
+	case 54: TC_data_command_Table.TC_Det_GYRO_Compute_Count			 		= u_TC.DataCommand.Data;
 				break;
-	case 54: TC_data_command_Table.TC_Rate_Chk_Safe2Det 						= u_TC.DataCommand.Data;
+	case 55: TC_data_command_Table.TC_Rate_Chk_Safe2Det 						= u_TC.DataCommand.Data;
 				break;
-	case 55: TC_data_command_Table.TC_ECEF_stationlatitude 						= u_TC.DataCommand.Data;
+	case 56: TC_data_command_Table.TC_ECEF_stationlatitude 						= u_TC.DataCommand.Data;
 				break;
-	case 56: TC_data_command_Table.TC_ECEF_stationLongitude 					= u_TC.DataCommand.Data;
+	case 57: TC_data_command_Table.TC_ECEF_stationLongitude 					= u_TC.DataCommand.Data;
 				break;
-	case 57: TC_data_command_Table.TC_Error_dev_SunlitAD 						= u_TC.DataCommand.Data;
+	case 58: TC_data_command_Table.TC_Error_dev_SunlitAD 						= u_TC.DataCommand.Data;
 				break;
-	case 58: TC_data_command_Table.TC_Error_dev_EclipseAD 						= u_TC.DataCommand.Data;
+	case 59: TC_data_command_Table.TC_Error_dev_EclipseAD 						= u_TC.DataCommand.Data;
 				break;
-	case 59: TC_data_command_Table.TC_wAD_BODYmaxThRoll 						= u_TC.DataCommand.Data;
+	case 60: TC_data_command_Table.TC_wAD_BODYmaxThRoll 						= u_TC.DataCommand.Data;
 				break;
-	case 60: TC_data_command_Table.TC_wAD_BODYmaxThPitch 						= u_TC.DataCommand.Data;
+
+
+
+
+	case 61: TC_data_command_Table.TC_wAD_BODYmaxThPitch 						= u_TC.DataCommand.Data;
 				break;
-	case 61: TC_data_command_Table.TC_wAD_BODYmaxThYaw 							= u_TC.DataCommand.Data;
+	case 62: TC_data_command_Table.TC_wAD_BODYmaxThYaw 							= u_TC.DataCommand.Data;
 				break;
-	case 62: TC_data_command_Table.TC_magMin_angle 								= u_TC.DataCommand.Data;
+	case 63: TC_data_command_Table.TC_magMin_angle 								= u_TC.DataCommand.Data;
 				break;
-	case 63: TC_data_command_Table.TC_magMax_angle 								= u_TC.DataCommand.Data;
+	case 64: TC_data_command_Table.TC_magMax_angle 								= u_TC.DataCommand.Data;
 				break;
-	case 64: TC_data_command_Table.TC_GYRO_Det_Max_Thresh						= u_TC.DataCommand.Data;
+	case 65: TC_data_command_Table.TC_GYRO_Det_Max_Thresh						= u_TC.DataCommand.Data;
 			    break;
-	case 65: TC_data_command_Table.TC_PanelD_Status_Sel						    = u_TC.DataCommand.Data;
+	case 66: TC_data_command_Table.TC_PanelD_Status_Sel						    = u_TC.DataCommand.Data;
 				break;
-	case 66: TC_data_command_Table.TC_wAD_BODYminThRoll						    = u_TC.DataCommand.Data;
+	case 67: TC_data_command_Table.TC_wAD_BODYminThRoll						    = u_TC.DataCommand.Data;
 			 	 break;
-	case 67: TC_data_command_Table.TC_wAD_BODYminThPitch						= u_TC.DataCommand.Data;
+	case 68: TC_data_command_Table.TC_wAD_BODYminThPitch						= u_TC.DataCommand.Data;
 				break;
-	case 68: TC_data_command_Table.TC_wAD_BODYminThYaw						    = u_TC.DataCommand.Data;
+	case 69: TC_data_command_Table.TC_wAD_BODYminThYaw						    = u_TC.DataCommand.Data;
 				break;
-	case 69: TC_data_command_Table.TC_wAD_updateTimeThresh					    = u_TC.DataCommand.Data;
+	case 70: TC_data_command_Table.TC_wAD_updateTimeThresh					    = u_TC.DataCommand.Data;
 				break;
-	case 70: TC_data_command_Table.TC_wp_QDP						            = u_TC.DataCommand.Data;
+	case 71: TC_data_command_Table.TC_wp_QDP						            = u_TC.DataCommand.Data;
 				break;
-	case 71: TC_data_command_Table.TC_heaters_auto_manual						= u_TC.DataCommand.Data;
+	case 72: TC_data_command_Table.TC_heaters_auto_manual						= u_TC.DataCommand.Data;
 				break;
-	case 72: TC_data_command_Table.TC_heaters_manual						    = u_TC.DataCommand.Data;
+	case 73: TC_data_command_Table.TC_heaters_manual						    = u_TC.DataCommand.Data;
 				break;
+
 
 	default:
 		      break;
@@ -526,13 +545,7 @@ void rBoolean_TC()
 {
 	if (u_TC.Bool.offset_addr <= sizeof(TC_boolean_u.TC_Boolean_Table)/sizeof(uint8))
 	{
-		/* if (u_TC.Bool.decision_bit)
 
-			TC_boolean_u.Pos[u_TC.Bool.offset_addr] = 0xff;
-		else
-			TC_boolean_u.Pos[u_TC.Bool.offset_addr] = 0;
-
-		*/
 
 		TC_boolean_u.Pos[u_TC.Bool.offset_addr] = (char)u_TC.Bool.decision_bit;
     }

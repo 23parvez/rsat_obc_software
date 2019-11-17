@@ -274,6 +274,7 @@ Nodeptrtype new_node;			//Create new node to be used for storing the TC data to 
 Nodeptrtype temp;
 Nodeptrtype prev;
 int Top_index;
+uint16 RW_number;
 //-----------------------------------
 //----------------BCHEncoder-------------
 void invertReverse(unsigned char * startAddr);

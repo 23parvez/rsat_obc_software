@@ -3,10 +3,13 @@
 
 #include "adcs_VarDeclarations.h"
 
+#include "HAL_Global.h"
+#include "Global.h"
 #include "Telecommand.h"
 #include "TC_List.h"
 #include "TM_Global_Buffer.h"
 #include "Telemetry.h"
+
 
 void rScModeSelection(void)
 {
@@ -39,6 +42,36 @@ void rScModeSelection(void)
 	}
 }
 
+unsigned char Check_sum_data =0;
+void rHILS_packets()
+{
+	int i;
+	unsigned short temp_hils;
+	HILS_packet.header = 0xc3a5;
+	HILS_packet.len    = 0x40;
+	HILS_packet.aux    = 0x01;
+	HILS_packet.mode_flag 		= (char)Spacecraft_Mode; //HILS
+	HILS_packet.mag_field[0] 	= (int)(B_BODY[0]/c_TM_Resol_B);
+	HILS_packet.mag_field[1] 	= (int)(B_BODY[1]/c_TM_Resol_B);
+	HILS_packet.mag_field[2] 	= (int)(B_BODY[2]/c_TM_Resol_B);
+	temp_hils                	= input_latch_1.data;
+	HILS_packet.polarity     	= (char)((temp_hils & 0xFC00)>>8);
+	HILS_packet.rw_torque[0] 	= (int)(T_RW[0]/c_TM_RW_Resol);
+	HILS_packet.rw_torque[1] 	= (int)(T_RW[1]/c_TM_RW_Resol);
+	HILS_packet.rw_torque[2] 	= (int)(T_RW[2]/c_TM_RW_Resol);
+	HILS_packet.rw_torque[3] 	= (int)(T_RW[3]/c_TM_RW_Resol);
+	HILS_packet.Mic_time     	= Minor_Cycle_Count;
+
+	for(i = 0; i<= 62 ; i++)
+	{
+		unsigned char temp;
+
+		temp = HILS_packet.HILS_data_8bit[i];
+		Check_sum_data = (Check_sum_data ^ temp);
+		HILS_packet.checksum = Check_sum_data;
+	}
+}
+
 void rSuspended_ModePreprocessing(void)
 {
 	TM.Buffer.TM_TC_Buffer[7] = (char)Spacecraft_Mode;
@@ -58,6 +91,8 @@ void rSuspended_ModePreprocessing(void)
 void rDetumbling_ModePreprocessing_BDOT_Logic(void)
 {
     //rRateReductionCheck();
+
+
 	TM.Buffer.TM_TC_Buffer[8] = (char)Spacecraft_Mode;
     CB_Detumbling_Mode = 1;
     CB_OrbitModel = 0;

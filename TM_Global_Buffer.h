@@ -2,6 +2,8 @@
 #define TM_GLOBAL_BUFFER
 
 #define TM_ADC_MAX_LIMIT 39
+#define RW_TM_MAX         4
+#define PL_TM_BUF_MAX     8
 
 //----------------------IMU Data(TM)---------------------
 #pragma pack(1)
@@ -202,7 +204,9 @@ struct TM_BUFFER_STUCTURE{
 
     unsigned short TM_manual;
 
-   unsigned short Payload_TM;
+    unsigned char TM_NSP_addr_table[RW_TM_MAX];
+
+   unsigned short Payload_TM[PL_TM_BUF_MAX];
 }Buffer;
 
 #endif // TM_GLOBAL_BUFFER

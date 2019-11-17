@@ -1,6 +1,28 @@
 #ifndef ADCS_VARDECLARATIONS_H_INCLUDED
 #define ADCS_VARDECLARATIONS_H_INCLUDED
 
+//HILS_test
+union HILS_test
+{
+	unsigned char HILS_data_8bit[63];
+	unsigned int HILS_data[16];
+	struct
+	{
+		unsigned short header;
+		unsigned char len;
+		unsigned char aux;
+		unsigned char mode_flag;
+		unsigned short mag_field[3];
+		unsigned char polarity;
+		unsigned int rw_torque[4];
+		unsigned int Mic_time;
+		unsigned char fillerbyte[31];
+		unsigned char checksum;
+	};
+}HILS_packet;
+
+extern void rHILS_payload();
+extern void rHILS_packets();
 
 #define abs_f(a) (((a) < 0.0) ? (-1.0 * (a)) : (a))
 #define abs_i(a) (((a) < 0) ? (-1 * (a)) : (a))

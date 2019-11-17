@@ -71,16 +71,6 @@ void rLinearController(void)
             del_Vw[2] = T_RW[2] * c_MiC/c_MOI_wh;
             del_Vw[3] = T_RW[3] * c_MiC/c_MOI_wh;
 
-            /*T_RW_sdump[0] = T_RW_sdump[0] + del_Vw[0];//test
-            T_RW_sdump[1] = T_RW_sdump[1] + del_Vw[1];//test
-            T_RW_sdump[2] = T_RW_sdump[2] + del_Vw[2];//test
-            T_RW_sdump[3] = T_RW_sdump[3] + del_Vw[3];//test
-
-            H_wh[0] = (c_MOI_wh)* T_RW_sdump[0];//test
-			H_wh[1] = (c_MOI_wh)* T_RW_sdump[1];//test
-			H_wh[2] = (c_MOI_wh)* T_RW_sdump[2];//test
-			H_wh[3] = (c_MOI_wh)* T_RW_sdump[3];//test*/
-
 			H_wh[0] = (c_MOI_wh)* (double)RW_Wheel_Speed[RWHEEL0];
 			H_wh[1] = (c_MOI_wh)* (double)RW_Wheel_Speed[RWHEEL1];
 			H_wh[2] = (c_MOI_wh)* (double)RW_Wheel_Speed[RWHEEL2];
@@ -96,32 +86,10 @@ void rLinearController(void)
             RWSpeed[2] = (double)RW_Wheel_Speed[RWHEEL2] * c_RADps2RPM;
             RWSpeed[3] = (double)RW_Wheel_Speed[RWHEEL3] * c_RADps2RPM;
 
-            /*RWSpeed[0] = T_RW_sdump[0] * c_RADps2RPM;//test
-			RWSpeed[1] = T_RW_sdump[1] * c_RADps2RPM;//test
-			RWSpeed[2] = T_RW_sdump[2] * c_RADps2RPM;//test
-			RWSpeed[3] = T_RW_sdump[3] * c_RADps2RPM;//test
-
-            TM.Buffer.TM_RW_Speed[0] = (int)(RWSpeed[0]/c_TM_RW_Resol);//test
-            TM.Buffer.TM_RW_Speed[1] = (int)(RWSpeed[1]/c_TM_RW_Resol);//test
-            TM.Buffer.TM_RW_Speed[2] = (int)(RWSpeed[2]/c_TM_RW_Resol);//test
-            TM.Buffer.TM_RW_Speed[3] = (int)(RWSpeed[3]/c_TM_RW_Resol);//test*/
-
             TM.Buffer.TM_RW_DeltaSpeed[0] = (int)(del_Vw[0] * c_RADps2RPM/c_TM_RW_Resol);
             TM.Buffer.TM_RW_DeltaSpeed[1] = (int)(del_Vw[1] * c_RADps2RPM/c_TM_RW_Resol);
             TM.Buffer.TM_RW_DeltaSpeed[2] = (int)(del_Vw[2] * c_RADps2RPM/c_TM_RW_Resol);
             TM.Buffer.TM_RW_DeltaSpeed[3] = (int)(del_Vw[3] * c_RADps2RPM/c_TM_RW_Resol);
-
-            /*
-            rWheel_Dither_Torque();
-
-            if (Dither_Compensation == Enable)
-            {
-                T_RW[0] = T_RW[0] + DFCTorq[0];
-                T_RW[1] = T_RW[1] + DFCTorq[1];
-                T_RW[2] = T_RW[2] + DFCTorq[2];
-                T_RW[3] = T_RW[3] + DFCTorq[3];
-            }
-            */
 
             if (CB_Wheel_OverSpeed_TorqueCutOff == Enable)
             {
@@ -165,17 +133,9 @@ void rLinearController(void)
                     T_RW[3] = 0.0;
                 }
             }
-            /*
-            if (DFriction_Compensation == Disable)
-            {
-                T_RW[0] = T_RW[0] + DFCTorq[0];
-                T_RW[1] = T_RW[1] + DFCTorq[1];
-                T_RW[2] = T_RW[2] + DFCTorq[2];
-                T_RW[3] = T_RW[3] + DFCTorq[3];
-            }
 
-            rWheel_Spin_updown();
-        */
+            //rWheel_Spin_updown();
+
             if (abs_f(T_RW[0]) >= TC_T_RW_MAX )
             {
                 T_RW[0] = sign_f(T_RW[0])*TC_T_RW_MAX;

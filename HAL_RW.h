@@ -55,7 +55,7 @@
 #define RW_POLY 0x8408
 
 #define reverse_order(a) (((a&0xFF000000) >> 24)|((a&0x00FF0000) >> 8)|((a&0x0000FF00) << 8)|((a&0x000000FF) << 24))
-#define byte_swap(a) (unsigned short)(((a&0xFF00)>>8)|((a&0x00FF)<<8))
+//#define byte_swap(a) (unsigned short)(((a&0xFF00)>>8)|((a&0x00FF)<<8))
 
 struct HAL_RW_Data_Structure
 {

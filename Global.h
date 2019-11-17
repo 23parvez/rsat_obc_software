@@ -61,6 +61,8 @@ typedef long long int int64;
 #define REG32(a) *((volatile uint32*) (a))   //For 32 Bit Addressing
 #define REG32f(a) *((volatile float*) (a))   //For 32 Bit Addressing
 
+#define byte_swap(a) (unsigned short)(((a&0xFF00)>>8)|((a&0x00FF)<<8))
+
 //Heater
 #define HEATER_1 			1
 #define HEATER_2 			2
@@ -260,6 +262,7 @@ extern void S_band_tx_on_off(unsigned int s_status);
 extern void antennaCommand1(void);
 extern void antennaCommand2(void);
 extern void antennaCommand3(void);
+extern void PL_TM_read();
 
 //TC_Definitions
 extern unsigned long int rHAL_GPS_Config(unsigned long int GPS_No,unsigned long int Config_Type);

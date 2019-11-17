@@ -104,11 +104,7 @@ void OBC_Process()
 		rLinearController();
 		rHAL_MTR();
 		rGPS_pulsecheck();
-
-
-
-
-
+		rHILS_payload();
 		// ADCS Processing ends here
 
 		rRW_Data_Write();                              // Set the Reaction Wheel Speeds
@@ -195,6 +191,7 @@ void OBC_Process()
 		rLinearController();
 		rHAL_MTR();
 		rGPS_pulsecheck();
+		rHILS_payload();
 
 		rHAL_ADC_StatusREG_Enable();			      // Set ADC Status Register
 		rHAL_TM_HW_Status_Update();				      // Update HW status of OBC to TM GBL Buffer
@@ -272,7 +269,7 @@ void OBC_Process()
 		rScModeSelection();
 		rHAL_MTR();
 		rGPS_pulsecheck();
-
+		rHILS_payload();
 		//ADCS routines ends//
 
 		rRW_Data_Write();
@@ -333,7 +330,7 @@ void OBC_Process()
 		rHAL_MTR();
 		rGPS_pulsecheck();
 		rExtendedKalmanFilter1_p2();
-
+		rHILS_payload();
 		//ADCS routines ends//
 
 		rRW_Data_Write();
@@ -364,8 +361,8 @@ void OBC_Process()
 		rGPS_pulsecheck();
 		//ADCS routines ends//
 
-		PL_TM();                                       //Payload_status_rvc
 
+		PL_TM_read();                                  // Read the Payload data
 		rHAL_ADC_Read(ADC_Buffer);				       // Set ADC Read Enable
 		rHAL_TM_HW_Status_Update();			           // Update HW status of OBC to TM GBL Buffer
 		rOutput_Latch_Update();

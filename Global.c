@@ -8,10 +8,12 @@
 #include "adcs_SensorDataProcs.h"
 #include "adcs_VarDeclarations.h"
 
-
+extern unsigned char NSP_addr_table[4];
 
 void rPOR_Init(void)
 {
+	int i;
+
 	rTC_Suspended_ModePreprocessing();
 	//Telemetry
 	TM.Buffer.FrameSynch = 0xF9A42BB1;
@@ -382,6 +384,11 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.TC_SpeedDump_TimeSelect_0_10 = 1228.8;
 
 	GAIN_DATA_SET.TC_SpeedDump_TimeSelect_0_11 = 491.52;
+
+	 for(i= 0 ; i<RW_TM_MAX ; i++)
+	 {
+	    TM.Buffer.TM_NSP_addr_table[i] = NSP_addr_table[i];
+	 }
 
 
 
