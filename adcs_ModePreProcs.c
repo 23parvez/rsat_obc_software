@@ -47,7 +47,7 @@ void rHILS_packets()
 {
 	int i;
 	unsigned short temp_hils;
-	HILS_packet.header = 0xc3a5;
+/*	HILS_packet.header = 0xc3a5;
 	HILS_packet.len    = 0x40;
 	HILS_packet.aux    = 0x01;
 	HILS_packet.mode_flag 		= (char)Spacecraft_Mode; //HILS
@@ -60,7 +60,23 @@ void rHILS_packets()
 	HILS_packet.rw_torque[1] 	= (int)(T_RW[1]/c_TM_RW_Resol);
 	HILS_packet.rw_torque[2] 	= (int)(T_RW[2]/c_TM_RW_Resol);
 	HILS_packet.rw_torque[3] 	= (int)(T_RW[3]/c_TM_RW_Resol);
-	HILS_packet.Mic_time     	= Minor_Cycle_Count;
+	HILS_packet.Mic_time     	= Minor_Cycle_Count; */
+
+	HILS_packet.header = 0xc3a5;
+		HILS_packet.len    = 0x40;
+		HILS_packet.aux    = 0x01;
+		HILS_packet.mode_flag 		= 0x01;
+		HILS_packet.mag_field[0] 	= 0xaabb;
+		HILS_packet.mag_field[1] 	= 0xccdd;
+		HILS_packet.mag_field[2] 	= 0xeeff;
+		temp_hils                	= 0x9c00;
+		HILS_packet.polarity     	= (char)((temp_hils & 0xFC00)>>8);
+		HILS_packet.rw_torque[0] 	= 0xaabbccdd;
+		HILS_packet.rw_torque[1] 	= 0xddeeffaa;
+		HILS_packet.rw_torque[2] 	= 0xccbbaaff;
+		HILS_packet.rw_torque[3] 	= 0x11223344;
+		HILS_packet.Mic_time     	= Minor_Cycle_Count;
+
 
 	for(i = 0; i<= 62 ; i++)
 	{
@@ -70,6 +86,8 @@ void rHILS_packets()
 		Check_sum_data = (Check_sum_data ^ temp);
 		HILS_packet.checksum = Check_sum_data;
 	}
+
+	 rHILS_payload(&HILS_packet);
 }
 
 void rSuspended_ModePreprocessing(void)

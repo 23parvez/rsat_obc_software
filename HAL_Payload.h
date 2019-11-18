@@ -6,7 +6,8 @@
 #define PL_MAX_LIMIT 8
 #define  Payload_DATA_READY 0x00000002
 
-int* Hils_ptr;
+short* Hils_ptr;
+short* hils_ptr_sh;
 unsigned int       Payload_status_1_data;
 unsigned long int* PL_CONFIG_Addr_Ptr;
 unsigned short PL_ACK;

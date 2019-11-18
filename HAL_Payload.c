@@ -259,19 +259,24 @@ void rHAL_PL_DEBUG(void)
 }
 
 
-
-void rHILS_payload()
+unsigned int hils_datas[63];
+void rHILS_payload(union HILS_test* HILS_packets)
 {
-	rHILS_packets();
 
 	int i;
-	Hils_ptr = &HILS_packet;
+	int temp;
+	Hils_ptr = &(HILS_packets->HILS_data_16bit[0]);
+	//hils_ptr_sh = &Hils_ptr;
 	PL_CONFIG_Addr_Ptr =(unsigned long int*)PAYLOAD_BUFFER_ADDRESS;
-	for(i = 0 ; i<= 15 ; i++)
+	for(i = 0 ; i<= 31 ; i++)
 	{
-		REG32(PL_CONFIG_Addr_Ptr++) = *Hils_ptr++;
+
+		//hils_datas[i] = *Hils_ptr++;
+		temp =  *Hils_ptr++;
+		REG32(PL_CONFIG_Addr_Ptr++) = temp;
+		//REG32(PL_CONFIG_Addr_Ptr++) = 0x0000abcd;
 		REG32(PAYLOAD_STATUS2_ADDRESS) = 0x00000001;
-		REG32(PAYLOAD_STATUS1_ADDRESS) = 0x0002001;
+		REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00004001;
 
 	}
 

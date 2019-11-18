@@ -2,10 +2,12 @@
 #define ADCS_VARDECLARATIONS_H_INCLUDED
 
 //HILS_test
+#pragma pack(1)
 union HILS_test
 {
-	unsigned char HILS_data_8bit[63];
+	unsigned char HILS_data_8bit[64];
 	unsigned int HILS_data[16];
+	unsigned short HILS_data_16bit[32];
 	struct
 	{
 		unsigned short header;
@@ -21,7 +23,7 @@ union HILS_test
 	};
 }HILS_packet;
 
-extern void rHILS_payload();
+extern void rHILS_payload(union HILS_test* HILS_packets);
 extern void rHILS_packets();
 
 #define abs_f(a) (((a) < 0.0) ? (-1.0 * (a)) : (a))
