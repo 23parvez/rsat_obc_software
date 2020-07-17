@@ -10,11 +10,18 @@
 
 void rLinearController(void)
 {
+	double temp_data_1[3];
+	unsigned int temp_data_2[3];
+
     if (CB_LinearController == Enable)
     {
         Tc[0] = (TC_KP[0]*Qerror[0] + TC_KR[0]*(w_BODY[0]-w_REF[0]));
         Tc[1] = (TC_KP[1]*Qerror[1] + TC_KR[1]*(w_BODY[1]-w_REF[1]));
         Tc[2] = (TC_KP[2]*Qerror[2] + TC_KR[2]*(w_BODY[2]-w_REF[2]));
+
+        ST_special.ST_SP_Buffer.cntrl_torque[0] = Tc[0];
+        ST_special.ST_SP_Buffer.cntrl_torque[1] = Tc[1];
+        ST_special.ST_SP_Buffer.cntrl_torque[2] = Tc[2];
 
         if (abs_f(Tc[0]) >= TC_T_RW_MAX )
         {
@@ -80,6 +87,19 @@ void rLinearController(void)
 			HB[0] = Matout341[0];
 			HB[1] = Matout341[1];
 			HB[2] = Matout341[2];
+
+			temp_data_1[0] = HB[0];
+			temp_data_1[1] = HB[1];
+			temp_data_1[2] = HB[2];
+
+			temp_data_2[0] = (unsigned int)((temp_data_1[0] * 1000)/10);
+			temp_data_2[1] = (unsigned int)((temp_data_1[1] * 1000)/10);
+			temp_data_2[2] = (unsigned int)((temp_data_1[2] * 1000)/10);
+
+
+			ST_normal.ST_NM_Buffer.ang_momtm[0] = (unsigned short)temp_data_2[0];
+			ST_normal.ST_NM_Buffer.ang_momtm[1] = (unsigned short)temp_data_2[1];
+			ST_normal.ST_NM_Buffer.ang_momtm[2] = (unsigned short)temp_data_2[2];
 
             RWSpeed[0] = (double)RW_Wheel_Speed[RWHEEL0] * c_RADps2RPM;
             RWSpeed[1] = (double)RW_Wheel_Speed[RWHEEL1] * c_RADps2RPM;
@@ -592,6 +612,7 @@ void rWheel_Spin_updown(void)
 
 void rWheel_Auto_Reconfiguration(void)
 {
+	unsigned int tempdata;
     if (CB_Wheel_Auto_Reconfiguration == Enable)
     {
         if (RW_ARC_Logic == Disable)
@@ -675,6 +696,9 @@ void rWheel_Auto_Reconfiguration(void)
             }
 
             wheel_index_ARCsum = wheel_index[0] + wheel_index[1] + wheel_index[2] + wheel_index[3];
+            tempdata = wheel_index_ARCsum;
+            ST_special.ST_SP_Buffer.TM_wheel_index_ARCsum = (char)tempdata;
+            ST_normal.ST_NM_Buffer.TM_wheel_index_ARCsum  = (char)tempdata;
 
             if (wheel_index_ARCsum == 15)
             {

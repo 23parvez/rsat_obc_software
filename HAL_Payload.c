@@ -1,350 +1,668 @@
+//payload code//
+#include "Global.h"
 #include "HAL_Payload.h"
 #include "HAL_Address.h"
 #include "HAL_Global.h"
-#include "Global.h"
 #include "Telemetry.h"
 #include "TM_Global_Buffer.h"
 #include "adcs_VarDeclarations.h"
+#include "TC_List.h"
+#include "Telecommand.h"
 
-void rHAL_PL_Power(unsigned int Payload_No,unsigned int status)
+uint32 PL_1_on_off_flag;
+uint32 PL_2_on_off_flag;
+
+uint8 pl_HLT_en;
+
+void rHAL_pl1_ON()
 {
 	unsigned short tempdata;
-	if(Payload_No == Payload_1)
+
+	Out_Latch_3.PL1_ON_OFF = 1;
+	Out_Latch_3.PL2_ON_OFF = 0;
+	tempdata = Out_Latch_3.data;
+	IO_LATCH_REGISTER_3;
+	IO_LATCH_REGISTER_3 = tempdata;
+	pl_cmd_id = 1;
+	PL_1_on_off_flag = 1;
+	PL_2_on_off_flag = 0;
+
+	for(int i=0 ; i< PL_TM_BUF_MAX ; i++)
 	{
-		if(status == ON)
-		{
-			Out_Latch_3.PL1_ON_OFF = 1;
-			tempdata = Out_Latch_3.data;
-			IO_LATCH_REGISTER_3;
-			IO_LATCH_REGISTER_3 = tempdata;
-		}
-		else if(status == OFF)
-		{
-			//bbb=0xabcd;
-			Out_Latch_3.PL1_ON_OFF = 0;
-			tempdata = Out_Latch_3.data;
-			IO_LATCH_REGISTER_3;
-			IO_LATCH_REGISTER_3 = tempdata;
-		}
-	}
-	else if(Payload_No == Payload_2)
-	{
-		if(status == ON)
-				{
-					Out_Latch_3.PL2_ON_OFF = 1;
-					tempdata = Out_Latch_3.data;
-					IO_LATCH_REGISTER_3;
-					IO_LATCH_REGISTER_3 = tempdata;
-				}
-				else if(status == OFF)
-				{
-					Out_Latch_3.PL2_ON_OFF = 0;
-					tempdata = Out_Latch_3.data;
-					IO_LATCH_REGISTER_3;
-					IO_LATCH_REGISTER_3 = tempdata;
-				}
-	}
-	else
-	{
-	     //
-	}
-}
-void rHAL_X_Tx_ON_OFF(unsigned int x_status)
-{
-	unsigned short tempdata;
-	if(x_status == X_Tx_ON)
-	{
-		Out_Latch_2.X_Tx_ON_OFF = 1;
-		tempdata =  Out_Latch_2.data;
-		IO_LATCH_REGISTER_2;
-		IO_LATCH_REGISTER_2 = tempdata;
-		Out_Latch_3.TM_DS_EN = 1;
-		tempdata = Out_Latch_3.data;
-		IO_LATCH_REGISTER_3;
-		IO_LATCH_REGISTER_3 = tempdata;
-	}
-	else if(x_status == X_Tx_OFF)
-	{
-		Out_Latch_2.X_Tx_ON_OFF = 0;
-		tempdata =  Out_Latch_2.data;
-		IO_LATCH_REGISTER_2;
-		IO_LATCH_REGISTER_2 = tempdata;
-		Out_Latch_3.TM_DS_EN = 0;
-		tempdata = Out_Latch_3.data;
-		IO_LATCH_REGISTER_3;
-		IO_LATCH_REGISTER_3 = tempdata;
-	}
-	else
-	{
-		//
+		TM.Buffer.TM_pl_data[i] = 0;
 	}
 
 }
-//void S_band_tx_on_off(unsigned int s_status)
+
+void rHAL_pl1_OFF()
+{
+	unsigned short tempdata;
+	Out_Latch_3.PL1_ON_OFF = 0;
+	Out_Latch_3.TM_DS_EN = 0;
+	tempdata = Out_Latch_3.data;
+	IO_LATCH_REGISTER_3;
+	IO_LATCH_REGISTER_3 = tempdata;
+	pl_cmd_id = 0;
+	PL_1_on_off_flag = 0;
+
+	// Health command disable
+	pl_HLT_en = False;
+
+	// Reset the acknowledgement counter when the payload is turned off
+	pl_ack_count = False;
+}
+
+
+
+void rHAL_pl2_ON()
+{
+	unsigned short tempdata;
+	Out_Latch_3.PL2_ON_OFF = 1;
+	Out_Latch_3.PL1_ON_OFF = 0;
+	tempdata = Out_Latch_3.data;
+	IO_LATCH_REGISTER_3;
+	IO_LATCH_REGISTER_3 = tempdata;
+	pl_cmd_id = 1;
+	PL_2_on_off_flag = 1;
+	PL_1_on_off_flag = 0;
+	for(int i=0 ; i< PL_TM_BUF_MAX ; i++)
+	{
+		TM.Buffer.TM_pl_data[i] = 0;
+	}
+}
+
+void rHAL_pl2_OFF()
+{
+	unsigned short tempdata;
+	Out_Latch_3.PL2_ON_OFF = 0;
+	Out_Latch_3.TM_DS_EN = 0;
+	tempdata = Out_Latch_3.data;
+	IO_LATCH_REGISTER_3;
+	IO_LATCH_REGISTER_3 = tempdata;
+	pl_cmd_id = 0;
+	PL_2_on_off_flag = 0;
+
+	// Health command disable
+	pl_HLT_en = False;
+
+	// Reset the acknowledgement counter when the payload is turned off
+	pl_ack_count = False;
+}
+
+void rHAL_tm_ds_en()
+{
+	unsigned short tempdata;
+
+	Out_Latch_3.TM_DS_EN = 1;
+	tempdata = Out_Latch_3.data;
+	IO_LATCH_REGISTER_3;
+	IO_LATCH_REGISTER_3 = tempdata;
+	tm_ds_en_flag = 1;
+}
+
+void rHAL_X_Tx_ON()
+{
+	uint16 tempdata;
+	Out_Latch_2.X_Tx_ON_OFF = 1;
+	tempdata =  Out_Latch_2.data;
+	IO_LATCH_REGISTER_2;
+	IO_LATCH_REGISTER_2 = tempdata;
+}
+
+
+void rHAL_X_Tx_OFF()
+{
+	unsigned short tempdata;
+	Out_Latch_2.X_Tx_ON_OFF = 0;
+	tempdata =  Out_Latch_2.data;
+	IO_LATCH_REGISTER_2;
+	IO_LATCH_REGISTER_2 = tempdata;
+}
+
+
+/****************************************************************
+ *@function name rHAL_pl_sts_check
+ *@return type   NONE
+ *@Description   This function sends two bytes of data
+ *@				 to check the status of PAYLOAD
+ *@				 Payload responds with 0xAA0F if payload status PASSED
+ *@				 			   0xAA0XF0 if payload status FAILED.
+ ****************************************************************
+ */
+void rpl_init()
+{
+	if (PL_1_on_off_flag && tm_ds_en_flag)
+	{
+		if (Major_Cycle_Count >= PL_STS_TIME)
+		{
+			rHAL_pl_sts_check_mj_flag= 1;
+			if(rHAL_pl_sts_check_mj_flag)
+			{
+				rHAL_pl_sts_check();
+			}
+
+		}
+	}
+}
+//void rpl_sts()
 //{
-//	if(s_status == s_band_on)
-//	{
-//		//Out_Latch_2.RF_Tx_ON_OFF = 1;
-//		IO_LATCH_REGISTER_2 = Out_Latch_2.data;
-//	}
-//	else if(s_status == s_band_off)
-//	{
-//		Out_Latch_2.RF_Tx_ON_OFF = 0;
-//		IO_LATCH_REGISTER_2 = Out_Latch_2.data;
-//	}
-//	else
-//	{
-//		//
-//	}
-//
+//	if(rHAL_pl_sts_check_mj_flag)
+//{
+//	rHAL_pl_sts_check();
+//}
 //}
 
-void S_band_tx_on_off(unsigned int s_status)
+unsigned int pl_configure_data;
+void rHAL_pl_sts_check()
 {
-	if(s_status == s_band_on)
-	{
-		GPIO_pins.PIO_5 = 1;
-		IODAT = GPIO_pins.data;
-	}
-	else if(s_status == s_band_off)
-	{
-		GPIO_pins.PIO_5 = 0;
-		IODAT = GPIO_pins.data;
-	}
-	else
-	{
-		//
-	}
+		REG32(PAYLOAD_CONFIG_REGISTER) = PL_STS_CMD_ID;
+		/* No of Configure Bytes (15:7) : 2 bytes
+		 * No of Receive Bytes (6:1)    : 2 byte
+		 * Configure Bytes  (0)         : 1 */
+		REG32(PAYLOAD_STATUS2_ADDRESS) = PL_STS_CONFIG;
+		pl_cmd_id = 2;
 
 }
-/************************************************************
- *@function name PL_TM
+
+/****************************************************************
+ *@function name rHAL_PL_CMD_HLT
  *@return type   NONE
- *@Description   This function receives the payload data and
- *				 updates it in to telemetry frame.
- ************************************************************
+ *@Description   This function sends two bytes of data
+ *@				 to check the Health status of PAYLOAD
+ *@				 Payload responds with 0xAA0F followed by 13Bytes of
+ *@				 health parameters
+ ****************************************************************
+ */
+uint16 pl_hlt_flag;
+
+void rHAL_pl_cmd_hlt()
+{
+	//if((PL_1_on_off_flag || PL_2_on_off_flag) && PL_TM_Status_flag)
+	if ((PL_1_on_off_flag || PL_2_on_off_flag) && pl_HLT_en)
+	{
+		REG32(PAYLOAD_CONFIG_REGISTER) = PL_HLT_CMD_ID;
+		/*****************************************************/
+		/* No of Configure Bytes (15:7) : 2 bytes
+		 * No of Receive Bytes (6:1)    : 15 byte
+		 * Configure Bytes  (0)         : 1 */
+		REG32(PAYLOAD_STATUS2_ADDRESS) = PL_HLT_CONFIG;
+		pl_cmd_id = 3;
+	}
+		pl_sts_chk_flag = 0;
+		rHAL_pl_sts_check_mj_flag = 0;
+		PL_TM_Status_flag = 1;
+
+}
+
+/****************************************************************
+ *@function name rHAL_PL_DEBUG
+ *@return type   NONE
+ *@Description   This function enables read and write to the
+ 	 	 	 	 payload. Data Bytes D1 to D8 is configured
+ 	 	 	 	 by telecommand. Payload responds with 0XAA0F
+ ****************************************************************
  */
 
-void rHAL_PL_STS_Check()
+void rHAL_pl_debug(void)
 {
-	//REG32(0x20007000) = 0x0000FFFF;
-	REG32(PAYLOAD_BUFFER_ADDRESS) = 0x00005355;
-	REG32(PAYLOAD_STATUS2_ADDRESS) = 0x00000001;
-	REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00000101;//0000_0001_0000_0001
-}
-
-void rHAL_PL_CMD_ACQ() 	// PL_CMD_DEBUG
-{
-	//REG32(0x20007000) = 0x0000FFFF;
-	PL_CONFIG_Addr_Ptr =(unsigned long int*)PAYLOAD_BUFFER_ADDRESS;
-//	REG32(PL_CONFIG_Addr_Ptr++) = 0x00005755;
-//	REG32(PL_CONFIG_Addr_Ptr++) = 0x00000100;
-//	REG32(PL_CONFIG_Addr_Ptr++) = 0x00000101;
-//	REG32(PL_CONFIG_Addr_Ptr++) = 0x00000101;
-//	REG32(PL_CONFIG_Addr_Ptr++) = 0x00001F01;
-//	REG32(PL_CONFIG_Addr_Ptr) 	= 0x00000002;
-
-	/******************************************************/
-	/***********************PL_CMD_Debug******************/
-	REG32(PL_CONFIG_Addr_Ptr++) = 0x00004555;
-	REG32(PL_CONFIG_Addr_Ptr++) = 0x0000A406;
-	REG32(PL_CONFIG_Addr_Ptr++) = 0x000000D2;
-	REG32(PL_CONFIG_Addr_Ptr++) = 0x0000FFFF;
-	REG32(PL_CONFIG_Addr_Ptr++) = 0x0000FFFF;
-//	REG32(PL_CONFIG_Addr_Ptr) 	= 0x00000002;
-	/*****************************************************/
-
-	REG32(PAYLOAD_STATUS2_ADDRESS) = 0x00000002;
-	REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00000501;//0000_0101_1000_0001
-}
-
-void rHAL_PL_CMD_HLT()
-{
-	//REG32(0x20007000) = 0x0000FFFF;
-	REG32(PAYLOAD_BUFFER_ADDRESS) = 0x00004855;
-	REG32(PAYLOAD_STATUS2_ADDRESS) = 0x0000000E;
-	REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00000101;//0000_0001_0000_0001
-}
-
-uint16 temp_short1, temp_short2;
-void PL_TM_read()
-{
-	//uint16 temp_short1, temp_short2;
-	 Payload_status_1_data = REG32(PAYLOAD_STATUS1_ADDRESS);
-	if((Payload_status_1_data & Payload_DATA_READY) == 0x00000002)
-	{
-		// Read Payload status buffer to the telemtry
-		pl_buffer_len = PL_TM_BUF_MAX - 1;
-		pl_buffer_addr = (uint32*)PAYLOAD_BUFFER_ADDRESS;
-		for(PL_Addr_count = 0; PL_Addr_count <= pl_buffer_len; PL_Addr_count++)
+		if (pl_data_command.pl_data_2byte[0] == PL_DEBUG_HDR_CMD_ID)
 		{
-			temp_short1 = (unsigned short)(REG32(pl_buffer_addr++) & 0x0000FFFF);
-			temp_short2 = byte_swap(temp_short1);
-			TM.Buffer.Payload_TM[PL_Addr_count] = temp_short2;
+			pl_config_addr_ptr =(uint32*)PAYLOAD_CONFIG_REGISTER;
+			REG32(pl_config_addr_ptr++) = pl_data_command.pl_data_2byte[0];
+			REG32(pl_config_addr_ptr++) = pl_data_command.pl_data_2byte[1];
+			REG32(pl_config_addr_ptr++) = pl_data_command.pl_data_2byte[2];
+			REG32(pl_config_addr_ptr++) = pl_data_command.pl_data_2byte[3];
+			REG32(pl_config_addr_ptr) 	= pl_data_command.pl_data_2byte[4];
+			/* No of Configure Bytes (15:7) : 10 bytes
+			 * No of Receive Bytes (6:1)    : 2 byte
+			 * Configure Bytes  (0)         : 1 */
+			REG32(PAYLOAD_STATUS2_ADDRESS) = PL_DEBUG_CONIG;
+			pl_cmd_id = 4;
+
+		}
+		else
+		{
+			//
+		}
+}
+
+/****************************************************************
+ *@function name rHAL_PL_X_TX_DATA_ON
+ *@return type   NONE
+ *@Description   This function requests to transmit payload data
+  	  	  	  	 stored in SDCARD
+  	  	  	  	 Payload responds with 0XAA0F
+ ****************************************************************
+ */
+ uint32 pl_x_tx_data_on_flag;
+uint32  data_nc;
+void rHAL_pl_x_tx_data_on()
+{
+
+	if (pl_data_command.pl_data_2byte[0] == (uint16)PL_TX_DATA_ON_HDR_CMD_ID)
+	{
+		data_nc = 2;
+		pl_config_addr_ptr =(uint32*)PAYLOAD_CONFIG_REGISTER;
+		REG32(pl_config_addr_ptr++)      = pl_data_command.pl_data_2byte[0];
+		REG32(pl_config_addr_ptr++) 	 = pl_data_command.pl_data_2byte[1];
+		REG32(pl_config_addr_ptr++) 	 = pl_data_command.pl_data_2byte[2];
+		REG32(pl_config_addr_ptr++) 	 = pl_data_command.pl_data_2byte[3];
+		REG32(pl_config_addr_ptr++) 	 = pl_data_command.pl_data_2byte[4];
+		REG32(pl_config_addr_ptr) 	     = pl_data_command.pl_data_2byte[5];
+		/********************************************/
+		/* No of Configure Bytes (15:7) : 11 bytes
+		 * No of Receive Bytes (6:1)    : 2 byte
+		 * Configure Bytes  (0)         : 1 */
+		REG32(PAYLOAD_STATUS2_ADDRESS) = PL_X_DATA_ON_CONFIG;
+		pl_cmd_id = 5;
+
+		// This flag is enabled to send payload command for Health monitoring
+		pl_HLT_en = TRUE;
+	}
+	else
+	{
+		//
+	}
+
+}
+
+/****************************************************************
+ *@function name rHAL_PL_CMD_ACQ
+ *@return type   NONE
+ *@Description   This function commands payload to recieve
+    			 data(RAW/EXT/Telemetry).
+  	  	  	  	 Payload responds with 0XAA0F
+ ****************************************************************
+ */
+uint32 pl_acq_flag;
+uint16 pl_mode;
+uint32 pl_command_data;
+
+void rHAL_pl_cmd_acq()
+{
+
+	if (pl_data_command.pl_data_2byte[0] == PL_ACQ_HDR_CMD_ID)
+	{
+
+		pl_config_addr_ptr =(uint32*)PAYLOAD_CONFIG_REGISTER;
+		REG32(pl_config_addr_ptr++) = pl_data_command.pl_data_2byte[0];
+		REG32(pl_config_addr_ptr++) = pl_data_command.pl_data_2byte[1];
+		REG32(pl_config_addr_ptr++) = pl_data_command.pl_data_2byte[2];
+		REG32(pl_config_addr_ptr++) = pl_data_command.pl_data_2byte[3];
+		REG32(pl_config_addr_ptr) 	= pl_data_command.pl_data_2byte[4];
+		pl_mode = pl_data_command.pl_data_2byte[4] & EXTRACT_LSB_8BITS;
+		/*****************************************************/
+		/* No of Configure Bytes (15:7) : 10 bytes
+		 * No of Receive Bytes (6:1)    : 2 byte
+		 * Configure Bytes  (0)         : 1 */
+		REG32(PAYLOAD_STATUS2_ADDRESS) = PL_ACQ_CONFIG;
+		pl_cmd_id = 6;
+		pl_acq_flag = TRUE;
+
+		// This flag is enabled to send payload command for Health monitoring
+		pl_HLT_en = TRUE;
+	}
+
+	else
+	{
+		//
+	}
+}
+
+
+/****************************************************************
+ *@function name rHAL_PL_X_TX_DATA_OFF
+ *@return type   NONE
+ *@Description   This function requests to stop the transmission
+   	   	   	     of payload data stored in SDCARD
+  	  	  	  	 Payload responds with 0XAA0F
+ ****************************************************************
+ */
+uint32 pl_x_tx_data_off_flag;
+
+uint32 data_x_tx;
+void rHAL_pl_x_tx_data_off()
+{
+		REG32(PAYLOAD_CONFIG_REGISTER) = PL_TX_DATA_OFF_HDR_CMD_ID;
+		data_x_tx = PL_TX_DATA_OFF_HDR_CMD_ID;
+		/* No of Configure Bytes (15:7) : 2 bytes
+		 * No of Receive Bytes (6:1)    : 2 byte
+		 * Configure Bytes  (0)         : 1 */
+		REG32(PAYLOAD_STATUS2_ADDRESS) = PL_X_TX_DATA_OFF_CONFIG;//0000 0001 0000 0101
+		pl_cmd_id = 7;
+
+		pl_HLT_en = False;
+
+}
+
+
+/************* Diagnosis of AIS PAYLOAD ******************************/
+uint32 pl_diag_flag;
+void rHAL_pl_diag(void)
+{
+	if (pl_data_command.pl_data_2byte[0] == PL_DIAG_HDR_CMD_ID)
+	{
+
+		pl_config_addr_ptr =(uint32*)PAYLOAD_CONFIG_REGISTER;
+
+		REG32(pl_config_addr_ptr++)  = pl_data_command.pl_data_2byte[0];
+		REG32(pl_config_addr_ptr) 	 = pl_data_command.pl_data_2byte[1];
+		/* No of Configure Bytes (15:7) : 3 bytes
+		 * No of Receive Bytes (6:1)    : 2 byte
+		 * Configure Bytes  (0)         : 1 */
+		REG32(PAYLOAD_STATUS2_ADDRESS) = PL_DIAG_CONFIG;
+		//REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00000181;//0000_0001_1000_0001
+		pl_cmd_id = 8;
+	}
+	else
+	{
+		//
+	}
+
+}
+/*void pl_tx_tm_main()
+{
+	pl_tx_tm_flag = pl_tx_tm_flag ^ TRUE;
+	if(pl_tx_tm_flag)
+	{
+		pl_tx_tm();
+	}
+
+}*/
+unsigned int pl_test10;
+uint16 *pl_tm_ptr;
+uint16 temp_data_1,temp_data_2;
+unsigned short PL_TX_TM_2_EN;
+void pl_tx_tm()
+{
+	uint16 tempdata_pl_1,tempdata_pl_2;
+	uint32 i;
+
+	//if ( TC_boolean_u.TC_Boolean_Table.pl_tx_tm_flag && pl_acq_flag  && ((pl_mode == PL_TM_DATA) || (pl_mode ==PL_MODE_ALL)))
+	if ( TC_boolean_u.TC_Boolean_Table.pl_tx_tm_flag && pl_acq_flag)
+	{
+		if(inter_TM_Pl_Buffer)
+		{
+			PL_TM_Status_flag = 0;
+			pl_tm_ptr = &(Pl_tm_data.pl_tm_2bytes[0]);
+			pl_config_addr_ptr = (uint32*)PAYLOAD_CONFIG_REGISTER;
+			REG32(pl_config_addr_ptr++) = 0x00005055;
+			for(i = 0; i<=126; i++)                         //changed
+			{
+				tempdata_pl_1 = *pl_tm_ptr++;
+				tempdata_pl_2 = byte_swap(tempdata_pl_1);
+
+				REG32(pl_config_addr_ptr++) = (uint32)(tempdata_pl_2 & EXTRACT_LSB_16BITS);  //swaping the telemetry_data and updating in Pl_config
+			}
+			tempdata_pl_2 	= *pl_tm_ptr++;
+			temp_data_1	    = tempdata_pl_2;
+			tempdata_pl_2 	= *pl_tm_ptr++;
+			temp_data_2     = tempdata_pl_2;
+			//REG32(pl_config_addr_ptr++) = 0x0000aabb;
+			//REG32(pl_config_addr_ptr) = 0x0000ccdd;
+			/* No of Configure Bytes (15:7) : 258 bytes // changed to 256bytes
+			 * No of Receive Bytes (6:1)    : 2 byte
+			 * Configure Bytes  (0)         : 1 */
+			REG32(PAYLOAD_STATUS2_ADDRESS) = PL_TX_TM_CONFIG;
+			pl_cmd_id = 9;
+			inter_TM_Pl_Buffer = FALSE;
+			PL_TX_TM_2_EN =TRUE;
+			pl_test10++;
+		}
+		else
+		{
+			//
 		}
 	}
-}
-
-void rHAL_PL_DIAG()			// PL_X_TX
-{
-	//REG32(0x20007000) = 0x0000FFFF;
-	PL_CONFIG_Addr_Ptr =(unsigned long int*)PAYLOAD_BUFFER_ADDRESS;
-//	REG32(PL_CONFIG_Addr_Ptr++)  = 0x00004455;
-//	REG32(PL_CONFIG_Addr_Ptr) 	 = 0x00000001;
-	/*********************************************/
-	/****************X_tx************************/
-	REG32(PL_CONFIG_Addr_Ptr++)      = 0x00005255;
-	REG32(PL_CONFIG_Addr_Ptr++) 	 = 0x00000a09;
-	REG32(PL_CONFIG_Addr_Ptr++) 	 = 0x00000c0b;
-	REG32(PL_CONFIG_Addr_Ptr++) 	 = 0x0000ffff;
-	REG32(PL_CONFIG_Addr_Ptr++) 	 = 0x000004ff;
-	REG32(PL_CONFIG_Addr_Ptr) 	     = 0x00000011;
-	/********************************************/
-	REG32(PAYLOAD_STATUS2_ADDRESS) = 0x00000002;
-	REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00000581;//0000_0101_1000_0001
-}
-
-void rHAL_PL_CMD_OFF()
-{
-	//REG32(0x20007000) = 0x0000FFFF;
-	REG32(PAYLOAD_BUFFER_ADDRESS) = 0x00004655;
-	REG32(PAYLOAD_STATUS2_ADDRESS) = 0x00000002;
-	REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00000101;//0000_0001_0000_0001
-}
-
-void rHAL_PL_CMD_ON()
-{
-	//REG32(0x20007000) = 0x0000FFFF;
-	PL_CONFIG_Addr_Ptr =(unsigned long int*)PAYLOAD_BUFFER_ADDRESS;
-	REG32(PL_CONFIG_Addr_Ptr++) = 0x00005255;
-	REG32(PL_CONFIG_Addr_Ptr++) = 0x00000300;
-	REG32(PL_CONFIG_Addr_Ptr++) = 0x0000FF07;
-	REG32(PL_CONFIG_Addr_Ptr++) = 0x0000FFFF;
-	REG32(PL_CONFIG_Addr_Ptr++) = 0x00001FFF;
-	REG32(PAYLOAD_STATUS2_ADDRESS) = 0x00000002;
-	REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00000501;//0000_0110_0000_0001
-}
-
-void rHAL_PL_DIAG_SDCARD(void)
-{
-	//REG32(0x20007000) = 0x0000FFFF;
-	PL_CONFIG_Addr_Ptr =(unsigned long int*)PAYLOAD_BUFFER_ADDRESS;
-	REG32(PL_CONFIG_Addr_Ptr++)  = 0x00004455;
-	REG32(PL_CONFIG_Addr_Ptr) 	 = 0x00000002;
-	REG32(PAYLOAD_STATUS2_ADDRESS) = 0x00000002;
-	REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00000181;//0000_0001_1000_0001
-}
-
-void rHAL_PL_DIAG_FRAM(void)
-{
-	//REG32(0x20007000) = 0x0000FFFF;
-	PL_CONFIG_Addr_Ptr =(unsigned long int*)PAYLOAD_BUFFER_ADDRESS;
-	REG32(PL_CONFIG_Addr_Ptr++)  = 0x00004455;
-	REG32(PL_CONFIG_Addr_Ptr) 	 = 0x00000003;
-	REG32(PAYLOAD_STATUS2_ADDRESS) = 0x00000002;
-	REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00000181;//0000_0001_1000_0001
-}
-
-void rHAL_PL_DEBUG(void)
-{
-	//REG32(0x20007000) = 0x0000FFFF;
-	PL_CONFIG_Addr_Ptr =(unsigned long int*)PAYLOAD_BUFFER_ADDRESS;
-	REG32(PL_CONFIG_Addr_Ptr++)  = 0x00004555;
-	REG32(PL_CONFIG_Addr_Ptr++)  = PL_Debug_Data[0];
-	REG32(PL_CONFIG_Addr_Ptr++)  = PL_Debug_Data[1];
-	REG32(PL_CONFIG_Addr_Ptr++)  = PL_Debug_Data[2];
-	REG32(PL_CONFIG_Addr_Ptr)    = PL_Debug_Data[3];
-	REG32(PAYLOAD_STATUS2_ADDRESS) = 0x00000002;
-	REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00000501;//0000_0101_0000_0001
-}
-
-
-unsigned int hils_datas[63];
-void rHILS_payload(union HILS_test* HILS_packets)
-{
-
-	int i;
-	int temp;
-	Hils_ptr = &(HILS_packets->HILS_data_16bit[0]);
-	//hils_ptr_sh = &Hils_ptr;
-	PL_CONFIG_Addr_Ptr =(unsigned long int*)PAYLOAD_BUFFER_ADDRESS;
-	for(i = 0 ; i<= 31 ; i++)
+	else
 	{
+		//
+	}
+}
 
-		//hils_datas[i] = *Hils_ptr++;
-		temp =  *Hils_ptr++;
-		REG32(PL_CONFIG_Addr_Ptr++) = temp;
-		//REG32(PL_CONFIG_Addr_Ptr++) = 0x0000abcd;
-		REG32(PAYLOAD_STATUS2_ADDRESS) = 0x00000001;
-		REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00004001;
+uint32 pl_test12;
+void pl_tx_tm_2()
+{
+	uint16 tempdata3,tempdata2;
+	pl_config_addr_ptr =(uint32*)PAYLOAD_CONFIG_REGISTER;
+	if(PL_TX_TM_2_EN)
+	{
+		tempdata3 = REG32(PAYLOAD_STATUS2_ADDRESS);
+		tempdata2 = tempdata3 & 0x0001;
 
+		 //if(tempdata2 == 0)
+		// {
+			 pl_test12++;
+			Out_Latch_3.TM_DS_EN = 0;
+			IO_LATCH_REGISTER_3 = Out_Latch_3.data;
+			IO_LATCH_REGISTER_3;
+			IO_LATCH_REGISTER_3;
+			Out_Latch_3.TM_DS_EN = 1;
+			IO_LATCH_REGISTER_3 = Out_Latch_3.data;
+			IO_LATCH_REGISTER_3;
+
+			REG32(pl_config_addr_ptr++) = temp_data_1;
+			REG32(pl_config_addr_ptr) 	= temp_data_2;
+
+			REG32(PAYLOAD_STATUS2_ADDRESS) = PL_TX_TM_CONFIG_2;
+		// }
+		 PL_TX_TM_2_EN=FALSE;
+		 pl_cmd_id = 9;
+		 PL_TM_Status_flag = 1;
 	}
 
+
 }
-//void rHAL_PL_TEST(void)
-//{
-//		TM.Buffer.Debug_Data[0] = PL_Debug_Data[0];
-//		TM.Buffer.Debug_Data[1] = PL_Debug_Data[1];
-//		TM.Buffer.Debug_Data[2] = PL_Debug_Data[2];
-//		TM.Buffer.Debug_Data[3] = PL_Debug_Data[3];
-//		if(PL_Exe_Flag ==0)
-//		{
-//			if((REG32(PAYLOAD_STATUS1_ADDRESS)&0x00000002) == 0x00000002){
-//				if(TC_command == 0x9A){
-//				TM.Buffer.TM_PAYLOAD_ACK[0] = (short)((REG32(PAYLOAD_BUFFER_ADDRESS)&0x000000FF) <<8) | (short)((REG32(PAYLOAD_BUFFER_ADDRESS)&0x0000FF00) >>8) ;
-//				TM.Buffer.TM_PAYLOAD_ACK[1] = (short)((REG32(PAYLOAD_BUFFER_ADDRESS + 4)&0x000000FF) <<8) | (short)((REG32(PAYLOAD_BUFFER_ADDRESS + 4)&0x0000FF00) >>8);
-//				}
-//				else{
-//				TM.Buffer.TM_PAYLOAD_ACK[0] = (short)((REG32(PAYLOAD_BUFFER_ADDRESS)&0x000000FF) <<8) | (short)((REG32(PAYLOAD_BUFFER_ADDRESS)&0x0000FF00) >>8) ;
-//				}
-//
-//					REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00000000;
-//			}
-//		}
-//		if(Enable_PL_TM_flag == TRUE)
-//		{
-//			inter_PL_TM_Source_Addr = (unsigned short*)TM_Buffer;
-//			if(PL_TM_write_Flag ==0)
-//			{
-//				inter_PL_TM_Dest_Addr=(unsigned long int*)PAYLOAD_BUFFER_ADDRESS;
-//				REG32(0x20007000) = 0x0000FFFF;
-//				*inter_PL_TM_Dest_Addr++ = 0x00005055;//0x00005055;
-//				for(pl_i=0;pl_i<=127;pl_i++)
-//				{
-//					*inter_PL_TM_Dest_Addr++ = (unsigned long int)*inter_PL_TM_Source_Addr++;
-//				}
-//				REG32(PAYLOAD_STATUS2_ADDRESS) = 2;
-//				REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00008101;//1000_0001_0000_0001
-//
-//			}
-//			else
-//			{
-//				if((short)REG32(PAYLOAD_STATUS1_ADDRESS) & 0x0002 == 0x0002)
-//				{
-//					REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00000000;
-//					if((short)REG32(PAYLOAD_BUFFER_ADDRESS)==0x0FAA)
-//					{
-//						inter_PL_TM_Dest_Addr=(unsigned long int*)PAYLOAD_BUFFER_ADDRESS;
-//						REG32(0x20007000) = 0x0000FFFF;
-//						*inter_PL_TM_Dest_Addr++ = 0x00005055;//0x00005055;
-//						for(pl_i=0;pl_i<=127;pl_i++)
-//						{
-//							*inter_PL_TM_Dest_Addr++ = (unsigned long int)*inter_PL_TM_Source_Addr++;
-//						}
-//						REG32(PAYLOAD_STATUS2_ADDRESS) = 2;
-//						REG32(PAYLOAD_STATUS1_ADDRESS) = 0x00008101;//1000_0001_0000_0001
-//
-//					}
-//					else
-//					{
-//						//
-//					}
-//				}
-//				else
-//				{
-//					//
-//				}
-//				PL_TM_write_Flag =1;
-//			}
-//		}
-//}
+int32 length;
+void rpl_read()                                                    //Reading the payload_data
+{
+	uint16  temp_short1, temp_short2;
+	uint32 tempdata;
+	int32  pl_Addr_count;
+	uint32 Payload_status_2_data;
+	uint32  Payload_status_1_data;
+	uint16* pl_data_addr;
+	Payload_status_2_data = (REG32(PAYLOAD_STATUS2_ADDRESS) & EXTRACT_LSB_16BITS);
+	Payload_status_1_data = (REG32(PAYLOAD_STATUS1_ADDRESS) & EXTRACT_LSB_16BITS);
+	pl_Addr_count = 0;
+
+	if (Payload_status_1_data & Payload_DATA_READY)
+	{
+		/*if(Payload_status_1_data & Payload_DATA_NOT_READY)
+		{
+			pl_data_rcvd = 0;
+		}
+		else
+		{
+			pl_data_rcvd = 1;
+		}*/
+		pl_data_rcvd = 1;
+		pl_buffer_len = ((Payload_status_2_data & 0x0000007E)>>1);
+		pl_buffer_len = ((pl_buffer_len+1)>>1);
+		if(pl_buffer_len > 8) pl_buffer_len = 8;
+		length = pl_buffer_len;
+		pl_buffer_addr = (uint32*)PAYLOAD_BUFFER_ADDRESS;
+
+		while(pl_Addr_count < pl_buffer_len)
+		{
+			tempdata  = REG32(pl_buffer_addr++) & EXTRACT_LSB_16BITS;
+			temp_short1 = (unsigned short)(tempdata & EXTRACT_LSB_16BITS);
+			pl_data_rx.data_16bits[pl_Addr_count] = byte_swap(temp_short1);
+			pl_Addr_count++;
+		}
+
+	}
+	else
+	{
+		pl_data_rcvd = 0;
+	}
+}
+
+unsigned int data;
+void rpl_tm_write()
+{
+		uint16 tempdata;
+		uint16* pl_data_addr;
+		int  pl_Addr_count;
+		pl_data_addr = &pl_data_rx.data_16bits[0];
+		tempdata = *pl_data_addr;
+			switch(pl_cmd_id)
+			{
+				case 1: if (pl_data_rcvd )
+						{
+							//
+						}
+						else
+						{
+							//
+						}
+
+						break;
+
+				case 2:	if (pl_data_rcvd )
+						{
+
+							if (*pl_data_addr == PL_PASS)
+							{
+								TM.Buffer.TM_pl_data[0] = PL_STS_CHK_ACK;
+								pl_data_rcvd = 0;
+								pl_sts_chk_flag = 1;
+								pl_ack_count++;
+
+							}
+							else if (*pl_data_addr == PL_FAIL)
+							{
+								TM.Buffer.TM_pl_data[0] = PL_STS_CHK_NACK;
+								pl_data_rcvd = 0;
+
+							}
+						}
+						else
+						{
+							TM.Buffer.TM_pl_data[0] = PL_STS_CHK_TIMEOUT;
+
+						}
+						break;
+
+				case 3: if (pl_data_rcvd )
+						{
+							unsigned int hlt_count;
+
+							TM.Buffer.TM_pl_data[1] = PL_HLT_ACK;
+
+							for (pl_Addr_count = 2, hlt_count = 1 ; hlt_count < pl_buffer_len; pl_Addr_count++ , hlt_count++)
+							{
+								TM.Buffer.TM_pl_data[pl_Addr_count] = pl_data_rx.data_16bits[hlt_count];
+							}
+							pl_data_rcvd = 0;
+							pl_ack_count++;
+						}
+						else
+						{
+							TM.Buffer.TM_pl_data[1] = PL_HLT_TIMEOUT;
+						}
+						break;
+
+				case 4: if (pl_data_rcvd )
+						{
+
+							TM.Buffer.TM_pl_data[9]= PL_DEBUG_ACK;
+							pl_data_rcvd = 0;
+							pl_ack_count++;
+						}
+						else
+						{
+							TM.Buffer.TM_pl_data[9] = PL_DEBUG_TIEMOUT;
+
+						}
+						break;
+
+				case 5: data = 5;
+						if (pl_data_rcvd )
+						{
+							TM.Buffer.TM_pl_data[9] = PL_TX_ON_ACK;
+							//data = TM.Buffer.TM_pl_data[9];
+							pl_data_rcvd = 0;
+							pl_ack_count++;
+
+						}
+						else
+						{
+							TM.Buffer.TM_pl_data[9] = PL_TX_ON_TIMEOUT;
+
+						}
+						break;
+
+				case 6:if (pl_data_rcvd )
+						{
+						 	 TM.Buffer.TM_pl_data[9] = PL_ACQ_ACK;
+						 	 pl_data_rcvd = 0;
+						 	 pl_ack_count++;
+
+						}
+						else
+						{
+							TM.Buffer.TM_pl_data[9] = PL_ACQ_TIMEOUT;
+
+						}
+						break;
+
+				case 7: if (pl_data_rcvd )
+						{
+							TM.Buffer.TM_pl_data[9] = PL_TX_OFF_ACK;
+							pl_data_rcvd = 0;
+							pl_ack_count++;
+
+						}
+						else
+						{
+							TM.Buffer.TM_pl_data[9] = PL_TX_OFF_TIMEOUT;
+
+						}
+						break;
+
+				case 8: if (pl_data_rcvd )
+						{
+							if (*pl_data_addr == PL_PASS)
+							{
+								TM.Buffer.TM_pl_data[9] = PL_DIAG_ACK;
+								pl_data_rcvd = 0;
+								pl_ack_count++;
+
+							}
+							else if (*pl_data_addr == PL_FAIL)
+							{
+								TM.Buffer.TM_pl_data[9] = PL_DIAG_NACK;
+								pl_data_rcvd = 0;
+
+							}
+						}
+						else
+						{
+							TM.Buffer.TM_pl_data[9] = PL_DIAG_TIMEOUT;
+
+						}
+						break;
+				case 9: if (pl_data_rcvd )
+						{
+							TM.Buffer.TM_pl_data[9] = PL_TX_TM_ACK;
+							pl_data_rcvd = 0;
+							pl_ack_count++;
+
+						}
+						else
+						{
+							TM.Buffer.TM_pl_data[9] = PL_TX_TM_TIMEOUT;
+
+						}
+						break;
+
+				default:
+						break;
+
+			}
+
+	pl_cmd_id = FALSE;
+	TM.Buffer.TM_pl_ack_count = pl_ack_count;
+}
+

@@ -410,9 +410,9 @@ void rReferenceQuatComputation(void)
 
         ///---------------------------------------SPO to ECI Transformation--------------------------------------------------
 
-        STATION_ECEF[0] = c_radiusearthkm * (cos(TC_data_command_Table.TC_ECEF_stationLongitude) * cos(TC_data_command_Table.TC_ECEF_stationlatitude));
-        STATION_ECEF[1] = c_radiusearthkm * (sin(TC_data_command_Table.TC_ECEF_stationLongitude) * cos(TC_data_command_Table.TC_ECEF_stationlatitude));
-        STATION_ECEF[2] = c_radiusearthkm * sin(TC_data_command_Table.TC_ECEF_stationlatitude);
+        STATION_ECEF[0] = c_radiusearthkm * (cos(ADCS_TC_data_command_Table.TC_ECEF_stationLongitude) * cos(ADCS_TC_data_command_Table.TC_ECEF_stationlatitude));
+        STATION_ECEF[1] = c_radiusearthkm * (sin(ADCS_TC_data_command_Table.TC_ECEF_stationLongitude) * cos(ADCS_TC_data_command_Table.TC_ECEF_stationlatitude));
+        STATION_ECEF[2] = c_radiusearthkm * sin(ADCS_TC_data_command_Table.TC_ECEF_stationlatitude);
 
         rMatMul3x1(ECEFtoECI,STATION_ECEF);
         STATION_ECI[0] = Matout31[0];
@@ -785,10 +785,25 @@ void rRefVectorGeneration(void)
 		TM.Buffer.TM_S_BODY_Red[1] = (int)(S_REF[1]/4.65661287E-7);
 		TM.Buffer.TM_S_BODY_Red[2] = (int)(S_REF[2]/4.65661287E-7);
 
+		ST_normal.ST_NM_Buffer.TM_S_BODY_Red[0] = (int)(S_REF[0]/4.65661287E-7);
+		ST_normal.ST_NM_Buffer.TM_S_BODY_Red[1] = (int)(S_REF[1]/4.65661287E-7);
+		ST_normal.ST_NM_Buffer.TM_S_BODY_Red[2] = (int)(S_REF[2]/4.65661287E-7);
+
         TM.Buffer.TM_Q_Ref[0] = (int)(Q_REF[0]/4.65661287E-7);
         TM.Buffer.TM_Q_Ref[1] = (int)(Q_REF[1]/4.65661287E-7);
         TM.Buffer.TM_Q_Ref[2] = (int)(Q_REF[2]/4.65661287E-7);
         TM.Buffer.TM_Q_Ref[3] = (int)(Q_REF[3]/4.65661287E-7);
+
+        ST_normal.ST_NM_Buffer.TM_Q_Ref[0] = (int)(Q_REF[0]/4.65661287E-7);
+        ST_normal.ST_NM_Buffer.TM_Q_Ref[1] = (int)(Q_REF[1]/4.65661287E-7);
+        ST_normal.ST_NM_Buffer.TM_Q_Ref[2] = (int)(Q_REF[2]/4.65661287E-7);
+        ST_normal.ST_NM_Buffer.TM_Q_Ref[3] = (int)(Q_REF[3]/4.65661287E-7);
+
+        ST_special.ST_SP_Buffer.TM_Q_Ref[0] = (int)(Q_REF[0]/4.65661287E-7);
+        ST_special.ST_SP_Buffer.TM_Q_Ref[1] = (int)(Q_REF[1]/4.65661287E-7);
+        ST_special.ST_SP_Buffer.TM_Q_Ref[2] = (int)(Q_REF[2]/4.65661287E-7);
+        ST_special.ST_SP_Buffer.TM_Q_Ref[3] = (int)(Q_REF[3]/4.65661287E-7);
+
     }
 }
 

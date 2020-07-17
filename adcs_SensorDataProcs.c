@@ -282,6 +282,7 @@ void rIMUDataProcessing(void)
 	TM_IMU1.TM_B_IMU[2] = (int)(B_rawdata[2]);
 
 	TM_IMU1.TM_IMU_Temp     = (unsigned short)(IMU1_DATA.IMU_Temp); //IMU Temperature
+	//IMU_temperature         = (unsigned short)(IMU1_DATA.IMU_Temp);
 	TM_IMU1.TM_IMU_Diag_STS = (unsigned short)(IMU1_DATA.IMU_Diag_STS); //IMU DIAG STATUS
 	TM_IMU1.TM_IMU_Diag_REG = (unsigned short)(IMU1_DATA.IMU_Diag_REG); //IMU DIAG REGISTER
 
@@ -336,8 +337,12 @@ void rIMUDataProcessing(void)
 		B_BODY[1] = B_BODY_IMU1[1];
 		B_BODY[2] = B_BODY_IMU1[2];
 
-		TM.Buffer.TM_IMU_SELECTED = TM_IMU1;
+		ST_normal.ST_NM_Buffer.TM_IMU_1_Temp     = (unsigned short)(IMU1_DATA.IMU_Temp); //IMU Temperature
+		ST_special.ST_SP_Buffer.TM_IMU_1_Temp     = (unsigned short)(IMU1_DATA.IMU_Temp); //IMU Temperature
+		ST_normal.ST_NM_Buffer.TM_IMU_1_Diag_STS = (unsigned short)(IMU1_DATA.IMU_Diag_STS); //IMU DIAG STATUS
 
+		TM.Buffer.TM_IMU_SELECTED = TM_IMU1;
+		IMU_temperature         = IMU1_DATA.IMU_Temp;
 		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable == Enable)
 		{
 			w_BODY[0] = w_BODY[0] - Xk[3];
@@ -346,9 +351,9 @@ void rIMUDataProcessing(void)
 		}
 		else
 		{
-			w_BODY[0] = w_BODY[0] - (double)(TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[0]);
-			w_BODY[1] = w_BODY[1] - (double)(TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[1]);
-			w_BODY[2] = w_BODY[2] - (double)(TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[2]);
+			w_BODY[0] = w_BODY[0] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[0]);
+			w_BODY[1] = w_BODY[1] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[1]);
+			w_BODY[2] = w_BODY[2] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[2]);
 		}
 
 		w_BODYdeg[0] = w_BODY[0] * c_R2D;
@@ -363,9 +368,9 @@ void rIMUDataProcessing(void)
 		}
 		else
 		{
-			B_BODY[0] = B_BODY[0] - (double)(TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[0]);
-			B_BODY[1] = B_BODY[1] - (double)(TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[1]);
-			B_BODY[2] = B_BODY[2] - (double)(TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[2]);
+			B_BODY[0] = B_BODY[0] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[0]);
+			B_BODY[1] = B_BODY[1] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[1]);
+			B_BODY[2] = B_BODY[2] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[2]);
 		}
 
 		B_BODYtesla[0] = B_BODY[0] * 1.0E-9;
@@ -390,9 +395,25 @@ void rIMUDataProcessing(void)
 		TM.Buffer.TM_w_BODY[1]=(int)(w_BODY[1]/c_TM_Resol_w);
 		TM.Buffer.TM_w_BODY[2]=(int)(w_BODY[2]/c_TM_Resol_w);
 
+		ST_normal.ST_NM_Buffer.TM_w_BODY[0] = (int)(w_BODY[0]/c_TM_Resol_w);
+		ST_normal.ST_NM_Buffer.TM_w_BODY[1] = (int)(w_BODY[1]/c_TM_Resol_w);
+		ST_normal.ST_NM_Buffer.TM_w_BODY[2] = (int)(w_BODY[2]/c_TM_Resol_w);
+
+		ST_special.ST_SP_Buffer.TM_w_BODY[0] = (int)(w_BODY[0]/c_TM_Resol_w);
+		ST_special.ST_SP_Buffer.TM_w_BODY[1] = (int)(w_BODY[1]/c_TM_Resol_w);
+		ST_special.ST_SP_Buffer.TM_w_BODY[2] = (int)(w_BODY[2]/c_TM_Resol_w);
+
 		TM.Buffer.TM_B_BODY[0]=(int)(B_BODY[0]/c_TM_Resol_B);
 		TM.Buffer.TM_B_BODY[1]=(int)(B_BODY[1]/c_TM_Resol_B);
 		TM.Buffer.TM_B_BODY[2]=(int)(B_BODY[2]/c_TM_Resol_B);
+
+		ST_normal.ST_NM_Buffer.TM_B_BODY[0] = (int)(B_BODY[0]/c_TM_Resol_B);
+		ST_normal.ST_NM_Buffer.TM_B_BODY[1] = (int)(B_BODY[1]/c_TM_Resol_B);
+		ST_normal.ST_NM_Buffer.TM_B_BODY[2] = (int)(B_BODY[2]/c_TM_Resol_B);
+
+		ST_special.ST_SP_Buffer.TM_B_BODY[0] = (int)(B_BODY[0]/c_TM_Resol_B);
+		ST_special.ST_SP_Buffer.TM_B_BODY[1] = (int)(B_BODY[1]/c_TM_Resol_B);
+		ST_special.ST_SP_Buffer.TM_B_BODY[2] = (int)(B_BODY[2]/c_TM_Resol_B);
 
 		TM.Buffer.TM_Thta_BODY[0] = (int)(Thta_BODY_IMU1[0] / c_TM_Resol_DelThta);
 		TM.Buffer.TM_Thta_BODY[1] = (int)(Thta_BODY_IMU1[1] / c_TM_Resol_DelThta);
@@ -410,6 +431,11 @@ void rIMUDataProcessing(void)
 		B_BODY[2] = B_BODY_IMU2[2];
 
 		TM.Buffer.TM_IMU_SELECTED = TM_IMU2;
+		IMU_temperature         = IMU2_DATA.IMU_Temp;
+
+		ST_normal.ST_NM_Buffer.TM_IMU_2_Temp     = (unsigned short)(IMU2_DATA.IMU_Temp); //IMU Temperature
+		ST_special.ST_SP_Buffer.TM_IMU_2_Temp     = (unsigned short)(IMU2_DATA.IMU_Temp); //IMU Temperature
+		ST_normal.ST_NM_Buffer.TM_IMU_2_Diag_STS = (unsigned short)(IMU2_DATA.IMU_Diag_STS); //IMU DIAG STATUS
 
 		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable == Enable)
 		{
@@ -419,9 +445,9 @@ void rIMUDataProcessing(void)
 		}
 		else
 		{
-			w_BODY[0] = w_BODY[0] - (double)(TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[0]);
-			w_BODY[1] = w_BODY[1] - (double)(TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[1]);
-			w_BODY[2] = w_BODY[2] - (double)(TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[2]);
+			w_BODY[0] = w_BODY[0] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[0]);
+			w_BODY[1] = w_BODY[1] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[1]);
+			w_BODY[2] = w_BODY[2] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[2]);
 		}
 
 		w_BODYdeg[0] = w_BODY[0] * c_R2D;
@@ -436,9 +462,9 @@ void rIMUDataProcessing(void)
 		}
 		else
 		{
-			B_BODY[0] = B_BODY[0] - (double)(TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[0]);
-			B_BODY[1] = B_BODY[1] - (double)(TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[1]);
-			B_BODY[2] = B_BODY[2] - (double)(TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[2]);
+			B_BODY[0] = B_BODY[0] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[0]);
+			B_BODY[1] = B_BODY[1] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[1]);
+			B_BODY[2] = B_BODY[2] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[2]);
 		}
 
 		B_BODYtesla[0] = B_BODY[0] * 1.0E-9;
@@ -525,13 +551,13 @@ void rBDOT_Computation(void)
     if (CB_BDOT_Computation == Enable)
     {
         BDOT_Counter++;
-        if(BDOT_Counter == TC_data_command_Table.TC_Det_BDOT_Compute_Count)
+        if(BDOT_Counter == ADCS_TC_data_command_Table.TC_Det_BDOT_Compute_Count)
         {
             Bpresent[0] = B_BODY[0];
             Bpresent[1] = B_BODY[1];
             Bpresent[2] = B_BODY[2];
 
-            BDOT_deltaT = (TC_data_command_Table.TC_Det_BDOT_Compute_Count-TC_data_command_Table.TC_Det_Bprev_Count)*c_MaC;
+            BDOT_deltaT = (ADCS_TC_data_command_Table.TC_Det_BDOT_Compute_Count-ADCS_TC_data_command_Table.TC_Det_Bprev_Count)*c_MaC;
 
             BDOT[0] = (Bpresent[0] - Bprev[0])/(BDOT_deltaT);
             BDOT[1] = (Bpresent[1] - Bprev[1])/(BDOT_deltaT);
@@ -543,10 +569,12 @@ void rBDOT_Computation(void)
 			TM.Buffer.TM_B_DOT[1] = (int)(BDOT[1] / c_TM_Resol_B);
 			TM.Buffer.TM_B_DOT[2] = (int)(BDOT[2] / c_TM_Resol_B);
 
+
+
             BDOT_Counter = 0;
         }
 
-        else if(BDOT_Counter == TC_data_command_Table.TC_Det_Bprev_Count)
+        else if(BDOT_Counter == ADCS_TC_data_command_Table.TC_Det_Bprev_Count)
         {
             Bprev[0] = B_BODY[0];
             Bprev[1] = B_BODY[1];
@@ -580,6 +608,18 @@ void rSunSensorDataProcessing(void)
 	TM.Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
 	TM.Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
 
+	ST_normal.ST_NM_Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
+	ST_normal.ST_NM_Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
+	ST_normal.ST_NM_Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
+
+	//for special_str s_body datatype(int) as to be changed to datatype(short)
+
+	ST_special.ST_SP_Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
+	ST_special.ST_SP_Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
+	ST_special.ST_SP_Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
+
+	//--------------------------------------------------------------------
+
 	/*TM.Buffer.TM_S_BODY_Red[0] = (int)(SB_RED[0]/4.65661287E-7);
 	TM.Buffer.TM_S_BODY_Red[1] = (int)(SB_RED[1]/4.65661287E-7);
 	TM.Buffer.TM_S_BODY_Red[2] = (int)(SB_RED[2]/4.65661287E-7);*/
@@ -607,10 +647,16 @@ void rSunSensorDataProcessing(void)
 	Yaw_ang_err = ((-1.0) * atan2(S_BODYn[0], -S_BODYn[1]));
 
 	TM.Buffer.TM_SunSens_Roll_Error = (int)(Roll_ang_err/0.01);
+	ST_normal.ST_NM_Buffer.TM_SunSens_Roll_Error = (int)(Roll_ang_err/0.01);
+
 	TM.Buffer.TM_SunSens_Yaw_Error = (int)(Yaw_ang_err/0.01);
+	ST_normal.ST_NM_Buffer.TM_SunSens_Yaw_Error = (int)(Yaw_ang_err/0.01);
 
 	///Angle Deviation Computation
 	Ang_Deviation = acos((-1.0) * (S_BODYn[1]));
+	TM.Buffer.TM_SunSens_Pitch_Error = (int)Ang_Deviation;
+	ST_normal.ST_NM_Buffer.TM_SunSens_Pitch_Error = (int)Ang_Deviation;
+
 
 	if(abs_f(Ang_Deviation) < AngDev_SAMtransit_thrsld)
 	{
@@ -647,7 +693,7 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 	SS_M8 = *SS_Data_Addr;				//SSCAT42//SSCAT82:://SS M8//SS M16
 
 	/// Different deployment selections
-	 if(TC_data_command_Table.TC_PanelD_Status_Sel == TC_Not_Deployed)///Both the panels are Not deployed
+	 if(ADCS_TC_data_command_Table.TC_PanelD_Status_Sel == TC_Not_Deployed)///Both the panels are Not deployed
 	{
 		SC1 = (SS_M7);
 		SC3 = (SS_M8);
@@ -656,7 +702,7 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 		SC3ImaxF = SS_2Exe_Addr->DB_Imax_RNND;
 	}
 
-	 else if(TC_data_command_Table.TC_PanelD_Status_Sel == TC_All_Deployed)//Both the panels deployed
+	 else if(ADCS_TC_data_command_Table.TC_PanelD_Status_Sel == TC_All_Deployed)//Both the panels deployed
 	{
 		SC1 = (SS_M1);
 		SC3 = (SS_M3);
@@ -665,7 +711,7 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 		SC3ImaxF = SS_2Exe_Addr->DB_Imax_RND;
 	}
 
-	 else if(TC_data_command_Table.TC_PanelD_Status_Sel == TC_PosR_Deployed)//Positive Roll Panel deployed
+	 else if(ADCS_TC_data_command_Table.TC_PanelD_Status_Sel == TC_PosR_Deployed)//Positive Roll Panel deployed
 	{
 		SC1 = (SS_M1);
 		SC3 = (SS_M8);

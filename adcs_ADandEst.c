@@ -57,7 +57,7 @@ void rQuestDataProcessing(void)
 {
     if (CB_QuestDataProcessing == Enable)
     {
-        if((abs_f(w_BODYdeg[0]) <= TC_data_command_Table.TC_wAD_BODYmaxThRoll) && (w_BODYdeg[1] <= TC_data_command_Table.TC_wAD_BODYmaxThPitch) && (w_BODYdeg[1] >= TC_data_command_Table.TC_wAD_BODYminThPitch) && (abs_f(w_BODYdeg[2]) <= TC_data_command_Table.TC_wAD_BODYmaxThYaw))
+        if((abs_f(w_BODYdeg[0]) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll) && (w_BODYdeg[1] <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch) && (w_BODYdeg[1] >= ADCS_TC_data_command_Table.TC_wAD_BODYminThPitch) && (abs_f(w_BODYdeg[2]) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw))
         {
             wAD_updatecount++;
         }
@@ -68,7 +68,7 @@ void rQuestDataProcessing(void)
 
 //        if((magRoll_angle >= TC_data_command_Table.TC_magMin_angle) && (magPitch_angle >= TC_data_command_Table.TC_magMin_angle) && (magYaw_angle >= TC_data_command_Table.TC_magMin_angle) && (magRoll_angle <= TC_data_command_Table.TC_magMax_angle) && (magPitch_angle <= TC_data_command_Table.TC_magMax_angle) && (magYaw_angle <= TC_data_command_Table.TC_magMax_angle)) ///TC_magMin_angle=45deg
 //        {
-            if(wAD_updatecount >= TC_data_command_Table.TC_wAD_updateTimeThresh)
+            if(wAD_updatecount >= ADCS_TC_data_command_Table.TC_wAD_updateTimeThresh)
             {
                 w_q_update_satisfy = 1;
             }
@@ -87,7 +87,7 @@ void rQuestDataProcessing(void)
             if(dc_qst >= 9)
             {
                 wc_qst++;
-                if(wc_qst >= TC_data_command_Table.TC_wp_QDP)
+                if(wc_qst >= ADCS_TC_data_command_Table.TC_wp_QDP)
                 {
                     wc_qst = 0;
                     dc_qst = 0;
@@ -464,6 +464,21 @@ void rDAD_quest(void)
         Q_quest_DAD[2] = (1.0 / Q_quest_DAD_den) * X_DAD[2];
         Q_quest_DAD[3] = (1.0 / Q_quest_DAD_den) * gamma_DAD;
 
+        TM.Buffer.TM_Q_Sunmagad[0] = (1.0 / Q_quest_DAD_den) * X_DAD[0];
+        TM.Buffer.TM_Q_Sunmagad[1] = (1.0 / Q_quest_DAD_den) * X_DAD[1];
+        TM.Buffer.TM_Q_Sunmagad[2] = (1.0 / Q_quest_DAD_den) * X_DAD[2];
+        TM.Buffer.TM_Q_Sunmagad[3] = (1.0 / Q_quest_DAD_den) * X_DAD[3];
+
+        ST_normal.ST_NM_Buffer.TM_Q_Sunmagad[0] = (1.0 / Q_quest_DAD_den) * X_DAD[0];
+        ST_normal.ST_NM_Buffer.TM_Q_Sunmagad[1] = (1.0 / Q_quest_DAD_den) * X_DAD[1];
+        ST_normal.ST_NM_Buffer.TM_Q_Sunmagad[2] = (1.0 / Q_quest_DAD_den) * X_DAD[2];
+        ST_normal.ST_NM_Buffer.TM_Q_Sunmagad[3] = (1.0 / Q_quest_DAD_den) * X_DAD[3];
+
+        ST_special.ST_SP_Buffer.TM_Q_Sunmagad[0] = (1.0 / Q_quest_DAD_den) * X_DAD[0];
+        ST_special.ST_SP_Buffer.TM_Q_Sunmagad[1] = (1.0 / Q_quest_DAD_den) * X_DAD[1];
+        ST_special.ST_SP_Buffer.TM_Q_Sunmagad[2] = (1.0 / Q_quest_DAD_den) * X_DAD[2];
+        ST_special.ST_SP_Buffer.TM_Q_Sunmagad[3] = (1.0 / Q_quest_DAD_den) * X_DAD[3];
+
         ///Normalization of Q_opt (Q_quest)
         rQs_Normalization(Q_quest_DAD);
         Q_quest_DAD[0] = out_Quat_norm[0];
@@ -537,6 +552,18 @@ void rErrorComputation(void)
 			TM.Buffer.TM_Q_EKF[1] = (int)(qk_minus[1]/4.65661287E-7);
 			TM.Buffer.TM_Q_EKF[2] = (int)(qk_minus[2]/4.65661287E-7);
 			TM.Buffer.TM_Q_EKF[3] = (int)(qk_minus[3]/4.65661287E-7);
+
+			ST_normal.ST_NM_Buffer.TM_Q_EKF[0] = (int)(qk_minus[0]/4.65661287E-7);
+			ST_normal.ST_NM_Buffer.TM_Q_EKF[1] = (int)(qk_minus[1]/4.65661287E-7);
+			ST_normal.ST_NM_Buffer.TM_Q_EKF[2] = (int)(qk_minus[2]/4.65661287E-7);
+			ST_normal.ST_NM_Buffer.TM_Q_EKF[3] = (int)(qk_minus[3]/4.65661287E-7);
+
+			ST_special.ST_SP_Buffer.TM_Q_EKF[0] = (int)(qk_minus[0]/4.65661287E-7);
+			ST_special.ST_SP_Buffer.TM_Q_EKF[1] = (int)(qk_minus[1]/4.65661287E-7);
+			ST_special.ST_SP_Buffer.TM_Q_EKF[2] = (int)(qk_minus[2]/4.65661287E-7);
+			ST_special.ST_SP_Buffer.TM_Q_EKF[3] = (int)(qk_minus[3]/4.65661287E-7);
+
+
         }
         else
         {
@@ -551,6 +578,11 @@ void rErrorComputation(void)
 			TM.Buffer.TM_Q_BODY[1] = (int)(Qbody[1]/4.65661287E-7);
 			TM.Buffer.TM_Q_BODY[2] = (int)(Qbody[2]/4.65661287E-7);
 			TM.Buffer.TM_Q_BODY[3] = (int)(Qbody[3]/4.65661287E-7);
+
+			ST_normal.ST_NM_Buffer.TM_Q_BODY[0] = (int)(Qbody[0]/4.65661287E-7);
+			ST_normal.ST_NM_Buffer.TM_Q_BODY[1] = (int)(Qbody[1]/4.65661287E-7);
+			ST_normal.ST_NM_Buffer.TM_Q_BODY[2] = (int)(Qbody[2]/4.65661287E-7);
+			ST_normal.ST_NM_Buffer.TM_Q_BODY[3] = (int)(Qbody[3]/4.65661287E-7);
 
             rQs_Multiplication(Q_REF_conj,Qbody);
 			Qerror[0] = out_Quat_mult[0];
@@ -568,6 +600,15 @@ void rErrorComputation(void)
         TM.Buffer.TM_Q_Error[0] = (int)(Qerror[0]/4.65661287E-7);
 		TM.Buffer.TM_Q_Error[1] = (int)(Qerror[1]/4.65661287E-7);
 		TM.Buffer.TM_Q_Error[2] = (int)(Qerror[2]/4.65661287E-7);
+
+		ST_normal.ST_NM_Buffer.TM_Q_Error[0] = (int)(Qerror[0]/4.65661287E-7);
+		ST_normal.ST_NM_Buffer.TM_Q_Error[1] = (int)(Qerror[1]/4.65661287E-7);
+		ST_normal.ST_NM_Buffer.TM_Q_Error[2] = (int)(Qerror[2]/4.65661287E-7);
+
+		ST_special.ST_SP_Buffer.TM_Q_Error[0] = (int)(Qerror[0]/4.65661287E-7);
+		ST_special.ST_SP_Buffer.TM_Q_Error[1] = (int)(Qerror[1]/4.65661287E-7);
+		ST_special.ST_SP_Buffer.TM_Q_Error[2] = (int)(Qerror[2]/4.65661287E-7);
+
     }
 }
 
@@ -778,13 +819,29 @@ void rExtendedKalmanFilter1_p1(void)
             TM.Buffer.TM_Error_EKF[1] = (int)(Xk[1]/4.19095159E-7);
             TM.Buffer.TM_Error_EKF[2] = (int)(Xk[2]/4.19095159E-7);
 
+            ST_special.ST_SP_Buffer.TM_Error_EKF[0] = (int)(Xk[0]/4.19095159E-7);
+            ST_special.ST_SP_Buffer.TM_Error_EKF[1] = (int)(Xk[1]/4.19095159E-7);
+            ST_special.ST_SP_Buffer.TM_Error_EKF[2] = (int)(Xk[2]/4.19095159E-7);
+
             TM.Buffer.TM_w_EKF_Drift[0] = (int)((3600.0 * Xk[3])/c_TM_Resol_w);
             TM.Buffer.TM_w_EKF_Drift[1] = (int)((3600.0 * Xk[4])/c_TM_Resol_w);
             TM.Buffer.TM_w_EKF_Drift[2] = (int)((3600.0 * Xk[5])/c_TM_Resol_w);
 
+            ST_normal.ST_NM_Buffer.TM_w_EKF_Drift[0] = (int)((3600.0 * Xk[3])/c_TM_Resol_w);
+            ST_normal.ST_NM_Buffer.TM_w_EKF_Drift[1] = (int)((3600.0 * Xk[4])/c_TM_Resol_w);
+            ST_normal.ST_NM_Buffer.TM_w_EKF_Drift[2] = (int)((3600.0 * Xk[5])/c_TM_Resol_w);
+
+            ST_special.ST_SP_Buffer.TM_w_EKF_Drift[0] = (int)((3600.0 * Xk[3])/c_TM_Resol_w);
+            ST_special.ST_SP_Buffer.TM_w_EKF_Drift[1] = (int)((3600.0 * Xk[4])/c_TM_Resol_w);
+            ST_special.ST_SP_Buffer.TM_w_EKF_Drift[2] = (int)((3600.0 * Xk[5])/c_TM_Resol_w);
+
             TM.Buffer.TM_B_EKF_Bias[0] = (int)(Xk[6]/1.0E-12);
             TM.Buffer.TM_B_EKF_Bias[1] = (int)(Xk[7]/1.0E-12);
             TM.Buffer.TM_B_EKF_Bias[2] = (int)(Xk[8]/1.0E-12);
+
+            ST_special.ST_SP_Buffer.TM_B_EKF_Bias[0] = (int)(Xk[6]/1.0E-12);
+            ST_special.ST_SP_Buffer.TM_B_EKF_Bias[1] = (int)(Xk[7]/1.0E-12);
+            ST_special.ST_SP_Buffer.TM_B_EKF_Bias[2] = (int)(Xk[8]/1.0E-12);
 
             q_by_two[0][0] =  0.5 * qk_minus[3];
             q_by_two[0][1] = -0.5 * qk_minus[2];

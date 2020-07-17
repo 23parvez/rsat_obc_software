@@ -6,6 +6,7 @@ typedef unsigned short uint16;
 typedef unsigned long int uint32;
 typedef unsigned long long int uint64;
 
+unsigned int Remote_data_addr;
 
 #pragma pack(1)
 	struct TC_Boolean
@@ -56,13 +57,27 @@ typedef unsigned long long int uint64;
 			uint8 Reaction_wheel_2_speed_enable;                                  /* offset =   43  */
 			uint8 Reaction_wheel_3_speed_enable;                                  /* offset =   44  */
 			uint8 Reaction_wheel_4_speed_enable;                                  /* offset =   45  */
-			uint8 SunMagAD;                                                    /* offset =   46  */
+			uint8 SunMagAD;                                                       /* offset =   46  */
 			uint8 magAD;                                                          /* offset =   47  */
-			uint8 TC_EKF1_Enable;                                                  /* offset =   48  */
-			uint8 TC_EKF2_Enable;                                                  /* offset =   49  */
+			uint8 TC_EKF1_Enable;                                                 /* offset =   48  */
+			uint8 TC_EKF2_Enable;                                                 /* offset =   49  */
+			uint8 TC_Storage_TM_Enable_Disable;                                   /* offset =   50  */
+			uint8 TC_ST_mode;                                                     /* offset =   51  */
+			uint8 TC_NormalStorage_Sampling_Rate_Select;                          /* offset =   52  */
+			uint8 pl_tx_tm_flag;                                                  /* offset =   53  */
+			uint8 Storage_TM_dumping;                                             /* offset =   54  */
+			uint8 tc_mode;                                                        /* offset =   55  */
+			uint8 RW_Speed_Negative;                                              /* offset =   56  */
+			uint8 storage_dump_mode;                                              /* offset =   57  */
+			uint8 TC_dumping;                                                     /* offset =   58  */
+			uint8 TC_sram_scrub_enable_disable;                                   /* offset =   59  */
+			uint8 NMI_test_enable;                                                /* offset =   60  */
+			uint8 ST_dump_abort;												  /* offset =   61  */
+			uint8 TCH_dump_mode;                                                  /* offset =   62  */
+
 	    };
 
-#define TC_BOOLEAN_MAX_LIMIT 48
+#define TC_BOOLEAN_MAX_LIMIT 63
 	union TC_boolean_U
 	    {
 			uint8 Pos[TC_BOOLEAN_MAX_LIMIT];
@@ -120,11 +135,23 @@ typedef unsigned long long int uint64;
 			uint8 Reaction_wheel_2_speed_enable                   :1;
 			uint8 Reaction_wheel_3_speed_enable                   :1;
 			uint8 Reaction_wheel_4_speed_enable                   :1;
-			uint8 SunMagAD                                     :1;
+			uint8 SunMagAD                                        :1;
 			uint8 magAD                                           :1;
 			uint8 TC_EKF1_Enable                                  :1;
 			uint8 TC_EKF2_Enable                                  :1;
-
+			uint8 TC_Storage_TM_Enable_Disable                    :1;
+			uint8 TC_ST_mode                                      :1;
+			uint8 TC_NormalStorage_Sampling_Rate_Select           :1;
+			uint8 pl_tx_tm_flag                                   :1;
+			uint8 Storage_TM_dumping                              :1;
+			uint8 tc_mode                                         :1;
+			uint8 RW_Speed_Negative                               :1;
+			uint8 storage_dump_mode                               :1;
+			uint8 TC_dumping                                      :1;
+			uint8 TC_sram_scrub_enable_disable                    :1;
+			uint8 NMI_test_enable                                 :1;
+			uint8 ST_dump_abort                                   :1;
+			uint8 TCH_dump_mode                                   :1;
 	    };
 
 	union TMTC_boolean_U
@@ -165,10 +192,12 @@ typedef unsigned long long int uint64;
 	    	uint8 TC_AngMomDump_Thrsld;						             //offset =    23//
 	    	uint8 TC_SpeedDump_Thrsld;						             //offset =    24//
 	    	uint8 TC_SpeedDump_TimeSelect;							     //offset =    25//
+	    	uint8 TC_special_Sampling_rate_Select;                       //offset =    26//
+	    	uint8 TC_ST_Format_Selection;                                //offset =    27//
 
 	    };
 
-#define TC_gain_select_MAX_LIMIT 26
+#define TC_gain_select_MAX_LIMIT 28
 	union TC_gain_select_U
 	    {
 		uint8 Pos[TC_gain_select_MAX_LIMIT];
@@ -208,6 +237,8 @@ typedef unsigned long long int uint64;
 			uint8 TC_AngMomDump_Thrsld								:2;
 			uint8 TC_SpeedDump_Thrsld								:2;
 			uint8 TC_SpeedDump_TimeSelect							:2;
+			uint8 TC_special_Sampling_rate_Select                   :2;
+			uint8 TC_ST_Format_Selection                            :2;
 
 	    };
 
@@ -216,39 +247,6 @@ typedef unsigned long long int uint64;
 		uint32 TMTC_Buffer[2]; //TBD
 		struct TMTC_gain_select gain_select_Table;
 	    }TMTC_gain_select_u;
-//-------------------------------------------------------------------------------
-
-	    /* double TC_ADCS_gainset[0][4][3]={
-	            {{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}},
-	    		{{1,2,3},{1,2,3},{1,2,3},{1,2,3}}*/
-
-
-
-
 
 #pragma pack(1)
 	struct TC_data_command
@@ -258,88 +256,97 @@ typedef unsigned long long int uint64;
 			float RW2_Speed;			         										/* offset = 1*/
 			float RW3_Speed;                     										/* offset = 2*/
 			float RW4_Speed;                     										/* offset = 3*/
-			long int Differential_srl_num;       								    /* offset = 4*/
+			long int Differential_srl_num;       								        /* offset = 4*/
 
 			/***** Below telecommands are not implemented *****/
 
-			float SA1_SHUNT_LTP;                  										/* offset = 5*/
-			float SA1_SHUNT_UTP;                  										/* offset = 6*/
-			float SA2_SHUNT_LTP;                  										/* offset = 7*/
-			float SA2_SHUNT_UTP;                  										/* offset = 8*/
-			float SA3_SHUNT_LTP;                  										/* offset = 9*/
-			float SA3_SHUNT_UTP;                 										/* offset = 10*/
-			float BATTERY_HEATER1_UTP;           										/* offset = 11*/
-			float BATTERY_HEATER1_LTP;           										/* offset = 12*/
-			float BATTERY_HEATER2_UTP;           										/* offset = 13*/
-			float BATTERY_HEATER2_LTP;            										/* offset = 14*/
-			unsigned long int SA_PanelHeater_Timeout;									/*offset = 15*/
+			int SA1_SHUNT_LTP;                  										/* offset = 5*/
+			int SA1_SHUNT_UTP;                  										/* offset = 6*/
+			int SA2_SHUNT_LTP;                  										/* offset = 7*/
+			int SA2_SHUNT_UTP;                  										/* offset = 8*/
+			int SA3_SHUNT_LTP;                  										/* offset = 9*/
+			int SA3_SHUNT_UTP;                 										    /* offset = 10*/
+			int BATTERY_HEATER1_UTP;           											/* offset = 11*/
+			int BATTERY_HEATER1_LTP;           											/* offset = 12*/
+			unsigned long int SA_PanelHeater_Timeout;									/*offset =  13*/
 
 
 			/***************** Added on 27 July 2019 *****************/
-			float TC_Drift_Uplink_Compensation_IMU1[3];									/*offset = 16*/
-			float TC_Drift_Uplink_Compensation_IMU2[3];									/*offset = 17*/
-			float TC_Gyro_Misalignment_IMU2;											/*offset = 18*/
-			float TC_Gyro_Scale_Factor_IMU1;											/*offset = 19*/
-			float TC_Gyro_Scale_Factor_IMU2;											/*offset = 20*/
-			float TC_MagBias_Uplink_Compensation_IMU1[3];							    /*offset = 21*/
-			float TC_MagBias_Uplink_Compensation_IMU2[3];								/*offset = 22*/
-			float TC_Mag_Misalignment_IMU1;												/*offset = 23*/
-			float TC_Mag_Misalignment_IMU2;												/*offset = 24*/
-			float TC_Mag_Scale_Factor_IMU1;												/*offset = 25*/
-			float TC_Mag_Scale_Factor_IMU2;												/*offset = 26*/
-			float TC_ACC_Ang_RESET;														/*offset = 27*/
-			float TC_SS_misalnCM1256;													/*offset = 28*/
-			float TC_SS_misalnCM2356;													/*offset = 29*/
-			float TC_SS_misalnCM3456;													/*offset = 30*/
-			float TC_SS_misalnCM4156;													/*offset = 31*/
-			float TC_SS_Imax_ALPHA;														/*offset = 32*/
-			float TC_eclipse_entrytime;													/*offset = 33*/
-			float TC_eclipse_exittime;													/*offset = 34*/
-			float TC_elapsed_orbitTimer;												/*offset = 35*/
-			float TC_Sunlit_detctn_timer;												/*offset = 36*/
-			float TC_Time_GPS2TLE;														/*offset = 37*/
-			float TC_GPS_OFFSET_UTC;													/*offset = 38*/
-			float TC_delUT1_ECEF2ECI;													/*offset = 39*/
-			float TC_delAT_ECEF2ECI;													/*offset = 40*/
-			float TC_xp_ECEF2ECI;														/*offset = 41*/
-			float TC_yp_ECEF2ECI;														/*offset = 42*/
-			float TC_JulianDay_at_OBT0;													/*offset = 43*/
-			float TC_OBT_Drift_Corr;													/*offset = 44*/
-			float TC_TLE;																/*offset = 45*/
-			float TC_JulianDate_at_OrbitalEpoch;										/*offset = 46*/
-			float TC_OBT_with_TLE_Update;												/*offset = 47*/
-			float TC_Wheel_Configuration_Index;											/*offset = 48*/
-			float TC_Speed_Based_Dumping_Speed_Upper_Threshold;							/*offset = 49*/
-			float TC_Speed_Based_Dumping_Speed_Lower_Threshold;							/*offset = 50*/
-			float TC_Det_Bprev_Count;													/*offset = 51*/
-			float TC_Det_BDOT_Compute_Count;											/*offset = 52*/
-			float TC_Det_GYRO_Compute_Count;											/*offset = 53*/
-			float TC_Rate_Chk_Safe2Det;													/*offset = 54*/
-			float TC_ECEF_stationlatitude;												/*offset = 55*/
-			float TC_ECEF_stationLongitude;												/*offset = 56*/
-			float TC_Error_dev_SunlitAD;												/*offset = 57*/
-			float TC_Error_dev_EclipseAD;												/*offset = 58*/
-			float TC_wAD_BODYmaxThRoll;													/*offset = 59*/
-			float TC_wAD_BODYmaxThPitch;												/*offset = 60*/
-			float TC_wAD_BODYmaxThYaw;													/*offset = 61*/
-			float TC_magMin_angle;														/*offset = 62*/
-			float TC_magMax_angle;														/*offset = 63*/
-			float TC_GYRO_Det_Max_Thresh;												/*offset = 64*/
-			float TC_PanelD_Status_Sel;                                                 /*offset = 65*/
-			float TC_wAD_BODYminThRoll;                                                 /*offset = 66*/
-			float TC_wAD_BODYminThPitch;                                                /*offset = 67*/
-			float TC_wAD_BODYminThYaw;                                                  /*offset = 68*/
-			float TC_wAD_updateTimeThresh;                                              /*offset = 69*/
-			float TC_wp_QDP;                                                            /*offset = 70*/
-			float TC_heaters_auto_manual;                                               /*offset = 71*/
-			float TC_heaters_manual;                                                    /*offset = 72*/
+			//unsigned long int TC_RW_NO;
 
+			int TC_heaters_auto_manual;                                                 /*offset = 14*/
+			int TC_heaters_manual;                                                      /*offset = 15*/
+			float pl_data_command_1;                                                    /*offset = 16*/
+			float pl_data_command_2;                                                    /*offset = 17*/
+			float pl_data_command_3;                                                    /*offset = 18*/
+			float pl_data_command_4;                                                    /*offset = 19*/
+			float pl_data_command_5;                                                    /*offset = 20*/
+			float pl_data_command_6;                                                    /*offset = 21*/
+			int BLK_Number_selection;                                                   /*offset = 22*/
+			int Remote_blk_select;                                                      /*offset = 23*/
+			int TC_power_safe_LTP;                                                      /*offset = 24*/
+			int TC_power_safe_UTP;                                                      /*offset = 25*/
+			int TC_over_Heat;                                                           /*offset = 26*/
 	    } TC_data_command_Table;
 
+#define TC_data_command_MAX_LIMIT 27
 
+#pragma pack(1)
+	    struct ADCS_Data_TC
+	    {
+			float TC_Drift_Uplink_Compensation_IMU1[3];									/*offset = 0*/
+			float TC_Drift_Uplink_Compensation_IMU2[3];									/*offset = 1*/
+			float TC_MagBias_Uplink_Compensation_IMU1[3];							    /*offset = 2*/
+			float TC_MagBias_Uplink_Compensation_IMU2[3];								/*offset = 3*/
+			float TC_Mag_Misalignment_IMU1;												/*offset = 4*/
+			float TC_Mag_Misalignment_IMU2;												/*offset = 5*/
+			float TC_Mag_Scale_Factor_IMU1;												/*offset = 6*/
+			float TC_Mag_Scale_Factor_IMU2;												/*offset = 7*/
+			float TC_ACC_Ang_RESET;														/*offset = 8*/
+			float TC_SS_misalnCM1256;													/*offset = 9*/
+			float TC_SS_misalnCM2356;													/*offset = 10*/
+			float TC_SS_misalnCM3456;													/*offset = 11*/
+			float TC_SS_misalnCM4156;													/*offset = 12*/
+			float TC_SS_Imax_ALPHA;														/*offset = 13*/
+			float TC_eclipse_entrytime;													/*offset = 14*/
+			float TC_eclipse_exittime;													/*offset = 15*/
+			float TC_elapsed_orbitTimer;												/*offset = 16*/
+			float TC_Sunlit_detctn_timer;												/*offset = 17*/
+			float TC_Time_GPS2TLE;														/*offset = 18*/
+			float TC_GPS_OFFSET_UTC;													/*offset = 19*/
+			float TC_delUT1_ECEF2ECI;													/*offset = 20*/
+			float TC_delAT_ECEF2ECI;													/*offset = 21*/
+			float TC_xp_ECEF2ECI;														/*offset = 22*/
+			float TC_yp_ECEF2ECI;														/*offset = 23*/
+			float TC_JulianDay_at_OBT0;													/*offset = 24*/
+			float TC_OBT_Drift_Corr;													/*offset = 25*/
+			float TC_TLE;																/*offset = 26*/
+			float TC_JulianDate_at_OrbitalEpoch;										/*offset = 27*/
+			float TC_OBT_with_TLE_Update;												/*offset = 28*/
+			float TC_Wheel_Configuration_Index;											/*offset = 29*/
+			float TC_Det_Bprev_Count;													/*offset = 30*/
+			float TC_Det_BDOT_Compute_Count;											/*offset = 31*/
+			float TC_Det_GYRO_Compute_Count;											/*offset = 32*/
+			float TC_Rate_Chk_Safe2Det;													/*offset = 33*/
+			float TC_ECEF_stationlatitude;												/*offset = 34*/
+			float TC_ECEF_stationLongitude;												/*offset = 35*/
+			float TC_Error_dev_SunlitAD;												/*offset = 36*/
+			float TC_Error_dev_EclipseAD;												/*offset = 37*/
+			float TC_wAD_BODYmaxThRoll;													/*offset = 38*/
+			float TC_wAD_BODYmaxThPitch;												/*offset = 39*/
+			float TC_wAD_BODYmaxThYaw;													/*offset = 40*/
+			float TC_magMin_angle;														/*offset = 41*/
+			float TC_magMax_angle;														/*offset = 42*/
+			float TC_GYRO_Det_Max_Thresh;												/*offset = 43*/
+			float TC_PanelD_Status_Sel;                                                 /*offset = 44*/
+			float TC_wAD_BODYminThRoll;                                                 /*offset = 45*/
+			float TC_wAD_BODYminThPitch;                                                /*offset = 46*/
+			float TC_wAD_BODYminThYaw;                                                  /*offset = 47*/
+			float TC_wAD_updateTimeThresh;                                              /*offset = 48*/
+			float TC_wp_QDP;                                                            /*offset = 49*/
 
-#define TC_data_command_MAX_LIMIT 73
-
+	  	    }ADCS_TC_data_command_Table;
+#define ADCS_TC_data_command_MAX_LIMIT 50
 //---------------------------Data command telemetry-------------------------------
 
 //TBD
@@ -348,11 +355,11 @@ typedef unsigned long long int uint64;
 
 //Resolution table for Data-commands
 float Resol_Table[TC_data_command_MAX_LIMIT];
-
+//float Resol_Table_Adcs[ADCS_TC_data_command_MAX_LIMIT];
 double gain_set[300];
 //List of Function execute commands
 
-#define TC_func_exe_MAX_LIMIT 129
+#define TC_func_exe_MAX_LIMIT 150
 
 void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])();
 

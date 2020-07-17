@@ -1,36 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
-		<cconfiguration id="cdt.managedbuild.toolchain.rcc.base.1424245605">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.rcc.base.1424245605" moduleId="org.eclipse.cdt.core.settings" name="Default">
+		<cconfiguration id="cdt.managedbuild.toolchain.rcc.base.2138460219">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.rcc.base.2138460219" moduleId="org.eclipse.cdt.core.settings" name="Default">
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
-					<extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="obc_adcs_sep13" buildProperties="" description="" id="cdt.managedbuild.toolchain.rcc.base.1424245605" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
-					<folderInfo id="cdt.managedbuild.toolchain.rcc.base.1424245605.284502703" name="/" resourcePath="">
-						<toolChain id="cdt.managedbuild.toolchain.rcc.base.403098620" name="cdt.managedbuild.toolchain.rcc.base" superClass="cdt.managedbuild.toolchain.rcc.base">
-							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.GNU_ELF" id="cdt.managedbuild.target.rcc.platform.base.1786329278" name="Debug Platform" superClass="cdt.managedbuild.target.rcc.platform.base"/>
-							<builder id="cdt.managedbuild.target.rcc.builder.base.181687563" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="RTEMS Make" superClass="cdt.managedbuild.target.rcc.builder.base"/>
-							<tool id="cdt.managedbuild.tool.rcc.archiver.base.65850367" name="SPARC RTEMS C Archiver" superClass="cdt.managedbuild.tool.rcc.archiver.base"/>
-							<tool id="cdt.managedbuild.tool.rcc.cpp.compiler.base.1969216571" name="SPARC RTEMS C++ Compiler" superClass="cdt.managedbuild.tool.rcc.cpp.compiler.base"/>
-							<tool id="cdt.managedbuild.tool.rcc.c.compiler.base.1025249969" name="SPARC RTEMS C Compiler" superClass="cdt.managedbuild.tool.rcc.c.compiler.base">
-								<inputType id="cdt.managedbuild.tool.base.c.compiler.input.c.1407456688" superClass="cdt.managedbuild.tool.base.c.compiler.input.c"/>
-								<inputType id="cdt.managedbuild.tool.base.c.compiler.input.asm.1597266340" superClass="cdt.managedbuild.tool.base.c.compiler.input.asm"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.rcc.c.linker.base.1466574363" name="SPARC RTEMS C Linker" superClass="cdt.managedbuild.tool.rcc.c.linker.base">
-								<inputType id="cdt.managedbuild.tool.base.c.linker.input.1888189101" superClass="cdt.managedbuild.tool.base.c.linker.input">
-									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
-									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
-								</inputType>
-							</tool>
-							<tool id="cdt.managedbuild.tool.rcc.cpp.linker.base.2131571985" name="SPARC RTEMS C++ Linker" superClass="cdt.managedbuild.tool.rcc.cpp.linker.base"/>
+				<configuration buildProperties="" id="cdt.managedbuild.toolchain.rcc.base.2138460219" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
+					<folderInfo id="cdt.managedbuild.toolchain.rcc.base.2138460219.2000642713" name="/" resourcePath="">
+						<toolChain id="cdt.managedbuild.toolchain.rcc.base.1208378459" name="cdt.managedbuild.toolchain.rcc.base" superClass="cdt.managedbuild.toolchain.rcc.base">
+							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.rcc.platform.base.651230774" name="Debug Platform" superClass="cdt.managedbuild.target.rcc.platform.base"/>
+							<builder id="cdt.managedbuild.target.rcc.builder.base.1865146476" managedBuildOn="false" name="RTEMS Make.Default" superClass="cdt.managedbuild.target.rcc.builder.base"/>
+							<tool id="cdt.managedbuild.tool.rcc.archiver.base.1793480346" name="SPARC RTEMS C Archiver" superClass="cdt.managedbuild.tool.rcc.archiver.base"/>
+							<tool id="cdt.managedbuild.tool.rcc.cpp.compiler.base.36986600" name="SPARC RTEMS C++ Compiler" superClass="cdt.managedbuild.tool.rcc.cpp.compiler.base"/>
+							<tool id="cdt.managedbuild.tool.rcc.c.compiler.base.2112542248" name="SPARC RTEMS C Compiler" superClass="cdt.managedbuild.tool.rcc.c.compiler.base"/>
+							<tool id="cdt.managedbuild.tool.rcc.c.linker.base.1208788081" name="SPARC RTEMS C Linker" superClass="cdt.managedbuild.tool.rcc.c.linker.base"/>
+							<tool id="cdt.managedbuild.tool.rcc.cpp.linker.base.74594570" name="SPARC RTEMS C++ Linker" superClass="cdt.managedbuild.tool.rcc.cpp.linker.base"/>
 						</toolChain>
 					</folderInfo>
 				</configuration>
@@ -40,26 +31,21 @@
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.release.957610134;cdt.managedbuild.config.gnu.cross.exe.release.957610134.;cdt.managedbuild.tool.gnu.cross.c.compiler.824290137;cdt.managedbuild.tool.gnu.c.compiler.input.505169167">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.rcc.exe.release.1862449833;cdt.managedbuild.config.rcc.exe.release.1862449833.;cdt.managedbuild.tool.rcc.c.compiler.exe.release.1116744487;cdt.managedbuild.tool.base.c.compiler.input.asm.1990234280">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.debug.1543675529;cdt.managedbuild.config.gnu.cross.exe.debug.1543675529.;cdt.managedbuild.tool.gnu.cross.c.compiler.1404799607;cdt.managedbuild.tool.gnu.c.compiler.input.1671541097">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.rcc.exe.debug.924317702;cdt.managedbuild.config.rcc.exe.debug.924317702.;cdt.managedbuild.tool.rcc.c.compiler.exe.debug.415856049;cdt.managedbuild.tool.base.c.compiler.input.asm.1249619558">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.release.603610015;cdt.managedbuild.config.gnu.cross.exe.release.603610015.;cdt.managedbuild.tool.gnu.cross.c.compiler.1809938310;cdt.managedbuild.tool.gnu.c.compiler.input.854455338">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.rcc.exe.release.1862449833;cdt.managedbuild.config.rcc.exe.release.1862449833.;cdt.managedbuild.tool.rcc.c.compiler.exe.release.1116744487;cdt.managedbuild.tool.base.c.compiler.input.c.1569676284">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.debug.175381585;cdt.managedbuild.config.gnu.cross.exe.debug.175381585.;cdt.managedbuild.tool.gnu.cross.c.compiler.216781294;cdt.managedbuild.tool.gnu.c.compiler.input.1229483717">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.rcc.exe.debug.924317702;cdt.managedbuild.config.rcc.exe.debug.924317702.;cdt.managedbuild.tool.rcc.c.compiler.exe.debug.415856049;cdt.managedbuild.tool.base.c.compiler.input.c.270662073">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="obc_adcs_sep13.null.191229865" name="obc_adcs_sep13"/>
+		<project id="flight_model_v4_new_gps_update.null.704383500" name="flight_model_v4_new_gps_update"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope" versionNumber="2">
-		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/obc_adcs_sep13"/>
-		</configuration>
-	</storageModule>
 </cproject>

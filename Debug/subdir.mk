@@ -3,10 +3,10 @@
 ################################################################################
 
 # Add inputs and outputs from these tool invocations to the build variables 
+S_SRCS += \
+../xdump.s 
+
 C_SRCS += \
-../ADandEst.c \
-../CommonRoutines.c \
-../Constants.c \
 ../Global.c \
 ../HAL_ADC.c \
 ../HAL_Antenna.c \
@@ -18,29 +18,24 @@ C_SRCS += \
 ../HAL_MTR.c \
 ../HAL_Payload.c \
 ../HAL_RW.c \
-../Mode_Preprocessing.c \
-../OBC_GPS.c \
-../OBC_IMU.c \
-../OBC_Ref_Comp.c \
-../Orbit_Computation.c \
-../SunSensors.c \
 ../Telecommand.c \
 ../Telemetry.c \
+../adcs_ADandEst.c \
+../adcs_CommonRoutines.c \
+../adcs_Constants.c \
+../adcs_GPS_OD.c \
+../adcs_LinearController.c \
+../adcs_ModePreProcs.c \
+../adcs_RefComp.c \
+../adcs_SensorDataProcs.c \
+../adcs_VarDeclarations.c \
+../adcs_pinit.c \
 ../main.c 
-
-O_SRCS += \
-../28012019.o \
-../dak.o \
-../dak1.o \
-../obc.o 
 
 S_UPPER_SRCS += \
 ../inthandler.S 
 
 OBJS += \
-./ADandEst.o \
-./CommonRoutines.o \
-./Constants.o \
 ./Global.o \
 ./HAL_ADC.o \
 ./HAL_Antenna.o \
@@ -52,21 +47,29 @@ OBJS += \
 ./HAL_MTR.o \
 ./HAL_Payload.o \
 ./HAL_RW.o \
-./Mode_Preprocessing.o \
-./OBC_GPS.o \
-./OBC_IMU.o \
-./OBC_Ref_Comp.o \
-./Orbit_Computation.o \
-./SunSensors.o \
 ./Telecommand.o \
 ./Telemetry.o \
+./adcs_ADandEst.o \
+./adcs_CommonRoutines.o \
+./adcs_Constants.o \
+./adcs_GPS_OD.o \
+./adcs_LinearController.o \
+./adcs_ModePreProcs.o \
+./adcs_RefComp.o \
+./adcs_SensorDataProcs.o \
+./adcs_VarDeclarations.o \
+./adcs_pinit.o \
 ./inthandler.o \
-./main.o 
+./main.o \
+./xdump.o 
+
+S_DEPS += \
+./xdump.d 
+
+S_UPPER_DEPS += \
+./inthandler.d 
 
 C_DEPS += \
-./ADandEst.d \
-./CommonRoutines.d \
-./Constants.d \
 ./Global.d \
 ./HAL_ADC.d \
 ./HAL_Antenna.d \
@@ -78,29 +81,40 @@ C_DEPS += \
 ./HAL_MTR.d \
 ./HAL_Payload.d \
 ./HAL_RW.d \
-./Mode_Preprocessing.d \
-./OBC_GPS.d \
-./OBC_IMU.d \
-./OBC_Ref_Comp.d \
-./Orbit_Computation.d \
-./SunSensors.d \
 ./Telecommand.d \
 ./Telemetry.d \
+./adcs_ADandEst.d \
+./adcs_CommonRoutines.d \
+./adcs_Constants.d \
+./adcs_GPS_OD.d \
+./adcs_LinearController.d \
+./adcs_ModePreProcs.d \
+./adcs_RefComp.d \
+./adcs_SensorDataProcs.d \
+./adcs_VarDeclarations.d \
+./adcs_pinit.d \
 ./main.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
 %.o: ../%.c
 	@echo 'Building file: $<'
-	@echo 'Invoking: Cross GCC Compiler'
-	gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	@echo 'Invoking: SPARC RTEMS C Compiler'
+	sparc-rtems-gcc -O0 -g3 -Wall -msoft-float -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<" "../inthandler.S" "../xdump.s"
 	@echo 'Finished building: $<'
 	@echo ' '
 
 %.o: ../%.S
 	@echo 'Building file: $<'
-	@echo 'Invoking: Cross GCC Assembler'
-	as  -o "$@" "$<"
+	@echo 'Invoking: SPARC RTEMS C Compiler'
+	sparc-rtems-gcc -O0 -g3 -Wall -msoft-float -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<" "../inthandler.S" "../xdump.s"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+%.o: ../%.s
+	@echo 'Building file: $<'
+	@echo 'Invoking: SPARC RTEMS C Compiler'
+	sparc-rtems-gcc -O0 -g3 -Wall -msoft-float -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<" "../inthandler.S" "../xdump.s"
 	@echo 'Finished building: $<'
 	@echo ' '
 

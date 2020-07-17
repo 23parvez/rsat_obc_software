@@ -60,7 +60,8 @@
 struct HAL_RW_Data_Structure
 {
 	unsigned long int RW_Configure_Register;
-	unsigned long int RW_Status_Register;
+	unsigned long int RW_Status_Register_1;
+	unsigned long int RW_Status_Register_2;
 	unsigned long int RW_Buffer_Register;
 }RW_1,RW_2,RW_3,RW_4;
 
@@ -110,7 +111,7 @@ union RW_TM_Command_u
 #pragma pack(1)
 union RW_TM_Rcvd_u
 {
-	unsigned char Data[32];
+	unsigned char Data[512];
 	struct
 	{
 		unsigned char Start_Byte;
@@ -133,8 +134,8 @@ float RW_Wheel_Speed[4];
 #pragma pack(1)
 union TC_Config_Addr_Write
 {
-	unsigned char data_8bit[32];
-	unsigned short data_16bit[16];
+	unsigned char data_8bit[512];
+	unsigned short data_16bit[256];
 }RW_Buffer_u,RW_Buffer_u_rx;
 
 union int_float
@@ -168,7 +169,6 @@ void rRW_Ping_TC4();
 void rRW_Data_Write();
 void rRW_Data_Request();
 void rRW_Data_Read();
-void rHAL_RW_POWER(unsigned long int RW_No,unsigned long int RW_Status);
 
 unsigned char RW_Write_Data[20];
 unsigned char* RW_Write_ptr;
@@ -224,7 +224,7 @@ union rw_init_cmd_u
 	};
 }rw_init;
 
-unsigned char NSP_addr_table[4] = {0x35, 0x34, 0x40, 0x41}; // Reaction wheel address table
+unsigned char NSP_addr_table[4] = {0x34, 0x35, 0x36, 0x41}; // Reaction wheel address table
 //unsigned char rw_id[4] = {0,1,2,3};
 
 /******************************************************************/

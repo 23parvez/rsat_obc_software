@@ -8,7 +8,11 @@
 #define GPS_1_OFF   0x0000FFEFu
 #define GPS_2_OFF   0x0000FFBFu
 
+#define NO_BYTES 423
+
 #define Buffer_inc(a) a = a + 0x00000004
+
+
 
 unsigned int GPS_msg_header;
 unsigned int GPS_msg_header_MSB;
@@ -18,19 +22,25 @@ unsigned short  gps_pulse_mic_cnt;
 unsigned int  GPS_pulse_rcvd;
 unsigned long int gps_obt_counter;
 unsigned long int gps_obt_count_prev;
+unsigned short GPS_OBT_Latch_enable;
+unsigned short GPS_OBT_Read_1;
+unsigned short GPS_OBT_Read_2;
 
 unsigned long int GPS_Status_Data;
 unsigned long int GPS_Data;
-unsigned long int GPS_Buffer_Data[300];
+unsigned long int GPS_Buffer_Data[106];
 unsigned long int GPS_Addr_Count;
-unsigned long int GPS_Buffer_Addr;
+unsigned long int* GPS_Buffer_Addr;
 unsigned long int GPS_Data_Read_Status;
 unsigned long int GPS_Config_Status;
 unsigned long int GPS_Locations;
 
-void rHAL_GPS_POWER(unsigned long int GPS_No,unsigned long int GPS_Power);
-unsigned long int rHAL_GPS_Read(unsigned long int GPS_No,unsigned long int* GPS_Addr,unsigned long int No_of_Bytes);
-unsigned long int rHAL_GPS_Config(unsigned long int GPS_No,unsigned long int Config_Type);
+//void rHAL_GPS_POWER(unsigned long int GPS_No,unsigned long int GPS_Power);
+//void rHAL_GPS_Read(struct HAL_GPS_registers GPS_No, unsigned long int* GPS_Addr, unsigned int No_of_Bytes);
+unsigned int rHAL_GPS_Read(struct HAL_GPS_registers GPS_No, unsigned long int* GPS_Addr,unsigned int No_of_Bytes);
+//void rHAL_GPS_Read(struct HAL_GPS_registers , unsigned long int* , unsigned int );
+//unsigned long int rHAL_GPS_Config(struct HAL_GPS_registers GPS_No,unsigned long int Config_Type);
+void ST_TM_gps_data();
 void rGPS_Buffer_Init();
 void GPS_1_DATA();
 void rGPS_pulsecheck();
@@ -50,27 +60,6 @@ union GPS_Config_Message
 	};
 }GPS_Config_Msg;
 
-#pragma pack(1)
-struct GPS_Buff
-{
-	unsigned int Config_1;
-	unsigned int Config_2;
-	unsigned int Config_3;
-	unsigned int Config_4;
-	unsigned int Config_5;
-	unsigned int Config_6;
-	unsigned int Config_7;
-	unsigned int Config_8;
-	unsigned int Config_9;
-	unsigned int Config_10;
-	unsigned int Config_11;
-	unsigned int Config_12;
-
-	unsigned int Status_1;
-	unsigned int Status_2;
-	unsigned int Buffer;
-
-}GPS1_Buffer,GPS2_Buffer;
 
 #pragma pack(1)
 union GPS_Status2_Message
@@ -88,18 +77,20 @@ union GPS_Status2_Message
 
 int i_GPS_B_Count;
 
+
+
 #define GPS_BUFFER_COPY_LIMIT 12
 
 unsigned char* GPS_Config_ptr;
-unsigned int* GPS1_Buffer_ptr;
-unsigned int* GPS2_Buffer_ptr;
+unsigned int* GPS1_ptr;
+unsigned int* GPS2_ptr;
 
 #ifndef OBC_GPS
 #define OBC_GPS
 
 unsigned char* GPS_TM_Buffer_Addr_USC;
 
-unsigned long int GPS_RCVD_DATA[60];
+unsigned long int GPS_RCVD_DATA[106];
 
 //Function Declarations
 void rGPS_TM_Extract(void);

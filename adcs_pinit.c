@@ -1619,11 +1619,11 @@ void rADCS_Pon_vars(void)
 
 	// Remote data
 
-	TC_data_command_Table.TC_wAD_BODYminThRoll = -0.1;
-	TC_data_command_Table.TC_wAD_BODYminThPitch = -0.2;
-	TC_data_command_Table.TC_wAD_BODYminThYaw = -0.1;
-	TC_data_command_Table.TC_wAD_updateTimeThresh = 6000;
-	TC_data_command_Table.TC_wp_QDP = 60;
+	ADCS_TC_data_command_Table.TC_wAD_BODYminThRoll = -0.1;
+	ADCS_TC_data_command_Table.TC_wAD_BODYminThPitch = -0.2;
+	ADCS_TC_data_command_Table.TC_wAD_BODYminThYaw = -0.1;
+	ADCS_TC_data_command_Table.TC_wAD_updateTimeThresh = 6000;
+	ADCS_TC_data_command_Table.TC_wp_QDP = 60;
 
 	// Boolean//
 
@@ -1645,20 +1645,20 @@ void rADCS_Pon_vars(void)
 	TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable = Enable;
 	TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable = Enable;
 
-	TC_data_command_Table.TC_PanelD_Status_Sel = TC_All_Deployed;
-	TC_data_command_Table.TC_GYRO_Det_Max_Thresh = 40.0;
-	TC_data_command_Table.TC_eclipse_entrytime = 900.0;
-	TC_data_command_Table.TC_Det_BDOT_Compute_Count = 5;
-	TC_data_command_Table.TC_Det_Bprev_Count = 2;
-	TC_data_command_Table.TC_Det_GYRO_Compute_Count = 3;
+	ADCS_TC_data_command_Table.TC_PanelD_Status_Sel = TC_All_Deployed;
+	ADCS_TC_data_command_Table.TC_GYRO_Det_Max_Thresh = 40.0;
+	ADCS_TC_data_command_Table.TC_eclipse_entrytime = 900.0;
+	ADCS_TC_data_command_Table.TC_Det_BDOT_Compute_Count = 5;
+	ADCS_TC_data_command_Table.TC_Det_Bprev_Count = 2;
+	ADCS_TC_data_command_Table.TC_Det_GYRO_Compute_Count = 3;
 
-	TC_data_command_Table.TC_wAD_BODYmaxThRoll = 0.1;
-	TC_data_command_Table.TC_wAD_BODYmaxThPitch = 0.001;
-	TC_data_command_Table.TC_wAD_BODYmaxThYaw = 0.1;
-	TC_data_command_Table.TC_magMin_angle = 45.0;
-	TC_data_command_Table.TC_magMax_angle = 135.0;
-	TC_data_command_Table.TC_ECEF_stationlatitude = 0.303425;
-	TC_data_command_Table.TC_ECEF_stationLongitude = 1.300038;
+	ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll = 0.1;
+	ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch = 0.001;
+	ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw = 0.1;
+	ADCS_TC_data_command_Table.TC_magMin_angle = 45.0;
+	ADCS_TC_data_command_Table.TC_magMax_angle = 135.0;
+	ADCS_TC_data_command_Table.TC_ECEF_stationlatitude = 0.303425;
+	ADCS_TC_data_command_Table.TC_ECEF_stationLongitude = 1.300038;
 	TC_boolean_u.TC_Boolean_Table.TC_Station_Tracking_Mode = 1;
 
 	//TC_Bdot_Gain = 1.0;

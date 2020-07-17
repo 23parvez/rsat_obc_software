@@ -14,6 +14,7 @@ void rGPSDataProcessing(void)
 	GPS_1_DATA();                            //GPS
 
 	rGPS_TM_Extract();						//Extract GPS data for telemetry
+	ST_TM_gps_data();
 
 	if(TC_boolean_u.TC_Boolean_Table.TC_GPS_TLE_Select== True)
 	{
@@ -552,9 +553,27 @@ void rOrbit_Propagation(void)
 			TM.Buffer.TM_Pos_ECI[0] = (int)(Pos_ECI[0]/9.31322575E-6);
 			TM.Buffer.TM_Pos_ECI[1] = (int)(Pos_ECI[1]/9.31322575E-6);
 			TM.Buffer.TM_Pos_ECI[2] = (int)(Pos_ECI[2]/9.31322575E-6);
+
+			ST_normal.ST_NM_Buffer.TM_Pos_ECI[0] = (int)(Pos_ECI[0]/9.31322575E-6);
+			ST_normal.ST_NM_Buffer.TM_Pos_ECI[1] = (int)(Pos_ECI[1]/9.31322575E-6);
+			ST_normal.ST_NM_Buffer.TM_Pos_ECI[2] = (int)(Pos_ECI[2]/9.31322575E-6);
+
+			ST_special.ST_SP_Buffer.TM_Pos_ECI[0] = (int)(Pos_ECI[0]/9.31322575E-6);
+			ST_special.ST_SP_Buffer.TM_Pos_ECI[1] = (int)(Pos_ECI[1]/9.31322575E-6);
+			ST_special.ST_SP_Buffer.TM_Pos_ECI[2] = (int)(Pos_ECI[2]/9.31322575E-6);
+
 			TM.Buffer.TM_Vel_ECI[0] = (int)(Vel_ECI[0]/9.31322575E-6);
 			TM.Buffer.TM_Vel_ECI[1] = (int)(Vel_ECI[1]/9.31322575E-6);
 			TM.Buffer.TM_Vel_ECI[2] = (int)(Vel_ECI[2]/9.31322575E-6);
+
+			ST_normal.ST_NM_Buffer.TM_Vel_ECI[0] = (int)(Vel_ECI[0]/9.31322575E-6);
+			ST_normal.ST_NM_Buffer.TM_Vel_ECI[1] = (int)(Vel_ECI[1]/9.31322575E-6);
+			ST_normal.ST_NM_Buffer.TM_Vel_ECI[2] = (int)(Vel_ECI[2]/9.31322575E-6);
+
+			ST_special.ST_SP_Buffer.TM_Vel_ECI[0] = (int)(Vel_ECI[0]/9.31322575E-6);
+			ST_special.ST_SP_Buffer.TM_Vel_ECI[1] = (int)(Vel_ECI[1]/9.31322575E-6);
+			ST_special.ST_SP_Buffer.TM_Vel_ECI[2] = (int)(Vel_ECI[2]/9.31322575E-6);
+
 		}
 
         rMatMul3x1(ECItoECEF, Pos_ECI);
@@ -597,6 +616,9 @@ void rOrbit_Propagation(void)
 
         Tsince = Tsince + c_tsince_min;
         TM.Buffer.TM_Tsince = (int)(Tsince/0.01);
+        ST_special.ST_SP_Buffer.TM_Tsince = (int)(Tsince/0.01);
+        ST_normal.ST_NM_Buffer.TM_Tsince = (int)(Tsince/0.01);
+
 	}
 	return;
 }
@@ -807,9 +829,12 @@ void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], do
 		no = 24.0*3600.0/Orbit_Period;
 
 		TM.Buffer.TM_Latitude = (int)(latitude/4.19095159E-8);
+		ST_special.ST_SP_Buffer.TM_Latitude = (int)(latitude/4.19095159E-8);
 		TM.Buffer.TM_Longitude = (int)(longitude/8.38190317E-8);
+		ST_special.ST_SP_Buffer.TM_Longitude = (int)(longitude/8.38190317E-8);
 		TM.Buffer.TM_Orb_Period = (int)(Orbit_Period/1.0);
 		TM.Buffer.TM_Altitude = (int)(Alti/4.658941181E-7);
+		ST_special.ST_SP_Buffer.TM_Altitude = (int)(Alti/4.658941181E-7);
 	}
 	return;
 }

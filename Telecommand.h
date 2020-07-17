@@ -7,10 +7,10 @@ typedef unsigned long int uint32;
 typedef unsigned long long int uint64;
 
 
-#define MAX_TABLE_LIMIT   13
+#define MAX_TIMETAG_CMD_LIMIT   1000
 #define MAX_BLKS  64
-#define MAX_TABLE_LIMITS  10
 #define MAX_BLK_CMD_SIZE 64
+#define TC_TLE_MAX_LIMIT 17
 
 //enum {FALSE,TRUE};
 
@@ -19,14 +19,26 @@ typedef unsigned long long int uint64;
 #endif
 
 //mask values
+
 #define TC_AUTHENTIC_PULSE_MASK 0x00008000
+#define TC_DATA_READY           0x00000002
 #define TC_WRITE_BIT_MASK 		0x00000001
 
+unsigned long int Absolutetime;
 unsigned long int TC_Status_Data;
 unsigned long int TC_Buffer_Addr;
 unsigned long int TC_authentic_pulse_rcvd;
 unsigned short* Telecommand_ptr;
 unsigned short TC_count;
+unsigned short TC_cmd_executed;
+unsigned short TC_command_pending;
+unsigned int  TC_cmd_executed_count;
+unsigned long long int TC_exe;
+//unsigned char TC_storing_buffer[256];
+unsigned int TC_storing_buffer[256];
+unsigned int TC_buffer_count[300];
+unsigned int TC_flag;
+
 
 unsigned long int BlkCurrent_Cmd;
 
@@ -34,8 +46,8 @@ unsigned long int BlkCurrent_Cmd;
 //int ATTC_Master_en = 1;
 //int ATTC_exe_en = 0;
 //int tos;
-//int ATTC_count = 0;
-//unsigned int Absolutetime = 0;
+//int ATTC_count;
+
 
 unsigned int TC_DATA[2];
 
@@ -43,6 +55,8 @@ unsigned int abc;
 
 //Remote
 unsigned int Remote_Addr;
+unsigned int Remote_data;
+unsigned int Remote_minotoring_addr;
 
 //Differential Time tagged Command Handling
 
@@ -77,12 +91,11 @@ typedef struct S_DTTC_Execute		//Differential Time Tagged TC execute Structure
     uint32 TC_appended_bit:1;
 }DTTCformatExe;
 
-DTTCformat DTTCarray[MAX_TABLE_LIMIT];
+DTTCformat DTTCarray[MAX_TIMETAG_CMD_LIMIT];
 void rDifferentialTTC_Update();
 void rDifferentialTTC_Execute();
 void rInit_Block(void);
 void rBlockTC_Execute(void);
-void rBlock0_exe(void);
 unsigned long long int *commandptr;
 //int DTTC_count = 0;
 //uint32 Diff_start_srl_num = 0;
@@ -152,8 +165,8 @@ uint32 Block_Index[MAX_BLKS];
 	    uint32 command_type_A:2;
 	    uint32 command_type_B:4;
 		uint32 Data:16;
-		uint32 offset_addr:7;
-	    uint32 TC_time:19;
+		uint32 offset_addr:6;
+	    uint32 TC_time:20;
 	    uint32 TC_parity:7;
 	    uint32 TC_appended_bit:1;
 	} ;
@@ -212,11 +225,32 @@ typedef struct S_ATTC     //Data TC Structure
 	    uint32 command_type_B:4;
 	    uint32 command:16;
 	    uint32 type_of_data_command:6;
-	    uint32 TC_time:20;
+	    uint32 TC_time:19;
+	    uint32 filler:1;
 	    uint32 TC_parity:7;
 	    uint32 TC_appended_bit:1;
 }ATTCformat;
 
+// Structure modified on 18_05_2020
+#pragma pack(1)
+typedef struct TC_Block    //Data TC Structure
+{
+	    uint32 start_bit:2;
+	    uint32 spacecraft_id:4;
+	    uint32 link_id:2;
+	    uint32 command_type_A:2;
+	    uint32 command_type_B:4;
+	    uint32 command:16;
+	    uint32 type_of_data_command:6;
+	    uint32 Cmd_Srl:6;
+	    uint32 Blk_opn:2;
+	    uint32 Blk_No:6;
+	    uint32 filler:6;
+	    uint32 TC_parity:7;
+	    uint32 TC_appended_bit:1;
+} BLKformat;
+
+/*
 #pragma pack(1)
 typedef struct TC_Block    //Data TC Structure
 {
@@ -232,7 +266,7 @@ typedef struct TC_Block    //Data TC Structure
 	    uint32 TC_parity:7;
 	    uint32 TC_appended_bit:1;
 } BLKformat;
-
+*/
 
 
 union U_telecommand						//Union of Telecommands
@@ -255,18 +289,26 @@ union U_telecommand						//Union of Telecommands
 	} u_TC,u_DTTC;
 
 
+union TC_Hist *TC_hist_write_ptr;
+union TC_Hist *TC_hist_read_ptr;
+
+//Nodeptrtype Next_exe_TC;
+
+unsigned long long int block_test_array[50];
+
+
 typedef struct Node
 {
 	ATTCformat command;
-	struct Node *next;
+	struct Node* next;
 }Nodetype;
-
 typedef Nodetype* Nodeptrtype ;
+
 //Nodeptrtype head = NULL;
 
 // Following are data structures required to emulate malloc()
-Nodetype Nodearray[MAX_TABLE_LIMIT];
-Nodeptrtype Nodeptr[MAX_TABLE_LIMIT];
+Nodetype Nodearray[MAX_TIMETAG_CMD_LIMIT];
+Nodeptrtype Nodeptr[MAX_TIMETAG_CMD_LIMIT];
 
 //-----------testing--------------
 ATTCformat new_data;
@@ -301,10 +343,12 @@ union parity_tag
 
 //Function Declarations
 void rTelecommand();				//Telecommand Routine
+void TC_status_reset();
 void rReal_Time_TC();				//Real time command processing
 void rAbsolute_TimeTag_TC();		//Absolute timetag commmand processing
 void rDifferential_TimeTag_TC();	//Differential timetag command processing
 void rBlock_TC();					//Bulk telecommand processing
+void rADCS_Data_TC();
 
 void rContingency_TC();				//Contingency TC processing
 void rData_TC();					//Data command processing
@@ -314,6 +358,8 @@ void rFuncExecute_TC();             //Function execute command processing
 void rRemoteProgram_Addr_TC();      //Remote program address processing
 void rRemoteProgram_Data_TC();      //Remote program data processing
 void TMTC_Assignment();             //Assigning of TC to TM
+void rRemote_base_addr_TC();
+void rRemote_data_view();
 
 
 void adcsgains();                   //Gain_set_function
@@ -374,7 +420,8 @@ void TC_Gyro_LPF_Gain_Update_IMU1();
 void TC_Gyro_LPF_Gain_Update_IMU2();
 
 void TC_ACC_Ang_RESET();
-void TC_Panel1_Deploy();
+//void TC_Panel1_Deploy();
+void TC_NMI_count_reset();
 void TC_Panel2_Deploy();
 void TC_GPS1_ON();
 void TC_GPS1_OFF();
@@ -453,25 +500,25 @@ void TC_MTR_Roll_Negative();
 void rDifferentialTTC_Execute();
 void OBC_ON();
 void OBC_OFF();
-void Antenna_Deloy_ON();
-void Antenna_Deloy_OFF();
+void Antenna_mechanism_ON();
+void Antenna_mechanism_OFF();
 void payload_2_on();
 void payload_2_off();
 void EEPROM_CHECK_COMMAND();
 void S_band_tx_off();
 void X_band_tx_on();
 void X_band_tx_off();
-void SA1_DEPLOYMENT_MECHANISM_MAIN_ON();
-void SA1_DEPLOYMENT_MECHANISM_MAIN_OFF();
-void SA2_DEPLOYMENT_MECHANISM_MAIN_ON();
-void SA2_DEPLOYMENT_MECHANISM_MAIN_OFF();
+void SA_DEPLOYMENT_MECHANISM_MAIN_ON();
+void SA_DEPLOYMENT_MECHANISM_MAIN_OFF();
+void SA_DEPLOYMENT_MECHANISM_RED_ON();
+void SA_DEPLOYMENT_MECHANISM_RED_OFF();
 void SA1_DEPLOYMENT_AND_SA2_DEPLOYMENT_REDUNDANT_SPARE_BUS_ON();
 void SA1_DEPLOYMENT_AND_SA2_DEPLOYMENT_REDUNDANT_SPARE_BUS_OFF();
 void Test_ON();
 void Test_OFF();
-void Antenna_armed();
-void Antenna_deployed();
-void Antenna_dis_armed();
+void Antenna_mechanism_arm();
+void Antenna_deploy();
+void Antenna_mechanism_disarm();
 void rTC_Detumbling_ModePreprocessing_BDOT();
 void rTC_Detumbling_ModePreprocessing_GYRO();
 void rTC_SunAcquisition_ModePreprocessing();
@@ -480,12 +527,39 @@ void rTC_Suspended_ModePreprocessing();
 void sunlit();
 void eclipse();
 void Sunlit_eclipse_both();
+void rSafe_mode_PreProcessing();
+void TC_MTR_Roll_No_cuurent();
+void TC_MTR_Pitch_No_cuurent();
+void TC_MTR_Yaw_No_cuurent();
+void TC_pl_debug();
+void TC_pl_tm();
+void TC_TM_DS_EN();
+void Antenna_RESET_command();
+void Antenna_deploy_with_override();
+void Antenna_system_temp();
+void Antenna_deploy_status_report();
+void Antenna_deploy_activation_count();
+void Antenna_deploy_activation_time();
+void eeprom_en();
+void eeprom_dis();
+void TC_GPS1_NMEA_NMEA_GSV_Enable();
+void TC_GPS1_NMEA_NMEA_GSV_disable();
+void TC_GPS2_NMEA_NMEA_GSV_Enable();
+void TC_GPS2_NMEA_NMEA_GSV_disable();
+void TC_ATTC_CMD_clear();
+
 //void ATTC_exe_en_flag();
 //void Diff_Funtion_exe();
+
+// TC_history_view
+void rTC_write_tC_history();
 
 //Block Telecommand
 void Block_update();
 void gain_sets();
 // TeleCommand
+
+// TLE based array
+unsigned long int TC_TLE_data[TC_TLE_MAX_LIMIT];
 
 #endif // TELECOMMAND

@@ -14,13 +14,62 @@ void rPOR_Init(void)
 {
 	int i;
 
+	ram_scrub_addr = 0x40042d70;
 	rTC_Suspended_ModePreprocessing();
+    TC_hist_write_ptr = &TC_hist_data[0];
+	//TC_hist_read_ptr = &TC_hist_data[0];
+    TCH_read_ptr = &TC_hist_data[0];
+    TCH_read_full_ptr = &TC_hist_data[0];
+    TCH_cpy_ptr = &TC_hist_data[0];
+	//TCH_write_ptr = &TC_hist_data[0];
+	Remote_data_addr = RAM_SEG_START_ADDR;
+
+
 	//Telemetry
+	inter_TM_ST_TC_NS_Write_Source_Addr = (unsigned short*)TC_storing_buffer;
+	read_str_ptr = (unsigned short*)Storage;
+	TC_str_ptr = (unsigned char*)ST_TC_history_Buffer;
+	ST_frame_count = 0;
+	ST_TCH_frame_count = 0;
+
+	ST_Dest_Addr= ST_source_Buffer;                                     //Initializing Destination pointer
 	TM.Buffer.FrameSynch = 0xF9A42BB1;
 	TM.Buffer.Sat_ID = 0x74;
-	TM.Buffer.Main_Frame = 0;
+	TM.Buffer.Real_Storage_TM = 0;
+	TM.Buffer.Norm_Spec_TC_hist_TM = 0x0;
+	TM.Buffer.filler = 0;
 	TM.Buffer.Sub_Frame = 0;
 
+	ST_special.ST_SP_Buffer.FrameSynch = 0xF9A42BB1;
+	ST_special.ST_SP_Buffer.Sat_ID = 0x74;
+	ST_special.ST_SP_Buffer.Real_Storage_TM = 1;
+	ST_special.ST_SP_Buffer.Norm_Spec_TC_hist_TM = 0x01;
+	ST_special.ST_SP_Buffer.filler = 0;
+	ST_special.ST_SP_Buffer.Sub_Frame = 0;
+
+	ST_normal.ST_NM_Buffer.FrameSynch = 0xF9A42BB1;
+	ST_normal.ST_NM_Buffer.Sat_ID = 0x74;
+	ST_normal.ST_NM_Buffer.Real_Storage_TM = 1;
+	ST_normal.ST_NM_Buffer.Norm_Spec_TC_hist_TM = 0x00;
+	ST_normal.ST_NM_Buffer.filler = 0;
+	ST_normal.ST_NM_Buffer.Sub_Frame = 0;
+
+	TC_boolean_u.TC_Boolean_Table.TC_NormalStorage_Sampling_Rate_Select = 0;
+	TC_gain_select_u.TC_gain_select_Table.TC_special_Sampling_rate_Select = 0;
+	TC_gain_select_u.TC_gain_select_Table.TC_ST_Format_Selection = 0;
+
+	write_str_ptr = Storage;
+	//TC_write_str_ptr = ST_TC_history_final_Buffer;
+	Dest_end_addr = write_str_ptr + ( sizeof(Storage)-1 );
+	//Dest_TC_final_end_addr = TC_write_str_ptr + ( sizeof(ST_TC_history_final_Buffer)-1 );
+
+
+	TC_data_command_Table.BATTERY_HEATER1_UTP	= 0x00000155;     // 0.919v(temp_25 deg)
+	TC_data_command_Table.BATTERY_HEATER1_LTP   = 0x0000017d;     // 1.08v(temp_20 deg)
+
+	TC_data_command_Table.TC_over_Heat = 0x0000054A ;    // 160 degree centigrade (Vpm = 3.31v)
+
+	Thermister_select();
 	//S_band_on(14-10-19)
 	//GPIO_pins.PIO_5 = 1;
 	IODAT = GPIO_pins.data;
@@ -37,6 +86,9 @@ void rPOR_Init(void)
 	inter_Update_TM_With_ADC_offset = 0x00000000u;
 	inter_Update_TM_With_ADC_byte_offset = 0x00000000u;
 	TC_count = 0;
+	TC_cmd_executed=0;
+	ATTC_count =0;
+	TC_command_pending=0;
 
 	//IMU
 	inter_HAL_IMU_Data = 0x00000000u;
@@ -100,23 +152,30 @@ void rPOR_Init(void)
 
 	/** pre-defined block execution commands - Block #0 - Testing 08-03-2019
 	 *  Block #0 Execute Command: 0xC410000780000000 */
-	Block_array[0][0] = 0xC4D0000000000000;//IMU 1 On
+	/*Block_array[0][0] = 0xC4D0000000000000;//IMU 1 On
 	Block_array[0][1] = 0xC4D0000010010000;//IMU 2 On
 	Block_Index[0]    = 2;
 
 	/** pre-defined block execution commands - Block #2 - Testing 08-03-2019
-	 *  Block #2 Execute Command: 0xC4100007A0000000*/
-	Block_array[2][0] = 0xC4D0000020000200;//IMU 1 Off
-	Block_array[2][1] = 0xC4D0000030010200;//IMU 2 Off
-	Block_Index[2]    = 2;
+	/* *  Block #2 Execute Command: 0xC4100007A0000000*/
+	//Block_array[2][0] = 0xC4D0000020000200;//IMU 1 Off
+	//Block_array[2][1] = 0xC4D0000030010200;//IMU 2 Off
+	//Block_Index[2]    = 2;
 
 	// Initialization of NODE for Time-tag TC
 	initNodetable();
 
+	//thermistor selection for heaters
+	Thermister_select();
 
-
-	TC_data_command_Table.TC_heaters_auto_manual=0x0000;
-
+	TC_data_command_Table.TC_heaters_auto_manual 	= 0x000000FF;
+	TC_data_command_Table.TC_heaters_manual   		= 0x00000000;
+	TC_data_command_Table.SA1_SHUNT_UTP 			= 0x00000471;            //0x0000046f;             //   16.4
+	TC_data_command_Table.SA1_SHUNT_LTP 			= 0x0000045a;            //0x00000453;             //   16.0
+	TC_data_command_Table.SA2_SHUNT_UTP 			= 0x0000047c;            //0x0000047d;             //   16.6
+	TC_data_command_Table.SA2_SHUNT_LTP 			= 0x00000465;            //0x00000461;             // 	16.2
+	TC_data_command_Table.SA3_SHUNT_UTP 			= 0x0000048d;            //0x0000048a;             // 	16.8
+	TC_data_command_Table.SA3_SHUNT_LTP 			= 0x00000471;            //0x0000046f;             //	16.4
 
 	//GAIN_DATA_SET.TC_detumbling_bdot_gain_0_00 = 1.00;
 	//offset 00
@@ -155,38 +214,26 @@ void rPOR_Init(void)
 
 	//offset 02
 	GAIN_DATA_SET.TC_BDOT_Det_Thresh_0_00 = 1500.0;
-
 	GAIN_DATA_SET.TC_BDOT_Det_Thresh_0_01 = 2000.0;
-
 	GAIN_DATA_SET.TC_BDOT_Det_Thresh_0_10 = 1000.0;
-
 	GAIN_DATA_SET.TC_BDOT_Det_Thresh_0_11 = 1200.0;
 
 	//offset 03
 	GAIN_DATA_SET.TC_GYRO_Det_Min_Thres_0_00 = 0.1;
-
 	GAIN_DATA_SET.TC_GYRO_Det_Min_Thres_0_01 = 0.2;
-
 	GAIN_DATA_SET.TC_GYRO_Det_Min_Thres_0_10 = 0.05;
-
 	GAIN_DATA_SET.TC_GYRO_Det_Min_Thres_0_11 = 0.01;
 
 	//offset 04
 	GAIN_DATA_SET.TC_momentum_dumping_gain_0_00 = 0.001;
-
 	GAIN_DATA_SET.TC_momentum_dumping_gain_0_01 = 0.0001;
-
 	GAIN_DATA_SET.TC_momentum_dumping_gain_0_10 = 0.005;
-
 	GAIN_DATA_SET.TC_momentum_dumping_gain_0_11 = 0.01;
 
 	//offset 05//TBD
 	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_00;
-
 	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_01;
-
 	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_10;
-
 	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_11;
 
 	//offset 06
@@ -390,6 +437,43 @@ void rPOR_Init(void)
 	    TM.Buffer.TM_NSP_addr_table[i] = NSP_addr_table[i];
 	 }
 
+	 // Battery safe mode default voltage Value
+	 	TC_data_command_Table.TC_power_safe_LTP= 0x03CE;		// 14v LTP
+	 	TC_data_command_Table.TC_power_safe_UTP= 0x03E7;		// 14.5 UTP (calculate the corresponding hex )
+	 //---
+
+	 	TC_boolean_u.TC_Boolean_Table.TC_sram_scrub_enable_disable = False;
+
+	 	PL_TM_Status_flag = 1;
+	 	pl_ack_count = 0;
+
+	 	f_battery_safemode  = False;
+	 	low_battery_voltage = False;
+	 	load_shedding_flag  = False;
+
+	 	/****************************************/
+	 	/** Add this initialization in por_init **/
+	 	eeprom_flag = 0; //to be removed
+	 	eeprom_cur_addr = EEPROM_START_ADDR;
+	 	eeprom_blk_end_addr  = eeprom_cur_addr + EEPROM_BLOCK_SIZE;
+	 	/****************************************/
+
+	 	Out_Latch_2.SPARE2_ON_OFF = 1;
+	 	IO_LATCH_REGISTER_2;
+	 	IO_LATCH_REGISTER_2 = Out_Latch_2.data;
+
+
+	 	//******need to be removed*********/
+	 	Out_latch_5.SA2_DEPLOY = 1;
+	 	IO_LATCH_REGISTER_5;
+	 	IO_LATCH_REGISTER_5 = Out_latch_5.data;
+	 	//*****************************/
+
+
+	 	for(i=0;i<50;i++)
+	 	{
+	 		 block_test_array[i] = 0x00000000;
+	 	}
 
 
 }

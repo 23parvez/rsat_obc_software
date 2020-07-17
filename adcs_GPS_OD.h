@@ -4,8 +4,8 @@
 //GPS
 extern unsigned char* GPS_TM_Buffer_Addr_USC;
 extern unsigned long int GPS_Data_Read_Status;
-extern unsigned long int GPS_Buffer_Data[300];
-extern unsigned long int GPS_RCVD_DATA[60];
+extern unsigned long int GPS_Buffer_Data[106];
+extern unsigned long int GPS_RCVD_DATA[106];
 extern unsigned char GPS_obc_checkum;
 extern unsigned int f_GPS_Valid_Data;
 

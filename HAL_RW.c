@@ -14,11 +14,17 @@ void RW_Init(void)
 	 RW_2.RW_Configure_Register = RW2_CONFIG_REGISTER_1;
 	 RW_3.RW_Configure_Register = RW3_CONFIG_REGISTER_1;
 	 RW_4.RW_Configure_Register = RW4_CONFIG_REGISTER_1;
+
 	 //Initialize RW Status Registers
-	 RW_1.RW_Status_Register      = RW1_STATUS_REGISTER;
-	 RW_2.RW_Status_Register      = RW2_STATUS_REGISTER;
-	 RW_3.RW_Status_Register      = RW3_STATUS_REGISTER;
-	 RW_4.RW_Status_Register      = RW4_STATUS_REGISTER;
+	 RW_1.RW_Status_Register_1      = RW1_STATUS_REGISTER;
+	 RW_2.RW_Status_Register_1      = RW2_STATUS_REGISTER;
+	 RW_3.RW_Status_Register_1      = RW3_STATUS_REGISTER;
+	 RW_4.RW_Status_Register_1      = RW4_STATUS_REGISTER;
+
+	 RW_1.RW_Status_Register_2      = RW1_STATUS_REGISTER_2;
+	 RW_2.RW_Status_Register_2      = RW2_STATUS_REGISTER_2;
+	 RW_3.RW_Status_Register_2      = RW3_STATUS_REGISTER_2;
+	 RW_4.RW_Status_Register_2      = RW4_STATUS_REGISTER_2;
 	 //Initialize Buffer Base
 	 RW_1.RW_Buffer_Register      = RW1_BUFFER_BASE;
 	 RW_2.RW_Buffer_Register      = RW2_BUFFER_BASE;
@@ -47,23 +53,22 @@ unsigned short HAL_RW_CRC_Check(unsigned char* RW_Buffer_Addr,unsigned long int 
 	return (short)inter_HAL_RW_CRC;
 }
 
-void rHAL_RW_TC_Write(struct HAL_RW_Data_Structure RW_No,
-		              union  RW_TC_Command_u RW,
-		              float  RW_Speed,
-		              uint8  RW_ID)
+unsigned int rw_tc_count;
+unsigned int rw_tc_count_test;
+void rHAL_RW_TC_Write(struct HAL_RW_Data_Structure RW_No,union  RW_TC_Command_u RW,float  RW_Speed,uint8  RW_ID)
 {
-
 	////Local variables' declaration
 	int Byte_count;					//Counter in the loop
-	unsigned int inter_RW_Status_Register;
+	unsigned int inter_RW_Status_Register_1;
 
 	// Read the RW Status register
 
-	inter_RW_Status_Register = (REG32(RW_No.RW_Status_Register) & 0x0000FFFF);
+	inter_RW_Status_Register_1 = (REG32(RW_No.RW_Status_Register_2) & 0x0000FFFF);
 
 //	if((inter_RW_Status_Register & 0x00000001) == 0x00000000)
-	if (!(inter_RW_Status_Register & RW_TX_BUF_BUSY))
+	if ((inter_RW_Status_Register_1 & RW_TX_BUF_BUSY))
 	{
+
 		RW.Start_Byte  = 0xC0;
 		RW.Dest_Addr   = NSP_addr_table[RW_ID];
 		RW.Source_Addr = 0x11;
@@ -97,23 +102,24 @@ void rHAL_RW_TC_Write(struct HAL_RW_Data_Structure RW_No,
 
 	}
 }
-
-void rHAL_RW_TM_Write(struct HAL_RW_Data_Structure RW_No,
-		              union RW_TM_Command_u RW,
-		              uint8 RW_ID)
+unsigned char rw_count_test;
+unsigned int rw_tm_count;
+unsigned int rw_tmtc_count;
+void rHAL_RW_TM_Write(struct HAL_RW_Data_Structure RW_No,union RW_TM_Command_u RW,uint8 RW_ID)
 {
 	//Local variables' declaration
 	int Byte_count;					//Counter in the loop
-	unsigned int inter_RW_Status_Register;
+	unsigned int inter_RW_Status_Register_1;
 	//--------------------------------------------------------------
 
 	// Read the Status Register of Reaction Wheel interface
 
-	inter_RW_Status_Register = (REG32(RW_No.RW_Status_Register) & 0x0000FFFF);
+	inter_RW_Status_Register_1 = (REG32(RW_No.RW_Status_Register_2) & 0x0000FFFF);
 
 //	if((inter_RW_Status_Register & 0x00000001) == 0x00000000)
-	if (!(inter_RW_Status_Register & RW_TX_BUF_BUSY))
+	if ((inter_RW_Status_Register_1 & RW_TX_BUF_BUSY))
 	{
+
 		RW.Start_Byte  = 0xC0;
 		RW.Dest_Addr   = NSP_addr_table[RW_ID];
 		RW.Source_Addr = 0x11;
@@ -143,36 +149,45 @@ void rHAL_RW_TM_Write(struct HAL_RW_Data_Structure RW_No,
 	}
 }
 
-
+unsigned short rw_test_array[256];
 int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_TM, int wheel_index)
 {
 
-	//
+
 	// returns TRUE on the successful availability of wheel_speed data
 	// returns FALSE on error condition
-	//
+
+
 
 	//Local Variables' declaration
 	int inter_HAL_RW_count;
 	int inter_Buffer_cpy_limit;
 
 	int wheel_speed_data_available = FALSE;
+	unsigned int inter_HAL_RW_Status_Register_2;
+	unsigned int inter_HAL_RW_Status_Register;
 	//-------------------------------------------------------------
 
 	inter_HAL_RW_count = 0;
 
 	//TODO: CHECK MAX LIMIT
-	inter_HAL_RW_Status_Register = (REG32(RW_No->RW_Status_Register) & 0x0000FFFF);
+	inter_HAL_RW_Status_Register  =(REG32(RW_No->RW_Status_Register_1) & 0x0000FFFF);
+	inter_HAL_RW_Status_Register_2 = (REG32(RW_No->RW_Status_Register_2) & 0x0000FFFF);
 	inter_HAL_RW_Read_Addr = RW_No->RW_Buffer_Register;
 
-	if((inter_HAL_RW_Status_Register & 0x00000002))		//Check for Data Ready
+	if((inter_HAL_RW_Status_Register_2 & 0x00000002))		//Check for Data Ready
 	{
-		inter_HAL_RW_Read_Limit  = (inter_HAL_RW_Status_Register & 0x0000FF00)>>8;  //Bytes to be read from RW Buffer
+
+
+
+		inter_HAL_RW_Read_Limit  = (inter_HAL_RW_Status_Register_2 & 0x00000FF0)>>4;  //Bytes to be read from RW Buffer
 		inter_Buffer_cpy_limit = ((inter_HAL_RW_Read_Limit+1)>>1);
 
+		REG32(RW_No->RW_Status_Register_1) = ((inter_HAL_RW_Status_Register & 0x000000FE) | 0x00000002);
 		while(inter_HAL_RW_count < inter_Buffer_cpy_limit)
 		{
 			temp_short = (unsigned short)(REG32(inter_HAL_RW_Read_Addr) & 0x0000FFFF);
+			rw_test_array[inter_HAL_RW_count] = (unsigned short)(REG32(inter_HAL_RW_Read_Addr) & 0x0000FFFF);
 			RW_Buffer_u_rx.data_16bit[inter_HAL_RW_count] = byte_swap(temp_short);
 			inter_HAL_RW_count++;
 			inter_HAL_RW_Read_Addr = inter_HAL_RW_Read_Addr + 4;
@@ -181,6 +196,7 @@ int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_
 		RW_TM_Raw_Data_ptr = &RW_Buffer_u_rx.data_8bit[0];
 		RW_TM_ptr = &(RW_TM->Data[0]);
 		RW_TM_ptr_init = RW_TM_ptr;//test
+		REG32(RW_No->RW_Status_Register_1) = (inter_HAL_RW_Status_Register & 0x00000000);
 
 
 		inter_HAL_RW_count = 0;
@@ -277,8 +293,8 @@ void rRW_SlipFrame_Check(struct HAL_RW_Data_Structure* RW_No_Addr,
 	inter_HAL_Write_Count = 0;
 	RW_TC_ptr             = inter_slipframe_data_addr;
 
-	RW_Write_ptr          =
-	RW_Buffer_cpy_ptr     = (unsigned short*)(&RW_Buffer_u);
+	RW_Write_ptr          = (unsigned char*)(&RW_Buffer_u.data_8bit);
+	RW_Buffer_cpy_ptr     = (unsigned short*)(&RW_Buffer_u.data_16bit);
 
 	*RW_Write_ptr++       = *RW_TC_ptr++;				//Copying the start byte
 
@@ -336,29 +352,39 @@ void rHAL_RW_ConfigBuffer_Write(struct HAL_RW_Data_Structure* RW_No_Addr,
 	{
 
 		tempdata = *inter_Buffer_cpy_addr++;
-		REG32(Config_Buffer_Addr);
+		//REG32(Config_Buffer_Addr);
 		REG32(Config_Buffer_Addr) = tempdata;
 		Config_Buffer_Addr = Config_Buffer_Addr + 0x00000004;
 	}
 
 	//Set Configure Enable Bit and update number of bytes
 
-	REG32(RW_No_Addr->RW_Status_Register);
-	REG32(RW_No_Addr->RW_Status_Register)  = (((inter_NOB_Write & 0x000000FF)<<8) | 0x00000001);
+	REG32(RW_No_Addr->RW_Status_Register_1);
+	REG32(RW_No_Addr->RW_Status_Register_1)  = (((inter_NOB_Write & 0x000000FF)<<8) | 0x00000001);
 }
 
 void rRW_Data_Write(void)
 {
-
 	// set the wheel speeds to commmand speeds
+	/*if (TC_boolean_u.TC_Boolean_Table.RW_Speed_Negative== 1)
+	{
+		RWS[0] = -(TC_data_command_Table.RW1_Speed);
+	    RWS[1] = -(TC_data_command_Table.RW2_Speed);
+	    RWS[2] = -(TC_data_command_Table.RW3_Speed);
+	    RWS[3] = -(TC_data_command_Table.RW4_Speed);
+	}
+	else
+	 {*/
+		RWS[0] = TC_data_command_Table.RW1_Speed;
+		RWS[1] = TC_data_command_Table.RW2_Speed;
+		RWS[2] = TC_data_command_Table.RW3_Speed;
+		RWS[3] = TC_data_command_Table.RW4_Speed;
 
-	RWS[0] = TC_data_command_Table.RW1_Speed;
-    RWS[1] = TC_data_command_Table.RW2_Speed;
-    RWS[2] = TC_data_command_Table.RW3_Speed;
-    RWS[3] = TC_data_command_Table.RW4_Speed;
+	//}
 
     if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_1_speed_enable)
 	{
+
 		rHAL_RW_TC_Write(RW_1, RW_TC, RWS[0], RWHEEL0);	// Command Wheel Speed to RW1
 	}
 	if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_2_speed_enable)
@@ -373,7 +399,8 @@ void rRW_Data_Write(void)
 	{
 		rHAL_RW_TC_Write(RW_4, RW_TC, RWS[3], RWHEEL3); 					// Command Wheel Speed to RW1
 	}
-}
+
+  }
 
 void rRW_Data_Request(void)
 {
@@ -399,10 +426,14 @@ void rRW_Data_Read()
 {
 	if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_1_speed_enable )
 	  	  	{
+
 				if (rHAL_RW_TM_Read(&RW_1, &RW_TM, RWHEEL0))
 				{
 					TM.Buffer.TM_RW_Speed[RWHEEL0] = (unsigned int)(RW_Wheel_Speed[RWHEEL0]/(c_TM_RW_Resol));
-
+					ST_normal.ST_NM_Buffer.TM_RW_Speed[RWHEEL0] = (unsigned int)(RW_Wheel_Speed[RWHEEL0]/(c_TM_RW_Resol));
+					//special_storgare_rw as to be changed to short and add to be added
+					 ST_special.ST_SP_Buffer.TM_RW_Speed[RWHEEL0] = (unsigned int)(RW_Wheel_Speed[RWHEEL0]/(c_TM_RW_Resol));
+					//----------------------------------------------
 				}
 
 	  	  	}
@@ -411,6 +442,10 @@ void rRW_Data_Read()
 				if (rHAL_RW_TM_Read(&RW_2, &RW_TM, RWHEEL1))
 				{
 					TM.Buffer.TM_RW_Speed[RWHEEL1] = (unsigned int)(RW_Wheel_Speed[RWHEEL1]/(c_TM_RW_Resol));
+					ST_normal.ST_NM_Buffer.TM_RW_Speed[RWHEEL1] = (unsigned int)(RW_Wheel_Speed[RWHEEL1]/(c_TM_RW_Resol));
+					//special_storgare_rw as to be changed to short and add to be added
+					 ST_special.ST_SP_Buffer.TM_RW_Speed[RWHEEL1] = (unsigned int)(RW_Wheel_Speed[RWHEEL1]/(c_TM_RW_Resol));
+					//----------------------------------------------
 
 				}
 	        }
@@ -419,6 +454,10 @@ void rRW_Data_Read()
 				if (rHAL_RW_TM_Read(&RW_3, &RW_TM, RWHEEL2))
 				{
 					TM.Buffer.TM_RW_Speed[RWHEEL2] = (unsigned int)(RW_Wheel_Speed[RWHEEL2]/(c_TM_RW_Resol));
+					ST_normal.ST_NM_Buffer.TM_RW_Speed[RWHEEL2] = (unsigned int)(RW_Wheel_Speed[RWHEEL2]/(c_TM_RW_Resol));
+					//special_storgare_rw as to be changed to short and add to be added
+					 ST_special.ST_SP_Buffer.TM_RW_Speed[RWHEEL2] = (unsigned int)(RW_Wheel_Speed[RWHEEL2]/(c_TM_RW_Resol));
+					//----------------------------------------------
 
 				}
 	        }
@@ -427,7 +466,10 @@ void rRW_Data_Read()
 				if (rHAL_RW_TM_Read(&RW_4, &RW_TM, RWHEEL3))
 				{
 					TM.Buffer.TM_RW_Speed[RWHEEL3] = (unsigned int)(RW_Wheel_Speed[RWHEEL3]/(c_TM_RW_Resol));
-
+					ST_normal.ST_NM_Buffer.TM_RW_Speed[RWHEEL3] = (unsigned int)(RW_Wheel_Speed[RWHEEL3]/(c_TM_RW_Resol));
+					//special_storgare_rw as to be changed to short and add to be added
+					 ST_special.ST_SP_Buffer.TM_RW_Speed[RWHEEL3] = (unsigned int)(RW_Wheel_Speed[RWHEEL3]/(c_TM_RW_Resol));
+					//----------------------------------------------
 				}
 	        }
 
@@ -467,7 +509,7 @@ void rRW_init_cmd(struct HAL_RW_Data_Structure RW_No, unsigned char RW_ID)
 	int NOB_Write_rw;
 	//----------------------------------------------------------------------
 
-	inter_RW_Status_Register = (REG32(RW_No.RW_Status_Register) & 0x0000FFFF);
+	inter_RW_Status_Register = (REG32(RW_No.RW_Status_Register_1) & 0x0000FFFF);
 	NOB_Write_rw = 11; 	//Number of bytes to be transfered to RW for Ping
 
 	/*********************** Added on 12/10/19 ***********************/
@@ -513,93 +555,4 @@ void rRW_Ping_TC4()
 {
 	rRW_init_cmd(RW_4, 3);
 }
-
-void rHAL_RW_POWER(unsigned long int RW_No,unsigned long int RW_Status)
-{
-	unsigned short tempdata;
-	if(RW_No == RW1)
-	{
-		if(RW_Status == ON)
-		{
-			Out_Latch_3.RW1_ON_OFF = 1;
-			tempdata = Out_Latch_3.data;
-			IO_LATCH_REGISTER_3;
-			IO_LATCH_REGISTER_3 = tempdata;
-		}
-
-		else if(RW_Status == OFF)
-		{
-			Out_Latch_3.RW1_ON_OFF = 0;
-			tempdata = Out_Latch_3.data;
-			IO_LATCH_REGISTER_3;
-			IO_LATCH_REGISTER_3 = tempdata;
-		}
-	}
-
-	else if(RW_No == RW2)
-	{
-		if(RW_Status == ON)
-		{
-			Out_Latch_3.RW2_ON_OFF = 1;
-			tempdata = Out_Latch_3.data;
-			IO_LATCH_REGISTER_3;
-			IO_LATCH_REGISTER_3 = tempdata;
-		}
-
-		else if(RW_Status == OFF)
-		{
-			Out_Latch_3.RW2_ON_OFF = 0;
-			tempdata = Out_Latch_3.data;
-			IO_LATCH_REGISTER_3;
-			IO_LATCH_REGISTER_3 = tempdata;
-		}
-	}
-
-	else if(RW_No == RW3)
-	{
-		if(RW_Status == ON)
-		{
-			Out_Latch_3.RW3_ON_OFF = 1;
-			tempdata = Out_Latch_3.data;
-			IO_LATCH_REGISTER_3;
-			IO_LATCH_REGISTER_3 = tempdata;
-		}
-
-		else if(RW_Status == OFF)
-		{
-			Out_Latch_3.RW3_ON_OFF = 0;
-			tempdata = Out_Latch_3.data;
-			IO_LATCH_REGISTER_3;
-			IO_LATCH_REGISTER_3 = tempdata;
-		}
-	}
-
-	else if(RW_No == RW4)
-	{
-		if(RW_Status == ON)
-		{
-			Out_Latch_3.RW4_ON_OFF = 1;
-			tempdata = Out_Latch_3.data;
-			IO_LATCH_REGISTER_3;
-			IO_LATCH_REGISTER_3 = tempdata;
-		}
-
-		else if(RW_Status == OFF)
-		{
-			Out_Latch_3.RW4_ON_OFF = 0;
-			tempdata = Out_Latch_3.data;
-			IO_LATCH_REGISTER_3;
-			IO_LATCH_REGISTER_3 = tempdata;
-		}
-	}
-
-	else
-	{
-		//
-	}
-}
-
-
-
-
 

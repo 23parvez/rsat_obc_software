@@ -171,8 +171,8 @@ int TC_GPSvalidity_Threshold;
 //GPS
 unsigned char* GPS_TM_Buffer_Addr_USC;
 unsigned long int GPS_Data_Read_Status;
-unsigned long int GPS_Buffer_Data[300];
-unsigned long int GPS_RCVD_DATA[60];
+unsigned long int GPS_Buffer_Data[106];
+unsigned long int GPS_RCVD_DATA[106];
 unsigned char GPS_obc_checkum;
 unsigned int f_GPS_Valid_Data;
 

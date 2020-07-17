@@ -42,14 +42,15 @@ void rScModeSelection(void)
 	}
 }
 
-unsigned char Check_sum_data =0;
+/*
+unsigned short Check_sum_data =0;
 void rHILS_packets()
 {
 	int i;
 	unsigned short temp_hils;
-/*	HILS_packet.header = 0xc3a5;
-	HILS_packet.len    = 0x40;
-	HILS_packet.aux    = 0x01;
+	HILS_packet.header          = 0x07e0;
+	HILS_packet.len             = 0x40;
+	HILS_packet.aux             = 0x01;
 	HILS_packet.mode_flag 		= (char)Spacecraft_Mode; //HILS
 	HILS_packet.mag_field[0] 	= (int)(B_BODY[0]/c_TM_Resol_B);
 	HILS_packet.mag_field[1] 	= (int)(B_BODY[1]/c_TM_Resol_B);
@@ -60,39 +61,30 @@ void rHILS_packets()
 	HILS_packet.rw_torque[1] 	= (int)(T_RW[1]/c_TM_RW_Resol);
 	HILS_packet.rw_torque[2] 	= (int)(T_RW[2]/c_TM_RW_Resol);
 	HILS_packet.rw_torque[3] 	= (int)(T_RW[3]/c_TM_RW_Resol);
-	HILS_packet.Mic_time     	= Minor_Cycle_Count; */
-
-	HILS_packet.header = 0xc3a5;
-		HILS_packet.len    = 0x40;
-		HILS_packet.aux    = 0x01;
-		HILS_packet.mode_flag 		= 0x01;
-		HILS_packet.mag_field[0] 	= 0xaabb;
-		HILS_packet.mag_field[1] 	= 0xccdd;
-		HILS_packet.mag_field[2] 	= 0xeeff;
-		temp_hils                	= 0x9c00;
-		HILS_packet.polarity     	= (char)((temp_hils & 0xFC00)>>8);
-		HILS_packet.rw_torque[0] 	= 0xaabbccdd;
-		HILS_packet.rw_torque[1] 	= 0xddeeffaa;
-		HILS_packet.rw_torque[2] 	= 0xccbbaaff;
-		HILS_packet.rw_torque[3] 	= 0x11223344;
-		HILS_packet.Mic_time     	= Minor_Cycle_Count;
-
-
-	for(i = 0; i<= 62 ; i++)
+	HILS_packet.Mic_time     	= Minor_Cycle_Count;
+	HILS_packet.reserved_byte   = 0x55;
+	for(i = 0; i<= 29 ; i++)
 	{
-		unsigned char temp;
+		unsigned short temp;
 
-		temp = HILS_packet.HILS_data_8bit[i];
-		Check_sum_data = (Check_sum_data ^ temp);
-		HILS_packet.checksum = Check_sum_data;
+		temp                  = HILS_packet.HILS_data_16bit[i];
+		Check_sum_data        = (Check_sum_data ^ temp);
+		HILS_packet.checksum  = Check_sum_data;
 	}
 
-	 rHILS_payload(&HILS_packet);
+		HILS_packet.Footer    = 0x7ffe;
+	 //rHILS_payload(&HILS_packet);
 }
+*/
 
 void rSuspended_ModePreprocessing(void)
 {
-	TM.Buffer.TM_TC_Buffer[7] = (char)Spacecraft_Mode;
+	TM.Buffer.TM_TC_Buffer[7] 	= (char)Spacecraft_Mode;
+	TM.Buffer.TM_TC_Buffer[8] 	= 0x0;
+	TM.Buffer.TM_TC_Buffer[9]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[10]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[11]	= 0x0;
+
     if (Susp_cnt >= c_oneminute)
     {
         Susp_cnt = 0;
@@ -112,6 +104,10 @@ void rDetumbling_ModePreprocessing_BDOT_Logic(void)
 
 
 	TM.Buffer.TM_TC_Buffer[8] = (char)Spacecraft_Mode;
+	TM.Buffer.TM_TC_Buffer[7] 	= 0x0;
+	TM.Buffer.TM_TC_Buffer[9]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[10]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[11]	= 0x0;
     CB_Detumbling_Mode = 1;
     CB_OrbitModel = 0;
     CB_Q_propagation = 0;
@@ -138,7 +134,7 @@ void rDetumbling_ModePreprocessing_BDOT_Logic(void)
     CB_SunSensorDataProcessing = 0;
     CB_BDOT_Computation = 1;
 
-    if(abs_f(w_BODYdeg[0]) >= TC_data_command_Table.TC_GYRO_Det_Max_Thresh || abs_f(w_BODYdeg[0]) >= TC_data_command_Table.TC_GYRO_Det_Max_Thresh || abs_f(w_BODYdeg[0]) >= TC_data_command_Table.TC_GYRO_Det_Max_Thresh)
+    if(abs_f(w_BODYdeg[0]) >= ADCS_TC_data_command_Table.TC_GYRO_Det_Max_Thresh || abs_f(w_BODYdeg[0]) >= ADCS_TC_data_command_Table.TC_GYRO_Det_Max_Thresh || abs_f(w_BODYdeg[0]) >= ADCS_TC_data_command_Table.TC_GYRO_Det_Max_Thresh)
     {
         if(TC_boolean_u.TC_Boolean_Table.TC_Det_AutoTransitionBDOTtoGYRO == Enable)
         {
@@ -165,9 +161,9 @@ void rDetumbling_ModePreprocessing_BDOT_Logic(void)
 
             if(TC_boolean_u.TC_Boolean_Table.TC_AutoTransit_Det2SunAquisition == Enable)
             {
-                entrytime2eclipse = TC_data_command_Table.TC_eclipse_entrytime - orbit_time;
+                entrytime2eclipse = ADCS_TC_data_command_Table.TC_eclipse_entrytime - orbit_time;
                 //entrytime2eclipse = 1000; /// test
-                if ((TC_data_command_Table.TC_elapsed_orbitTimer < TC_data_command_Table.TC_eclipse_entrytime - 900.0) || (TC_data_command_Table.TC_elapsed_orbitTimer > TC_data_command_Table.TC_eclipse_exittime))
+                if ((ADCS_TC_data_command_Table.TC_elapsed_orbitTimer < ADCS_TC_data_command_Table.TC_eclipse_entrytime - 900.0) || (ADCS_TC_data_command_Table.TC_elapsed_orbitTimer > ADCS_TC_data_command_Table.TC_eclipse_exittime))
                 {
                     //rTC_SunAcquisition_ModePreprocessing();
                     return;
@@ -204,6 +200,11 @@ void rDetumbling_ModePreprocessing_GYRO_Logic(void)
 {
     ///rRateReductionCheck();
 	TM.Buffer.TM_TC_Buffer[9] = (char)Spacecraft_Mode;
+	TM.Buffer.TM_TC_Buffer[8] 	= 0x0;
+	TM.Buffer.TM_TC_Buffer[7]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[10]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[11]	= 0x0;
+
     CB_Detumbling_Mode = 1;
     CB_OrbitModel = 0;
     CB_Q_propagation = 0;
@@ -240,9 +241,9 @@ void rDetumbling_ModePreprocessing_GYRO_Logic(void)
 
             if(TC_boolean_u.TC_Boolean_Table.TC_AutoTransit_Det2SunAquisition == Enable)
             {
-                entrytime2eclipse = TC_data_command_Table.TC_eclipse_entrytime - orbit_time;
+                entrytime2eclipse = ADCS_TC_data_command_Table.TC_eclipse_entrytime - orbit_time;
                 //entrytime2eclipse = 1000; /// test
-                if (TC_data_command_Table.TC_elapsed_orbitTimer < TC_data_command_Table.TC_eclipse_entrytime - 900.0)
+                if (ADCS_TC_data_command_Table.TC_elapsed_orbitTimer < ADCS_TC_data_command_Table.TC_eclipse_entrytime - 900.0)
                 {
                     //rTC_SunAcquisition_ModePreprocessing();
                     return;
@@ -261,7 +262,7 @@ void rDetumbling_ModePreprocessing_GYRO_Logic(void)
     }
 
     GYRO_Counter++;
-    if(GYRO_Counter == TC_data_command_Table.TC_Det_GYRO_Compute_Count)
+    if(GYRO_Counter == ADCS_TC_data_command_Table.TC_Det_GYRO_Compute_Count)
     {
         gyrodet_w[0] = w_BODY[0];
         gyrodet_w[1] = w_BODY[1];
@@ -297,6 +298,11 @@ void rSunAcquisition_ModePreprocessing(void)
 {
     //f_Sunlit_Presence = True;    //for testing
 	TM.Buffer.TM_TC_Buffer[10] = (char)Spacecraft_Mode;
+	TM.Buffer.TM_TC_Buffer[8] 	= 0x0;
+	TM.Buffer.TM_TC_Buffer[9]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[7]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[11]	= 0x0;
+
     CB_Detumbling_Mode = 0;
     CB_OrbitModel = 0;
     CB_Q_propagation = 0;
@@ -348,9 +354,9 @@ void rSunAcquisition_ModePreprocessing(void)
                 SunAcq3ThreeAx_trsit_cnt++;
                 if (SunAcq3ThreeAx_trsit_cnt >= SunAcq2ThreeAx_trsit_cnt_thres)
                 {
-                    entrytime2eclipse = TC_data_command_Table.TC_eclipse_entrytime - orbit_time;
+                    entrytime2eclipse = ADCS_TC_data_command_Table.TC_eclipse_entrytime - orbit_time;
                     //entrytime2eclipse = 1000; /// test
-                    if (TC_elapsed_orbitTimer < TC_data_command_Table.TC_eclipse_entrytime - 600.0)
+                    if (TC_elapsed_orbitTimer < ADCS_TC_data_command_Table.TC_eclipse_entrytime - 600.0)
                     {
                         //rTC_ThreeAxis_ModePreprocessing();
                         return;
@@ -392,6 +398,11 @@ void rSunAcquisition_ModePreprocessing(void)
 void rThreeAxis_ModePreprocessing(void)
 {
 	TM.Buffer.TM_TC_Buffer[11] = (char)Spacecraft_Mode;
+	TM.Buffer.TM_TC_Buffer[8] 	= 0x0;
+	TM.Buffer.TM_TC_Buffer[9]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[10]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[7]	= 0x0;
+
     CB_Detumbling_Mode = 0;
     CB_OrbitModel = 1;
     CB_Q_propagation = 1;
@@ -503,6 +514,12 @@ void rRateReductionCheck(void)
 
 void rSafeMode_Preprocessing(void)
 {
+	TM.Buffer.TM_TC_Buffer[12] = (char)Spacecraft_Mode;
+	TM.Buffer.TM_TC_Buffer[8] 	= 0x0;
+	TM.Buffer.TM_TC_Buffer[9]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[10]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[7]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[11]	= 0x0;
 
 	if (f_battery_safemode == True) // Enable the flag when battery is less than the threshold
 	{

@@ -12,6 +12,12 @@ RM := rm -rf
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(strip $(S_DEPS)),)
+-include $(S_DEPS)
+endif
+ifneq ($(strip $(S_UPPER_DEPS)),)
+-include $(S_UPPER_DEPS)
+endif
 ifneq ($(strip $(C_DEPS)),)
 -include $(C_DEPS)
 endif
@@ -22,19 +28,19 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: OBC_UPDATE1
+all: OBC_ADCS_NEW_ADD
 
 # Tool invocations
-OBC_UPDATE1: $(OBJS) $(USER_OBJS)
+OBC_ADCS_NEW_ADD: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
-	@echo 'Invoking: Cross GCC Linker'
-	gcc  -o "OBC_UPDATE1" $(OBJS) $(USER_OBJS) $(LIBS)
+	@echo 'Invoking: SPARC RTEMS C Linker'
+	sparc-rtems-gcc -msoft-float -o "OBC_ADCS_NEW_ADD" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) OBC_UPDATE1
+	-$(RM) $(OBJS)$(S_DEPS)$(S_UPPER_DEPS)$(C_DEPS) OBC_ADCS_NEW_ADD
 	-@echo ' '
 
 .PHONY: all clean dependents
