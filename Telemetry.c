@@ -230,7 +230,6 @@ void rTM_Address_Table_Init()
 	TM_Table[TM_Table_Row_No].Length_Field = 2;//1byte(SA_current)
 	TM_Table_Row_No++;
 
-
 	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TC_rcvd_cntr2;
 	TM_Table[TM_Table_Row_No].Length_Field = 2;
 	TM_Table_Row_No++;
@@ -434,12 +433,12 @@ void rTM_Address_Table_Init()
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_heaters_manual_control;  // added(26/10/19)
-	TM_Table[TM_Table_Row_No].Length_Field = 2; // 4 bytes
+	TM_Table[TM_Table_Row_No].Length_Field = 2; // 4 bytes                                             // 221 bytes
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_inter_HAL_IMU_Status_Data_2;
 	TM_Table[TM_Table_Row_No].Length_Field = 2;
-	TM_Table_Row_No++;                                                               //total no of bytes are 228bytes
+	TM_Table_Row_No++;                                                               //total no of bytes are 223bytes
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = NULL; // End of Subframe2
 	TM_Table[TM_Table_Row_No].Length_Field = 0;
@@ -543,7 +542,11 @@ void rTM_Address_Table_Init()
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_Remote_Addr;     // added(26/10/19)
-	TM_Table[TM_Table_Row_No].Length_Field = 4; // 4 bytes                                      //215  bytes
+	TM_Table[TM_Table_Row_No].Length_Field = 4; // 4 bytes          // 214 bytes                                 //215  bytes
+	TM_Table_Row_No++;
+
+	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_Antenna_ACK;
+	TM_Table[TM_Table_Row_No].Length_Field = 2;
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_inter_HAL_IMU_Status_Data_2;
@@ -639,15 +642,11 @@ void rTM_Address_Table_Init()
 	TM_Table[TM_Table_Row_No].Length_Field = 2; // 1byte(SA_current)
 	TM_Table_Row_No++;
 
-	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_inter_HAL_IMU_Status_Data_2;
-	TM_Table[TM_Table_Row_No].Length_Field = 2;
-	TM_Table_Row_No++;
-
 	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_FDI_NMI_Count;
-	TM_Table[TM_Table_Row_No].Length_Field = 2;
+	TM_Table[TM_Table_Row_No].Length_Field = 1;
 	TM_Table_Row_No++;
 
-	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_Antenna_ACK;
+	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_inter_HAL_IMU_Status_Data_2;
 	TM_Table[TM_Table_Row_No].Length_Field = 2;
 	TM_Table_Row_No++;
 
@@ -846,7 +845,7 @@ void rTM_Address_Table_Init()
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_MUX_8;
-	TM_Table[TM_Table_Row_No].Length_Field = 2;
+	TM_Table[TM_Table_Row_No].Length_Field = 2;                                      //234 bytes
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_inter_HAL_IMU_Status_Data_2;
@@ -915,7 +914,7 @@ void rTM_Address_Table_Init()
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_ATTC_count;//Copy address of Rates in Sensor Frame
-	TM_Table[TM_Table_Row_No].Length_Field = 4;
+	TM_Table[TM_Table_Row_No].Length_Field = 4;                  // 195 bytes
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_inter_HAL_IMU_Status_Data_2;
@@ -1009,7 +1008,7 @@ void rTM_Address_Table_Init()
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_SA_current ;  // Copy address of Sunsensor1
 	TM_Table[TM_Table_Row_No].Length_Field = 2;//1byte(SA_current)
-	TM_Table_Row_No++;
+	TM_Table_Row_No++;                                // 250 bytes
 
 
 	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_inter_HAL_IMU_Status_Data_2;
@@ -1111,7 +1110,7 @@ void rTM_Address_Table_Init()
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_S_BODY_Red[0];//Copy address of Orbit Elapsed time
-	TM_Table[TM_Table_Row_No].Length_Field = 12;
+	TM_Table[TM_Table_Row_No].Length_Field = 12;                                      // 248 bhytes
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_inter_HAL_IMU_Status_Data_2;
@@ -1196,7 +1195,7 @@ void rTM_Address_Table_Init()
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_ADC_Thermistor_15;//Copy address of DPM
-	TM_Table[TM_Table_Row_No].Length_Field = 2;
+	TM_Table[TM_Table_Row_No].Length_Field = 2;                     // 248 bytes
 	TM_Table_Row_No++;
 
 
@@ -1342,7 +1341,7 @@ void rTM_Address_Table_Init()
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_GPS_OBT_Read_2;//Copy address of GPS2 Status
-	TM_Table[TM_Table_Row_No].Length_Field = 2;
+	TM_Table[TM_Table_Row_No].Length_Field = 2;                // 245 bytes
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_inter_HAL_IMU_Status_Data_2;
@@ -1435,7 +1434,7 @@ void rTM_Address_Table_Init()
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_SA_current ;  // Copy address of Sunsensor1
-	TM_Table[TM_Table_Row_No].Length_Field = 2;//1byte(SA_current)
+	TM_Table[TM_Table_Row_No].Length_Field = 2;//1byte(SA_current)                     // 250 bytes
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_inter_HAL_IMU_Status_Data_2;
@@ -1535,8 +1534,12 @@ void rTM_Address_Table_Init()
 	TM_Table[TM_Table_Row_No].Length_Field = sizeof(TM.Buffer.TM_w_Ref);
 	TM_Table_Row_No++;
 
-	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_TC_exe;//Copy address of Reference Rate
-	TM_Table[TM_Table_Row_No].Length_Field = 8;
+	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_Next_exe_TC;//Copy address of Reference Rate
+	TM_Table[TM_Table_Row_No].Length_Field = 8;                     // 244 Bytes
+	TM_Table_Row_No++;
+
+	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_TC_cmd_executed_count ;//Copy address of Error Quaternion
+	TM_Table[TM_Table_Row_No].Length_Field = 4;                   // 248 bytes
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_inter_HAL_IMU_Status_Data_2;
@@ -1622,11 +1625,7 @@ void rTM_Address_Table_Init()
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_Q_Error[0];//Copy address of Error Quaternion
 	TM_Table[TM_Table_Row_No].Length_Field = sizeof(TM.Buffer.TM_Q_Error);
-	TM_Table_Row_No++;
-
-	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_TC_cmd_executed_count ;//Copy address of Error Quaternion
-	TM_Table[TM_Table_Row_No].Length_Field = 4;
-	TM_Table_Row_No++;
+	TM_Table_Row_No++;                                   // 250 bytes
 
 	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_inter_HAL_IMU_Status_Data_2;
 	TM_Table[TM_Table_Row_No].Length_Field = 2;
