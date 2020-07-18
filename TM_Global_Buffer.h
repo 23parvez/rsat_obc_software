@@ -77,7 +77,7 @@ struct TM_MTR_STRUCTURE
 	unsigned char Roll_Polarity:2;
 	unsigned char Pitch_Polarity:2;
 	unsigned char Yaw_Polarity:2;
-	unsigned char filler:2;
+	unsigned char filler_1:2;
 };
 
 struct ST_NRM_MTR_STRUCTURE

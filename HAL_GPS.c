@@ -279,7 +279,7 @@ unsigned int rHAL_GPS_Read(struct HAL_GPS_registers GPS_No, unsigned long int* G
 
 //  if(GPS_No == GPS_1)
  // {
-	  GPS_Buffer_Addr = GPS_No.GPS_Buffer_addr;
+	  GPS_Buffer_Addr = (unsigned long int*)GPS_No.GPS_Buffer_addr;
 	  GPS_Status_Data = REG32(GPS_No.GPS_Status_Register_1);
 //TODO: To be removed : Issue with GPS Data Ready
 	  /*gps_obt_counter = 0;

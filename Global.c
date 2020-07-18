@@ -8,6 +8,7 @@
 #include "adcs_SensorDataProcs.h"
 #include "adcs_VarDeclarations.h"
 
+
 extern unsigned char NSP_addr_table[4];
 
 void rPOR_Init(void)
@@ -18,9 +19,9 @@ void rPOR_Init(void)
 	rTC_Suspended_ModePreprocessing();
     TC_hist_write_ptr = &TC_hist_data[0];
 	//TC_hist_read_ptr = &TC_hist_data[0];
-    TCH_read_ptr = &TC_hist_data[0];
-    TCH_read_full_ptr = &TC_hist_data[0];
-    TCH_cpy_ptr = &TC_hist_data[0];
+    TCH_read_ptr = (unsigned int)&TC_hist_data[0];
+    TCH_read_full_ptr = (unsigned int)&TC_hist_data[0];
+    TCH_cpy_ptr = (unsigned int)&TC_hist_data[0];
 	//TCH_write_ptr = &TC_hist_data[0];
 	Remote_data_addr = RAM_SEG_START_ADDR;
 

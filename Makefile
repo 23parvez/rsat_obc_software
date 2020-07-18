@@ -11,7 +11,7 @@ BSP = leon2
 CFLAGS = -qbsp=$(BSP) -mcpu=leon -mfix-at697f -lm -O2 -g
 
 PROJ= rsat-obc
-SOURCES = main.c HAL_Global.c Telemetry.c Telecommand.c inthandler.S Global.c HAL_Payload.c HAL_EPS.c HAL_IMU.c HAL_ADC.c HAL_GPS.c HAL_Heater.c HAL_MTR.c HAL_RW.c HAL_Antenna.c adcs_ADandEst.c adcs_RefComp.c adcs_Constants.c adcs_LinearController.c adcs_ModePreProcs.c adcs_pinit.c adcs_SensorDataProcs.c adcs_VarDeclarations.c adcs_GPS_OD.c adcs_CommonRoutines.c
+SOURCES = main.c HAL_Global.c Telemetry.c Telecommand.c inthandler.S Global.c HAL_Payload.c HAL_EPS.c HAL_IMU.c HAL_ADC.c HAL_GPS.c HAL_Heater.c HAL_MTR.c HAL_RW.c HAL_Antenna.c adcs_ADandEst.c adcs_RefComp.c adcs_Constants.c adcs_LinearController.c adcs_ModePreProcs.c adcs_pinit.c adcs_SensorDataProcs.c adcs_VarDeclarations.c adcs_GPS_OD.c adcs_CommonRoutines.c remote_patch.c
 all: $(PROJ).elf $(PROJ).dis $(PROJ).prom
 
 $(PROJ).elf: $(SOURCES)

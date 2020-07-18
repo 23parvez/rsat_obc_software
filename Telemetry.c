@@ -509,15 +509,15 @@ void rTM_Address_Table_Init()
 	TM_Table[TM_Table_Row_No].Length_Field = 2;
 	TM_Table_Row_No++;
 
-	TM_Table[TM_Table_Row_No].Addr_Field   = &TM.Buffer.SA1_Shunt_sw ;
+	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.SA1_Shunt_sw ;
 	TM_Table[TM_Table_Row_No].Length_Field = 2; // SA_1 switch status
 	TM_Table_Row_No++;
 
-	TM_Table[TM_Table_Row_No].Addr_Field   = &TM.Buffer.SA2_Shunt_sw ;
+	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.SA2_Shunt_sw ;
 	TM_Table[TM_Table_Row_No].Length_Field = 2; // SA_2 switch status
 	TM_Table_Row_No++;
 
-	TM_Table[TM_Table_Row_No].Addr_Field   = &TM.Buffer.SA3_Shunt_sw ;
+	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.SA3_Shunt_sw ;
 	TM_Table[TM_Table_Row_No].Length_Field = 2; // SA_3 switch status
 	TM_Table_Row_No++;
 
@@ -2031,7 +2031,7 @@ void rTCH_full_dump_cpy_buf()
 	}
 	ST_TCH_frame_count++;
 
-		if (TCH_read_full_ptr >= &TC_hist_data[TC_HISTORY_MAX])
+		if ( TCH_read_full_ptr >= &TC_hist_data[TC_HISTORY_MAX])
 		{
 			TCH_read_full_ptr = &TC_hist_data[0];
 			TCH_full_dump_finish = 1;

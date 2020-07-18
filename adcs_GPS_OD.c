@@ -2,7 +2,7 @@
 #include <math.h>
 
 #include "adcs_VarDeclarations.h"
-
+#include "Global.h"
 #include "Telecommand.h"
 #include "HAL_Global.h"
 #include "TM_Global_Buffer.h"

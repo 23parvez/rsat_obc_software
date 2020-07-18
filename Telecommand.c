@@ -672,13 +672,13 @@ void rRemote_base_addr_TC()
 	TM.Buffer.TM_Remote_Addr_SF0 	= Remote_minotoring_addr;
 }
 
-unsigned int test_remte[256];
-unsigned int count_remote;
+//unsigned int test_remte[256];
+//unsigned int count_remote;
 void rRemote_data_view()
 {
 	unsigned int i;
 	unsigned int remote_blk_select;
-	unsigned int* remote_ptr;
+	/*unsigned int* remote_ptr;
 	if(RAM_SEG_START_ADDR< Remote_data_addr > RAM_SEG_END_ADDR)
 	{
 		Remote_minotoring_addr = Remote_data_addr;
@@ -689,7 +689,22 @@ void rRemote_data_view()
 		   test_remte[i] 					= *remote_ptr++;
 		   TM.Buffer.TM_Remote_Data_SF0[i] 	= test_remte[i];
 		}
+
+	}*/
+
+	if(RAM_SEG_START_ADDR< Remote_data_addr > RAM_SEG_END_ADDR)
+	{
+		Remote_minotoring_addr = Remote_data_addr;
+
+		for(i = 0; i <= 255; i++)
+		{
+		  TM.Buffer.TM_Remote_Data_SF0[i] 	= REG32(Remote_minotoring_addr);
+		  Remote_minotoring_addr +=4;
+		}
+
 	}
+
+
 }
 
  // Routine for Boolean_Telecommand processing

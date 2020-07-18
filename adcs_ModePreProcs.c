@@ -11,6 +11,7 @@
 #include "Telemetry.h"
 
 
+
 void rScModeSelection(void)
 {
 	switch (Spacecraft_Mode)
@@ -79,6 +80,9 @@ void rHILS_packets()
 
 void rSuspended_ModePreprocessing(void)
 {
+	// Remote patch entry hook function
+	rSus_mode_remote_entry_hook();
+
 	TM.Buffer.TM_TC_Buffer[7] 	= (char)Spacecraft_Mode;
 	TM.Buffer.TM_TC_Buffer[8] 	= 0x0;
 	TM.Buffer.TM_TC_Buffer[9]	= 0x0;
@@ -96,10 +100,17 @@ void rSuspended_ModePreprocessing(void)
     {
         Susp_cnt++;
     }
+
+    // Remote patch exit hook function
+    rSus_mode_remote_exit_hook();
 }
 
 void rDetumbling_ModePreprocessing_BDOT_Logic(void)
 {
+
+	// Remote patch entry hook function
+	rDBDOT_mode_remote_entry_hook();
+
     //rRateReductionCheck();
 
 
@@ -194,10 +205,16 @@ void rDetumbling_ModePreprocessing_BDOT_Logic(void)
 
     rTorquer_Polarity_Check();
 
+
+    // Remote patch exit hook function
+    rDBDOT_mode_remote_exit_hook();
 }
 
 void rDetumbling_ModePreprocessing_GYRO_Logic(void)
 {
+	// Remote patch entry hook function
+	rDGYRO_mode_remote_entry_hook();
+
     ///rRateReductionCheck();
 	TM.Buffer.TM_TC_Buffer[9] = (char)Spacecraft_Mode;
 	TM.Buffer.TM_TC_Buffer[8] 	= 0x0;
@@ -290,12 +307,18 @@ void rDetumbling_ModePreprocessing_GYRO_Logic(void)
 	tor_counter = 0;
     rTorquer_Polarity_Check();
 
+    // Remote patch exit hook function
+    rDGYRO_mode_remote_exit_hook();
+
     return;
 }
 
 int qerror;
 void rSunAcquisition_ModePreprocessing(void)
 {
+	// Remote patch entry hook function
+	rSACQ_mode_remote_entry_hook();
+
     //f_Sunlit_Presence = True;    //for testing
 	TM.Buffer.TM_TC_Buffer[10] = (char)Spacecraft_Mode;
 	TM.Buffer.TM_TC_Buffer[8] 	= 0x0;
@@ -393,10 +416,16 @@ void rSunAcquisition_ModePreprocessing(void)
         SunAcq3ThreeAx_trsit_cnt = 0;
     }
 
+    // Remote patch exit hook function
+    rSACQ_mode_remote_exit_hook();
+
 }
 
 void rThreeAxis_ModePreprocessing(void)
 {
+	// Remote patch entry hook function
+	r3AXIS_mode_remote_entry_hook();
+
 	TM.Buffer.TM_TC_Buffer[11] = (char)Spacecraft_Mode;
 	TM.Buffer.TM_TC_Buffer[8] 	= 0x0;
 	TM.Buffer.TM_TC_Buffer[9]	= 0x0;
@@ -478,6 +507,9 @@ void rThreeAxis_ModePreprocessing(void)
 		ThreeAxis2DetMode_counter = 0;
 	}
 
+    // Remote patch exit hook function
+    r3AXIS_mode_remote_exit_hook();
+
 }
 
 void rRateReductionCheck(void)
@@ -514,6 +546,9 @@ void rRateReductionCheck(void)
 
 void rSafeMode_Preprocessing(void)
 {
+	// Remote patch entry hook function
+	rSAFE_mode_remote_entry_hook();
+
 	TM.Buffer.TM_TC_Buffer[12] = (char)Spacecraft_Mode;
 	TM.Buffer.TM_TC_Buffer[8] 	= 0x0;
 	TM.Buffer.TM_TC_Buffer[9]	= 0x0;
@@ -533,5 +568,8 @@ void rSafeMode_Preprocessing(void)
 			//rTC_SunAcquisition_ModePreprocessing;
 		}
 	}
+
+    // Remote patch exit hook function
+	rSAFE_mode_remote_exit_hook();
 }
 

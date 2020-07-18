@@ -77,7 +77,7 @@ void sun_Sensor_data()
 {
 	unsigned char tempdata;
 	unsigned int tempdata1;;
-	unsigned int *Sun_Sensor_Addr;
+	unsigned long int *Sun_Sensor_Addr;
 	Sun_Sensor_Addr = &ADC_Buffer[14];
 
 	ADC_Locations   =  ADC_SUN_SENSOR_MAX_LIMIT - 1;

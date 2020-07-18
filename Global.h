@@ -313,6 +313,8 @@ extern void rGPS_TM_Extract(void);
 //extern void rHAL_GPS_POWER(unsigned long int GPS_No,unsigned long int GPS_Power);
 extern void rGPS_Buffer_Init();
 extern void GPS_1_DATA();
+extern void ST_TM_gps_data();
+
 
 //MTR
 //#define MTR_Axis
@@ -477,4 +479,52 @@ extern union heaters_manual_data heaters_manual;
 extern unsigned short pl_ack_count; //Payload acknowledgement count
 
 
+
+
+/****************** Remote Patch function declaration *************/
+
+/***************** Remote Patch hook function *******************/
+extern void rSus_mode_remote_entry_hook();
+
+extern void rSus_mode_remote_exit_hook();
+
+extern void rDBDOT_mode_remote_entry_hook();
+
+extern void rDBDOT_mode_remote_entry_hook();
+
+extern void rDBDOT_mode_remote_exit_hook();
+
+extern void rDGYRO_mode_remote_entry_hook();
+
+extern void rDGYRO_mode_remote_exit_hook();
+
+extern void rSACQ_mode_remote_entry_hook();
+
+extern void rSACQ_mode_remote_exit_hook();
+
+extern void r3AXIS_mode_remote_entry_hook();
+
+extern void r3AXIS_mode_remote_exit_hook();
+
+extern void rSAFE_mode_remote_entry_hook();
+
+extern void rSAFE_mode_remote_exit_hook();
+
+
+/*************************************************/
+/************* Patch area declaration ************/
+
+extern void rRemote_patch_area_1();
+
+extern void rRemote_patch_area_2();
+
+extern void rRemote_patch_area_3();
+
+extern void rRemote_patch_area_4();
+
+extern void rRemote_patch_area_5();
+
+extern void rRemote_patch_area_6();
+
+/*************************************************/
 #endif // GLOBAL
