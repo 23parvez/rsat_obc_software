@@ -1,6 +1,6 @@
+#include "HAL_Global.h"
 #include "HAL_RW.h"
 #include "HAL_Address.h"
-#include "HAL_Global.h"
 #include "Global.h"
 #include "Telemetry.h"
 #include "TM_Global_Buffer.h"
@@ -536,23 +536,5 @@ void rRW_init_cmd(struct HAL_RW_Data_Structure RW_No, unsigned char RW_ID)
 
 	rRW_SlipFrame_Check(&RW_No,&RW_Data_SlipFrame_Init[0],NOB_SFC_Init);		//Slip-frame check routine
 }
-void rRW_Ping_TC1()
-{
-	rRW_init_cmd(RW_1, 0);
-}
 
-void rRW_Ping_TC2()
-{
-	rRW_init_cmd(RW_2, 1);
-}
-
-void rRW_Ping_TC3()
-{
-	rRW_init_cmd(RW_3, 2);
-}
-
-void rRW_Ping_TC4()
-{
-	rRW_init_cmd(RW_4, 3);
-}
 

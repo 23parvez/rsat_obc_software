@@ -57,14 +57,8 @@
 #define reverse_order(a) (((a&0xFF000000) >> 24)|((a&0x00FF0000) >> 8)|((a&0x0000FF00) << 8)|((a&0x000000FF) << 24))
 //#define byte_swap(a) (unsigned short)(((a&0xFF00)>>8)|((a&0x00FF)<<8))
 
-struct HAL_RW_Data_Structure
-{
-	unsigned long int RW_Configure_Register;
-	unsigned long int RW_Status_Register_1;
-	unsigned long int RW_Status_Register_2;
-	unsigned long int RW_Buffer_Register;
-}RW_1,RW_2,RW_3,RW_4;
 
+struct HAL_RW_Data_Structure RW_1,RW_2,RW_3,RW_4;
 //RW TEST
 #pragma pack(1)
 union RW_TC_Command_u
@@ -162,10 +156,6 @@ void rRW_init_cmd(struct HAL_RW_Data_Structure RW_No, unsigned char RW_ID);
 /*****************************************************/
 
 void rHAL_RW_ConfigBuffer_Write(struct HAL_RW_Data_Structure* RW_No_Addr, unsigned short* inter_Buffer_cpy_addr,int inter_NOB_Write);
-void rRW_Ping_TC1();
-void rRW_Ping_TC2();
-void rRW_Ping_TC3();
-void rRW_Ping_TC4();
 void rRW_Data_Write();
 void rRW_Data_Request();
 void rRW_Data_Read();

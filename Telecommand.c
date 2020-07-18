@@ -52,22 +52,22 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 		TC_Panel2_Deploy,												/* offset =    27 */
 		TC_GPS1_ON,														/* offset =    28 */
 		TC_GPS1_OFF,													/* offset =    29 */
-		TC_GPS1_NMEA_ZDA_enable,										/* offset =    30 */
-		TC_GPS1_NMEA_ZDA_disable,										/* offset =    31 */
+		TC_GPS1_NMEA_VTG_enable,										/* offset =    30 */
+		TC_GPS1_NMEA_VTG_disable,										/* offset =    31 */
 		TC_GPS1_NMEA_GGA_enable,										/* offset =    32 */
 		TC_GPS1_NMEA_GGA_disable,										/* offset =    33 */
-		TC_GPS1_NMEA_RMC_enable,										/* offset =    34 */
-		TC_GPS1_NMEA_RMC_disable,										/* offset =    35 */
+		TC_GPS1_NMEA_GSA_enable,										/* offset =    34 */
+		TC_GPS1_NMEA_GSA_disable,										/* offset =    35 */
 		TC_GPS1_cold_start,												/* offset =    36 */
 		TC_GPS1_factory_reset,											/* offset =    37 */
 		TC_GPS2_on,														/* offset =    38 */
 		TC_GPS2_off,													/* offset =    39 */
-		TC_GPS2_NMEA_ZDA_enable,										/* offset =    40 */
-		TC_GPS2_NMEA_ZDA_disable,										/* offset =    41 */
+		TC_GPS2_NMEA_VTG_enable,										/* offset =    40 */
+		TC_GPS2_NMEA_VTG_disable,										/* offset =    41 */
 		TC_GPS2_NMEA_GGA_enable,										/* offset =    42 */
 		TC_GPS2_NMEA_GGA_disable,										/* offset =    43 */
-		TC_GPS2_NMEA_RMC_enable,										/* offset =    44 */
-		TC_GPS2_NMEA_RMC_disable,										/* offset =    45 */
+		TC_GPS2_NMEA_GSA_enable,										/* offset =    44 */
+		TC_GPS2_NMEA_GSA_disable,										/* offset =    45 */
 		TC_GPS2_cold_start,												/* offset =    46 */
 		TC_GPS2_factory_reset,											/* offset =    47 */
 		TC_W1_ON,														/* offset =    48 */
@@ -79,10 +79,10 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 		TC_W3_OFF,														/* offset =    54 */
 		TC_W4_OFF,														/* offset =    55 */
 		TC_Nominal_wheel_speed_execute,									/* offset =    56 */
-		Roll_Torquer_ON,												/* offset =    57 */
+		TC_MTR_ON,							           					/* offset =    57 */
 		Pitch_Torquer_ON,												/* offset =    58 */
 		Yaw_Torquer_ON,													/* offset =    59 */
-		Roll_Torquer_OFF,												/* offset =    60 */
+		TC_MTR_OFF,										        		/* offset =    60 */
 		Pitch_Torquer_OFF,												/* offset =    61 */
 		Yaw_Torquer_OFF,												/* offset =    62 */
 		rTC_Detumbling_ModePreprocessing_BDOT,							/* offset =    63 */
@@ -116,10 +116,10 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 		ss_main_db_checksum,											/* offset =    91 */
 		ss_redundant_db_checksum,										/* offset =    92 */
 		TC_Qinit,														/* offset =    93 */
-		TC_Ping_RW1,													/* offset =    94 */
-		TC_Ping_RW2,													/* offset =    95 */
-		TC_Ping_RW3,													/* offset =    96 */
-		TC_Ping_RW4,													/* offset =    97 */
+		TC_init_RW1,													/* offset =    94 */
+		TC_init_RW2,													/* offset =    95 */
+		TC_init_RW3,													/* offset =    96 */
+		TC_init_RW4,													/* offset =    97 */
 		TC_MTR_Roll_Positive,											/* offset =    98 */
 		TC_MTR_Roll_Negative,											/* offset =    99 */
 		TC_MTR_Pitch_Positive,											/* offset =    100*/
@@ -1455,12 +1455,12 @@ void TC_GPS1_OFF()
 	//rHAL_GPS_POWER(GPS_1,OFF);
 	return;
 }
-void TC_GPS1_NMEA_ZDA_enable()
+void TC_GPS1_NMEA_VTG_enable()
 {
 	rHAL_GPS_Config(GPS1,NMEA_VTG_Enable);
 	return;
 }
-void TC_GPS1_NMEA_ZDA_disable()
+void TC_GPS1_NMEA_VTG_disable()
 {
 	rHAL_GPS_Config(GPS1,NMEA_VTG_Disable);
 	return;
@@ -1475,12 +1475,12 @@ void TC_GPS1_NMEA_GGA_disable()
 	rHAL_GPS_Config(GPS1,NMEA_GGA_Disable);
 	return;
 }
-void TC_GPS1_NMEA_RMC_enable()
+void TC_GPS1_NMEA_GSA_enable()
 {
 	rHAL_GPS_Config(GPS1,NMEA_GSA_Enable);
 	return;
 }
-void TC_GPS1_NMEA_RMC_disable()
+void TC_GPS1_NMEA_GSA_disable()
 {
 	rHAL_GPS_Config(GPS1,NMEA_GSA_Disable);
 	return;
@@ -1511,12 +1511,12 @@ void TC_GPS2_off()
 	//rHAL_GPS_POWER(GPS_2,OFF);
 	return;
 }
-void TC_GPS2_NMEA_ZDA_enable()
+void TC_GPS2_NMEA_VTG_enable()
 {
 	rHAL_GPS_Config(GPS2,NMEA_VTG_Enable);
 	return;
 }
-void TC_GPS2_NMEA_ZDA_disable()
+void TC_GPS2_NMEA_VTG_disable()
 {
 	rHAL_GPS_Config(GPS2,NMEA_VTG_Disable);
 	return;
@@ -1531,12 +1531,12 @@ void TC_GPS2_NMEA_GGA_disable()
 	rHAL_GPS_Config(GPS2,NMEA_GGA_Disable);
 	return;
 }
-void TC_GPS2_NMEA_RMC_enable()
+void TC_GPS2_NMEA_GSA_enable()
 {
 	rHAL_GPS_Config(GPS2,NMEA_GSA_Enable);
 	return;
 }
-void TC_GPS2_NMEA_RMC_disable()
+void TC_GPS2_NMEA_GSA_disable()
 {
 	rHAL_GPS_Config(GPS2,NMEA_GSA_Disable);
 	return;
@@ -1603,7 +1603,7 @@ void TC_Nominal_wheel_speed_execute()
 {
 	//to be done
 }
-void Roll_Torquer_ON()
+void TC_MTR_ON()
 {
 	rHAL_MTR_ON();
 	return;
@@ -1616,7 +1616,7 @@ void Yaw_Torquer_ON()
 {
 	//
 }
-void Roll_Torquer_OFF()
+void TC_MTR_OFF()
 {
 	rHAL_MTR_OFF();
 	return;
@@ -1754,9 +1754,6 @@ void RX_TX_deployed()
 void PL_K_CMD_STS()
 {
 	rHAL_pl_sts_check();
-//		REG32(0x20007000) = 0x0000FFFF;
-//		REG32(PAYLOAD_BUFFER_ADDRESS) = 0x00005355;
-//		REG32(PAYLOAD_STATUS_ADDRESS) = 0x00001201;
 }
 void PL_K_CMD_ACQ()
 {
@@ -1764,8 +1761,6 @@ void PL_K_CMD_ACQ()
 }
 void PL_K_CMD_HLT()
 {
-	//rHAL_pl_cmd_hlt();
-
 	REG32(PAYLOAD_CONFIG_REGISTER) = 0x00004855;
 	/*****************************************************/
 	/* No of Configure Bytes (15:7) : 2 bytes
@@ -1813,28 +1808,29 @@ void TC_Qinit()
 	return;
 }
 
-void TC_Ping_RW1()
+void TC_init_RW1()
 {
 	RW_Init();
-	rRW_Ping_TC1();
+	rRW_init_cmd(RW_1, 0);
+
 }
 
-void TC_Ping_RW2()
+void TC_init_RW2()
 {
 	RW_Init();
-	rRW_Ping_TC2();
+	rRW_init_cmd(RW_2, 1);
 }
 
-void TC_Ping_RW3()
+void TC_init_RW3()
 {
 	RW_Init();
-	rRW_Ping_TC3();
+	rRW_init_cmd(RW_3, 2);
 }
 
-void TC_Ping_RW4()
+void TC_init_RW4()
 {
 	RW_Init();
-	rRW_Ping_TC4();
+	rRW_init_cmd(RW_4, 3);
 }
 void TC_MTR_Yaw_Positive()
 {

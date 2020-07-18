@@ -293,6 +293,15 @@ union heaters_auto_manual
 		};
 }heaters;
 
+struct HAL_RW_Data_Structure
+{
+	unsigned long int RW_Configure_Register;
+	unsigned long int RW_Status_Register_1;
+	unsigned long int RW_Status_Register_2;
+	unsigned long int RW_Buffer_Register;
+};
+
+
 //payload union
 union PL_DATA_STORAGE
 {

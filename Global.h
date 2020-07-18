@@ -335,10 +335,10 @@ extern void RW_Init(void);
 extern void rRW_Data_Write();
 extern void rRW_Data_Request();
 extern void rRW_Data_Read();
-extern void rRW_Ping_TC1();
-extern void rRW_Ping_TC2();
-extern void rRW_Ping_TC3();
-extern void rRW_Ping_TC4();
+
+extern struct HAL_RW_Data_Structure RW_1,RW_2,RW_3,RW_4;
+
+extern void rRW_init_cmd(struct HAL_RW_Data_Structure RW_No, unsigned char RW_ID);
 
 //NMI
 extern unsigned char NMI_fail_count;
