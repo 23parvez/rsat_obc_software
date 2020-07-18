@@ -504,7 +504,7 @@ void Antenna_mechanism_ON();
 void Antenna_mechanism_OFF();
 void payload_2_on();
 void payload_2_off();
-void EEPROM_CHECK_COMMAND();
+void S_band_tx_on();
 void S_band_tx_off();
 void X_band_tx_on();
 void X_band_tx_off();

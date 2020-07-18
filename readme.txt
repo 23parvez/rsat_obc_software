@@ -33,5 +33,7 @@ Func execute command
 5. rRW_init_cmd is called in Telecommand.c instead of Function rRW_Ping_TC1,
    rRW_Ping_TC2, rRW_Ping_TC3, and rRW_Ping_TC4 which are now eliminated.
 
+6. Func exe EEPROM_CHECK_COMMAND  is replaced by S_band_tx_on
+
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

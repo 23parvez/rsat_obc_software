@@ -133,7 +133,7 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 		Antenna_mechanism_OFF,											/* offset =    108*/
 		payload_2_on,													/* offset =    109*/
 		payload_2_off,													/* offset =    110*/
-		EEPROM_CHECK_COMMAND,											/* offset =    111*/
+		S_band_tx_on,													/* offset =    111*/
 		S_band_tx_off,													/* offset =    112*/
 		X_band_tx_on,													/* offset =    113*/
 		X_band_tx_off,													/* offset =    114*/
@@ -1893,7 +1893,7 @@ void payload_2_off()
 	rHAL_pl2_OFF();
 	return;
 }
-void EEPROM_CHECK_COMMAND()
+void S_band_tx_on()
 {
 	Out_latch_6.RF_Tx_ON_OFF = 1;
 	IO_LATCH_REGISTER_6 = Out_latch_6.data;
