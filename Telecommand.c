@@ -1170,15 +1170,15 @@ void TMTC_Assignment()
 	TMTC_boolean_u.Boolean_Table.TC_ST_mode                                    = TC_boolean_u.TC_Boolean_Table.TC_ST_mode;
 	TMTC_boolean_u.Boolean_Table.TC_NormalStorage_Sampling_Rate_Select         = TC_boolean_u.TC_Boolean_Table.TC_NormalStorage_Sampling_Rate_Select;
 	TMTC_boolean_u.Boolean_Table.pl_tx_tm_flag                                 = TC_boolean_u.TC_Boolean_Table.pl_tx_tm_flag;
-	TMTC_boolean_u.Boolean_Table.Storage_TM_dumping                            = TC_boolean_u.TC_Boolean_Table.Storage_TM_dumping;
-	TMTC_boolean_u.Boolean_Table.tc_mode                                       = TC_boolean_u.TC_Boolean_Table.tc_mode;
+	TMTC_boolean_u.Boolean_Table.TC_Storage_TM_Dump_enable_disable             = TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Dump_enable_disable;
+	TMTC_boolean_u.Boolean_Table.TC_Storage_TM_Special_Normal_Mode_select      = TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Special_Normal_Mode_select;
 	TMTC_boolean_u.Boolean_Table.RW_Speed_Negative                             = TC_boolean_u.TC_Boolean_Table.RW_Speed_Negative;
-	TMTC_boolean_u.Boolean_Table.storage_dump_mode                             = TC_boolean_u.TC_Boolean_Table.storage_dump_mode;
-	TMTC_boolean_u.Boolean_Table.TC_dumping                                    = TC_boolean_u.TC_Boolean_Table.TC_dumping;
+	TMTC_boolean_u.Boolean_Table.TC_Storage_TM_Full_Segment_Dump_mode_Select   = TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Full_Segment_Dump_mode_Select;
+	TMTC_boolean_u.Boolean_Table.TC_TCH__Storage_TM_Dump_select                = TC_boolean_u.TC_Boolean_Table.TC_TCH__Storage_TM_Dump_select;
 	TMTC_boolean_u.Boolean_Table.TC_sram_scrub_enable_disable                  = TC_boolean_u.TC_Boolean_Table.TC_sram_scrub_enable_disable;
 	TMTC_boolean_u.Boolean_Table.NMI_test_enable                               = TC_boolean_u.TC_Boolean_Table.NMI_test_enable;
 	TMTC_boolean_u.Boolean_Table.ST_dump_abort                                 = TC_boolean_u.TC_Boolean_Table.ST_dump_abort;
-	TMTC_boolean_u.Boolean_Table.TCH_dump_mode                                 = TC_boolean_u.TC_Boolean_Table.TCH_dump_mode;
+	TMTC_boolean_u.Boolean_Table.TC_TCH_Full_Segment_Dump_mode                 = TC_boolean_u.TC_Boolean_Table.TC_TCH_Full_Segment_Dump_mode;
 
 	//Gain Select command TMTC Assignment
 	TMTC_gain_select_u.gain_select_Table.TC_detumbling_bdot_gain               = TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain;

@@ -17,7 +17,7 @@ unsigned int flag_for_test;
 void rTM_Real_st_write()
 {
 
-	if (TC_boolean_u.TC_Boolean_Table.Storage_TM_dumping)      // Enable storage_TM_dumping
+	if (TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Dump_enable_disable)      // Enable storage_TM_dumping
 	{
 
 		if ((TM.Buffer.Sub_Frame == 1) && (real_tm_wait))
@@ -32,14 +32,14 @@ void rTM_Real_st_write()
 
 		if (real_tm_finish)
 		{
-			if(TC_boolean_u.TC_Boolean_Table.TC_dumping)
+			if(TC_boolean_u.TC_Boolean_Table.TC_TCH__Storage_TM_Dump_select)
 			{
 
 				TC_Hist_dumping();
 			}
 			else
 			{
-				if(TC_boolean_u.TC_Boolean_Table.storage_dump_mode)
+				if(TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Full_Segment_Dump_mode_Select)
 				{
 					ST_full_dump();
 				}
@@ -1786,7 +1786,7 @@ int Sampling_Rate_Select(  )
 	unsigned int normal_sampling;
 	unsigned int special_sampling;
 
-	mode             = TC_boolean_u.TC_Boolean_Table.tc_mode;
+	mode             = TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Special_Normal_Mode_select;
 	normal_sampling  = TC_boolean_u.TC_Boolean_Table.TC_NormalStorage_Sampling_Rate_Select;
 	special_sampling = TC_gain_select_u.TC_gain_select_Table.TC_special_Sampling_rate_Select;
 
@@ -1822,7 +1822,7 @@ int Frame_Address_Select ( )
 	unsigned int ST_Format_Selection;
 	unsigned int frame_addr;
 
-	mode = TC_boolean_u.TC_Boolean_Table.tc_mode;
+	mode = TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Special_Normal_Mode_select;
 	ST_Format_Selection = TC_gain_select_u.TC_gain_select_Table.TC_ST_Format_Selection;
 
 	if( mode == 1 )                                                    // normal storage
@@ -1888,7 +1888,7 @@ void ST_Copy_Subframe(int frame_addr,unsigned int Sampling_Rate )
 
 	// Special storage enable
 
-	if(TC_boolean_u.TC_Boolean_Table.tc_mode == TRUE)
+	if(TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Special_Normal_Mode_select == TRUE)
 	{
 		static int interval_cnt = 1;                         // initializing the interval variable
 		if ( interval_cnt >= Sampling_Rate )                 // if interval exceeds sampling rate
@@ -2133,11 +2133,11 @@ void TC_Hist_dumping()
 
 				if (TC_boolean_u.TC_Boolean_Table.ST_dump_abort)
 				{
-					TC_boolean_u.TC_Boolean_Table.Storage_TM_dumping = 0;
+					TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Dump_enable_disable = 0;
 					TC_boolean_u.TC_Boolean_Table.ST_dump_abort = 0;
 					real_tm_finish = 0;
 					real_tm_wait = 1;
-					if(TC_boolean_u.TC_Boolean_Table.TCH_dump_mode)            // TCH full_dump
+					if(TC_boolean_u.TC_Boolean_Table.TC_TCH_Full_Segment_Dump_mode)            // TCH full_dump
 					{
 						TCH_read_full_ptr = &TC_hist_data[0];
 					}
@@ -2145,7 +2145,7 @@ void TC_Hist_dumping()
 				if (TCH_dump_finish == 1)
 				{
 					TCH_dump_finish = 0;
-					TC_boolean_u.TC_Boolean_Table.Storage_TM_dumping = 0;
+					TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Dump_enable_disable = 0;
 					real_tm_finish = 0;
 					real_tm_wait = 1;
 				}
@@ -2156,13 +2156,13 @@ void TC_Hist_dumping()
 
 					// pointer re-initialization after full_dump
 					TCH_read_full_ptr = TC_hist_write_ptr;
-					TC_boolean_u.TC_Boolean_Table.Storage_TM_dumping = 0;
+					TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Dump_enable_disable = 0;
 					real_tm_finish = 0;
 					real_tm_wait = 1;
 				}
 				else
 				{
-					if(TC_boolean_u.TC_Boolean_Table.TCH_dump_mode)            // TCH full_dump
+					if(TC_boolean_u.TC_Boolean_Table.TC_TCH_Full_Segment_Dump_mode)            // TCH full_dump
 						rTCH_full_dump_cpy_buf();
 					else
 						rTCH_dump_cpy_buf();
@@ -2177,7 +2177,7 @@ void TC_Hist_dumping()
 
 			if (rt_tm_frame_finish && !(TCH_start_buffer_ready))
 			{
-				if(TC_boolean_u.TC_Boolean_Table.TCH_dump_mode)            // TCH full_dump
+				if(TC_boolean_u.TC_Boolean_Table.TC_TCH_Full_Segment_Dump_mode)            // TCH full_dump
 					rTCH_full_dump_cpy_buf();
 				else
 					rTCH_dump_cpy_buf();
@@ -2784,7 +2784,7 @@ void ST_DUMPING()
 
 								if (TC_boolean_u.TC_Boolean_Table.ST_dump_abort)
 								{
-									TC_boolean_u.TC_Boolean_Table.Storage_TM_dumping = 0;
+									TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Dump_enable_disable = 0;
 									TC_boolean_u.TC_Boolean_Table.ST_dump_abort = 0;
 									real_tm_finish = 0;
 									real_tm_wait = 1;
@@ -2802,7 +2802,7 @@ void ST_DUMPING()
 			}
 			else
 			{
-				 TC_boolean_u.TC_Boolean_Table.Storage_TM_dumping = 0;
+				 TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Dump_enable_disable = 0;
 				 real_tm_finish = 0;
 				 real_tm_wait = 1;
 			}
@@ -2860,7 +2860,7 @@ void ST_full_dump()
 						{
 							 storage_page_count = 0;
 							 inter_TM_ST_NS_Write_Source_Addr = (unsigned short*)Storage;
-							 TC_boolean_u.TC_Boolean_Table.Storage_TM_dumping = 0;
+							 TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Dump_enable_disable = 0;
 							 real_tm_finish = 0;
 							 real_tm_wait = 1;
 						}
@@ -2868,7 +2868,7 @@ void ST_full_dump()
 						if (TC_boolean_u.TC_Boolean_Table.ST_dump_abort)
 						{
 							inter_TM_ST_NS_Write_Source_Addr = (unsigned short*)Storage;
-							TC_boolean_u.TC_Boolean_Table.Storage_TM_dumping = 0;
+							TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Dump_enable_disable = 0;
 							TC_boolean_u.TC_Boolean_Table.ST_dump_abort = 0;
 							real_tm_finish = 0;
 							real_tm_wait = 1;

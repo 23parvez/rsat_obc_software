@@ -65,16 +65,20 @@ unsigned int Remote_data_addr;
 			uint8 TC_ST_mode;                                                     /* offset =   51  */
 			uint8 TC_NormalStorage_Sampling_Rate_Select;                          /* offset =   52  */
 			uint8 pl_tx_tm_flag;                                                  /* offset =   53  */
-			uint8 Storage_TM_dumping;                                             /* offset =   54  */
-			uint8 tc_mode;                                                        /* offset =   55  */
+			//uint8 Storage_TM_dumping;                                           /* offset =   54  */
+			uint8 TC_Storage_TM_Dump_enable_disable;							  /* offset =   54  */
+			//uint8 tc_mode;                                                      /* offset =   55  */
+			uint8 TC_Storage_TM_Special_Normal_Mode_select;						  /* offset =   55  */
 			uint8 RW_Speed_Negative;                                              /* offset =   56  */
-			uint8 storage_dump_mode;                                              /* offset =   57  */
-			uint8 TC_dumping;                                                     /* offset =   58  */
+			//uint8 storage_dump_mode;                                            /* offset =   57  */
+			uint8 TC_Storage_TM_Full_Segment_Dump_mode_Select;					  /* offset =   57  */
+			//uint8 TC_dumping;                                                   /* offset =   58  */
+			uint8 TC_TCH__Storage_TM_Dump_select;      							  /* offset =   58  */
 			uint8 TC_sram_scrub_enable_disable;                                   /* offset =   59  */
 			uint8 NMI_test_enable;                                                /* offset =   60  */
 			uint8 ST_dump_abort;												  /* offset =   61  */
-			uint8 TCH_dump_mode;                                                  /* offset =   62  */
-
+			//uint8 TCH_dump_mode;                                                /* offset =   62  */
+			uint8 TC_TCH_Full_Segment_Dump_mode;   								  /* offset =   62  */
 	    };
 
 #define TC_BOOLEAN_MAX_LIMIT 63
@@ -143,15 +147,20 @@ unsigned int Remote_data_addr;
 			uint8 TC_ST_mode                                      :1;
 			uint8 TC_NormalStorage_Sampling_Rate_Select           :1;
 			uint8 pl_tx_tm_flag                                   :1;
-			uint8 Storage_TM_dumping                              :1;
-			uint8 tc_mode                                         :1;
+			//uint8 Storage_TM_dumping                            :1;
+			uint8 TC_Storage_TM_Dump_enable_disable               :1;
+			//uint8 tc_mode                                       :1;
+			uint8 TC_Storage_TM_Special_Normal_Mode_select 	 	  :1;
 			uint8 RW_Speed_Negative                               :1;
-			uint8 storage_dump_mode                               :1;
-			uint8 TC_dumping                                      :1;
+			//uint8 storage_dump_mode                             :1;
+			uint8 TC_Storage_TM_Full_Segment_Dump_mode_Select     :1;
+			//uint8 TC_dumping                                    :1;
+			uint8 TC_TCH__Storage_TM_Dump_select                  :1;
 			uint8 TC_sram_scrub_enable_disable                    :1;
 			uint8 NMI_test_enable                                 :1;
 			uint8 ST_dump_abort                                   :1;
-			uint8 TCH_dump_mode                                   :1;
+			//uint8 TCH_dump_mode                                 :1;
+			uint8 TC_TCH_Full_Segment_Dump_mode                   :1;
 	    };
 
 	union TMTC_boolean_U

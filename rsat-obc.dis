@@ -16879,7 +16879,7 @@ Disassembly of section .text:
 40010564:	81 c3 e0 08 	retl 
 40010568:	01 00 00 00 	nop 
 
-4001056c <EEPROM_CHECK_COMMAND>:
+4001056c <S_band_tx_on>:
 4001056c:	05 10 01 82 	sethi  %hi(0x40060800), %g2
 40010570:	86 10 a2 28 	or  %g2, 0x228, %g3	! 40060a28 <Out_latch_6>
 40010574:	c4 08 a2 28 	ldub  [ %g2 + 0x228 ], %g2
