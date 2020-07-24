@@ -156,15 +156,17 @@ Func execute command
 	    in file: Telemetry.c, function name: ST_Copy_Subframe
 
 	aa) for loop index i name changed to buf256_index
-	    in file: Telemetry.c, function name: rTCH_dump_cpy_buf and rTCH_full_dump_cpy_buf
+	    in file: Telemetry.c, function name: rTCH_dump_cpy_buf 
+	    and rTCH_full_dump_cpy_buf
 	
 	ab) for loop index j name changed to TCH_cpy_index
-	    in file: Telemetry.c, function name: rTCH_dump_cpy_buf and rTCH_full_dump_cpy_buf
+	    in file: Telemetry.c, function name: rTCH_dump_cpy_buf 
+	    and rTCH_full_dump_cpy_buf
 
 	ac) for loop index k name changed to Storage_buf_index
 	    in file: Telemetry.c, function name: copy_frame
 	
-
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
  
