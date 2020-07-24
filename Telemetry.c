@@ -2087,7 +2087,7 @@ void rTCH_dump_cpy_buf()
 		else
 		{
 			TCH_dump_finish = 1;
-			for(int TCH_cpy_index = 0; TCH_cpy_index < 4; TCH_cpy_index++)
+			for(TCH_cpy_index = 0; TCH_cpy_index < 4; TCH_cpy_index++)
 			{
 				TC_storing_buffer[buf256_index++] = 0;
 			}
