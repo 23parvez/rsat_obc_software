@@ -13,6 +13,7 @@
 //#include "HAL_Heater.h"
 
 
+
 extern unsigned char NSP_addr_table[4];
 BlkExe_Stat BlkExe_Status = BLK_Disabled;
 
@@ -687,11 +688,13 @@ void rRemote_base_addr_TC()
 	TM.Buffer.TM_Remote_Addr_SF0 	= Remote_minotoring_addr;
 }
 
+
+/******** Testing is pending for this sub routine ******/
 //unsigned int test_remte[256];
 //unsigned int count_remote;
 void rRemote_data_view()
 {
-	unsigned int i;
+	unsigned int remote_monitor_index = 0;
 	unsigned int remote_blk_select;
 	/*unsigned int* remote_ptr;
 	if(RAM_SEG_START_ADDR< Remote_data_addr > RAM_SEG_END_ADDR)
@@ -711,9 +714,9 @@ void rRemote_data_view()
 	{
 		Remote_minotoring_addr = Remote_data_addr;
 
-		for(i = 0; i <= 255; i++)
+		for(remote_monitor_index = 0; remote_monitor_index <= 255; remote_monitor_index++)
 		{
-		  TM.Buffer.TM_Remote_Data_SF0[i] 	= REG32(Remote_minotoring_addr);
+		  TM.Buffer.TM_Remote_Data_SF0[remote_monitor_index] 	= REG32(Remote_minotoring_addr);
 		  Remote_minotoring_addr +=4;
 		}
 
@@ -821,10 +824,10 @@ uint32 DTTCtime_reference;
 
 void initNodetable()
 {
-   int32 i;
-   for (i = 0; i < MAX_TIMETAG_CMD_LIMIT; i++)
+   int32 attc_node_index;
+   for (attc_node_index = 0; attc_node_index < MAX_TIMETAG_CMD_LIMIT; attc_node_index++)
      {
-       Nodeptr[i] = & Nodearray[i];
+       Nodeptr[attc_node_index] = & Nodearray[attc_node_index];
      }
 
    tos = 0;
@@ -1246,11 +1249,11 @@ void TMTC_Assignment()
 }
 void invertReverse(unsigned char * startAddr)
 {
-	int j;
-	unsigned char temp;
-	for (j=0; j <=6; j++)
+	int invert_index;
+	//unsigned char temp;
+	for (invert_index = 0; invert_index <=6; invert_index++)
     {
-	   startAddr[j] = startAddr[j] ^ 0x01;
+	   startAddr[invert_index] = startAddr[invert_index] ^ 0x01;
 	}
 /*	FPGA is reversing the parity & storing in Status register
 	for (j=0; j <=2; j++)
@@ -1272,8 +1275,8 @@ void BCHEncoder(unsigned long long int * TCAddr)
 	unsigned long long int randOutShift = 0;
 	unsigned long long int randOutShiftX = 0;
 	unsigned char randOutBit = 0;
-	char i = 0;
-	char j = 0;
+	char BCH_index = 0;
+	char BCH_index_1 = 0;
 
 	//compute randomized data
 	randOut = ((*TCAddr) ^ randSeq);
@@ -1281,7 +1284,7 @@ void BCHEncoder(unsigned long long int * TCAddr)
 	randOutShiftX = randOutShift & 0x8000000000000000;
 	randOutBit = (unsigned char) (randOutShiftX >> 63);
 
-	for (i = 0;i < 56; i++)
+	for (BCH_index = 0; BCH_index < 56; BCH_index++)
 	{
 		x[0] = xp[6]^randOutBit;
 		x[1] = xp[0];
@@ -1290,9 +1293,9 @@ void BCHEncoder(unsigned long long int * TCAddr)
 		x[4] = xp[3];
 		x[5] = xp[4];
 		x[6] = xp[5]^x[0];
-        for (j=0; j<=6; j++)
+        for (BCH_index_1 = 0; BCH_index_1 <= 6; BCH_index_1++)
 		{
-			xp[j] = x[j];
+			xp[BCH_index_1] = x[BCH_index_1];
 		}
 		randOutShift = randOutShift << 1;
 		randOutShiftX = randOutShift & 0x8000000000000000;

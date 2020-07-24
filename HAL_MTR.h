@@ -21,8 +21,6 @@ int Roll_Pol;
 int Pitch_Pol;
 int Yaw_Pol;
 unsigned int MTR_Reset_Flag = 0;
-unsigned int MTR_Axis;
-unsigned int MTR_Polarity;
 void rHAL_MTR_ON(void);
 void rHAL_MTR_OFF(void);
 void rHAL_MTR(void);

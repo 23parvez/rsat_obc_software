@@ -13,7 +13,7 @@ extern unsigned char NSP_addr_table[4];
 
 void rPOR_Init(void)
 {
-	int i;
+	unsigned char tm_nsp_addr_index;
 
 	ram_scrub_addr = 0x40042d70;
 	rTC_Suspended_ModePreprocessing();
@@ -433,9 +433,9 @@ void rPOR_Init(void)
 
 	GAIN_DATA_SET.TC_SpeedDump_TimeSelect_0_11 = 491.52;
 
-	 for(i= 0 ; i<RW_TM_MAX ; i++)
+	 for(tm_nsp_addr_index= 0 ; tm_nsp_addr_index < RW_TM_MAX ; tm_nsp_addr_index++)
 	 {
-	    TM.Buffer.TM_NSP_addr_table[i] = NSP_addr_table[i];
+	    TM.Buffer.TM_NSP_addr_table[tm_nsp_addr_index] = NSP_addr_table[tm_nsp_addr_index];
 	 }
 
 	 // Battery safe mode default voltage Value

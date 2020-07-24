@@ -113,7 +113,7 @@ void rHAL_TM_HW_Status_Update(void)
 	//Hardware Status Update
 	//IMU,RW,TC,TM,GPS,EPS
 
-	int i;
+	int HW_sts_update_index;
 
 	//OBT Update
 	TM.Buffer.OBT = Major_Cycle_Count;
@@ -126,22 +126,15 @@ void rHAL_TM_HW_Status_Update(void)
 
 	ST_normal.ST_NM_Buffer.TC_rcvd_cntr2 = TC_count;
 
-
-
-
-	for(i= 0 ; i<RW_TM_MAX ; i++)
+	for(HW_sts_update_index = 0 ; HW_sts_update_index < RW_TM_MAX ; HW_sts_update_index++)
 	{
-		TM.Buffer.TM_NSP_addr_table[i] = NSP_addr_table[i];
+		TM.Buffer.TM_NSP_addr_table[HW_sts_update_index] = NSP_addr_table[HW_sts_update_index];
 	}
 
 	//FDI_NMI_Count Update
 	TM.Buffer.TM_FDI_NMI_Count = FDI_NMI_Count;
 }
 
-void Update_TM_With_TMTC()
-{
-    //Update TMTC to TM GBL Buffer
-}
 
 void rTM_Address_Table_Init()
 {
@@ -1752,7 +1745,7 @@ void rTM_Copy_Subframe()
 
 }
 
- // Storage_telemetry
+// Storage_telemetry
 
 void Storage_Telemetry_Write()
 {
@@ -1880,6 +1873,8 @@ void ST_Copy_Subframe(int frame_addr,unsigned int Sampling_Rate )
 	unsigned char* Normal_ST_Source_Addr;
 	unsigned char* Special_ST_Source_Addr;
 
+	unsigned int subframe_copy_index = 0;
+
 	Normal_ST_Table_Addr    = Norm_ST_Table + frame_addr;
 	Special_ST_Table_Addr   = Spec_ST_Table + frame_addr;
 
@@ -1896,7 +1891,9 @@ void ST_Copy_Subframe(int frame_addr,unsigned int Sampling_Rate )
 			interval_cnt = 0;
 			while(Special_ST_Source_Addr != NULL)
 			{
-				for(long int j=0; j<=(Special_ST_Table_Addr->Length_Field -1); j++)
+				for(subframe_copy_index = 0;
+					subframe_copy_index <=(Special_ST_Table_Addr->Length_Field -1);
+					subframe_copy_index++)
 				{
 					repeat_count++;
 					*ST_Dest_Addr++ = *Special_ST_Source_Addr++;   				        //fetching data from source and storing in destination
@@ -1915,16 +1912,18 @@ void ST_Copy_Subframe(int frame_addr,unsigned int Sampling_Rate )
 				ST_Dest_Addr = ST_source_Buffer;                                     //Initializing Destination pointer
 			}
 
-			if(ST_special.ST_SP_Buffer.Sub_Frame == 2)
+			if (ST_special.ST_SP_Buffer.Sub_Frame == 2)
 			{
 				frame_addr = Special_st_table_page3;
 				ST_special.ST_SP_Buffer.Sub_Frame = 3;
 				Special_ST_Table_Addr   = Spec_ST_Table + frame_addr;
 				Special_ST_Source_Addr  = Special_ST_Table_Addr->Addr_Field;                     //Initializing Source pointer
 
-				while(Special_ST_Source_Addr != NULL)
+				while (Special_ST_Source_Addr != NULL)
 				{
-					for(long int j=0; j<=(Special_ST_Table_Addr->Length_Field -1); j++)
+					for (subframe_copy_index = 0;
+						subframe_copy_index <= (Special_ST_Table_Addr->Length_Field -1);
+						subframe_copy_index++)
 					{
 						repeat_count++;
 						*ST_Dest_Addr++ = *Special_ST_Source_Addr++;   				        //fetching data from source and storing in destination
@@ -1937,7 +1936,7 @@ void ST_Copy_Subframe(int frame_addr,unsigned int Sampling_Rate )
 				}
 				frame_addr = Special_st_table_page2;
 				ST_special.ST_SP_Buffer.Sub_Frame = 2;
-				if(repeat_count >= 255)
+				if (repeat_count >= 255)
 				{
 					repeat_count = 0;
 					ST_frame_count++;
@@ -1961,9 +1960,11 @@ void ST_Copy_Subframe(int frame_addr,unsigned int Sampling_Rate )
 		if ( interval_cnt >= Sampling_Rate )                 // if interval exceeds sampling rate
 		{
 			interval_cnt = 0;
-			while(Normal_ST_Source_Addr != NULL)
+			while (Normal_ST_Source_Addr != NULL)
 			{
-				for(long int j=0; j<=(Normal_ST_Table_Addr->Length_Field -1); j++)
+				for (subframe_copy_index = 0;
+					 subframe_copy_index <= (Normal_ST_Table_Addr->Length_Field -1);
+					 subframe_copy_index++)
 				{
 					repeat_count++;
 					*ST_Dest_Addr++ = *Normal_ST_Source_Addr++;   				       //fetching data from source and storing in destination
@@ -1997,7 +1998,9 @@ void ST_Copy_Subframe(int frame_addr,unsigned int Sampling_Rate )
 void rTCH_full_dump_cpy_buf()
 {
 
-	int i;
+	unsigned int buf256_index;
+	unsigned int TCH_cpy_index;
+
 	count_tc_hist = 0;
 	//------------- TC_history related initialization---------------------------------
 	unsigned char* Tc_ST_Source_Addr;
@@ -2013,18 +2016,18 @@ void rTCH_full_dump_cpy_buf()
 	ST_TC_header_Buffer.OBT = Major_Cycle_Count;
 	ST_TC_header_Buffer.frame_count = ST_frame_count;
 
-	for(i = 0; i < 3;i++)
+	for(buf256_index = 0; buf256_index < 3; buf256_index++)
 	{
-		TC_storing_buffer[i] = ST_TC_header_Buffer.data[i];
+		TC_storing_buffer[buf256_index] = ST_TC_header_Buffer.data[buf256_index];
 	}
 
-	i = 3;
+	buf256_index = 3;
 	while (count_tc_hist < 15)
 	{
 		count_tc_hist++;
-		for(int j = 0;j < 4; j++)
+		for(TCH_cpy_index = 0;TCH_cpy_index < 4; TCH_cpy_index++)
 		{
-			TC_storing_buffer[i++] = REG32(TCH_read_full_ptr);
+			TC_storing_buffer[buf256_index++] = REG32(TCH_read_full_ptr);
 			TCH_read_full_ptr = TCH_read_full_ptr+4;
 
 		}
@@ -2041,7 +2044,8 @@ void rTCH_full_dump_cpy_buf()
 
 void rTCH_dump_cpy_buf()
 {
-	int i;
+	unsigned int buf256_index;
+	unsigned int TCH_cpy_index;
 	count_tc_hist = 0;
 	//------------- TC_history related initialization---------------------------------
 	unsigned char* Tc_ST_Source_Addr;
@@ -2057,22 +2061,22 @@ void rTCH_dump_cpy_buf()
 	ST_TC_header_Buffer.OBT = Major_Cycle_Count;
 	ST_TC_header_Buffer.frame_count = ST_frame_count;
 
-	for(i = 0; i < 3;i++)
+	for(buf256_index = 0; buf256_index < 3; buf256_index++)
 	{
-		TC_storing_buffer[i] = ST_TC_header_Buffer.data[i];
+		TC_storing_buffer[buf256_index] = ST_TC_header_Buffer.data[buf256_index];
 	}
 
-	i = 3;
+	buf256_index = 3;
 	while (count_tc_hist < 15)
 	{
 
 		if (TCH_read_ptr < TC_hist_write_ptr)
 		{
 
-			for(int j = 0;j < 4; j++)
+			for(TCH_cpy_index = 0; TCH_cpy_index < 4; TCH_cpy_index++)
 			{
-				TC_storing_buffer[i++] = REG32(TCH_read_ptr);
-				TCH_read_ptr = TCH_read_ptr+4;
+				TC_storing_buffer[buf256_index++] = REG32(TCH_read_ptr);
+				TCH_read_ptr = TCH_read_ptr + 4;
 
 				// TCH pointer dump
 				if(TCH_read_ptr >= &TC_hist_data[TC_HISTORY_MAX])
@@ -2083,9 +2087,9 @@ void rTCH_dump_cpy_buf()
 		else
 		{
 			TCH_dump_finish = 1;
-			for(int j = 0;j < 4; j++)
+			for(int TCH_cpy_index = 0; TCH_cpy_index < 4; TCH_cpy_index++)
 			{
-				TC_storing_buffer[i++] = 0;
+				TC_storing_buffer[buf256_index++] = 0;
 			}
 		}
 		count_tc_hist++;
@@ -2197,12 +2201,13 @@ int copy_frame(  unsigned int Circular)
 	unsigned char* src_ptr; 		                            // Initializing a source pointer
 	unsigned char* dst_ptr; 								    // initializing a destination pointer
 	unsigned char* Source_end_addr;                             // initializing Source end address
+	unsigned int Storage_buf_index = 0;
 
 	src_ptr = ST_source_Buffer;
 
-	if(Circular == 1)
+	if (Circular == 1)
 	{
-		for( int k=0; k < ( sizeof( ST_source_Buffer )); k++ )
+		for (Storage_buf_index =0; Storage_buf_index < ( sizeof( ST_source_Buffer )); Storage_buf_index++ )
 		{
 			*write_str_ptr++ = *src_ptr++;	                            // copying values
 			if( write_str_ptr == Dest_end_addr )                            // if dst_ptr reaches the end of storage area
@@ -2211,11 +2216,11 @@ int copy_frame(  unsigned int Circular)
 			}
 		}
 	}
-	else if(Circular == 0)
+	else if (Circular == 0)
 	{
-		if(write_str_ptr != Dest_end_addr)
+		if (write_str_ptr != Dest_end_addr)
 		{
-			for( int k=0; k< ( sizeof( ST_source_Buffer )); k++ )
+			for (Storage_buf_index =0; Storage_buf_index < ( sizeof( ST_source_Buffer )); Storage_buf_index++ )
 			{
 				*write_str_ptr++ = *src_ptr++;	                            // copying values
 			}
@@ -2228,16 +2233,14 @@ int copy_frame(  unsigned int Circular)
 	return 0;
 }
 
-unsigned char test_st = 0xaa;
-unsigned char filler_byte1 = 0x00;
-unsigned char filler_byte2 = 0x00;
-unsigned char filler_byte3 = 0x00;
-unsigned char test_st_b = 0xbb;
-unsigned int count_plus;
+unsigned char filler_byte = 0x00;
 
- // Storage Telemetry frame table definition containing four normal storage frames
+// Storage Telemetry frame table definition containing four normal storage frames
 void Norm_ST_1_Table_Init()
 {
+	unsigned int frame_1_filler_index = 0;
+	unsigned int frame_2_filler_index = 0;
+	unsigned int frame_3_filler_index = 0;
 
 	//Subframe 0
 	Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)&ST_normal.ST_NM_Buffer.FrameSynch;                //Copy address of Frame sync
@@ -2440,15 +2443,15 @@ void Norm_ST_1_Table_Init()
 	Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 1;
 	Norm_ST_Table_Row_No++;
 
-	Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte1;
+	Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte;
 	Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 1;
 	Norm_ST_Table_Row_No++;
 
-	Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte2;
+	Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte;
 	Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 1;
 	Norm_ST_Table_Row_No++;
 
-	Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte3;
+	Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte;
 	Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 1;
 	Norm_ST_Table_Row_No++;
 
@@ -2470,10 +2473,10 @@ void Norm_ST_1_Table_Init()
 	Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 2;
 	Norm_ST_Table_Row_No++;
 
-	for(int i = 0;i<244;i++)
+	for(frame_1_filler_index = 0; frame_1_filler_index < 244; frame_1_filler_index++)
 	{
 
-		Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte1;
+		Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte;
 		Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 2;
 		Norm_ST_Table_Row_No++;
 	}
@@ -2494,10 +2497,10 @@ void Norm_ST_1_Table_Init()
 	Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 2;
 	Norm_ST_Table_Row_No++;
 
-	for(int i = 0;i<244;i++)
+	for(frame_2_filler_index = 0; frame_2_filler_index < 244; frame_2_filler_index++)
 	{
 
-		Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte1;
+		Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte;
 		Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 2;
 		Norm_ST_Table_Row_No++;
 	}
@@ -2517,10 +2520,10 @@ void Norm_ST_1_Table_Init()
 	Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 2;
 	Norm_ST_Table_Row_No++;
 
-	for(int i = 0;i<244;i++)
+	for(frame_3_filler_index = 0; frame_3_filler_index <244; frame_3_filler_index++)
 	{
 
-		Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte1;
+		Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte;
 		Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 2;
 		Norm_ST_Table_Row_No++;
 	}
@@ -2530,15 +2533,9 @@ void Norm_ST_1_Table_Init()
 	Norm_ST_Table_Row_No++;
 
 }
-void TC_ST_Table_init()
-{
-
-}
 
 unsigned char test_st_sp   = 0x00;
-unsigned char test_st_sp_b = 0xbb;
-unsigned int test_st_sp_c  = 0xcc;
-unsigned int test_st_sp_d  = 0xdd;
+
 void Spec_ST_Table_Init()
 {
 	// SUB FRAME 0
@@ -2735,9 +2732,6 @@ void Spec_ST_Table_Init()
 	Spec_ST_Table[Spec_ST_Table_Row_No].Addr_Field   = NULL;//End of Subframe_3
 	Spec_ST_Table[Spec_ST_Table_Row_No].Length_Field = 0;
 	Spec_ST_Table_Row_No++;
-
-
-	//Special_st_table_page3 = Spec_ST_Table_Row_No;
 
 }
 

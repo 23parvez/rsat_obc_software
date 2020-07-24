@@ -311,12 +311,11 @@ Nodetype Nodearray[MAX_TIMETAG_CMD_LIMIT];
 Nodeptrtype Nodeptr[MAX_TIMETAG_CMD_LIMIT];
 
 //-----------testing--------------
-ATTCformat new_data;
-Nodeptrtype new_node;			//Create new node to be used for storing the TC data to the list
-Nodeptrtype temp;
-Nodeptrtype prev;
+//ATTCformat new_data;
+//Nodeptrtype new_node;			//Create new node to be used for storing the TC data to the list
+//Nodeptrtype temp;
+//Nodeptrtype prev;
 int Top_index;
-uint16 RW_number;
 //-----------------------------------
 //----------------BCHEncoder-------------
 void invertReverse(unsigned char * startAddr);

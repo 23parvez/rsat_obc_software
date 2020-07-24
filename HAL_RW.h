@@ -186,7 +186,6 @@ unsigned char* Init_ptr;		//Pointer to structure of data frame
 unsigned char* Init_data_ptr;	//Pointer to union (contains data which can be accessed as short or char)
 /********************************************************/
 
-unsigned int inter_HAL_RW_Status_Register;
 unsigned int inter_HAL_RW_Read_Limit;
 unsigned int inter_HAL_RW_Read_Addr;
 unsigned short aa;

@@ -317,11 +317,7 @@ extern void ST_TM_gps_data();
 
 
 //MTR
-//#define MTR_Axis
-//#define MTR_Polarity
 extern unsigned int MTR_Reset_Flag;
-extern unsigned int MTR_Axis;
-extern unsigned int MTR_Polarity;
 extern unsigned long int MTR_Current_Data;
 void rHAL_MTR_TC(unsigned long int MTR_Axis,int MTR_Polarity);
 

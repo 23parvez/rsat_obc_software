@@ -134,14 +134,12 @@ unsigned short MUX_data1,MUX_data2,MUX_data3,MUX_data4,test_data_3;
 void MUX_Output()
 {
 	unsigned short tempdata1,tempdata2,tempdata3,tempdata4,tempdata5,tempdata6,tempdata7,tempdata8;
-	unsigned short MUX_count;
+	unsigned short MUX_index;
 
-	unsigned int i;
-
-	for(i = 0; i<8; i++)
+	for(MUX_index = 0; MUX_index < 8; MUX_index++)
 	{
 
-		switch(i)
+		switch(MUX_index)
 		{
 		case 0: Out_latch_5.SEL_2 = 0;
 				Out_latch_5.SEL_1 = 0;
@@ -383,12 +381,12 @@ eeprom_blk_end_addr  = eeprom_cur_addr + EEPROM_BLOCK_SIZE; */
 /****************************************/
 void prom_chksum(void)
 {
-	int i;
+	int eeprom_chksum_index;
 	if(eeprom_flag)
 	{
 		if(eeprom_cur_addr < EEPROM_END_ADDR)
 		{
-			for(i = 0; i < 64; i++)		// (256 bytes / 4 bytes at a time)
+			for(eeprom_chksum_index = 0; eeprom_chksum_index < 64; eeprom_chksum_index++)		// (256 bytes / 4 bytes at a time)
 			{
 				eeprom_chksum     += REG32(eeprom_cur_addr);
 				eeprom_cur_addr   += 4;

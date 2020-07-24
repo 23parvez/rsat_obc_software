@@ -940,7 +940,7 @@ unsigned long int gps_data_test[106];
 unsigned int gps_data_length;
 void ST_TM_gps_data()
 {
-	unsigned int i;
+	unsigned int gps_data_copy_index;
 	unsigned int tempdata;
 	unsigned char *GPS_TM_Buffer_Addr;
 	GPS_TM_Buffer_Addr = (unsigned char*)GPS_RCVD_DATA;
@@ -953,11 +953,9 @@ void ST_TM_gps_data()
 	{
 		gps_data_length = GPS2_STATUS_REGISTER2 & 0x000001FF;
 	}
-	for(i = 0; i <= gps_data_length; i++)
+	for(gps_data_copy_index = 0; gps_data_copy_index <= gps_data_length; gps_data_copy_index++)
 	{
-		//tempdata =  *gps_ptr;
-		ST_special.ST_SP_Buffer.ST_TM_GPS_RCVD_DATA[i] = *GPS_TM_Buffer_Addr++;
-		//gps_ptr++;
+		ST_special.ST_SP_Buffer.ST_TM_GPS_RCVD_DATA[gps_data_copy_index] = *GPS_TM_Buffer_Addr++;
 	}
 
 }

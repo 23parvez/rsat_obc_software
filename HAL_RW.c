@@ -65,7 +65,6 @@ void rHAL_RW_TC_Write(struct HAL_RW_Data_Structure RW_No,union  RW_TC_Command_u 
 
 	inter_RW_Status_Register_1 = (REG32(RW_No.RW_Status_Register_2) & 0x0000FFFF);
 
-//	if((inter_RW_Status_Register & 0x00000001) == 0x00000000)
 	if ((inter_RW_Status_Register_1 & RW_TX_BUF_BUSY))
 	{
 
@@ -116,7 +115,6 @@ void rHAL_RW_TM_Write(struct HAL_RW_Data_Structure RW_No,union RW_TM_Command_u R
 
 	inter_RW_Status_Register_1 = (REG32(RW_No.RW_Status_Register_2) & 0x0000FFFF);
 
-//	if((inter_RW_Status_Register & 0x00000001) == 0x00000000)
 	if ((inter_RW_Status_Register_1 & RW_TX_BUF_BUSY))
 	{
 
@@ -150,14 +148,11 @@ void rHAL_RW_TM_Write(struct HAL_RW_Data_Structure RW_No,union RW_TM_Command_u R
 }
 
 unsigned short rw_test_array[256];
-int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_TM, int wheel_index)
+int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_TM_data, int wheel_index)
 {
-
 
 	// returns TRUE on the successful availability of wheel_speed data
 	// returns FALSE on error condition
-
-
 
 	//Local Variables' declaration
 	int inter_HAL_RW_count;
@@ -194,7 +189,7 @@ int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_
 		}
 
 		RW_TM_Raw_Data_ptr = &RW_Buffer_u_rx.data_8bit[0];
-		RW_TM_ptr = &(RW_TM->Data[0]);
+		RW_TM_ptr = &(RW_TM_data->Data[0]);
 		RW_TM_ptr_init = RW_TM_ptr;//test
 		REG32(RW_No->RW_Status_Register_1) = (inter_HAL_RW_Status_Register & 0x00000000);
 
@@ -234,26 +229,26 @@ int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_
 			}
 		}
 
-		if(RW_TM->ACK == 1)
+		if(RW_TM_data->ACK == 1)
 		{
 
 			// ACK bit is high. Process the data
 
-			NOB_CRC_TMC = (((unsigned char*)&RW_TM->CRC) - (&RW_TM->Dest_Addr)) / sizeof(char);
-			crc_test = HAL_RW_CRC_Check(&RW_TM->Dest_Addr, NOB_CRC_TMC);		// Computation of CRC
+			NOB_CRC_TMC = (((unsigned char*)&RW_TM_data->CRC) - (&RW_TM_data->Dest_Addr)) / sizeof(char);
+			crc_test = HAL_RW_CRC_Check(&RW_TM_data->Dest_Addr, NOB_CRC_TMC);		// Computation of CRC
 			crc_test = byte_swap(crc_test);
-			if(crc_test == RW_TM->CRC)
+			if(crc_test == RW_TM_data->CRC)
 			{
 
 				// Checksum test passed..
 				// data is OK! Store it in Global wheel speed buffer
 
-				USIF_u.float_num = RW_TM->Data_Value;
+				USIF_u.float_num = RW_TM_data->Data_Value;
 				USIF_u.int_num = reverse_order(USIF_u.int_num);
-				RW_TM->Data_Value = USIF_u.float_num;
+				RW_TM_data->Data_Value = USIF_u.float_num;
 
 				wheel_speed_data_available  = TRUE;
-				RW_Wheel_Speed[wheel_index] = RW_TM->Data_Value;
+				RW_Wheel_Speed[wheel_index] = RW_TM_data->Data_Value;
 
 
 			}
