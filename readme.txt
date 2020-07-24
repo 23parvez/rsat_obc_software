@@ -42,3 +42,26 @@ Func execute command
 	++++++++++++++++++++++++++++++++
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 1. Storage telemetry command names are modified
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	++++++++++++++++++++++++++++++++
+	+ Changes made on 24 JULY 2020 +
+	++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+1. Removed Remote_block_select (unused) Data telecommand from data command list.
+2. Added TC_Mag_Misalignment_IMU1, TC_Mag_Misalignment_IMU2, 
+	TC_Mag_Scale_Factor_IMU1, TC_Mag_Scale_Factor_IMU2,
+	TC_SS_misalnCM1256, TC_SS_misalnCM2356,
+	TC_SS_misalnCM3456, TC_SS_misalnCM4156,
+	TC_SS_Imax_ALPHA offsets in rADCS_Data_TC function.
+3. Removed TC_Tle from the adcs data command list as it was decided to use
+   remote data command for TLE.
+4. Offset addresses in adcs data command structure and case statement in 
+   rADCS_Data_TC function are revised.
+5. Payload data commands data type is changed from float to integer.
+
+
+ 

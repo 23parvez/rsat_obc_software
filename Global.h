@@ -285,7 +285,7 @@ extern unsigned long long int block_test_array[50];  //to be removed
 
 
 #define TC_data_command_MAX_LIMIT 27
-#define ADCS_TC_data_command_MAX_LIMIT 50
+#define ADCS_TC_data_command_MAX_LIMIT 57
 #define TC_func_exe_MAX_LIMIT 150
 extern float Resol_Table[TC_data_command_MAX_LIMIT];
 extern float Resol_Table_Adcs[ADCS_TC_data_command_MAX_LIMIT];

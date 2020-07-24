@@ -276,18 +276,17 @@ unsigned int Remote_data_addr;
 
 
 			/***************** Added on 27 July 2019 *****************/
-			//unsigned long int TC_RW_NO;
+			//unsigned long int TC_RW_NO;												/*offset = 14*/
 
-			int TC_heaters_auto_manual;                                                 /*offset = 14*/
-			int TC_heaters_manual;                                                      /*offset = 15*/
-			float pl_data_command_1;                                                    /*offset = 16*/
-			float pl_data_command_2;                                                    /*offset = 17*/
-			float pl_data_command_3;                                                    /*offset = 18*/
-			float pl_data_command_4;                                                    /*offset = 19*/
-			float pl_data_command_5;                                                    /*offset = 20*/
-			float pl_data_command_6;                                                    /*offset = 21*/
-			int BLK_Number_selection;                                                   /*offset = 22*/
-			int Remote_blk_select;                                                      /*offset = 23*/
+			int TC_heaters_auto_manual;                                                 /*offset = 15*/
+			int TC_heaters_manual;                                                      /*offset = 16*/
+			int pl_data_command_1;                                                      /*offset = 17*/
+			int pl_data_command_2;                                                      /*offset = 18*/
+			int pl_data_command_3;                                                      /*offset = 19*/
+			int pl_data_command_4;                                                      /*offset = 20*/
+			int pl_data_command_5;                                                      /*offset = 21*/
+			int pl_data_command_6;                                                      /*offset = 22*/
+			int BLK_Number_selection;                                                   /*offset = 23*/
 			int TC_power_safe_LTP;                                                      /*offset = 24*/
 			int TC_power_safe_UTP;                                                      /*offset = 25*/
 			int TC_over_Heat;                                                           /*offset = 26*/
@@ -298,59 +297,58 @@ unsigned int Remote_data_addr;
 #pragma pack(1)
 	    struct ADCS_Data_TC
 	    {
-			float TC_Drift_Uplink_Compensation_IMU1[3];									/*offset = 0*/
-			float TC_Drift_Uplink_Compensation_IMU2[3];									/*offset = 1*/
-			float TC_MagBias_Uplink_Compensation_IMU1[3];							    /*offset = 2*/
-			float TC_MagBias_Uplink_Compensation_IMU2[3];								/*offset = 3*/
-			float TC_Mag_Misalignment_IMU1;												/*offset = 4*/
-			float TC_Mag_Misalignment_IMU2;												/*offset = 5*/
-			float TC_Mag_Scale_Factor_IMU1;												/*offset = 6*/
-			float TC_Mag_Scale_Factor_IMU2;												/*offset = 7*/
-			float TC_ACC_Ang_RESET;														/*offset = 8*/
-			float TC_SS_misalnCM1256;													/*offset = 9*/
-			float TC_SS_misalnCM2356;													/*offset = 10*/
-			float TC_SS_misalnCM3456;													/*offset = 11*/
-			float TC_SS_misalnCM4156;													/*offset = 12*/
-			float TC_SS_Imax_ALPHA;														/*offset = 13*/
-			float TC_eclipse_entrytime;													/*offset = 14*/
-			float TC_eclipse_exittime;													/*offset = 15*/
-			float TC_elapsed_orbitTimer;												/*offset = 16*/
-			float TC_Sunlit_detctn_timer;												/*offset = 17*/
-			float TC_Time_GPS2TLE;														/*offset = 18*/
-			float TC_GPS_OFFSET_UTC;													/*offset = 19*/
-			float TC_delUT1_ECEF2ECI;													/*offset = 20*/
-			float TC_delAT_ECEF2ECI;													/*offset = 21*/
-			float TC_xp_ECEF2ECI;														/*offset = 22*/
-			float TC_yp_ECEF2ECI;														/*offset = 23*/
-			float TC_JulianDay_at_OBT0;													/*offset = 24*/
-			float TC_OBT_Drift_Corr;													/*offset = 25*/
-			float TC_TLE;																/*offset = 26*/
-			float TC_JulianDate_at_OrbitalEpoch;										/*offset = 27*/
-			float TC_OBT_with_TLE_Update;												/*offset = 28*/
-			float TC_Wheel_Configuration_Index;											/*offset = 29*/
-			float TC_Det_Bprev_Count;													/*offset = 30*/
-			float TC_Det_BDOT_Compute_Count;											/*offset = 31*/
-			float TC_Det_GYRO_Compute_Count;											/*offset = 32*/
-			float TC_Rate_Chk_Safe2Det;													/*offset = 33*/
-			float TC_ECEF_stationlatitude;												/*offset = 34*/
-			float TC_ECEF_stationLongitude;												/*offset = 35*/
-			float TC_Error_dev_SunlitAD;												/*offset = 36*/
-			float TC_Error_dev_EclipseAD;												/*offset = 37*/
-			float TC_wAD_BODYmaxThRoll;													/*offset = 38*/
-			float TC_wAD_BODYmaxThPitch;												/*offset = 39*/
-			float TC_wAD_BODYmaxThYaw;													/*offset = 40*/
-			float TC_magMin_angle;														/*offset = 41*/
-			float TC_magMax_angle;														/*offset = 42*/
-			float TC_GYRO_Det_Max_Thresh;												/*offset = 43*/
-			float TC_PanelD_Status_Sel;                                                 /*offset = 44*/
-			float TC_wAD_BODYminThRoll;                                                 /*offset = 45*/
-			float TC_wAD_BODYminThPitch;                                                /*offset = 46*/
-			float TC_wAD_BODYminThYaw;                                                  /*offset = 47*/
-			float TC_wAD_updateTimeThresh;                                              /*offset = 48*/
-			float TC_wp_QDP;                                                            /*offset = 49*/
+			float TC_Drift_Uplink_Compensation_IMU1[3];									/*offset = 0 - 2*/
+			float TC_Drift_Uplink_Compensation_IMU2[3];									/*offset = 3 - 5*/
+			float TC_MagBias_Uplink_Compensation_IMU1[3];							    /*offset = 6 - 8*/
+			float TC_MagBias_Uplink_Compensation_IMU2[3];								/*offset = 9 - 11*/
+			float TC_Mag_Misalignment_IMU1;												/*offset = 12*/
+			float TC_Mag_Misalignment_IMU2;												/*offset = 13*/
+			float TC_Mag_Scale_Factor_IMU1;												/*offset = 14*/
+			float TC_Mag_Scale_Factor_IMU2;												/*offset = 15*/
+			float TC_ACC_Ang_RESET;														/*offset = 16*/
+			float TC_SS_misalnCM1256;													/*offset = 17*/
+			float TC_SS_misalnCM2356;													/*offset = 18*/
+			float TC_SS_misalnCM3456;													/*offset = 19*/
+			float TC_SS_misalnCM4156;													/*offset = 20*/
+			float TC_SS_Imax_ALPHA;														/*offset = 21*/
+			float TC_eclipse_entrytime;													/*offset = 22*/
+			float TC_eclipse_exittime;													/*offset = 23*/
+			float TC_elapsed_orbitTimer;												/*offset = 24*/
+			float TC_Sunlit_detctn_timer;												/*offset = 25*/
+			float TC_Time_GPS2TLE;														/*offset = 26*/
+			float TC_GPS_OFFSET_UTC;													/*offset = 27*/
+			float TC_delUT1_ECEF2ECI;													/*offset = 28*/
+			float TC_delAT_ECEF2ECI;													/*offset = 29*/
+			float TC_xp_ECEF2ECI;														/*offset = 30*/
+			float TC_yp_ECEF2ECI;														/*offset = 31*/
+			float TC_JulianDay_at_OBT0;													/*offset = 32*/
+			float TC_OBT_Drift_Corr;													/*offset = 33*/
+			float TC_JulianDate_at_OrbitalEpoch;										/*offset = 34*/
+			float TC_OBT_with_TLE_Update;												/*offset = 35*/
+			float TC_Wheel_Configuration_Index;											/*offset = 36*/
+			float TC_Det_Bprev_Count;													/*offset = 37*/
+			float TC_Det_BDOT_Compute_Count;											/*offset = 38*/
+			float TC_Det_GYRO_Compute_Count;											/*offset = 39*/
+			float TC_Rate_Chk_Safe2Det;													/*offset = 40*/
+			float TC_ECEF_stationlatitude;												/*offset = 41*/
+			float TC_ECEF_stationLongitude;												/*offset = 42*/
+			float TC_Error_dev_SunlitAD;												/*offset = 43*/
+			float TC_Error_dev_EclipseAD;												/*offset = 44*/
+			float TC_wAD_BODYmaxThRoll;													/*offset = 45*/
+			float TC_wAD_BODYmaxThPitch;												/*offset = 46*/
+			float TC_wAD_BODYmaxThYaw;													/*offset = 47*/
+			float TC_magMin_angle;														/*offset = 48*/
+			float TC_magMax_angle;														/*offset = 49*/
+			float TC_GYRO_Det_Max_Thresh;												/*offset = 50*/
+			float TC_PanelD_Status_Sel;                                                 /*offset = 51*/
+			float TC_wAD_BODYminThRoll;                                                 /*offset = 52*/
+			float TC_wAD_BODYminThPitch;                                                /*offset = 53*/
+			float TC_wAD_BODYminThYaw;                                                  /*offset = 54*/
+			float TC_wAD_updateTimeThresh;                                              /*offset = 55*/
+			float TC_wp_QDP;                                                            /*offset = 56*/
 
 	  	    }ADCS_TC_data_command_Table;
-#define ADCS_TC_data_command_MAX_LIMIT 50
+#define ADCS_TC_data_command_MAX_LIMIT 57
 //---------------------------Data command telemetry-------------------------------
 
 //TBD
