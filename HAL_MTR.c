@@ -147,8 +147,11 @@ void rHAL_MTR_OFF(void)
 
 //int CB_Torquer_Polarity_Check=1;
 void rHAL_MTR(void)
-{	MTR_Monitoring();
+{
 	short tempdata;
+
+	MTR_Monitoring();
+
 	if (CB_Torquer_Polarity_Check == 1)
 	{
 		tor_counter ++;
@@ -220,9 +223,9 @@ void rHAL_MTR(void)
 		}
 	if (CB_Torquer_Polarity_Check == 1)
 	{
-	if(tor_counter <= Ton[1])
+			if(tor_counter <= Ton[1])
 			{
-				if(TC_boolean_u.TC_Boolean_Table.Pitch_Torquer_Polarity_Reversal == 1)// 1 - high, 0 - low
+				if(TC_boolean_u.TC_Boolean_Table.Pitch_Torquer_Polarity_Reversal == 1)      // 1 - high, 0 - low
 				{
 					Pitch_Pol = -1 * DPM_Polarity[1];
 				}
@@ -230,7 +233,7 @@ void rHAL_MTR(void)
 				{
 					Pitch_Pol = DPM_Polarity[1];
 				}
-	//Pitch_Pol=1;
+					//Pitch_Pol=1;
 				switch(Pitch_Pol)		// PITCH
 				{
 					case Cur_Positive : Out_Latch_1.FP_CTRL_MTR3_P1 = 0;
@@ -281,73 +284,73 @@ void rHAL_MTR(void)
 				MTR_Reset_Flag = 1;
 			}
 	}
-			if (CB_Torquer_Polarity_Check == 1)
+		if (CB_Torquer_Polarity_Check == 1)
+		{
+		if(tor_counter <= Ton[2])
+		{
+			if(TC_boolean_u.TC_Boolean_Table.Yaw_Torquer_Polarity_Reversal == 1)// 1 - high, 0 - low
 			{
-			if(tor_counter <= Ton[2])
-			{
-				if(TC_boolean_u.TC_Boolean_Table.Yaw_Torquer_Polarity_Reversal == 1)// 1 - high, 0 - low
-				{
-					Yaw_Pol = -1 * DPM_Polarity[2];
-				}
-				else
-				{
-					Yaw_Pol = DPM_Polarity[2];
-				}
-				//Yaw_Pol=-1;
-				switch(Yaw_Pol)		//YAW
-				{
-				case Cur_Positive : Out_Latch_1.FP_CTRL_MTR1_P1 = 0;
-									Out_Latch_1.FP_CTRL_MTR1_N2 = 0;
-									Out_Latch_1.FP_CTRL_MTR1_P2 = 1;
-									Out_Latch_1.FP_CTRL_MTR1_N1 = 1;
-									MTR_LATCH_REGISTER = Out_Latch_1.data;
-									TM.Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
-									ST_normal.ST_NM_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
-									ST_special.ST_SP_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
-									break;
-
-				case Cur_Negative:  Out_Latch_1.FP_CTRL_MTR1_P1 = 1;
-									Out_Latch_1.FP_CTRL_MTR1_N2 = 1;
-									Out_Latch_1.FP_CTRL_MTR1_P2 = 0;
-									Out_Latch_1.FP_CTRL_MTR1_N1 = 0;
-									MTR_LATCH_REGISTER = Out_Latch_1.data;
-									TM.Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
-									ST_normal.ST_NM_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
-									ST_special.ST_SP_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
-									break;
-
-				 case No_Current  : Out_Latch_1.FP_CTRL_MTR1_P1 = 0;
-									Out_Latch_1.FP_CTRL_MTR1_N2 = 0;
-									Out_Latch_1.FP_CTRL_MTR1_P2 = 0;
-									Out_Latch_1.FP_CTRL_MTR1_N1 = 0;
-									MTR_LATCH_REGISTER = Out_Latch_1.data;
-									TM.Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
-									ST_normal.ST_NM_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
-									ST_special.ST_SP_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
-									MTR_Reset_Flag = 1;
-
-										break;
-
-					default			 :  break;
-
-				}
+				Yaw_Pol = -1 * DPM_Polarity[2];
 			}
 			else
 			{
-				Out_Latch_1.FP_CTRL_MTR1_P1 = 0;
-				Out_Latch_1.FP_CTRL_MTR1_N2 = 0;
-				Out_Latch_1.FP_CTRL_MTR1_P2 = 0;
-				Out_Latch_1.FP_CTRL_MTR1_N1 = 0;
-				MTR_LATCH_REGISTER = Out_Latch_1.data;
-				TM.Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
-				ST_normal.ST_NM_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
-				ST_special.ST_SP_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
-				MTR_Reset_Flag = 1;
+				Yaw_Pol = DPM_Polarity[2];
 			}
+			//Yaw_Pol=-1;
+			switch(Yaw_Pol)		//YAW
+			{
+			case Cur_Positive : Out_Latch_1.FP_CTRL_MTR1_P1 = 0;
+								Out_Latch_1.FP_CTRL_MTR1_N2 = 0;
+								Out_Latch_1.FP_CTRL_MTR1_P2 = 1;
+								Out_Latch_1.FP_CTRL_MTR1_N1 = 1;
+								MTR_LATCH_REGISTER = Out_Latch_1.data;
+								TM.Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
+								ST_normal.ST_NM_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
+								ST_special.ST_SP_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
+								break;
 
-		 }
-	  }
-	}
+			case Cur_Negative:  Out_Latch_1.FP_CTRL_MTR1_P1 = 1;
+								Out_Latch_1.FP_CTRL_MTR1_N2 = 1;
+								Out_Latch_1.FP_CTRL_MTR1_P2 = 0;
+								Out_Latch_1.FP_CTRL_MTR1_N1 = 0;
+								MTR_LATCH_REGISTER = Out_Latch_1.data;
+								TM.Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
+								ST_normal.ST_NM_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
+								ST_special.ST_SP_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
+								break;
+
+			 case No_Current  : Out_Latch_1.FP_CTRL_MTR1_P1 = 0;
+								Out_Latch_1.FP_CTRL_MTR1_N2 = 0;
+								Out_Latch_1.FP_CTRL_MTR1_P2 = 0;
+								Out_Latch_1.FP_CTRL_MTR1_N1 = 0;
+								MTR_LATCH_REGISTER = Out_Latch_1.data;
+								TM.Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
+								ST_normal.ST_NM_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
+								ST_special.ST_SP_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
+								MTR_Reset_Flag = 1;
+
+									break;
+
+				default			 :  break;
+
+			}
+		}
+		else
+		{
+			Out_Latch_1.FP_CTRL_MTR1_P1 = 0;
+			Out_Latch_1.FP_CTRL_MTR1_N2 = 0;
+			Out_Latch_1.FP_CTRL_MTR1_P2 = 0;
+			Out_Latch_1.FP_CTRL_MTR1_N1 = 0;
+			MTR_LATCH_REGISTER = Out_Latch_1.data;
+			TM.Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
+			ST_normal.ST_NM_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
+			ST_special.ST_SP_Buffer.TM_MTR.Yaw_Polarity = input_latch_1.FP_MTR1_mon1_mon2;
+			MTR_Reset_Flag = 1;
+		}
+
+	 }
+  }
+}
 
 
 void MTR_Monitoring()

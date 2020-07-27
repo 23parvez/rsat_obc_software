@@ -401,7 +401,6 @@ extern void rHAL_Antenna_Read();
 extern void rpl_read();
 extern void pl_tx_tm_2();
 extern void rpl_tm_write();
-extern void rpl_init();
 extern void rpl_sts();
 extern unsigned long int inter_TM_Pl_Buffer;
 

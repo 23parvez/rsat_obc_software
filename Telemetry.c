@@ -1813,7 +1813,7 @@ int Frame_Address_Select ( )
 {
 	unsigned int mode;
 	unsigned int ST_Format_Selection;
-	unsigned int frame_addr;
+	unsigned int frame_addr_sel = 0;
 
 	mode = TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Special_Normal_Mode_select;
 	ST_Format_Selection = TC_gain_select_u.TC_gain_select_Table.TC_ST_Format_Selection;
@@ -1822,16 +1822,16 @@ int Frame_Address_Select ( )
 	{
 		switch( ST_Format_Selection )
 		{
-		case 0: frame_addr =  0;
+		case 0: frame_addr_sel =  0;
 				ST_special.ST_SP_Buffer.Sub_Frame = 0;
 				break;
-		case 1: frame_addr = Special_st_table_page1;
+		case 1: frame_addr_sel = Special_st_table_page1;
 				ST_special.ST_SP_Buffer.Sub_Frame = 1;
 				break;
-		case 2: frame_addr = Special_st_table_page2;
+		case 2: frame_addr_sel = Special_st_table_page2;
 		    	ST_special.ST_SP_Buffer.Sub_Frame = 2;
 		    	break;
-		case 3: frame_addr = Special_st_table_page3;
+		case 3: frame_addr_sel = Special_st_table_page3;
 				ST_special.ST_SP_Buffer.Sub_Frame = 3;
 				break;
 		}
@@ -1842,28 +1842,28 @@ int Frame_Address_Select ( )
 		switch(ST_Format_Selection )
 		{
 
-		case 0: 	frame_addr = 0 	;
+		case 0: 	frame_addr_sel = 0 	;
 					ST_normal.ST_NM_Buffer.Sub_Frame = 0;
 					break;
-		case 1:		frame_addr = Normal_st_table_page1;
+		case 1:		frame_addr_sel = Normal_st_table_page1;
 					ST_normal.ST_NM_Buffer.Sub_Frame = 1;
 					break;
-		case 2: 	frame_addr = Normal_st_table_page2;
+		case 2: 	frame_addr_sel = Normal_st_table_page2;
 					ST_normal.ST_NM_Buffer.Sub_Frame = 2;
 					break;
-		case 3: 	frame_addr = Normal_st_table_page3;
+		case 3: 	frame_addr_sel = Normal_st_table_page3;
 					ST_normal.ST_NM_Buffer.Sub_Frame = 3;
 					break;
 		}
 
 	}
-	return frame_addr;
+	return frame_addr_sel;
 }
 
 unsigned int repeat_count = 0;
 
 //fetching data from address and storing it in Destination_Buffer
-void ST_Copy_Subframe(int frame_addr,unsigned int Sampling_Rate )
+void ST_Copy_Subframe(unsigned int frame_addr,unsigned int Sampling_Rate )
 {
 	struct Norm_ST_ADDR_TABLE *Normal_ST_Table;
 	struct Norm_ST_ADDR_TABLE *Normal_ST_Table_Addr;

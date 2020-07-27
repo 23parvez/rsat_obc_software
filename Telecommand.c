@@ -710,7 +710,7 @@ void rRemote_data_view()
 
 	}*/
 
-	if(RAM_SEG_START_ADDR< Remote_data_addr > RAM_SEG_END_ADDR)
+	if((RAM_SEG_START_ADDR< Remote_data_addr) && (Remote_data_addr > RAM_SEG_END_ADDR))
 	{
 		Remote_minotoring_addr = Remote_data_addr;
 
@@ -1034,44 +1034,50 @@ unsigned char tempdata1,tempdata2,block_test3,block_test1,block_test2, block_tes
  *  - This function will allow Block TC to be added in incremental order
  *  - This function will allow Block TC to be updated within the index   */
 
+/*
+Block operation (BLK_opn): 2Bits
+		BLK_opn = 1'b00; //0
+		BLK_opn = 1'b01; //1
+		BLK_opn = 1'b10; //2
+*/
+
 void Block_update(void)
 {
 	//tempdata1 = (unsigned char)u_TC.BLK_Update_cmd.Cmd_Srl;
 	BLK_number = u_TC.BLK_Update_cmd.Blk_No;
 	BLK_opn = u_TC.BLK_Update_cmd.Blk_opn;
-	if((BLK_number < MAX_BLKS) && (u_TC.BLK_Update_cmd.Cmd_Srl < MAX_BLK_CMD_SIZE))
-	{
 
-		block_test_array[block_test] = u_TC.cmd_rcvd;
-		block_test++;
-		if((u_TC.BLK_Update_cmd.Cmd_Srl == 0)|| (u_TC.BLK_Update_cmd.Cmd_Srl == Block_Index[BLK_number]))
-			{
-				if(BLK_opn == 00)          // BLK_update
-				{
-					Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = u_TC.cmd_rcvd;
-					Block_Index[BLK_number]++;
-					block_test1++;
-				}
-			}
-		if((u_TC.BLK_Update_cmd.Cmd_Srl == 0)|| (u_TC.BLK_Update_cmd.Cmd_Srl <= Block_Index[BLK_number]))
+	//block_test_array[block_test] = u_TC.cmd_rcvd;
+	//block_test++;
+
+	if((u_TC.BLK_Update_cmd.Cmd_Srl == 0)|| (u_TC.BLK_Update_cmd.Cmd_Srl == Block_Index[BLK_number]))
 		{
-				 if(BLK_opn == 01)     // BLK_modify
-				{
-
-					Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = u_TC.cmd_rcvd;
-					block_test2++;
-				}
-				else if(BLK_opn == 10)      // BLK_delete
-				{
-					block_test3++;
-					Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = 0x00;
-				}
-				else
-				{
-					//
-				}
+			if(BLK_opn == 0x0)          // BLK_update
+			{
+				Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = u_TC.cmd_rcvd;
+				Block_Index[BLK_number]++;
+				block_test1++;
 			}
-	}
+		}
+	if((u_TC.BLK_Update_cmd.Cmd_Srl == 0)|| (u_TC.BLK_Update_cmd.Cmd_Srl <= Block_Index[BLK_number]))
+	{
+			if(BLK_opn == 0x1)     // BLK_modify
+			{
+
+				Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = u_TC.cmd_rcvd;
+				block_test2++;
+			}
+			else if(BLK_opn == 0x2)      // BLK_delete
+			{
+				block_test3++;
+				Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = 0x00;
+			}
+			else
+			{
+				//
+			}
+		}
+
 }
 /*void Block_update(void)
 {

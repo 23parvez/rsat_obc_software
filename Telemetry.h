@@ -157,7 +157,7 @@ unsigned int TCH_dump_finish;
 int Frame_Address_Select ();
 int Sampling_Rate_Select();
 //void Normal_ST( unsigned int Sampling_Rate);
-void ST_Copy_Subframe(int frame_addr,unsigned int Sampling_Rate );
+void ST_Copy_Subframe(unsigned int frame_addr,unsigned int Sampling_Rate );
 void StorageTelemetry();
 int copy_frame(  unsigned int Circular );
 void rTC_final_storage();

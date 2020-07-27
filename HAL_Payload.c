@@ -121,32 +121,6 @@ void rHAL_X_Tx_OFF()
 	IO_LATCH_REGISTER_2 = tempdata;
 }
 
-
-/****************************************************************
- *@function name rHAL_pl_sts_check
- *@return type   NONE
- *@Description   This function sends two bytes of data
- *@				 to check the status of PAYLOAD
- *@				 Payload responds with 0xAA0F if payload status PASSED
- *@				 			   0xAA0XF0 if payload status FAILED.
- ****************************************************************
- */
-void rpl_init()
-{
-	if (PL_1_on_off_flag && tm_ds_en_flag)
-	{
-		if (Major_Cycle_Count >= PL_STS_TIME)
-		{
-			rHAL_pl_sts_check_mj_flag= 1;
-			if(rHAL_pl_sts_check_mj_flag)
-			{
-				rHAL_pl_sts_check();
-			}
-
-		}
-	}
-}
-
 unsigned int pl_configure_data;
 void rHAL_pl_sts_check()
 {
@@ -183,7 +157,6 @@ void rHAL_pl_cmd_hlt()
 		pl_cmd_id = 3;
 	}
 		pl_sts_chk_flag = 0;
-		rHAL_pl_sts_check_mj_flag = 0;
 		PL_TM_Status_flag = 1;
 
 }

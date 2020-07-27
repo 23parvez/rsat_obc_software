@@ -167,6 +167,28 @@ Func execute command
 	    in file: Telemetry.c, function name: copy_frame
 	
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	++++++++++++++++++++++++++++++++
+	+ Changes made on 24 JULY 2020 +
+	++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+1. defualt case has been removed in File: HAL_Global.c Function: MUX_Output()
+2. if condtion logic if((RAM_SEG_START_ADDR < Remote_data_addr >RAM_SEG_END_ADDR) is modified to
+	if((RAM_SEG_START_ADDR< Remote_data_addr) && (Remote_data_addr > RAM_SEG_END_ADDR))
+	 File: Telecommand.c Function: rRemote_data_view
+3.. if condition and else conditions has been modified in block_update routine
+   BLK_opn == 00, BLK_opn == 01, and BLK_opn == 10 is modiefied to BLK_opn == 0x0,
+	 BLK_opn == 0x1, and BLK_opn == 0x2 respectively.
+   File: Telecommand.c Function: block_update
 
+4. First argument of ST_Copy_Subframe data type is modiefied from int to unsigned int.
+   File: Telemetry.c Function: ST_Copy_Subframe
 
- 
+5. Local variable frame_addr is renamed as frame_addr_sel 
+   File: Telemetry.c Function: Frame_Address_Select
+
+6. Unused routine rpl_init() and variable rHAL_pl_sts_check_mj_flag has been 
+	removed from HAL_Palyoad.c File
+7. Condition if ((BLK_number < 64) && (u_TC.BLK_Update_cmd.Cmd_Srl < 64)) is removed 
+	 File: Telecommand.c Function: Block_update()
+	
+

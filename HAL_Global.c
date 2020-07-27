@@ -267,12 +267,8 @@ void MUX_Output()
 				input_latch_2.data = IO_IN_LATCH_REGISTER_4;
 				tempdata8 = input_latch_2.data;
 				TM.Buffer.TM_MUX_8 = tempdata8 & 0x3c00;
-
 				break;
 
-
-		default:
-				break;
 		}
 	}
 }

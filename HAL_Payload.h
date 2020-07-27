@@ -90,7 +90,6 @@ unsigned long int* pl_buffer_addr;
 unsigned int pl_tx_tm_flag;
 unsigned int  pl_sts_chk_flag;
 unsigned int tm_ds_en_flag;
-unsigned int rHAL_pl_sts_check_mj_flag;
 unsigned short PL_TM_Status_flag;
 unsigned short pl_ack_count;
 

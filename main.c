@@ -236,7 +236,6 @@ void OBC_Process()
 
 		rRW_Data_Write();
 
-		//rpl_init();
 		//rpl_sts();
 
 		GPIO_pins.PIO_6 = 0;
