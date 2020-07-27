@@ -80,9 +80,11 @@ void rHAL_TM_Write(void)
 			if((inter_TM_Status_Data & TM_DP_MEMORY_FULL) == TM_DP_MEMORY_EMPTY) // Check Dual Port Memory is Empty or Not
 			{
 
-				tempdata = (inter_TM_Status_Data | TM_DP_MEMORY_WRITE_ENABLE);   // Set WR Bit Before Writing TM Buffer
+				//tempdata = (inter_TM_Status_Data | TM_DP_MEMORY_WRITE_ENABLE);   // Set WR Bit Before Writing TM Buffer
 				 TM_STATUS_REGISTER;
 				 //TM_STATUS_REGISTER = tempdata;
+
+				 //TM_STATUS_REGISTER = (inter_TM_Status_Data | TM_DP_MEMORY_WRITE_ENABLE);   // Set WR Bit Before Writing TM Buffer
 
 				for(inter_HAL_TM_Write_Word_Count = 0;inter_HAL_TM_Write_Word_Count <= (TM_DP_MEMORY_SIZE-1) ; inter_HAL_TM_Write_Word_Count++)
 				{
@@ -1875,6 +1877,13 @@ void ST_Copy_Subframe(unsigned int frame_addr,unsigned int Sampling_Rate )
 
 	unsigned int subframe_copy_index = 0;
 
+	if (TC_gain_select_u.TC_gain_select_Table.TC_ST_Format_Selection == 2)
+	{
+		frame_addr = Special_st_table_page2;
+		ST_special.ST_SP_Buffer.Sub_Frame = 2;
+	}
+
+
 	Normal_ST_Table_Addr    = Norm_ST_Table + frame_addr;
 	Special_ST_Table_Addr   = Spec_ST_Table + frame_addr;
 
@@ -1934,8 +1943,7 @@ void ST_Copy_Subframe(unsigned int frame_addr,unsigned int Sampling_Rate )
 					Special_ST_Source_Addr = Special_ST_Table_Addr->Addr_Field;             //assigning Source pointer
 
 				}
-				frame_addr = Special_st_table_page2;
-				ST_special.ST_SP_Buffer.Sub_Frame = 2;
+
 				if (repeat_count >= 255)
 				{
 					repeat_count = 0;

@@ -168,7 +168,7 @@ Func execute command
 	
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	++++++++++++++++++++++++++++++++
-	+ Changes made on 24 JULY 2020 +
+	+ Changes made on 27 JULY 2020 +
 	++++++++++++++++++++++++++++++++
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 1. defualt case has been removed in File: HAL_Global.c Function: MUX_Output()
@@ -190,5 +190,23 @@ Func execute command
 	removed from HAL_Palyoad.c File
 7. Condition if ((BLK_number < 64) && (u_TC.BLK_Update_cmd.Cmd_Srl < 64)) is removed 
 	 File: Telecommand.c Function: Block_update()
-	
-
+8. Multiple if conditions with same condtional statement has been removed (if (CB_Torquer_Polarity_Check == 1))
+	File: HAL_MTR.c Function: rHAL_MTR()
+9. Removed tempdata variable declaration and assignment.
+	File: HAL_ADC.c Function: rHAL_ADC_TM_Copy()
+10. Removed assignment and declaration of tempdata3 tempdata2.
+	File: HAL_Payload.c Function: pl_tx_tm_2()
+11. Removed tempdata = *pl_data_addr statement.
+	File: HAL_Payload.c Function: rpl_tm_write()
+12. Removed NOB_Write_rw = 11 statement.
+	File: HAL_RW.c Function: rRW_init_cmd()
+13. Commented   tempdata = (inter_TM_Status_Data | 0x00000001) statement (Has to be verified with Prof. Priyanka)
+	File: Telemetry.c Function: rHAL_TM_Write()
+14. Removed line frame_addr = Special_st_table_page2 statement and 
+	added - 	
+	if (TC_gain_select_u.TC_gain_select_Table.TC_ST_Format_Selection == 2)
+	{
+		frame_addr = Special_st_table_page2;
+		ST_special.ST_SP_Buffer.Sub_Frame = 2;
+	}
+	File: Telemetry.c Function: ST_Copy_Subframe

@@ -501,11 +501,11 @@ void rRW_init_cmd(struct HAL_RW_Data_Structure RW_No, unsigned char RW_ID)
 	int Byte_count;					//Counter in the loop
 	unsigned long int inter_RW_Status_Register;
 //	int i_rw;
-	int NOB_Write_rw;
+	//int NOB_Write_rw;
 	//----------------------------------------------------------------------
 
 	inter_RW_Status_Register = (REG32(RW_No.RW_Status_Register_1) & 0x0000FFFF);
-	NOB_Write_rw = 11; 	//Number of bytes to be transfered to RW for Ping
+	//NOB_Write_rw = 11; 	//Number of bytes to be transfered to RW for Ping
 
 	/*********************** Added on 12/10/19 ***********************/
 	rw_init.Start_Byte = 0xC0; rw_init.Dest_Addr = NSP_addr_table[RW_ID];

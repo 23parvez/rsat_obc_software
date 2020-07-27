@@ -23,7 +23,7 @@ unsigned short test_thermistor_1;
 void rHAL_ADC_TM_Copy(uint32* ADC_Addr)
 {
 	unsigned char AGC_DATA;
-	unsigned int  temp_data,temp_data_th2,temp_data_th3,temp_data_th4,temp_data_th5;
+	unsigned int  temp_data_th2,temp_data_th3,temp_data_th4,temp_data_th5;
 	unsigned int AGC_Data;
 	unsigned short tempdata;
 	unsigned int Thermister_1_2,Thermister_2_3,Thermister_3,Thermister_4,Thermister_5,Thermister_6,Thermister_7,Thermister_8,Thermister_9,Thermister_10,Thermister_11,Thermister_12,Thermister_13,Thermister_14,Thermister_15,Thermister_16;
@@ -54,7 +54,6 @@ void rHAL_ADC_TM_Copy(uint32* ADC_Addr)
 
 	AGC_Data = ADC_Buffer[31];
 	TM.Buffer.TM_AGC = (unsigned short)(AGC_Data & 0x00000FFF);
-	temp_data = AGC_Data;
 	ST_normal.ST_NM_Buffer.TM_AGC = (unsigned short)(AGC_Data & 0x00000FFF);
 
 

@@ -328,7 +328,7 @@ void rHAL_pl_diag(void)
 
 unsigned int pl_test10;
 uint16 *pl_tm_ptr;
-uint16 temp_data_1,temp_data_2;
+uint16 temp_data_1_pl, temp_data_2_pl;
 unsigned short PL_TX_TM_2_EN;
 void pl_tx_tm()
 {
@@ -351,9 +351,9 @@ void pl_tx_tm()
 				REG32(pl_config_addr_ptr++) = (uint32)(tempdata_pl_2 & EXTRACT_LSB_16BITS);  //swaping the telemetry_data and updating in Pl_config
 			}
 			tempdata_pl_2 	= *pl_tm_ptr++;
-			temp_data_1	    = tempdata_pl_2;
+			temp_data_1_pl	= tempdata_pl_2;
 			tempdata_pl_2 	= *pl_tm_ptr++;
-			temp_data_2     = tempdata_pl_2;
+			temp_data_2_pl  = tempdata_pl_2;
 
 			/* No of Configure Bytes (15:7) : 258 bytes // changed to 256bytes
 			 * No of Receive Bytes (6:1)    : 2 byte
@@ -379,12 +379,12 @@ void pl_tx_tm()
 uint32 pl_test12;
 void pl_tx_tm_2()
 {
-	uint16 tempdata3,tempdata2;
+//	uint16 tempdata3,tempdata2;
 	pl_config_addr_ptr =(uint32*)PAYLOAD_CONFIG_REGISTER;
 	if(PL_TX_TM_2_EN)
 	{
-		tempdata3 = REG32(PAYLOAD_STATUS2_ADDRESS);
-		tempdata2 = tempdata3 & 0x0001;
+//		tempdata3 = REG32(PAYLOAD_STATUS2_ADDRESS);
+//		tempdata2 = tempdata3 & 0x0001;
 
 		pl_test12++;
 		Out_Latch_3.TM_DS_EN = 0;
@@ -395,8 +395,8 @@ void pl_tx_tm_2()
 		IO_LATCH_REGISTER_3 = Out_Latch_3.data;
 		IO_LATCH_REGISTER_3;
 
-		REG32(pl_config_addr_ptr++) = temp_data_1;
-		REG32(pl_config_addr_ptr) 	= temp_data_2;
+		REG32(pl_config_addr_ptr++) = temp_data_1_pl;
+		REG32(pl_config_addr_ptr) 	= temp_data_2_pl;
 
 		REG32(PAYLOAD_STATUS2_ADDRESS) = PL_TX_TM_CONFIG_2;
 
@@ -447,166 +447,164 @@ void rpl_read()                                                    //Reading the
 unsigned int data;
 void rpl_tm_write()
 {
-		uint16 tempdata;
 		uint16* pl_data_addr;
 		int  pl_Addr_count;
 		pl_data_addr = &pl_data_rx.data_16bits[0];
-		tempdata = *pl_data_addr;
-			switch(pl_cmd_id)
-			{
-				case 1: if (pl_data_rcvd )
+		switch(pl_cmd_id)
+		{
+			case 1: if (pl_data_rcvd )
+					{
+						//
+					}
+					else
+					{
+						//
+					}
+
+					break;
+
+			case 2:	if (pl_data_rcvd )
+					{
+
+						if (*pl_data_addr == PL_PASS)
 						{
-							//
-						}
-						else
-						{
-							//
-						}
-
-						break;
-
-				case 2:	if (pl_data_rcvd )
-						{
-
-							if (*pl_data_addr == PL_PASS)
-							{
-								TM.Buffer.TM_pl_data[0] = PL_STS_CHK_ACK;
-								pl_data_rcvd = 0;
-								pl_sts_chk_flag = 1;
-								pl_ack_count++;
-
-							}
-							else if (*pl_data_addr == PL_FAIL)
-							{
-								TM.Buffer.TM_pl_data[0] = PL_STS_CHK_NACK;
-								pl_data_rcvd = 0;
-
-							}
-						}
-						else
-						{
-							TM.Buffer.TM_pl_data[0] = PL_STS_CHK_TIMEOUT;
-
-						}
-						break;
-
-				case 3: if (pl_data_rcvd )
-						{
-							unsigned int hlt_count;
-
-							TM.Buffer.TM_pl_data[1] = PL_HLT_ACK;
-
-							for (pl_Addr_count = 2, hlt_count = 1 ; hlt_count < pl_buffer_len; pl_Addr_count++ , hlt_count++)
-							{
-								TM.Buffer.TM_pl_data[pl_Addr_count] = pl_data_rx.data_16bits[hlt_count];
-							}
+							TM.Buffer.TM_pl_data[0] = PL_STS_CHK_ACK;
 							pl_data_rcvd = 0;
-							pl_ack_count++;
-						}
-						else
-						{
-							TM.Buffer.TM_pl_data[1] = PL_HLT_TIMEOUT;
-						}
-						break;
-
-				case 4: if (pl_data_rcvd )
-						{
-
-							TM.Buffer.TM_pl_data[9]= PL_DEBUG_ACK;
-							pl_data_rcvd = 0;
-							pl_ack_count++;
-						}
-						else
-						{
-							TM.Buffer.TM_pl_data[9] = PL_DEBUG_TIEMOUT;
-
-						}
-						break;
-
-				case 5: data = 5;
-						if (pl_data_rcvd )
-						{
-							TM.Buffer.TM_pl_data[9] = PL_TX_ON_ACK;
-							//data = TM.Buffer.TM_pl_data[9];
-							pl_data_rcvd = 0;
+							pl_sts_chk_flag = 1;
 							pl_ack_count++;
 
 						}
-						else
+						else if (*pl_data_addr == PL_FAIL)
 						{
-							TM.Buffer.TM_pl_data[9] = PL_TX_ON_TIMEOUT;
-
-						}
-						break;
-
-				case 6:if (pl_data_rcvd )
-						{
-						 	 TM.Buffer.TM_pl_data[9] = PL_ACQ_ACK;
-						 	 pl_data_rcvd = 0;
-						 	 pl_ack_count++;
-
-						}
-						else
-						{
-							TM.Buffer.TM_pl_data[9] = PL_ACQ_TIMEOUT;
-
-						}
-						break;
-
-				case 7: if (pl_data_rcvd )
-						{
-							TM.Buffer.TM_pl_data[9] = PL_TX_OFF_ACK;
+							TM.Buffer.TM_pl_data[0] = PL_STS_CHK_NACK;
 							pl_data_rcvd = 0;
-							pl_ack_count++;
 
 						}
-						else
-						{
-							TM.Buffer.TM_pl_data[9] = PL_TX_OFF_TIMEOUT;
+					}
+					else
+					{
+						TM.Buffer.TM_pl_data[0] = PL_STS_CHK_TIMEOUT;
 
+					}
+					break;
+
+			case 3: if (pl_data_rcvd )
+					{
+						unsigned int hlt_count;
+
+						TM.Buffer.TM_pl_data[1] = PL_HLT_ACK;
+
+						for (pl_Addr_count = 2, hlt_count = 1 ; hlt_count < pl_buffer_len; pl_Addr_count++ , hlt_count++)
+						{
+							TM.Buffer.TM_pl_data[pl_Addr_count] = pl_data_rx.data_16bits[hlt_count];
 						}
-						break;
+						pl_data_rcvd = 0;
+						pl_ack_count++;
+					}
+					else
+					{
+						TM.Buffer.TM_pl_data[1] = PL_HLT_TIMEOUT;
+					}
+					break;
 
-				case 8: if (pl_data_rcvd )
+			case 4: if (pl_data_rcvd )
+					{
+
+						TM.Buffer.TM_pl_data[9]= PL_DEBUG_ACK;
+						pl_data_rcvd = 0;
+						pl_ack_count++;
+					}
+					else
+					{
+						TM.Buffer.TM_pl_data[9] = PL_DEBUG_TIEMOUT;
+
+					}
+					break;
+
+			case 5: data = 5;
+					if (pl_data_rcvd )
+					{
+						TM.Buffer.TM_pl_data[9] = PL_TX_ON_ACK;
+						//data = TM.Buffer.TM_pl_data[9];
+						pl_data_rcvd = 0;
+						pl_ack_count++;
+
+					}
+					else
+					{
+						TM.Buffer.TM_pl_data[9] = PL_TX_ON_TIMEOUT;
+
+					}
+					break;
+
+			case 6:if (pl_data_rcvd )
+					{
+						 TM.Buffer.TM_pl_data[9] = PL_ACQ_ACK;
+						 pl_data_rcvd = 0;
+						 pl_ack_count++;
+
+					}
+					else
+					{
+						TM.Buffer.TM_pl_data[9] = PL_ACQ_TIMEOUT;
+
+					}
+					break;
+
+			case 7: if (pl_data_rcvd )
+					{
+						TM.Buffer.TM_pl_data[9] = PL_TX_OFF_ACK;
+						pl_data_rcvd = 0;
+						pl_ack_count++;
+
+					}
+					else
+					{
+						TM.Buffer.TM_pl_data[9] = PL_TX_OFF_TIMEOUT;
+
+					}
+					break;
+
+			case 8: if (pl_data_rcvd )
+					{
+						if (*pl_data_addr == PL_PASS)
 						{
-							if (*pl_data_addr == PL_PASS)
-							{
-								TM.Buffer.TM_pl_data[9] = PL_DIAG_ACK;
-								pl_data_rcvd = 0;
-								pl_ack_count++;
-
-							}
-							else if (*pl_data_addr == PL_FAIL)
-							{
-								TM.Buffer.TM_pl_data[9] = PL_DIAG_NACK;
-								pl_data_rcvd = 0;
-
-							}
-						}
-						else
-						{
-							TM.Buffer.TM_pl_data[9] = PL_DIAG_TIMEOUT;
-
-						}
-						break;
-				case 9: if (pl_data_rcvd )
-						{
-							TM.Buffer.TM_pl_data[9] = PL_TX_TM_ACK;
+							TM.Buffer.TM_pl_data[9] = PL_DIAG_ACK;
 							pl_data_rcvd = 0;
 							pl_ack_count++;
 
 						}
-						else
+						else if (*pl_data_addr == PL_FAIL)
 						{
-							TM.Buffer.TM_pl_data[9] = PL_TX_TM_TIMEOUT;
+							TM.Buffer.TM_pl_data[9] = PL_DIAG_NACK;
+							pl_data_rcvd = 0;
 
 						}
-						break;
+					}
+					else
+					{
+						TM.Buffer.TM_pl_data[9] = PL_DIAG_TIMEOUT;
 
-				default:
-						break;
+					}
+					break;
+			case 9: if (pl_data_rcvd )
+					{
+						TM.Buffer.TM_pl_data[9] = PL_TX_TM_ACK;
+						pl_data_rcvd = 0;
+						pl_ack_count++;
 
-			}
+					}
+					else
+					{
+						TM.Buffer.TM_pl_data[9] = PL_TX_TM_TIMEOUT;
+
+					}
+					break;
+
+			default:
+					break;
+
+		}
 
 	pl_cmd_id = FALSE;
 	TM.Buffer.TM_pl_ack_count = pl_ack_count;
