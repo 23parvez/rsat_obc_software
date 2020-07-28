@@ -476,6 +476,6 @@ void rPOR_Init(void)
 	 		 block_test_array[i] = 0x00000000;
 	 	}
 
-
+	 	TM.Buffer.TM_Remote_Addr_SF0 = Remote_data_addr;
 }
 

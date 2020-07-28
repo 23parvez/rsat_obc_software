@@ -689,28 +689,13 @@ void rRemote_base_addr_TC()
 }
 
 
-/******** Testing is pending for this sub routine ******/
-//unsigned int test_remte[256];
-//unsigned int count_remote;
 void rRemote_data_view()
 {
 	unsigned int remote_monitor_index = 0;
 	unsigned int remote_blk_select;
-	/*unsigned int* remote_ptr;
-	if(RAM_SEG_START_ADDR< Remote_data_addr > RAM_SEG_END_ADDR)
-	{
-		Remote_minotoring_addr = Remote_data_addr;
-		remote_ptr =  Remote_minotoring_addr;
-		count_remote = *remote_ptr++;
-		for(i = 0; i <= 255; i++)
-		{
-		   test_remte[i] 					= *remote_ptr++;
-		   TM.Buffer.TM_Remote_Data_SF0[i] 	= test_remte[i];
-		}
+	unsigned int* remote_ptr;
 
-	}*/
-
-	if((RAM_SEG_START_ADDR< Remote_data_addr) && (Remote_data_addr > RAM_SEG_END_ADDR))
+	if((Remote_data_addr >= RAM_SEG_START_ADDR) && (Remote_data_addr < RAM_SEG_END_ADDR))
 	{
 		Remote_minotoring_addr = Remote_data_addr;
 

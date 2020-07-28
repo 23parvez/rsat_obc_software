@@ -256,7 +256,7 @@ void OBC_Process()
 
 		s_ram_scrub();                                 // scrubing SRAM
 
-		//rRemote_data_view();
+		rRemote_data_view();
 
 		rErrorComputation();
 		rLinearController();

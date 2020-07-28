@@ -210,3 +210,10 @@ Func execute command
 		ST_special.ST_SP_Buffer.Sub_Frame = 2;
 	}
 	File: Telemetry.c Function: ST_Copy_Subframe
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	++++++++++++++++++++++++++++++++
+	+ Changes made on 28 JULY 2020 +
+	++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+1.Remote_data_view routine is tested with modification in if condition and also remote_base_addr is being telemetered.
