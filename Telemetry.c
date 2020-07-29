@@ -1883,12 +1883,11 @@ void ST_Copy_Subframe(unsigned int frame_addr,unsigned int Sampling_Rate )
 		ST_special.ST_SP_Buffer.Sub_Frame = 2;
 	}
 
-
 	Normal_ST_Table_Addr    = Norm_ST_Table + frame_addr;
 	Special_ST_Table_Addr   = Spec_ST_Table + frame_addr;
 
-	Normal_ST_Source_Addr   = Normal_ST_Table_Addr->Addr_Field;                      //Initializing Source pointer
-	Special_ST_Source_Addr  = Special_ST_Table_Addr->Addr_Field;                     //Initializing Source pointer
+	Normal_ST_Source_Addr   = Normal_ST_Table_Addr->Addr_Field;                      // Initializing Source pointer
+	Special_ST_Source_Addr  = Special_ST_Table_Addr->Addr_Field;                     // Initializing Source pointer
 
 	// Special storage enable
 
@@ -1916,7 +1915,7 @@ void ST_Copy_Subframe(unsigned int frame_addr,unsigned int Sampling_Rate )
 			{
 				repeat_count = 0;
 				ST_frame_count++;
-				ST_normal.ST_NM_Buffer.frame_count = ST_frame_count;
+				ST_special.ST_SP_Buffer.frame_count = ST_frame_count;
 				copy_frame( circuar_spec);
 				ST_Dest_Addr = ST_source_Buffer;                                     //Initializing Destination pointer
 			}
@@ -1948,11 +1947,10 @@ void ST_Copy_Subframe(unsigned int frame_addr,unsigned int Sampling_Rate )
 				{
 					repeat_count = 0;
 					ST_frame_count++;
-					ST_normal.ST_NM_Buffer.frame_count = ST_frame_count;
+					ST_special.ST_SP_Buffer.frame_count = ST_frame_count;
 					copy_frame( circuar_spec);
 					ST_Dest_Addr = ST_source_Buffer;                                     //Initializing Destination pointer
 				}
-
 			}
 		}
 		interval_cnt++;
@@ -1963,7 +1961,6 @@ void ST_Copy_Subframe(unsigned int frame_addr,unsigned int Sampling_Rate )
 
 	else
 	{
-
 		static int interval_cnt = 1;                         // initializing the interval variable
 		if ( interval_cnt >= Sampling_Rate )                 // if interval exceeds sampling rate
 		{
@@ -2022,7 +2019,7 @@ void rTCH_full_dump_cpy_buf()
 	ST_TC_header_Buffer.filler = 0;
 	ST_TC_header_Buffer.Sub_Frame = 0;
 	ST_TC_header_Buffer.OBT = Major_Cycle_Count;
-	ST_TC_header_Buffer.frame_count = ST_frame_count;
+	ST_TC_header_Buffer.frame_count = ST_TCH_frame_count;
 
 	for(buf256_index = 0; buf256_index < 3; buf256_index++)
 	{
@@ -2067,7 +2064,7 @@ void rTCH_dump_cpy_buf()
 	ST_TC_header_Buffer.filler = 0;
 	ST_TC_header_Buffer.Sub_Frame = 0;
 	ST_TC_header_Buffer.OBT = Major_Cycle_Count;
-	ST_TC_header_Buffer.frame_count = ST_frame_count;
+	ST_TC_header_Buffer.frame_count = ST_TCH_frame_count;
 
 	for(buf256_index = 0; buf256_index < 3; buf256_index++)
 	{
@@ -2485,11 +2482,11 @@ void Norm_ST_1_Table_Init()
 	{
 
 		Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte;
-		Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 2;
+		Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 1;
 		Norm_ST_Table_Row_No++;
 	}
 
-	Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = NULL;//End of Subframe 0
+	Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = NULL;//End of Subframe 1
 	Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 0;
 	Norm_ST_Table_Row_No++;
 
@@ -2509,15 +2506,15 @@ void Norm_ST_1_Table_Init()
 	{
 
 		Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte;
-		Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 2;
+		Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 1;
 		Norm_ST_Table_Row_No++;
 	}
 
-	Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = NULL;//End of Subframe 0
+	Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = NULL;//End of Subframe 2
 	Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 0;
 	Norm_ST_Table_Row_No++;
 
-	//frame_1
+	//frame_3
 	Normal_st_table_page3 = Norm_ST_Table_Row_No;
 
 	Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)&ST_normal.ST_NM_Buffer.FrameSynch;                //Copy address of Frame sync
@@ -2532,11 +2529,11 @@ void Norm_ST_1_Table_Init()
 	{
 
 		Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = (unsigned char*)& filler_byte;
-		Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 2;
+		Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 1;
 		Norm_ST_Table_Row_No++;
 	}
 
-	Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = NULL;//End of Subframe 0
+	Norm_ST_Table[Norm_ST_Table_Row_No].Addr_Field   = NULL;//End of Subframe 3
 	Norm_ST_Table[Norm_ST_Table_Row_No].Length_Field = 0;
 	Norm_ST_Table_Row_No++;
 
@@ -2756,7 +2753,7 @@ void ST_DUMPING()
 
 		if ((inter_TM_Status_Data & TM_DP_MEMORY_FULL) == TM_DP_MEMORY_EMPTY) // Check Dual Port Memory is Empty or Not
 		{
-			if(!(read_str_ptr > (unsigned short*)write_str_ptr))
+			if(!(read_str_ptr >= (unsigned short*)write_str_ptr))
 			{
 					 if ((TM_page_count % 4) != 0)
 					 {

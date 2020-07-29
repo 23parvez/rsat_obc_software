@@ -200,7 +200,8 @@ Func execute command
 	File: HAL_Payload.c Function: rpl_tm_write()
 12. Removed NOB_Write_rw = 11 statement.
 	File: HAL_RW.c Function: rRW_init_cmd()
-13. Commented   tempdata = (inter_TM_Status_Data | 0x00000001) statement (Has to be verified with Prof. Priyanka)
+13. Commented   tempdata = (inter_TM_Status_Data | 0x00000001) statement 
+    (Has to be verified with Prof. Priyanka)
 	File: Telemetry.c Function: rHAL_TM_Write()
 14. Removed line frame_addr = Special_st_table_page2 statement and 
 	added - 	
@@ -216,4 +217,16 @@ Func execute command
 	++++++++++++++++++++++++++++++++
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-1.Remote_data_view routine is tested with modification in if condition and also remote_base_addr is being telemetered.
+1.Remote_data_view routine is tested with modification in if condition and 
+  also remote_base_addr is being telemetered.
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	++++++++++++++++++++++++++++++++
+	+ Changes made on 29 JULY 2020 +
+	++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+1. ST_dumping routine:read_ptr was graeter then write_ptr. it is changed to greater 
+     than or equal to condition (if(!(read_str_ptr >= (unsigned short*)write_str_ptr)))
+2.changed ST_frame_count to ST_TCH_frame_count  
+   File: Telemetry.c Function:  rTCH_full_dump_cpy_buf(),rTCH_dump_cpy_buf().
