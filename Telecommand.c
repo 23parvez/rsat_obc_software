@@ -961,18 +961,28 @@ void rDifferential_TimeTag_Execute()
 //Delete the node for the given position
 void rAbsoluteTTC_Delete()
 {
+	unsigned short traverse_count = 0;
 	Nodeptrtype temp = head;
 	Nodeptrtype prev = NULL;
-	while (temp->command.TC_time < u_TC.ATTC_Exe_cmd.TC_time)	// Search for the ATT command to be deleted using the unique TC_time data
+	while (temp->command.TC_time < u_TC.ATTC_Exe_cmd.TC_time)	  // Search for the ATT command to be deleted using the unique TC_time data
 	{
+		traverse_count++;
+		if(traverse_count == MAX_TIMETAG_CMD_LIMIT)
+		{
+			break;
+		}
 		prev = temp;
 		temp = temp->next;
 	}
-	prev->next = temp->next;
-	temp->next = NULL;
-	temp->command.TC_time = 0;
-	freeNode(temp);
-	ATTC_count--;
+	if(traverse_count < MAX_TIMETAG_CMD_LIMIT)
+	{
+		prev->next = temp->next;
+		temp->next = NULL;
+		temp->command.TC_time = 0;
+		freeNode(temp);
+		ATTC_count--;
+	}
+
 }
 
 

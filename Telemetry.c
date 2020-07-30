@@ -76,15 +76,8 @@ void rHAL_TM_Write(void)
 			inter_TM_DP_Addr = (unsigned long int*)TM_BUFFER_BASE;  // Assign DP Memory pointer
 
 			//Write 32Bytes Data to FPGA Dual Port Memory
-
 			if((inter_TM_Status_Data & TM_DP_MEMORY_FULL) == TM_DP_MEMORY_EMPTY) // Check Dual Port Memory is Empty or Not
 			{
-
-				//tempdata = (inter_TM_Status_Data | TM_DP_MEMORY_WRITE_ENABLE);   // Set WR Bit Before Writing TM Buffer
-				 TM_STATUS_REGISTER;
-				 //TM_STATUS_REGISTER = tempdata;
-
-				 //TM_STATUS_REGISTER = (inter_TM_Status_Data | TM_DP_MEMORY_WRITE_ENABLE);   // Set WR Bit Before Writing TM Buffer
 
 				for(inter_HAL_TM_Write_Word_Count = 0;inter_HAL_TM_Write_Word_Count <= (TM_DP_MEMORY_SIZE-1) ; inter_HAL_TM_Write_Word_Count++)
 				{
@@ -94,20 +87,18 @@ void rHAL_TM_Write(void)
 					inter_TM_DP_Addr++;
 
 				}
-				//TM_STATUS_REGISTER = (inter_TM_Status_Data & TM_DP_MEMORY_WRITE_DISABLE);//  Reset WR Bit After Writing to DPM
 
-				inter_TM_Minor_Cycle_Count++;                                             //   Update TM Minor Cycle Count for next TM Minor Cycle Operation
+				inter_TM_Minor_Cycle_Count++;                                       //   Update TM Minor Cycle Count for next TM Minor Cycle Operation
 				if(inter_TM_Minor_Cycle_Count == 4)
 				{
 					rt_tm_frame_finish = 1;
 					inter_TM_Minor_Cycle_Count = 0;
 					inter_TM_Main_Buffer_Empty = TRUE;
-					rTM_Copy_Subframe();                        //   Copy Subframe to TM Main Buffer if TM Main Buffer is Empty
-					TM_page_count++;                            //   Frame_count
+					rTM_Copy_Subframe();                                            //   Copy Subframe to TM Main Buffer if TM Main Buffer is Empty
+					TM_page_count++;                                                //   Frame_count
 					inter_TM_Write_Source_Addr = (unsigned short*)TM_Buffer;
 				}
 			}
-
 }
 
 void rHAL_TM_HW_Status_Update(void)

@@ -230,3 +230,12 @@ Func execute command
      than or equal to condition (if(!(read_str_ptr >= (unsigned short*)write_str_ptr)))
 2.changed ST_frame_count to ST_TCH_frame_count  
    File: Telemetry.c Function:  rTCH_full_dump_cpy_buf(),rTCH_dump_cpy_buf().
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	++++++++++++++++++++++++++++++++
+	+ Changes made on 30 JULY 2020 +
+	++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+1.TM_write routine write_enable bit was commented that is removed.
+   File: Telemetry.c Function: rHAL_TM_Write().
+2.If condition is added in ATTC_delete function to over come the hanging issue.
+  File: Telecommand.c Function: rAbsoluteTTC_Delete().

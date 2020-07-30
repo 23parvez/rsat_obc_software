@@ -404,8 +404,6 @@ void pl_tx_tm_2()
 		pl_cmd_id = 9;
 		PL_TM_Status_flag = 1;
 	}
-
-
 }
 int32 length;
 void rpl_read()                                                    //Reading the payload_data
