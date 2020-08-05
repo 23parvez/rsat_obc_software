@@ -102,7 +102,7 @@ void rSuspended_ModePreprocessing(void)
     }
 
     // Remote patch exit hook function
-    rSus_mode_remote_exit_hook();
+   rSus_mode_remote_exit_hook();
 }
 
 void rDetumbling_ModePreprocessing_BDOT_Logic(void)
@@ -417,7 +417,7 @@ void rSunAcquisition_ModePreprocessing(void)
     }
 
     // Remote patch exit hook function
-    rSACQ_mode_remote_exit_hook();
+   rSACQ_mode_remote_exit_hook();
 
 }
 
@@ -508,7 +508,7 @@ void rThreeAxis_ModePreprocessing(void)
 	}
 
     // Remote patch exit hook function
-    r3AXIS_mode_remote_exit_hook();
+   r3AXIS_mode_remote_exit_hook();
 
 }
 

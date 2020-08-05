@@ -19,7 +19,6 @@ void rTM_Real_st_write()
 
 	if (TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Dump_enable_disable)      // Enable storage_TM_dumping
 	{
-
 		if ((TM.Buffer.Sub_Frame == 1) && (real_tm_wait))
 		{
 			real_tm_wait          = 0;
@@ -27,7 +26,6 @@ void rTM_Real_st_write()
 			TM_page_count         = 0;
 			real_tm_finish        = 1;
 			rt_tm_frame_finish    = 0;
-
 		}
 
 		if (real_tm_finish)
@@ -48,7 +46,6 @@ void rTM_Real_st_write()
 					ST_DUMPING();
 				}
 			}
-
 		}
 			                                      // Function to dump the storage_tm_data
 

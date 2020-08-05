@@ -58,7 +58,6 @@ void rSACQ_mode_remote_entry_hook ()
 	nop();	nop(); nop();
 	nop();	nop(); nop();
 	nop();	nop(); nop();
-
 }
 
 void rSACQ_mode_remote_exit_hook ()
@@ -66,7 +65,6 @@ void rSACQ_mode_remote_exit_hook ()
 	nop();	nop(); nop();
 	nop();	nop(); nop();
 	nop();	nop(); nop();
-
 }
 
 void r3AXIS_mode_remote_entry_hook ()
@@ -74,7 +72,6 @@ void r3AXIS_mode_remote_entry_hook ()
 	nop();	nop(); nop();
 	nop();	nop(); nop();
 	nop();	nop(); nop();
-
 }
 
 void r3AXIS_mode_remote_exit_hook ()
@@ -82,7 +79,6 @@ void r3AXIS_mode_remote_exit_hook ()
 	nop();	nop(); nop();
 	nop();	nop(); nop();
 	nop();	nop(); nop();
-
 }
 
 void rSAFE_mode_remote_entry_hook ()
@@ -90,7 +86,6 @@ void rSAFE_mode_remote_entry_hook ()
 	nop();	nop(); nop();
 	nop();	nop(); nop();
 	nop();	nop(); nop();
-
 }
 
 void rSAFE_mode_remote_exit_hook()
@@ -98,7 +93,6 @@ void rSAFE_mode_remote_exit_hook()
 	nop();	nop(); nop();
 	nop();	nop(); nop();
 	nop();	nop(); nop();
-
 }
 
 /******************************************************************/
@@ -111,7 +105,6 @@ void rSAFE_mode_remote_exit_hook()
  *@Description    Creating Space to patch new code.
  *@
  ******************************************************************/
-
 void rRemote_patch_area_1 ()
 {
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
@@ -124,11 +117,11 @@ void rRemote_patch_area_1 ()
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-
 }
 
 void rRemote_patch_area_2 ()
 {
+
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
@@ -139,6 +132,8 @@ void rRemote_patch_area_2 ()
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
+
+
 }
 
 void rRemote_patch_area_3 ()
@@ -153,6 +148,7 @@ void rRemote_patch_area_3 ()
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
+
 }
 
 void rRemote_patch_area_4 ()
@@ -167,6 +163,7 @@ void rRemote_patch_area_4 ()
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
+
 }
 
 void rRemote_patch_area_5 ()
@@ -181,6 +178,7 @@ void rRemote_patch_area_5 ()
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
+
 }
 
 void rRemote_patch_area_6 ()
@@ -195,4 +193,6 @@ void rRemote_patch_area_6 ()
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
 	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
+
 }
+

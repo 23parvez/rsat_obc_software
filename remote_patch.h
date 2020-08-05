@@ -8,6 +8,19 @@
 #ifndef REMOTE_PATCH_H_
 #define REMOTE_PATCH_H_
 
+#include <math.h>
+#include "Global.h"
+#include "HAL_Global.h"
+#include "HAL_IMU.h"
+#include "HAL_Address.h"
+#include "TM_Global_Buffer.h"
+#include "Telemetry.h"
+#include "adcs_VarDeclarations.h"
+#include "Telecommand.h"
+#include "TC_List.h"
+#include "adcs_Constants.h"
+#include "adcs_SensorDataProcs.h"
+
 #define nop() 	asm(" nop")
 
 /** Declaration of remote hook routines **/
@@ -52,5 +65,6 @@ void rRemote_patch_area_4 ();
 void rRemote_patch_area_5 ();
 
 void rRemote_patch_area_6 ();
+
 
 #endif /* REMOTE_PATCH_H_ */
