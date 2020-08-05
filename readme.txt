@@ -239,3 +239,11 @@ Func execute command
    File: Telemetry.c Function: rHAL_TM_Write().
 2.If condition is added in ATTC_delete function to over come the hanging issue.
   File: Telecommand.c Function: rAbsoluteTTC_Delete().
+ 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	++++++++++++++++++++++++++++++++++
+	+ Changes made on 05 August 2020 +
+	++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
+1. ATTC delete function is modified. All cases of deleting operations
+   are verified. 
