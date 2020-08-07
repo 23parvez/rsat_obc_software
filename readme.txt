@@ -243,7 +243,23 @@ Func execute command
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	++++++++++++++++++++++++++++++++++
 	+ Changes made on 05 August 2020 +
+	+ by Ajeeth			 +
 	++++++++++++++++++++++++++++++++++
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
 1. ATTC delete function is modified. All cases of deleting operations
-   are verified. 
+   are verified.
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	++++++++++++++++++++++++++++++++++
+	+ Changes made on 07 August 2020 +
+	+ by Ajeeth			 +
+	++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
+1. rRemote_patch_area_1, rRemote_patch_area_2 ..... rRemote_patch_area_6 is renamed as
+ rRemote_patch_area_S1, rRemote_patch_area_S2 ..... rRemote_patch_area_S6.
+2. Calling number of nop Macro is increased to 200 times.
+3. Introduced two new patch area named rRemote_patch_area_L1 and rRemote_patch_area_L2
+   which calls 1000 nops
+2. Added #pragma optimize ("O0") for patch area routines to avoid optimization on this routine.
+   File: remote_patch.c remote_patch.h Functions: rRemote_patch_area_S1 .... rRemote_patch_area_S6
+						  rRemote_patch_area_L1 and rRemote_patch_area_L2   						 

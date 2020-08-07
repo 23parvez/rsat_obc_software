@@ -172,9 +172,6 @@ int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_
 
 	if((inter_HAL_RW_Status_Register_2 & 0x00000002))		//Check for Data Ready
 	{
-
-
-
 		inter_HAL_RW_Read_Limit  = (inter_HAL_RW_Status_Register_2 & 0x00000FF0)>>4;  //Bytes to be read from RW Buffer
 		inter_Buffer_cpy_limit = ((inter_HAL_RW_Read_Limit+1)>>1);
 
@@ -182,7 +179,7 @@ int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_
 		while(inter_HAL_RW_count < inter_Buffer_cpy_limit)
 		{
 			temp_short = (unsigned short)(REG32(inter_HAL_RW_Read_Addr) & 0x0000FFFF);
-			rw_test_array[inter_HAL_RW_count] = (unsigned short)(REG32(inter_HAL_RW_Read_Addr) & 0x0000FFFF);
+			rw_test_array[inter_HAL_RW_count] = (unsigned short)(REG32(inter_HAL_RW_Read_Addr) & 0x0000FFFF); // Remove
 			RW_Buffer_u_rx.data_16bit[inter_HAL_RW_count] = byte_swap(temp_short);
 			inter_HAL_RW_count++;
 			inter_HAL_RW_Read_Addr = inter_HAL_RW_Read_Addr + 4;

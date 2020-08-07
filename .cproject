@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?>
+
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
-		<cconfiguration id="cdt.managedbuild.toolchain.rcc.base.354401354">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.rcc.base.354401354" moduleId="org.eclipse.cdt.core.settings" name="Default">
+		<cconfiguration id="cdt.managedbuild.toolchain.rcc.base.899983938">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.rcc.base.899983938" moduleId="org.eclipse.cdt.core.settings" name="Default">
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
-					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration buildProperties="" id="cdt.managedbuild.toolchain.rcc.base.354401354" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
-					<folderInfo id="cdt.managedbuild.toolchain.rcc.base.354401354.1054559269" name="/" resourcePath="">
-						<toolChain id="cdt.managedbuild.toolchain.rcc.base.1824741982" name="cdt.managedbuild.toolchain.rcc.base" superClass="cdt.managedbuild.toolchain.rcc.base">
-							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.rcc.platform.base.1437628689" name="Debug Platform" superClass="cdt.managedbuild.target.rcc.platform.base"/>
-							<builder id="cdt.managedbuild.target.rcc.builder.base.260928986" managedBuildOn="false" name="RTEMS Make.Default" superClass="cdt.managedbuild.target.rcc.builder.base"/>
-							<tool id="cdt.managedbuild.tool.rcc.archiver.base.1808286933" name="SPARC RTEMS C Archiver" superClass="cdt.managedbuild.tool.rcc.archiver.base"/>
-							<tool id="cdt.managedbuild.tool.rcc.cpp.compiler.base.1667004691" name="SPARC RTEMS C++ Compiler" superClass="cdt.managedbuild.tool.rcc.cpp.compiler.base"/>
-							<tool id="cdt.managedbuild.tool.rcc.c.compiler.base.1204937266" name="SPARC RTEMS C Compiler" superClass="cdt.managedbuild.tool.rcc.c.compiler.base"/>
-							<tool id="cdt.managedbuild.tool.rcc.c.linker.base.1974624580" name="SPARC RTEMS C Linker" superClass="cdt.managedbuild.tool.rcc.c.linker.base"/>
-							<tool id="cdt.managedbuild.tool.rcc.cpp.linker.base.1679446199" name="SPARC RTEMS C++ Linker" superClass="cdt.managedbuild.tool.rcc.cpp.linker.base"/>
+				<configuration buildProperties="" id="cdt.managedbuild.toolchain.rcc.base.899983938" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
+					<folderInfo id="cdt.managedbuild.toolchain.rcc.base.899983938.782109431" name="/" resourcePath="">
+						<toolChain id="cdt.managedbuild.toolchain.rcc.base.297502631" name="cdt.managedbuild.toolchain.rcc.base" superClass="cdt.managedbuild.toolchain.rcc.base">
+							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.rcc.platform.base.1721054499" name="Debug Platform" superClass="cdt.managedbuild.target.rcc.platform.base"/>
+							<builder id="cdt.managedbuild.target.rcc.builder.base.2019714847" managedBuildOn="false" name="RTEMS Make.Default" superClass="cdt.managedbuild.target.rcc.builder.base"/>
+							<tool id="cdt.managedbuild.tool.rcc.archiver.base.1190607462" name="SPARC RTEMS C Archiver" superClass="cdt.managedbuild.tool.rcc.archiver.base"/>
+							<tool id="cdt.managedbuild.tool.rcc.cpp.compiler.base.1005639333" name="SPARC RTEMS C++ Compiler" superClass="cdt.managedbuild.tool.rcc.cpp.compiler.base"/>
+							<tool id="cdt.managedbuild.tool.rcc.c.compiler.base.1311631104" name="SPARC RTEMS C Compiler" superClass="cdt.managedbuild.tool.rcc.c.compiler.base"/>
+							<tool id="cdt.managedbuild.tool.rcc.c.linker.base.2034071689" name="SPARC RTEMS C Linker" superClass="cdt.managedbuild.tool.rcc.c.linker.base"/>
+							<tool id="cdt.managedbuild.tool.rcc.cpp.linker.base.1597664816" name="SPARC RTEMS C++ Linker" superClass="cdt.managedbuild.tool.rcc.cpp.linker.base"/>
 						</toolChain>
 					</folderInfo>
 				</configuration>
@@ -45,7 +47,7 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="FLIGHT_CODE_BASE_VER_28_7-2020.null.931230071" name="FLIGHT_CODE_BASE_VER_28_7-2020"/>
+		<project id="rsat_obc_software.null.283805427" name="rsat_obc_software"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 </cproject>
