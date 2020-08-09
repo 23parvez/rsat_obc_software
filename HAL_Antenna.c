@@ -127,10 +127,10 @@ void antennaCommand9(void){
 
 void rHAL_Antenna_Read()
 {
-  unsigned int Antenna_statuts_reg;
+  unsigned int Antenna_status_reg;
   unsigned short tempdata;
-  Antenna_statuts_reg = REG32(ANTENNA_STATUS_REGISTER_1);
-  if(Antenna_statuts_reg & ANTENNA_DATA_READY == 0x00000001)
+  Antenna_status_reg = REG32(ANTENNA_STATUS_REGISTER_1);
+  if(Antenna_status_reg & ANTENNA_DATA_READY)
   {
 	  tempdata =  (unsigned short)(REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE) & 0x0000FFFF);
 	  Antenna_ACK = tempdata;

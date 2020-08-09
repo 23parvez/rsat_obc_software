@@ -89,6 +89,7 @@ void rHAL_RW_TC_Write(struct HAL_RW_Data_Structure RW_No,union  RW_TC_Command_u 
 
 		Byte_count  = 0;
 		TC_ptr      = &RW.Data[0];
+
 		TC_data_ptr = &RW_Data_SlipFrame_TC[0];
 
 		while(Byte_count < 13)
@@ -135,6 +136,8 @@ void rHAL_RW_TM_Write(struct HAL_RW_Data_Structure RW_No,union RW_TM_Command_u R
 
 		Byte_count     = 0;
 		TMC_ptr        = &RW.Data[0];
+
+
 		TMC_data_ptr   = &RW_Data_SlipFrame_TMC[0];
 
 		while (Byte_count < 8)

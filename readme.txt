@@ -262,4 +262,22 @@ Func execute command
    which calls 1000 nops
 2. Added #pragma optimize ("O0") for patch area routines to avoid optimization on this routine.
    File: remote_patch.c remote_patch.h Functions: rRemote_patch_area_S1 .... rRemote_patch_area_S6
-						  rRemote_patch_area_L1 and rRemote_patch_area_L2   						 
+						  rRemote_patch_area_L1 and rRemote_patch_area_L2   
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	++++++++++++++++++++++++++++++++++
+	+ Changes made on 09 August 2020 +
+	+ by Ajeeth			 +
+	++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 	
+Software bug resolved according to MISRA C guidelines.
+a)  if(Antenna_statuts_reg & ANTENNA_DATA_READY == 0x00000001) is modified 
+    to  if(Antenna_statuts_reg & ANTENNA_DATA_READY)
+    File: HAL_Antenna.c remote_patch.h Function: rHAL_Antenna_Read ()
+b) variable Antenna_statuts_reg is changed to Antenna_status_reg 
+   File: HAL_Antenna.c remote_patch.h Function: rHAL_Antenna_Read ()
+c) Remote_Addr is initialized to RAM_SEG_START_ADDR to solve NULL pointer bug.
+   File: Telecommand.c remote_patch.h Function: rRemoteProgram_Data_TC()
+
+					 
