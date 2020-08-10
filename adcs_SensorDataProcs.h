@@ -10,6 +10,10 @@ double w_BODY_IMU1[3], w_BODY_IMU2[3], B_BODY_IMU1[3], B_BODY_IMU2[3];
 double IMU_prcd_data[6];
 double* IMU_prcd_data_ptr;
 double IMU_Sen2Bdy[3][3];
+double B_BODY_LUT[3];
+
+int PolCheck_LUT, PolChec_LUT_res;
+double MagBias_residue_LUT[27][3], MagBias_act_LUT[27][3];
 
 unsigned int imu1_db_checksum_obc;
 unsigned int imu2_db_checksum_obc;
@@ -50,12 +54,11 @@ double Ang_Deviation; ///arccos(dot(S_BODY,[0,-1,0]))
 
 double Roll_ang_err, Yaw_ang_err;
 int sun_quadrant;
-int f_Sunlit_Presence;
+int f_Sunlit_Presence, f_Sunlit_Presence_previous;
+int f_aft_statn_wait,aft_statn_cnt;
 
 int i_MatEq, j_MatEq;
-int Sunlit_presence_timer;
 
-double AngDev_SMtransit_thrsld;
 int SunNPP_SMtransit_counter;
 int SunNPP_SMtransit_count_limit;
 int SunNPP_SMtransit;

@@ -348,7 +348,6 @@ void rADCS_Pon_vars(void)
 	j_MatEq = 0.0;
 	Sunlit_presence_timer = 0;
 
-	AngDev_SMtransit_thrsld = 0.0;
 	SunNPP_SMtransit_counter = 0;
 	SunNPP_SMtransit_count_limit = 0;
 	SunNPP_SMtransit = 0.0;
@@ -382,6 +381,9 @@ void rADCS_Pon_vars(void)
 
 	wAD_updatecount = 0;
 	w_q_update_satisfy = 0;
+
+	PolCheck_LUT = 0;
+	PolChec_LUT_res = 0;
 
 	Quest_update_available = 0;
 
@@ -1253,10 +1255,9 @@ void rADCS_Pon_vars(void)
 		rsat[i_pini] = 0.0;
 	}
 
-	theta1  = 0.0;
-	theta2 = 0.0;
+	theta1_se  = 0.0;
+	theta2_se = 0.0;
 	psi_sl_ecl = 0.0;
-	f_Sunlit_Presence_OBC = 0.0;
 
 	magrsun  = 0.0;
 	//tempse  = 0.0;
@@ -1414,6 +1415,7 @@ void rADCS_Pon_vars(void)
 	for (i_pini=0; i_pini<3; i_pini++)
 	{
 		DPM_Polarity[i_pini] = 0;
+		DPM_Pol_prev[i_pini] = 0;
 		Ton[i_pini] = 0.0;
 		Ton[i_pini] = 0.0;
 		TorquerDutyCycle[i_pini] = 0.0;
@@ -1428,9 +1430,6 @@ void rADCS_Pon_vars(void)
 	Roll_MTR_Pol_Reversal = 0.0;
 	Pitch_MTR_Pol_Reversal = 0.0;
 	Yaw_MTR_Pol_Reversal = 0.0;
-	MR_Polarity = 0.0;
-	MP_Polarity = 0.0;
-	MY_Polarity = 0.0;
 	MTR_ActuationCycle = 8;
 
 	ActuationCycle = 0.0;
@@ -1539,7 +1538,6 @@ void rADCS_Pon_vars(void)
 	for (i_pini=0; i_pini<4; i_pini++)
 	{
 		del_v0[i_pini] = 0.0;
-		v0c[i_pini] = 0.0;
 		T_RW_spin[i_pini] = 0.0;
 	}
 

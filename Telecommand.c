@@ -116,7 +116,7 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 		ss_redundant_db_execute,										/* offset =    90 */
 		ss_main_db_checksum,											/* offset =    91 */
 		ss_redundant_db_checksum,										/* offset =    92 */
-		TC_Qinit,														/* offset =    93 */
+		rTLE_Update,												    /* offset =    93 */  //Renamed from TC_Qinit
 		TC_init_RW1,													/* offset =    94 */
 		TC_init_RW2,													/* offset =    95 */
 		TC_init_RW3,													/* offset =    96 */
@@ -172,6 +172,13 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 		TC_GPS2_NMEA_NMEA_GSV_Enable,                                    /* offset = 146  */
 		TC_GPS2_NMEA_NMEA_GSV_disable,                                   /* offset = 147 */
 		TC_ATTC_CMD_clear,                                               /* offset = 148 */
+		// Added on 05-08-2020
+		rTC_ref_snv_bias_q_update,										/* offset = 149 */
+		rTC_ref_stn_bias_q_update,										/* offset = 150 */
+		rTC_ref_q_gnd_update,											/* offset = 151 */
+		TC_q_body_init,													/* offset = 152 */
+		rElapsedTimerAssign,											/* offset = 153 */
+
 
 	};
 
@@ -581,7 +588,7 @@ void rADCS_Data_TC()
 						break;
 			case 11: ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[2] 		= u_TC.DataCommand.Data;
 						break;
-			case 12: ADCS_TC_data_command_Table.TC_Mag_Misalignment_IMU1 					= u_TC.DataCommand.Data;
+			/*case 12: ADCS_TC_data_command_Table.TC_Mag_Misalignment_IMU1 					= u_TC.DataCommand.Data;
 						break;
 			case 13: ADCS_TC_data_command_Table.TC_Mag_Misalignment_IMU2 					= u_TC.DataCommand.Data;
 						break;
@@ -599,8 +606,8 @@ void rADCS_Data_TC()
 						break;
 			case 20: ADCS_TC_data_command_Table.TC_SS_misalnCM4156 							= u_TC.DataCommand.Data;
 						break;
-			case 21: ADCS_TC_data_command_Table.TC_SS_Imax_ALPHA 							= u_TC.DataCommand.Data;
-						break;
+			case 21: ADCS_TC_data_command_Table.TC_SS_Imax_ALPHA 							= u_TC.DataCommand.Data;  //TO BE ADDED IN DOCUMENT
+						break;*/
 			case 22: ADCS_TC_data_command_Table.TC_eclipse_entrytime  						= u_TC.DataCommand.Data;
 						break;
 			case 23: ADCS_TC_data_command_Table.TC_eclipse_exittime  						= u_TC.DataCommand.Data;
@@ -671,7 +678,20 @@ void rADCS_Data_TC()
 						break;
 			case 56: ADCS_TC_data_command_Table.TC_wp_QDP						            = u_TC.DataCommand.Data;
 						break;
-
+			case 57: ADCS_TC_data_command_Table.TC_nut_dpsi						            = u_TC.DataCommand.Data;
+						break;
+			case 58: ADCS_TC_data_command_Table.TC_nut_deps						            = u_TC.DataCommand.Data;
+						break;
+			case 59: ADCS_TC_data_command_Table.TC_ref_svn_bias_off_deg						= u_TC.DataCommand.Data;
+						break;
+			case 60: ADCS_TC_data_command_Table.TC_q_command_0						        = u_TC.DataCommand.Data;
+						break;
+			case 61: ADCS_TC_data_command_Table.TC_q_command_1						        = u_TC.DataCommand.Data;
+						break;
+			case 62: ADCS_TC_data_command_Table.TC_q_command_2						        = u_TC.DataCommand.Data;
+						break;
+			case 63: ADCS_TC_data_command_Table.TC_q_command_3						        = u_TC.DataCommand.Data;
+						break;
 		    default:
 			            break;
 		}
@@ -1198,6 +1218,28 @@ void TMTC_Assignment()
 	TMTC_boolean_u.Boolean_Table.NMI_test_enable                               = TC_boolean_u.TC_Boolean_Table.NMI_test_enable;
 	TMTC_boolean_u.Boolean_Table.ST_dump_abort                                 = TC_boolean_u.TC_Boolean_Table.ST_dump_abort;
 	TMTC_boolean_u.Boolean_Table.TC_TCH_Full_Segment_Dump_mode                 = TC_boolean_u.TC_Boolean_Table.TC_TCH_Full_Segment_Dump_mode;
+	//added on 05-08-2020
+	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW1_enable			   = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW1_enable;
+	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW1_disable			   = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW1_disable;
+	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW2_enable			   = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW2_enable;
+	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW2_disable             = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW2_disable;
+	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW3_disable             = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW3_disable;
+	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW4_enable              = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW4_enable;
+	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW4_disable             = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW4_disable;
+	TMTC_boolean_u.Boolean_Table.TC_GND_Drift_Compensation_Enable_or_Disable   = TC_boolean_u.TC_Boolean_Table.TC_GND_Drift_Compensation_Enable_or_Disable;
+	TMTC_boolean_u.Boolean_Table.TC_GND_MagBias_Compensation_Enable_or_Disable = TC_boolean_u.TC_Boolean_Table.TC_GND_MagBias_Compensation_Enable_or_Disable;
+	TMTC_boolean_u.Boolean_Table.TC_H8Backup_H4_Main                           = TC_boolean_u.TC_Boolean_Table.TC_H8Backup_H4_Main;
+	TMTC_boolean_u.Boolean_Table.TC_H8Backup_H4_Redt                           = TC_boolean_u.TC_Boolean_Table.TC_H8Backup_H4_Redt;
+	TMTC_boolean_u.Boolean_Table.TC_H7Backup_H4_Main                           = TC_boolean_u.TC_Boolean_Table.TC_H7Backup_H4_Main;
+	TMTC_boolean_u.Boolean_Table.TC_H7Backup_H4_Redt                           = TC_boolean_u.TC_Boolean_Table.TC_H7Backup_H4_Redt;
+	TMTC_boolean_u.Boolean_Table.TC_MiddayOrbitFrame                           = TC_boolean_u.TC_Boolean_Table.TC_MiddayOrbitFrame;
+	TMTC_boolean_u.Boolean_Table.TC_Sunlitdec_sensor_based                     = TC_boolean_u.TC_Boolean_Table.TC_Sunlitdec_sensor_based;
+	TMTC_boolean_u.Boolean_Table.TC_Sunlitdec_Orbit_based                      = TC_boolean_u.TC_Boolean_Table.TC_Sunlitdec_Orbit_based;
+	TMTC_boolean_u.Boolean_Table.TC_Sunlitdec_timer_based                      = TC_boolean_u.TC_Boolean_Table.TC_Sunlitdec_timer_based;
+
+
+
+
 
 	//Gain Select command TMTC Assignment
 	TMTC_gain_select_u.gain_select_Table.TC_detumbling_bdot_gain               = TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain;
@@ -1822,9 +1864,20 @@ void ss_redundant_db_checksum()
 		//Add here for telemetry: ss_redundant_db_checksum_obc;
 }
 
-void TC_Qinit()
+void rTLE_Update()
 {
-	return;
+	Epochyear_TLE_tc = TC_TLE_data[0];
+	epochdays_TLE_tc = TC_TLE_data[1];
+	ibexp_TLE_tc = TC_TLE_data[2];
+	bstar_TLE_tc = TC_TLE_data[3];
+	inclination_TLE_tc = TC_TLE_data[4];
+	nodeo_TLE_tc = TC_TLE_data[5];
+	ecc_TLE_tc = TC_TLE_data[6];
+	argpo_TLE_tc = TC_TLE_data[7];
+	mo_TLE_tc = TC_TLE_data[8];
+	no_TLE_tc = TC_TLE_data[9];
+	Tsince_TLE_tc = TC_TLE_data[10];
+	//Epochyear_TLE_tc = TC_TLE_data[11];
 }
 
 void TC_init_RW1()
@@ -2095,6 +2148,66 @@ void TC_ATTC_CMD_clear()
 	rAbsoluteTTC_Clear();
 }
 
+void rTC_ref_snv_bias_q_update()
+{
+	Q_svn_off[0] = sin(ADCS_TC_data_command_Table.TC_ref_svn_bias_off_deg*c_D2R*0.5);
+	Q_svn_off[1] = 0.0;
+	Q_svn_off[2] = 0.0;
+	Q_svn_off[3] = cos(ADCS_TC_data_command_Table.TC_ref_svn_bias_off_deg*c_D2R*0.5);
+
+	rQs_Normalization(Q_svn_off);
+	Q_svn_off[0] = out_Quat_norm[0];
+	Q_svn_off[1] = out_Quat_norm[1];
+	Q_svn_off[2] = out_Quat_norm[2];
+	Q_svn_off[3] = out_Quat_norm[3];
+}
+
+void rTC_ref_stn_bias_q_update()
+{
+	Q_stn_off[0] = ADCS_TC_data_command_Table.TC_q_command_0;
+	Q_stn_off[1] = ADCS_TC_data_command_Table.TC_q_command_1;
+	Q_stn_off[2] = ADCS_TC_data_command_Table.TC_q_command_2;
+	Q_stn_off[3] = ADCS_TC_data_command_Table.TC_q_command_3;
+
+	rQs_Normalization(Q_stn_off);
+	Q_stn_off[0] = out_Quat_norm[0];
+	Q_stn_off[1] = out_Quat_norm[1];
+	Q_stn_off[2] = out_Quat_norm[2];
+	Q_stn_off[3] = out_Quat_norm[3];
+}
+
+void rTC_ref_q_gnd_update()
+{
+	Q_REF_GND[0] = ADCS_TC_data_command_Table.TC_q_command_0;
+	Q_REF_GND[1] = ADCS_TC_data_command_Table.TC_q_command_1;
+	Q_REF_GND[2] = ADCS_TC_data_command_Table.TC_q_command_2;
+	Q_REF_GND[3] = ADCS_TC_data_command_Table.TC_q_command_3;
+
+	rQs_Normalization(Q_REF_GND);
+	Q_REF_GND[0] = out_Quat_norm[0];
+	Q_REF_GND[1] = out_Quat_norm[1];
+	Q_REF_GND[2] = out_Quat_norm[2];
+	Q_REF_GND[3] = out_Quat_norm[3];
+}
+
+void TC_q_body_init()
+{
+	Qbody[0] = ADCS_TC_data_command_Table.TC_q_command_0;
+	Qbody[1] = ADCS_TC_data_command_Table.TC_q_command_1;
+	Qbody[2] = ADCS_TC_data_command_Table.TC_q_command_2;
+	Qbody[3] = ADCS_TC_data_command_Table.TC_q_command_3;
+
+	rQs_Normalization(Qbody);
+	Qbody[0] = out_Quat_norm[0];
+	Qbody[1] = out_Quat_norm[1];
+	Qbody[2] = out_Quat_norm[2];
+	Qbody[3] = out_Quat_norm[3];
+	
+void rElapsedTimerAssign()
+{
+	elapsed_running_timer = ADCS_TC_data_command_Table.TC_elapsed_orbitTimer;
+}
+
 void adcsgains()
 {
 	switch(u_TC.GainSelect.offset_addr)
@@ -2107,6 +2220,14 @@ void adcsgains()
 			 break;
 		case 3: TC_GYRO_Det_Min_Thres_1();
 			break;
+		case 4: rTc_nominal_speed_RW1();
+					break;
+		case 5:rTc_nominal_speed_RW2();
+					break;
+		case 6:rTc_nominal_speed_RW3();
+					break;
+		case 7:rTc_nominal_speed_RW4();
+					break;
 		case 23: TC_AngMomDump_Thrsld_1();
 			break;
 		case 24: TC_SpeedDump_Thrsld_1();
@@ -2252,6 +2373,109 @@ void TC_GYRO_Det_Min_Thres_1()
 		//
 	}
 }	 //
+
+void rTc_nominal_speed_RW1()
+{
+	if(TC_gain_select_u.TC_gain_select_Table.TC_W1_Commanded_Nominal_Speed)
+	{
+		TC_RW1_Nominal = GAIN_DATA_SET.Tc_nominal_speed_rw1_01;
+	}
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W1_Commanded_Nominal_Speed==02)
+	{
+		TC_RW1_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw1_10;
+	}
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W1_Commanded_Nominal_Speed==03)
+	{
+		TC_RW1_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw1_11;
+	}
+
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W1_Commanded_Nominal_Speed==00)
+	{
+		TC_RW1_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw1_00;
+	}
+	else
+	{
+		//
+	}
+}
+
+void rTc_nominal_speed_RW2()
+{
+	if(TC_gain_select_u.TC_gain_select_Table.TC_W2_Commanded_Nominal_Speed)
+	{
+		TC_RW2_Nominal = GAIN_DATA_SET.Tc_nominal_speed_rw1_01;
+	}
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W2_Commanded_Nominal_Speed==02)
+	{
+		TC_RW2_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw2_10;
+	}
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W2_Commanded_Nominal_Speed==03)
+	{
+		TC_RW2_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw2_11;
+	}
+
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W2_Commanded_Nominal_Speed==00)
+	{
+		TC_RW2_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw2_00;
+	}
+	else
+	{
+		//
+	}
+}
+
+void rTc_nominal_speed_RW3()
+{
+	if(TC_gain_select_u.TC_gain_select_Table.TC_W3_Commanded_Nominal_Speed)
+	{
+		TC_RW3_Nominal = GAIN_DATA_SET.Tc_nominal_speed_rw3_01;
+	}
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W3_Commanded_Nominal_Speed==02)
+	{
+		TC_RW3_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw3_10;
+	}
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W3_Commanded_Nominal_Speed==03)
+	{
+		TC_RW3_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw3_11;
+	}
+
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W3_Commanded_Nominal_Speed==00)
+	{
+		TC_RW3_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw3_00;
+	}
+	else
+	{
+		//
+	}
+}
+
+void rTc_nominal_speed_RW4()
+{
+	if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed)
+	{
+		TC_RW4_Nominal = GAIN_DATA_SET.Tc_nominal_speed_rw4_01;
+	}
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed==02)
+	{
+		TC_RW4_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw4_10;
+	}
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed==03)
+	{
+		TC_RW4_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw4_11;
+	}
+
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed==00)
+	{
+		TC_RW4_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw4_00;
+	}
+	else
+	{
+		//
+	}
+}
+
+
+
 void TC_AngMomDump_Thrsld_1()
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld==01)

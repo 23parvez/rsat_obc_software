@@ -203,6 +203,8 @@ const double c_B2wh_mat_0034[4][3];
 
 const double c_Tv_wof_1200[3][3],c_Tv_wof_1030[3][3],c_Tv_wof_1004[3][3],c_Tv_wof_0230[3][3],c_Tv_wof_0204[3][3],c_Tv_wof_0034[3][3];
 
+const int c_DPM_Pol_LookUpTable[27][3];
+
 ///Kalman Filter
 const double c_I_three_cross_three[3][3];
 const double c_I_nine_cross_nine[9][9];

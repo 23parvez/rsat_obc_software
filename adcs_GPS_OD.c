@@ -9,21 +9,26 @@
 #include "Telemetry.h"
 #include "TC_List.h"
 
-void rGPSDataProcessing(void)
+void rGPSTLEProcessing(void)
 {
 	GPS_1_DATA();                            //GPS
 
 	rGPS_TM_Extract();						//Extract GPS data for telemetry
 	ST_TM_gps_data();
 
+	if(TLE_Data_Available == 1) //TLE data availability flag irrespective of TLE or GPS selection
+	{
+		Tsince_TLE_tc = 0.0;
+		TLE_Data_Available = 0;
+	}
+
 	if(TC_boolean_u.TC_Boolean_Table.TC_GPS_TLE_Select== True)
 	{
-		rGPS2OE();
+		rGPSDataProcessing();
 	}
 	else if(TC_boolean_u.TC_Boolean_Table.TC_GPS_TLE_Select == False)
 	{
-		rOrbitalElements_TLE();
-		GPS_Elements_Available = 0;
+		rTLEDataProcessing();
 	}
 	else
 	{
@@ -35,61 +40,6 @@ void rOrbit_Initialization(void)
 {
     if (CB_OrbitModel == Enable)
     {
-        if(GPS_Elements_Available == 1)
-        {
-            Tsince_GPS = 0.0;
-            Tsince = Tsince_GPS;
-            epochdays_sel = epochdays_GPS;
-            inclination_sel = inclination_GPS;
-            nodeo_sel = nodeo_GPS;
-            trueanomoly_sel = trueanomoly_GPS;
-            mo_sel = mo_GPS;
-            argpo_sel = argpo_GPS;
-            epochyr_sel = Epochyear_GPS;
-            ecc_sel = ecc_GPS;
-            no_sel = no_GPS;
-            ibexp_sel = ibexp_TLE_tc;
-            bstar_sel = bstar_TLE_tc;
-            year_sel = year_GPS;
-            mon_sel = UTC_mon_GPS;
-            days_sel = UTC_day_GPS;
-            hr_sel = UTC_hr_GPS;
-            minute_sel = UTC_min_GPS;
-            sec_sel = UTC_sec_GPS;
-
-            GPS_Elements_Available = 0;
-
-        }
-
-
-        if(TLE_Data_Available == 1) //TLE data availability flag irrespective of TLE or GPS selection
-        {
-            Tsince_TLE_tc = 0.0;
-            TLE_Data_Available = 0;
-        }
-
-        if(TLE_Select == 1) //Telecommand to select TLE data over GPS
-        {
-            Tsince = Tsince_TLE;
-            epochdays_sel = epochdays_TLE_tc;
-            inclination_sel = inclination_TLE_tc;
-            nodeo_sel = nodeo_TLE_tc;
-            trueanomoly_sel = trueanomoly_TLE_tc;
-            mo_sel = mo_TLE_tc;
-            argpo_sel = argpo_TLE_tc;
-            epochyr_sel = Epochyear_TLE_tc;
-            ecc_sel = ecc_TLE_tc;
-            no_sel = no_TLE_tc;
-            ibexp_sel = ibexp_TLE_tc;
-            bstar_sel = bstar_TLE_tc;
-            year_sel = year_TLE_tc;
-            mon_sel = mon_TLE_tc;
-            days_sel = day_TLE_tc;
-            hr_sel = hr_TLE_tc;
-            minute_sel = minute_TLE_tc;
-            sec_sel = sec_TLE_tc;
-            ///TC_TLE_Elements_select = 0;
-        }
         ///----------------------Initialization------------------------------------------------------------
         //DeltaT computation using TLE data added on 4-3-2016
         Day_Of_Year_DeltaT = epochdays_sel + (Tsince/1440.0);
@@ -812,13 +762,41 @@ void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], do
 		///Compute the latitude of the satellite
 
 		if(abs_f(radialdistance_ecef) <= c_dividebyzerovalue)
-        {
-            radialdistance_ecef = c_dividebyzerovalue;
-        }
+		{
+			radialdistance_ecef = c_dividebyzerovalue;
+		}
 
 		latitude_temp = (Pos_ECEF_in[2]/radialdistance_ecef);
 		latitude = asin(latitude_temp);
 
+		xa_gcgd = 6356752.314245/(sqrt(tan(latitude)*tan(latitude) + 0.99330562));
+
+		if (xa_gcgd<c_radiusearthkm)
+			mua_gcgd = atan2(sqrt(c_radiusearthkm*c_radiusearthkm*1000000.0 - xa_gcgd*xa_gcgd),0.996647189335*xa_gcgd);
+		else
+			mua_gcgd = 0.0;
+
+		if (latitude < 0)
+		{
+			mua_gcgd = -mua_gcgd;
+		}
+
+		ra_gcgd = xa_gcgd/cos(latitude);
+
+		l_gcgd = radialdistance_ecef*1.0 - ra_gcgd;
+
+		dlambda_gcgd = mua_gcgd - latitude;
+
+		h_gcgd = l_gcgd*cos(dlambda_gcgd);
+
+		den_gcgd = 1 - (0.00669437999)*sin(mua_gcgd)*sin(mua_gcgd);
+		rhoa_gcgd = (6335439.32722)/sqrt(den_gcgd*den_gcgd*den_gcgd);
+
+		dmu_gcgd = atan2(l_gcgd*sin(dlambda_gcgd),rhoa_gcgd + h_gcgd);
+
+		gd_gcgd = mua_gcgd - dmu_gcgd;
+
+		latitude = gd_gcgd;
         Orbit_Period = c_Twopi*sqrt(pow(semimajoraxis,3.0)/c_mu);
 
         if(abs_f(Orbit_Period) <= c_dividebyzerovalue)
@@ -840,9 +818,9 @@ void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], do
 }
 
 
-void rOrbitalElements_TLE(void)
+void rTLEDataProcessing(void)
 {
-    if ((TLE_Select == 1)&&(CB_OrbitModel == Enable))
+    if (CB_OrbitModel == Enable)
     {
         for(i_jday = 1; i_jday <= 12; i_jday++)
         {
@@ -888,35 +866,39 @@ void rOrbitalElements_TLE(void)
             i_jday= i_jday + 1;
         }
 
-        mon_TLE_tc= i_jday;
-        mon_TLE_tc= dayofyr - inttemp;
-        temp_jday= (epochdays_TLE_tc - (float)dayofyr )*24.0;
-        hr_TLE_tc  = (int)( temp_jday );
-        temp_jday= (temp_jday - (float)hr_TLE_tc) * 60.0;
-        minute_TLE_tc = (int)(temp_jday);
-        sec_TLE_tc = (temp_jday - (float)minute_TLE_tc) * 60.0;
+        //mon_TLE_tc= i_jday;
+		mon_TLE_tc= dayofyr - inttemp;
+		temp_jday= (epochdays_TLE_tc - (double)dayofyr )*24.0;
+		hr_TLE_tc  = (int)( temp_jday );
+		temp_jday= (temp_jday - (double)hr_TLE_tc) * 60.0;
+		minute_TLE_tc = (int)(temp_jday);
+		sec_TLE_tc = (temp_jday - (double)minute_TLE_tc) * 60.0;
 
-        ibexp_TLE_tc = ibexp_tc * (-1.0);
-        bstar_TLE_tc = bstar_tc * pow(10.0, ibexp);
-        inclination_TLE_tc = inclo_tc*c_D2R;
-        nodeo_TLE_tc = nodeo_tc*c_D2R;
-        argpo_TLE_tc = argpo_tc*c_D2R;
-        mo_TLE_tc    = mo_tc*c_D2R;
-    }
-}
+		/*ibexp_TLE_tc = TC_ibexp_TLE * (-1.0);
+		bstar_TLE_tc = TC_bstar_TLE * pow(10.0, ibexp);
+		inclination_TLE_tc = TC_inclo_TLE*c_D2R;
+		nodeo_TLE_tc = TC_nodeo_TLE*c_D2R;
+		argpo_TLE_tc = TC_argpo_TLE*c_D2R;
+		mo_TLE_tc    = TC_mo_TLE*c_D2R;*/
 
-void rGPS_data_validity(void)
-{
-    if (CB_OrbitModel == Enable)
-    {
-        if(Alti_GPS >= 500.0 && Alti_GPS <= 700.0 && ecc_GPS <= 0.258819) /// 0.258819=cos 75
-        {
-            //GPS_Elements_Available = 1;
-        }
-        else
-        {
-            //GPS_Elements_Available = 0;
-        }
+		Tsince = Tsince_TLE_tc;
+		epochdays_sel = epochdays_TLE_tc;
+		inclination_sel = inclination_TLE_tc*c_D2R;
+		nodeo_sel = nodeo_TLE_tc*c_D2R;
+		//trueanomoly_sel = trueanomoly_TLE_tc;
+		mo_sel = mo_TLE_tc*c_D2R;
+		argpo_sel = argpo_TLE_tc*c_D2R;
+		epochyr_sel = Epochyear_TLE_tc;
+		ecc_sel = ecc_TLE_tc;
+		no_sel = no_TLE_tc;
+		ibexp_sel = ibexp_TLE_tc;
+		bstar_sel = bstar_TLE_tc * pow(10.0, ibexp_TLE_tc);
+		year_sel = year_TLE_tc;
+		mon_sel = mon_TLE_tc;
+		days_sel = day_TLE_tc;
+		hr_sel = hr_TLE_tc;
+		minute_sel = minute_TLE_tc;
+		sec_sel = sec_TLE_tc;
     }
 }
 
@@ -956,11 +938,11 @@ void rECEFtoECItoECEF(void)
         /// compute julian day of UT1 JDUT1
         UT1 = jd_time * c_min_per_day;
 
-        UTC = UT1*60.0 - TC_delUT1;
+        UTC = UT1*60.0 - ADCS_TC_data_command_Table.TC_delUT1_ECEF2ECI;
 
         /// compute julian day of UTC JDUTC
 
-        TAI = UTC + TC_delAT;
+        TAI = UTC + ADCS_TC_data_command_Table.TC_delAT_ECEF2ECI;
 
         TDT = TAI + 32.184;
 
@@ -1019,6 +1001,30 @@ void rECEFtoECItoECEF(void)
             }
         }
 
+        // iau 1980 nutation
+		eps=0.40909280 - 0.000226966*TTDB - 2.86E-9*TTDB2 + 8.8E-9*TTDB3;
+		rxRot(-eps);
+		rzRot(ADCS_TC_data_command_Table.TC_nut_dpsi);
+		rMatMul3x3(Rz, Rx);
+		for(i_god=0; i_god<3; i_god++)
+		{
+			for(j_god=0; j_god<3; j_god++)
+			{
+				nut_temp[i_god][j_god] = Matout33[i_god][j_god];
+			}
+		}
+
+		xin_temp = eps+ADCS_TC_data_command_Table.TC_nut_deps;
+		rxRot(xin_temp);
+		rMatMul3x3(Rx, nut_temp);
+		for(i_god=0; i_god<3; i_god++)
+		{
+			for(j_god=0; j_god<3; j_god++)
+			{
+				nutation[i_god][j_god] = Matout33[i_god][j_god];
+			}
+		}
+
         // astronomical arguments
         /*rast_args(TTDB);
 
@@ -1065,8 +1071,8 @@ void rECEFtoECItoECEF(void)
             }
         }
 
-        ryRot(TC_xp*c_AS2R);
-        rxRot(TC_yp*c_AS2R);
+        ryRot(ADCS_TC_data_command_Table.TC_xp_ECEF2ECI*c_AS2R);
+        rxRot(ADCS_TC_data_command_Table.TC_yp_ECEF2ECI*c_AS2R);
         rMatMul3x3(Ry, Rx);
         for(i_god=0; i_god<3; i_god++)
         {
@@ -1106,7 +1112,7 @@ void rECEFtoECItoECEF(void)
 
 }
 
-void rast_args(double TTDBin)
+/*void rast_args(double TTDBin)
 {
     for(tt[0]=TTDBin,i_god=1 ; i_god<4 ; i_god++)
     {
@@ -1140,15 +1146,15 @@ void rnut_iau1980(double TTDBin, const double *fin)
     }
     dpsi*=1.0E-4*c_AS2R; // 0.1 mas -> rad
     deps*=1.0E-4*c_AS2R;
-}
+}*/
 
-void rGPS2OE(void)
+void rGPSDataProcessing(void)
 {
     if (CB_OrbitModel == Enable)
     {
-        if(GPSDataReady ==1)
+        if(GPSDataReady ==1 && (Major_Cycle_Count % TC_GPS_pulse_duration == 0))
         {
-        	/*Pos_ECEF_GPS[0] =(*((int*)(GPS_TM_Buffer_Addr_USC+160))) * 0.00001;
+        	Pos_ECEF_GPS[0] =(*((int*)(GPS_TM_Buffer_Addr_USC+160))) * 0.00001;
 			Pos_ECEF_GPS[1] = (*((int*)(GPS_TM_Buffer_Addr_USC+164))) * 0.00001;
 			Pos_ECEF_GPS[2] = (*((int*)(GPS_TM_Buffer_Addr_USC+168))) * 0.00001;
 			Vel_ECEF_GPS[0] = (*((int*)(GPS_TM_Buffer_Addr_USC+172))) * 0.00001;
@@ -1159,7 +1165,7 @@ void rGPS2OE(void)
 			UTC_day_GPS = *(GPS_TM_Buffer_Addr_USC+150);
 			UTC_hr_GPS = *(GPS_TM_Buffer_Addr_USC+154);
 			UTC_min_GPS = *(GPS_TM_Buffer_Addr_USC+155);
-			UTC_sec_GPS = (*((unsigned short*)(GPS_TM_Buffer_Addr_USC+156))) * 0.001;*/
+			UTC_sec_GPS = (*((unsigned short*)(GPS_TM_Buffer_Addr_USC+156))) * 0.001;
 
             UTC_sec_GPS = UTC_sec_GPS + gps_pulse_mic_cnt * c_MiC;
 
@@ -1256,11 +1262,31 @@ void rGPS2OE(void)
             GPS_pulse_rcvd = 0;
             gps_pulse_mic_cnt = 0;
             GPSDataReady_NA_count = 0;
+
+            Tsince_GPS = 0.0;
+			Tsince = Tsince_GPS;
+			epochdays_sel = epochdays_GPS;
+			inclination_sel = inclination_GPS;
+			nodeo_sel = nodeo_GPS;
+			//trueanomoly_sel = trueanomoly_GPS;
+			mo_sel = mo_GPS;
+			argpo_sel = argpo_GPS;
+			epochyr_sel = Epochyear_GPS;
+			ecc_sel = ecc_GPS;
+			no_sel = no_GPS;
+			ibexp_sel = ibexp_TLE_tc;
+			bstar_sel = bstar_TLE_tc;
+			year_sel = year_GPS;
+			mon_sel = UTC_mon_GPS;
+			days_sel = UTC_day_GPS;
+			hr_sel = UTC_hr_GPS;
+			minute_sel = UTC_min_GPS;
+			sec_sel = UTC_sec_GPS;
         }
         else
         {
             GPSDataReady_NA_count = GPSDataReady_NA_count + 1;
-            if (GPSDataReady_NA_count >= TC_GPS2TLE_Switch)
+            if (GPSDataReady_NA_count >= ADCS_TC_data_command_Table.TC_Time_GPS2TLE)
             {
                 //TLE_Select = 1;
                 //GPS_Select = 0;
