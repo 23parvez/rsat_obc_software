@@ -15,9 +15,18 @@ void rLinearController(void)
 
     if (CB_LinearController == Enable)
     {
-        Tc[0] = (TC_KP[0]*Qerror[0] + TC_KR[0]*(w_BODY[0]-w_REF[0]));
-        Tc[1] = (TC_KP[1]*Qerror[1] + TC_KR[1]*(w_BODY[1]-w_REF[1]));
-        Tc[2] = (TC_KP[2]*Qerror[2] + TC_KR[2]*(w_BODY[2]-w_REF[2]));
+    	if (TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == 1 && TC_boolean_u.TC_Boolean_Table.TC_EKFControl_Enable == 1)
+		{
+			Tc[0] = (TC_KP[0]*Qerror[0] + TC_KR[0]*(w_k[0]-w_REF[0]));
+			Tc[1] = (TC_KP[1]*Qerror[1] + TC_KR[1]*(w_k[1]-w_REF[1]));
+			Tc[2] = (TC_KP[2]*Qerror[2] + TC_KR[2]*(w_k[2]-w_REF[2]));
+		}
+		else
+		{
+			Tc[0] = (TC_KP[0]*Qerror[0] + TC_KR[0]*(w_BODY[0]-w_REF[0]));
+			Tc[1] = (TC_KP[1]*Qerror[1] + TC_KR[1]*(w_BODY[1]-w_REF[1]));
+			Tc[2] = (TC_KP[2]*Qerror[2] + TC_KR[2]*(w_BODY[2]-w_REF[2]));
+		}
 
         ST_special.ST_SP_Buffer.cntrl_torque[0] = Tc[0];
         ST_special.ST_SP_Buffer.cntrl_torque[1] = Tc[1];
@@ -40,43 +49,16 @@ void rLinearController(void)
             Tc[2] = sign_f(Tc[2])*TC_T_RW_MAX;
         }
 
-        if ((w_BODYdeg[0] > 1.0 && (Qerror[0] < 0.0)))
-            Tc[0] = 0.0;
-        else if ((w_BODYdeg[0] < -1.0 && (Qerror[0] > 0.0)))
-            Tc[0] = 0.0;
-        else
-            //
-
-        if ((w_BODYdeg[1] > 1.0 && (Qerror[1] < 0.0)))
-            Tc[1] = 0.0;
-        else if ((w_BODYdeg[1] < -1.0 && (Qerror[1] > 0.0)))
-            Tc[1] = 0.0;
-        else
-            //
-
-        if ((w_BODYdeg[2] > 1.0 && (Qerror[2] < 0.0)))
-            Tc[2] = 0.0;
-        else if ((w_BODYdeg[2] < -1.0 && (Qerror[2] > 0.0)))
-            Tc[2] = 0.0;
-        else
-            //
-
-
+        rWheel_Auto_Reconfiguration();
 
         if ((Wheel_Config == 0) || (Wheel_Config == 1))
         {
-            ///rWheel_Dynamic_Friction();
 
             rMatMul43x1(c_B2wh_mat_4RW,Tc);
             T_RW[0] = Matout431[0];
             T_RW[1] = Matout431[1];
             T_RW[2] = Matout431[2];
             T_RW[3] = Matout431[3];
-
-            del_Vw[0] = T_RW[0] * c_MiC/c_MOI_wh;
-            del_Vw[1] = T_RW[1] * c_MiC/c_MOI_wh;
-            del_Vw[2] = T_RW[2] * c_MiC/c_MOI_wh;
-            del_Vw[3] = T_RW[3] * c_MiC/c_MOI_wh;
 
 			H_wh[0] = (c_MOI_wh)* (double)RW_Wheel_Speed[RWHEEL0];
 			H_wh[1] = (c_MOI_wh)* (double)RW_Wheel_Speed[RWHEEL1];
@@ -106,10 +88,8 @@ void rLinearController(void)
             RWSpeed[2] = (double)RW_Wheel_Speed[RWHEEL2] * c_RADps2RPM;
             RWSpeed[3] = (double)RW_Wheel_Speed[RWHEEL3] * c_RADps2RPM;
 
-            TM.Buffer.TM_RW_DeltaSpeed[0] = (int)(del_Vw[0] * c_RADps2RPM/c_TM_RW_Resol);
-            TM.Buffer.TM_RW_DeltaSpeed[1] = (int)(del_Vw[1] * c_RADps2RPM/c_TM_RW_Resol);
-            TM.Buffer.TM_RW_DeltaSpeed[2] = (int)(del_Vw[2] * c_RADps2RPM/c_TM_RW_Resol);
-            TM.Buffer.TM_RW_DeltaSpeed[3] = (int)(del_Vw[3] * c_RADps2RPM/c_TM_RW_Resol);
+            rSpeedBasedMomentumDumping();
+            rWheel_Spin_updown();
 
             if (CB_Wheel_OverSpeed_TorqueCutOff == Enable)
             {
@@ -154,8 +134,6 @@ void rLinearController(void)
                 }
             }
 
-            //rWheel_Spin_updown();
-
             if (abs_f(T_RW[0]) >= TC_T_RW_MAX )
             {
                 T_RW[0] = sign_f(T_RW[0])*TC_T_RW_MAX;
@@ -179,7 +157,16 @@ void rLinearController(void)
                 T_RW[3] = sign_f(T_RW[3])*TC_T_RW_MAX;
             }
 
-            ///rWheel_Auto_Reconfiguration();
+            del_Vw[0] = T_RW[0] * c_MiC/c_MOI_wh;
+			del_Vw[1] = T_RW[1] * c_MiC/c_MOI_wh;
+			del_Vw[2] = T_RW[2] * c_MiC/c_MOI_wh;
+			del_Vw[3] = T_RW[3] * c_MiC/c_MOI_wh;
+
+			TM.Buffer.TM_RW_DeltaSpeed[0] = (int)(del_Vw[0] * c_RADps2RPM/c_TM_RW_Resol);
+			TM.Buffer.TM_RW_DeltaSpeed[1] = (int)(del_Vw[1] * c_RADps2RPM/c_TM_RW_Resol);
+			TM.Buffer.TM_RW_DeltaSpeed[2] = (int)(del_Vw[2] * c_RADps2RPM/c_TM_RW_Resol);
+			TM.Buffer.TM_RW_DeltaSpeed[3] = (int)(del_Vw[3] * c_RADps2RPM/c_TM_RW_Resol);
+
         }
     }
 }
@@ -188,18 +175,6 @@ void rDutyCycleGeneration(void)
 {
     if(CB_DutyCycleGeneration == Enable)
     {
-        if (CB_Detumbling_Mode == 1)
-        {
-            Ton[0] = MTR_ActuationCycle;
-            Toff[0] = 0;
-
-            Ton[1] = MTR_ActuationCycle;
-            Toff[1] = 0;
-
-            Ton[2] = MTR_ActuationCycle;
-            Toff[2] = 0;
-        }
-
         if (DutyCycleGenEnable == 1)
         {
             TorquerDutyCycle[0] = abs_f(DPM[0])/c_DPMMAX;
@@ -230,7 +205,7 @@ void rAngularMomentumDumping(void)
     {
         if(TC_boolean_u.TC_Boolean_Table.TC_mom_dumping_ang_mom_based == Enable)
         {
-            if (f_Momentum_Dumping == Enable)
+            if (f_Momentum_Dumping == Enable && f_Sunlit_Presence == 1 && f_aft_statn_wait == 0)
             {
                 if (dumping_on == 0)
                 {
@@ -239,7 +214,7 @@ void rAngularMomentumDumping(void)
                         dumping_on = 1;
                     }
                 }
-                if (dumping_on == 1)
+                else //if (dumping_on == 1)
                 {
                     if ((abs_f(HB[0]) > TC_Hmin) || (abs_f(HB[1]) > TC_Hmin) || (abs_f(HB[2]) > TC_Hmin))
                     {
@@ -298,32 +273,28 @@ void rAngularMomentumDumping(void)
 						TM.Buffer.TM_DPM[2] = (int)(DPM[2] / 4.65661287E-8);
 
                         DutyCycleGenEnable = 1;
-                        CB_Torquer_Polarity_Check = 1;
                         tor_counter = 0;
+                        tor_counterk = 0;
+                        TorquerPolaritySetFlag = 1;
                     }
                     else
                     {
                         dumping_on = 0;
+                        TorquerPolaritySetFlag = 0;
+						DutyCycleGenEnable = 0;
+						DPM[0] = 0.0;
+						DPM[1] = 0.0;
+						DPM[2] = 0.0;
                     }
-                }
-                else
-                {
-                    tor_counter = 0;
-                    CB_Torquer_Polarity_Check = 0;
-                    DutyCycleGenEnable = 0;
-                    DPM[0] = 0.0;
-                    DPM[1] = 0.0;
-                    DPM[2] = 0.0;
                 }
             }
             else
             {
-                tor_counter = 0;
-                CB_Torquer_Polarity_Check = 0;
-                DutyCycleGenEnable = 0;
-                DPM[0] = 0.0;
-                DPM[1] = 0.0;
-                DPM[2] = 0.0;
+            	TorquerPolaritySetFlag = 0;
+				DutyCycleGenEnable = 0;
+				DPM[0] = 0.0;
+				DPM[1] = 0.0;
+				DPM[2] = 0.0;
             }
             rTorquer_Polarity_Check();
         }
@@ -334,75 +305,82 @@ void rTorquer_Polarity_Check(void)
 {
     if(CB_Torquer_Polarity_Check == 1)
     {
-        if(Roll_MTREnable == 1) // 1 - Enable, 0 - Disable
-        {
-            if(DPM[0] == 0.0)
-            {
-                DPM_Polarity[0] = No_Current;
-            }
-            else if(DPM[0] > 0.0)
-			{
-				DPM_Polarity[0] = Cur_Positive;
+    	DPM_Pol_prev[0] = DPM_Polarity[0];
+		DPM_Pol_prev[1] = DPM_Polarity[1];
+		DPM_Pol_prev[2] = DPM_Polarity[2];
 
+		if (TorquerPolaritySetFlag == 1)
+		{
+			if(Roll_MTREnable == 1) // 1 - Enable, 0 - Disable
+			{
+				if(DPM[0] == 0.0)
+				{
+					DPM_Polarity[0] = No_Current;
+				}
+				else if(DPM[0] > 0.0)
+				{
+					DPM_Polarity[0] = Cur_Positive;
+
+				}
+				else
+				{
+					DPM_Polarity[0] = Cur_Negative;
+				}
 			}
 			else
 			{
-				DPM_Polarity[0] = Cur_Negative;
+				DPM[0] = 0.0;
+				DPM_Polarity[0]  = No_Current;
 			}
-        }
-        else
-        {
-            DPM[0] = 0.0;
-            DPM_Polarity[0]  = No_Current;
-        }
 
-        if(Pitch_MTREnable == 1)
-        {
-            if(DPM[1] == 0)
-            {
-                DPM_Polarity[1] = No_Current;
-            }
-            else if(DPM[1] > 0.0)
+			if(Pitch_MTREnable == 1)
 			{
-				DPM_Polarity[1] = Cur_Positive;
+				if(DPM[1] == 0)
+				{
+					DPM_Polarity[1] = No_Current;
+				}
+				else if(DPM[1] > 0.0)
+				{
+					DPM_Polarity[1] = Cur_Positive;
+				}
+				else
+				{
+					DPM_Polarity[1] = Cur_Negative;
+				}
 			}
 			else
 			{
-				DPM_Polarity[1] = Cur_Negative;
+				DPM[1] = 0.0;
+				DPM_Polarity[1] = No_Current;
 			}
-        }
-        else
-        {
-            DPM[1] = 0.0;
-            DPM_Polarity[1] = No_Current;
-        }
 
-        if(Yaw_MTREnable ==1)
-        {
-            if(DPM[2] == 0)
-            {
-                DPM_Polarity[2] = No_Current;
-            }
-            else if(DPM[2] > 0.0)
+			if(Yaw_MTREnable ==1)
 			{
-				DPM_Polarity[2] = Cur_Positive;
+				if(DPM[2] == 0)
+				{
+					DPM_Polarity[2] = No_Current;
+				}
+				else if(DPM[2] > 0.0)
+				{
+					DPM_Polarity[2] = Cur_Positive;
+				}
+				else
+				{
+					DPM_Polarity[2] = Cur_Negative;
+				}
 			}
 			else
 			{
-				DPM_Polarity[2] = Cur_Negative;
+				DPM[2] = 0.0;
+				DPM_Polarity[2] = No_Current;
 			}
 		}
 		else
 		{
-			DPM[2] = 0.0;
+			DPM_Polarity[0] = No_Current;
+			DPM_Polarity[1] = No_Current;
 			DPM_Polarity[2] = No_Current;
 		}
-    }
-    else
-    {
-        DPM_Polarity[0] = No_Current;
-        DPM_Polarity[1] = No_Current;
-        DPM_Polarity[2] = No_Current;
     }
 }
 
@@ -412,14 +390,14 @@ void rSpeedBasedMomentumDumping(void)
     if (CB_SpeedBasedMomentumDumping == Enable)
     {
         //TC_SpeedAngularMomemtumDumping = 1;
-        if(TC_SpeedAngularMomemtumDumping == 1)
+        if(TC_boolean_u.TC_Boolean_Table.TC_Speed_Dumping == 1)
         {
             for(i_lict=0; i_lict<4; i_lict++)
             {
-                /*if(abs_i(TC_SpeedDumpTime) == 0)
+                if(abs_i(TC_SpeedDumpTime) == 0)
                 {
                     TC_SpeedDumpTime = 200;
-                }*/
+                }
 
                 if ((RWSpeed[i_lict] > TC_max_whspeed) && (check_dump_wh[i_lict] == 1))
                 {
@@ -444,105 +422,112 @@ void rSpeedBasedMomentumDumping(void)
                     }
                 }
             }
-            rMatMul34x1(wh2B_mat, T_RW_sdump);
-            TB_sMD[0] = Matout341[0];
-            TB_sMD[1] = Matout341[1];
-            TB_sMD[2] = Matout341[2];
+//            rMatMul34x1(wh2B_mat, T_RW_sdump);
+//            TB_sMD[0] = Matout341[0];
+//            TB_sMD[1] = Matout341[1];
+//            TB_sMD[2] = Matout341[2];
 
             if ((check_dump_wh[0] == 0) || (check_dump_wh[1] == 0) || (check_dump_wh[2] == 0) || (check_dump_wh[3] == 0))
             {
-                u_parl[0] = B_BODYn[0]*B_BODYn[0]*Tc[0] + B_BODYn[0]*B_BODYn[1]*Tc[1] + B_BODYn[0]*B_BODYn[2]*Tc[2];
-                u_parl[1] = B_BODYn[1]*B_BODYn[0]*Tc[0] + B_BODYn[1]*B_BODYn[1]*Tc[1] + B_BODYn[1]*B_BODYn[2]*Tc[2];
-                u_parl[2] = B_BODYn[2]*B_BODYn[0]*Tc[0] + B_BODYn[2]*B_BODYn[1]*Tc[1] + B_BODYn[1]*B_BODYn[2]*Tc[2];
+				u_parl[0] = B_BODYn[0]*B_BODYn[0]*Tc[0] + B_BODYn[0]*B_BODYn[1]*Tc[1] + B_BODYn[0]*B_BODYn[2]*Tc[2];
+				u_parl[1] = B_BODYn[1]*B_BODYn[0]*Tc[0] + B_BODYn[1]*B_BODYn[1]*Tc[1] + B_BODYn[1]*B_BODYn[2]*Tc[2];
+				u_parl[2] = B_BODYn[2]*B_BODYn[0]*Tc[0] + B_BODYn[2]*B_BODYn[1]*Tc[1] + B_BODYn[1]*B_BODYn[2]*Tc[2];
 
-                rMatMul43x1(B2wh_mat,u_parl);
-                T_RW[0] = Matout431[0];
-                T_RW[1] = Matout431[1];
-                T_RW[2] = Matout431[2];
-                T_RW[3] = Matout431[3];
+				rMatMul43x1(B2wh_mat,u_parl);
+				T_RW[0] = Matout431[0];
+				T_RW[1] = Matout431[1];
+				T_RW[2] = Matout431[2];
+				T_RW[3] = Matout431[3];
 
-                T_RW[0] = T_RW[0] + T_RW_sdump[0];
-                T_RW[1] = T_RW[1] + T_RW_sdump[1];
-                T_RW[2] = T_RW[2] + T_RW_sdump[2];
-                T_RW[3] = T_RW[3] + T_RW_sdump[3];
+				T_RW[0] = T_RW[0] + T_RW_sdump[0];
+				T_RW[1] = T_RW[1] + T_RW_sdump[1];
+				T_RW[2] = T_RW[2] + T_RW_sdump[2];
+				T_RW[3] = T_RW[3] + T_RW_sdump[3];
 
-                rMatMul34x1(wh2B_mat,T_RW);
-                T_RWB[0] = Matout341[0];
-                T_RWB[1] = Matout341[1];
-                T_RWB[2] = Matout341[2];
+				rMatMul34x1(wh2B_mat,T_RW);
+				T_RWB[0] = Matout341[0];
+				T_RWB[1] = Matout341[1];
+				T_RWB[2] = Matout341[2];
 
-                speed_based_torquer_control = 1;
+			    u_perp[0] = (B_BODYn[2]*B_BODYn[2]+B_BODYn[1]*B_BODYn[1])*(-T_RWB[0] + Tc[0]) + (-B_BODYn[1]*B_BODYn[0])*(-T_RWB[1] + Tc[1]) + (-B_BODYn[2]*B_BODYn[0])*(-T_RWB[2] + Tc[2]);
+				u_perp[1] = (-B_BODYn[1]*B_BODYn[0])*(-T_RWB[0] + Tc[0]) + (B_BODYn[2]*B_BODYn[2]+B_BODYn[0]*B_BODYn[0])*(-T_RWB[1] + Tc[1]) + (-B_BODYn[2]*B_BODYn[1])*(-T_RWB[2] + Tc[2]);
+				u_perp[2] = (-B_BODYn[0]*B_BODYn[2])*(-T_RWB[0] + Tc[0]) + (-B_BODYn[2]*B_BODYn[1])*(-T_RWB[1] + Tc[1]) + (B_BODYn[1]*B_BODYn[1]+B_BODYn[0]*B_BODYn[0])*(-T_RWB[2] + Tc[2]);
+
+				rCross_Product(B_BODYtesla, u_perp);
+				DPM[0] = Cross_Product[0]/Bsq; //Bsq dividebyzero check is done already
+				DPM[1] = Cross_Product[1]/Bsq;
+				DPM[2] = Cross_Product[2]/Bsq;
+
+				if(abs_f(T_RWB[0]) <= c_dividebyzerovalue)
+				{
+					T_RWB[0] = c_dividebyzerovalue;
+				}
+
+				if(abs_f(T_RWB[1]) <= c_dividebyzerovalue)
+				{
+					T_RWB[1] = c_dividebyzerovalue;
+				}
+
+
+				if(abs_f(T_RWB[2]) <= c_dividebyzerovalue)
+				{
+					T_RWB[2] = c_dividebyzerovalue;
+				}
+
+				T_RWBn[0] = abs_f(0.001/(1.732050807568877*T_RWB[0]));
+				T_RWBn[1] = abs_f(0.001/(1.732050807568877*T_RWB[1]));
+				T_RWBn[2] = abs_f(0.001/(1.732050807568877*T_RWB[2]));
+
+				H_retn = min_fun3(T_RWBn[0], T_RWBn[1], T_RWBn[2]);
+
+				DPM[0] = abs_f(c_DPMMAX/DPM[0]);
+				DPM[1] = abs_f(c_DPMMAX/DPM[1]);
+				DPM[2] = abs_f(c_DPMMAX/DPM[2]);
+
+				tau_ms = min_fun3(DPM[0], DPM[1], DPM[2]);
+
+				min_TW = min_fun2(H_retn, tau_ms);
+
+				if (min_TW < 1.0)
+				{
+					u_perp[0] = u_perp[0] * min_TW;
+					u_perp[1] = u_perp[1] * min_TW;
+					u_perp[2] = u_perp[2] * min_TW;
+
+					rCross_Product(B_BODYtesla,u_perp);
+					DPM[0] = Cross_Product[0]/Bsq;
+					DPM[1] = Cross_Product[1]/Bsq;
+					DPM[2] = Cross_Product[2]/Bsq;
+
+					T_RWB[0] = T_RWB[0] * min_TW;
+					T_RWB[1] = T_RWB[1] * min_TW;
+					T_RWB[2] = T_RWB[2] * min_TW;
+
+					rMatMul43x1(B2wh_mat,T_RWB);
+					T_RW[0] = Matout431[0];
+					T_RW[1] = Matout431[1];
+					T_RW[2] = Matout431[2];
+					T_RW[3] = Matout431[3];
+				}
+				DutyCycleGenEnable = 1;
+			    tor_counter = 0; // for dynamics
+			    tor_counterk = 0;
+			    TorquerPolaritySetFlag = 1;
+			    rTorquer_Polarity_Check();
+
+			   //speed_based_torquer_control = 1;
             }
 
-            else
-            {
-                speed_based_torquer_control = 0;
-            }
-
-            if (speed_based_torquer_control == 1)
-            {
-                u_perp[0] = (B_BODYn[2]*B_BODYn[2]+B_BODYn[1]*B_BODYn[1])* (-T_RWB[0] + Tc[0]) + (-B_BODYn[1]*B_BODYn[0])*(-T_RWB[1] + Tc[1]) + (-B_BODYn[2]*B_BODYn[0])*(-T_RWB[2] + Tc[2]);
-                u_perp[1] = (-B_BODYn[1]*B_BODYn[0])*(-T_RWB[0] + Tc[0]) + (B_BODYn[2]*B_BODYn[2]+B_BODYn[0]*B_BODYn[0])*(-T_RWB[1] + Tc[1]) + (-B_BODYn[2]*B_BODYn[1])*(-T_RWB[2] + Tc[2]);
-                u_perp[2] = (-B_BODYn[0]*B_BODYn[2])*(-T_RWB[0] + Tc[0]) + (-B_BODYn[2]*B_BODYn[1])*(-T_RWB[1] + Tc[1]) + (B_BODYn[1]*B_BODYn[1]+B_BODYn[0]*B_BODYn[0])*(-T_RWB[2] + Tc[2]);
-
-                rCross_Product(B_BODYtesla, u_perp);
-                DPM[0] = Cross_Product[0]/Bsq; //Bsq dividebyzero check is done already
-                DPM[1] = Cross_Product[1]/Bsq;
-                DPM[2] = Cross_Product[2]/Bsq;
-
-                if(abs_f(T_RWB[0]) <= c_dividebyzerovalue)
-                {
-                    T_RWB[0] = c_dividebyzerovalue;
-                }
-
-                if(abs_f(T_RWB[1]) <= c_dividebyzerovalue)
-                {
-                    T_RWB[1] = c_dividebyzerovalue;
-                }
-
-
-                if(abs_f(T_RWB[2]) <= c_dividebyzerovalue)
-                {
-                    T_RWB[2] = c_dividebyzerovalue;
-                }
-
-                T_RWBn[0] = abs_f(0.001/(1.732050807568877*T_RWB[0]));
-                T_RWBn[1] = abs_f(0.001/(1.732050807568877*T_RWB[1]));
-                T_RWBn[2] = abs_f(0.001/(1.732050807568877*T_RWB[2]));
-
-                H_retn = min_fun3(T_RWBn[0], T_RWBn[1], T_RWBn[2]);
-
-                DPM[0] = abs_f(c_Mmax/DPM[0]);
-                DPM[1] = abs_f(c_Mmax/DPM[1]);
-                DPM[2] = abs_f(c_Mmax/DPM[2]);
-
-                tau_ms = min_fun3(DPM[0], DPM[1], DPM[2]);
-
-                min_TW = min_fun2(H_retn, tau_ms);
-
-                if (min_TW < 1.0)
-                {
-                    u_perp[0] = u_perp[0] * min_TW;
-                    u_perp[1] = u_perp[1] * min_TW;
-                    u_perp[2] = u_perp[2] * min_TW;
-
-                    rCross_Product(B_BODYtesla,u_perp);
-                    DPM[0] = Cross_Product[0]/Bsq;
-                    DPM[1] = Cross_Product[1]/Bsq;
-                    DPM[2] = Cross_Product[2]/Bsq;
-
-                    T_RWB[0] = T_RWB[0] * min_TW;
-                    T_RWB[1] = T_RWB[1] * min_TW;
-                    T_RWB[2] = T_RWB[2] * min_TW;
-
-                    rMatMul43x1(Pse_Inv_Dist_Mat,T_RWB);
-                    T_RW[0] = Matout431[0];
-                    T_RW[1] = Matout431[1];
-                    T_RW[2] = Matout431[2];
-                    T_RW[3] = Matout431[3];
-                }
-                rTorquer_Polarity_Check();
-            }
+			else
+			{
+			   DutyCycleGenEnable = 0;
+			   tor_counter = 0; // for dynamics
+			   tor_counterk = 0;
+			   TorquerPolaritySetFlag = 0;
+			   DPM[0] = 0.0;
+			   DPM[1] = 0.0;
+			   DPM[2] = 0.0;
+			}
         }
     }
 }
@@ -551,14 +536,14 @@ void rWheel_Spin_updown(void)
 {
     if (CB_Wheel_Spin_updown == Enable)
     {
-        if (wheel_spin_logic == Disable)
+        if (TC_boolean_u.TC_Boolean_Table.TC_Wheel_SpinUpDown_Logic == Enable)
         {
             if (Wheel_Config == 0)
             {
                 del_v0a = 0.0;
                 for (i_lict=0; i_lict<=3; i_lict++)
                 {
-                    del_v0[i_lict] = v0c[i_lict] - RWSpeed[i_lict];//v0c[i_lict] should be assigned with Telecommanded value for nominal speed
+                    del_v0[i_lict] = RW_Nominal[i_lict] - RWSpeed[i_lict];//RW_Nominal[i_lict] should be assigned with Telecommanded value for nominal speed
                     del_v0a = del_v0a + abs_f(del_v0[i_lict]);
                 }
                 del_v0a = del_v0a/4.0;
@@ -615,7 +600,7 @@ void rWheel_Auto_Reconfiguration(void)
 	unsigned int tempdata;
     if (CB_Wheel_Auto_Reconfiguration == Enable)
     {
-        if (RW_ARC_Logic == Disable)
+        if (TC_boolean_u.TC_Boolean_Table.TC_Wheel_AutoReConfig_Logic == Enable)
         {
             exp_whsp_ch[0] = exp_whsp_ch[0] + (T_RW[0] * c_MaC/c_MOI_wh)*c_RADps2RPM;
             exp_whsp_ch[1] = exp_whsp_ch[1] + (T_RW[1] * c_MaC/c_MOI_wh)*c_RADps2RPM;
@@ -624,7 +609,7 @@ void rWheel_Auto_Reconfiguration(void)
 
             RW_ARC_Count = RW_ARC_Count + 1;
 
-            if ((majorcyclecount % TC_RW_ARC_Count_thres) == 0)
+            if ((Major_Cycle_Count % TC_RW_ARC_Count_thres) == 0)
             {
                 for (i_lict=0; i_lict<=3; i_lict++)
                 {
@@ -694,6 +679,50 @@ void rWheel_Auto_Reconfiguration(void)
                 exp_whsp_ch[3] = 0.0;
 
             }
+
+            if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW1_enable == 1)
+			{
+				wheel_index[0] = 1;
+			}
+			else if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW1_disable == 1)
+			{
+				wheel_index[0] = 0;
+			}
+			else
+				//
+
+			if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW2_enable == 1)
+			{
+				wheel_index[1] = 2;
+			}
+			else if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW2_disable == 1)
+			{
+				wheel_index[1] = 0;
+			}
+			else
+							//
+
+			if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW3_enable == 1)
+			{
+				wheel_index[2] = 4;
+			}
+			else if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW3_disable == 1)
+			{
+				wheel_index[2] = 0;
+			}
+			else
+							//
+
+			if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW4_enable == 1)
+			{
+				wheel_index[3] = 8;
+			}
+			else if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW4_disable == 1)
+			{
+				wheel_index[3] = 0;
+			}
+			else
+							//
 
             wheel_index_ARCsum = wheel_index[0] + wheel_index[1] + wheel_index[2] + wheel_index[3];
             tempdata = wheel_index_ARCsum;

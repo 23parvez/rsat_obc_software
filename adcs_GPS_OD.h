@@ -98,7 +98,7 @@ double Pos_ECIn[3], Vel_ECIn[3], Pos_ECEFn[3], Vel_ECEFn[3];
 ///Orbital elements computation
 double semimajoraxis, ecc, Alti, inclination_temp, inclination, RAAN, trueanomoly, argofperigee, eccanomaly, ecc_r;
 double longitude, latitude_temp, latitude, longitude_tan_num, longitude_tan_den;
-
+double xa_gcgd, mua_gcgd,ra_gcgd,l_gcgd,dlambda_gcgd,h_gcgd,den_gcgd,rhoa_gcgd,dmu_gcgd,gd_gcgd;
 
 ///Ecef to ECI to ecef
 double UT1, UTC, TAI, JDTDT, M_quad, sine1, sine2, TDB, TDT, TTDB, JDTDB, TTDB2, TTDB3, zeta, z, theta;
@@ -116,7 +116,7 @@ void rSidereal(void);
 void rxRot(double th);
 void ryRot(double th);
 void rzRot(double th);
-void rOrbitalElements_TLE(void);
+void rTLEDataProcessing(void);
 void rOrbitalElements_generation_GPS(void);
 void rOrbit_Initialization(void);
 void rJulian_Day(int year, int mon, int days, int hr, int minute, double sec);
@@ -124,7 +124,6 @@ void rECEFtoECItoECEF(void);
 void rMatInv(double mat2inv[3][3]);
 void rOrbit_Propagation(void);
 void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], double Pos_ECEF_in[3]);
-void rGPS_data_validity(void);
 void rNEDtoECEF(void);
 void rGPSDataProcessing(void);
 

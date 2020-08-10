@@ -5,7 +5,7 @@
 int DutyCycleGenEnable, TorquerPolaritySetFlag;
 double MR, MP, MY;
 int Roll_MTR_Pol_Reversal, Pitch_MTR_Pol_Reversal, Yaw_MTR_Pol_Reversal;
-int MR_Polarity, MP_Polarity, MY_Polarity, DPM_Polarity[3], Ton[3], Toff[3];
+int DPM_Polarity[3], Ton[3], Toff[3], DPM_Pol_prev[3];
 int Roll_MTREnable, Pitch_MTREnable, Yaw_MTREnable;
 int MTR_ActuationCycle;
 
@@ -63,7 +63,7 @@ int DFCCountLimSL[4], DFCCountLimSL[4], DFCcountHigh, DFCcountLow;
 
 ///wheel spin updown
 int wheel_spin_logic, spin_up_avg_count, spin_up_avg_count_2;
-double del_v0[4], v0c[4], del_v0a, T_RW_spin[4];
+double del_v0[4], del_v0a, T_RW_spin[4];
 
 /// for dynamics
 int tor_counter;
