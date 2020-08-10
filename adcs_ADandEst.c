@@ -48,7 +48,7 @@ void rQ_Propagation(double q_prop[4], double w_prop[3])
 	}
 	else
     {
-        q_prop_out[3] = 1.00;
+        q_prop_out[3] = 1.0;
     }
 }
 
