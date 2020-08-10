@@ -521,5 +521,9 @@ extern void rRemote_patch_area_5();
 
 extern void rRemote_patch_area_6();
 
+extern void rRemote_patch_area_L1 ();
+
+extern void rRemote_patch_area_L2 ();
+
 /*************************************************/
 #endif // GLOBAL

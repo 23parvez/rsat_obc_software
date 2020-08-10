@@ -25,6 +25,9 @@ void rPOR_Init(void)
 	//TCH_write_ptr = &TC_hist_data[0];
 	Remote_data_addr = RAM_SEG_START_ADDR;
 
+	// Remote program default address
+	Remote_Addr = RAM_SEG_START_ADDR;
+
 
 	//Telemetry
 	inter_TM_ST_TC_NS_Write_Source_Addr = (unsigned short*)TC_storing_buffer;

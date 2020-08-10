@@ -239,3 +239,45 @@ Func execute command
    File: Telemetry.c Function: rHAL_TM_Write().
 2.If condition is added in ATTC_delete function to over come the hanging issue.
   File: Telecommand.c Function: rAbsoluteTTC_Delete().
+ 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	++++++++++++++++++++++++++++++++++
+	+ Changes made on 05 August 2020 +
+	+ by Ajeeth			 +
+	++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
+1. ATTC delete function is modified. All cases of deleting operations
+   are verified.
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	++++++++++++++++++++++++++++++++++
+	+ Changes made on 07 August 2020 +
+	+ by Ajeeth			 +
+	++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
+1. rRemote_patch_area_1, rRemote_patch_area_2 ..... rRemote_patch_area_6 is renamed as
+ rRemote_patch_area_S1, rRemote_patch_area_S2 ..... rRemote_patch_area_S6.
+2. Calling number of nop Macro is increased to 200 times.
+3. Introduced two new patch area named rRemote_patch_area_L1 and rRemote_patch_area_L2
+   which calls 1000 nops
+2. Added #pragma optimize ("O0") for patch area routines to avoid optimization on this routine.
+   File: remote_patch.c remote_patch.h Functions: rRemote_patch_area_S1 .... rRemote_patch_area_S6
+						  rRemote_patch_area_L1 and rRemote_patch_area_L2   
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	++++++++++++++++++++++++++++++++++
+	+ Changes made on 09 August 2020 +
+	+ by Ajeeth			 +
+	++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 	
+Software bug resolved according to MISRA C guidelines.
+a)  if(Antenna_statuts_reg & ANTENNA_DATA_READY == 0x00000001) is modified 
+    to  if(Antenna_statuts_reg & ANTENNA_DATA_READY)
+    File: HAL_Antenna.c remote_patch.h Function: rHAL_Antenna_Read ()
+b) variable Antenna_statuts_reg is changed to Antenna_status_reg 
+   File: HAL_Antenna.c remote_patch.h Function: rHAL_Antenna_Read ()
+c) Remote_Addr is initialized to RAM_SEG_START_ADDR to solve NULL pointer bug.
+   File: Telecommand.c remote_patch.h Function: rRemoteProgram_Data_TC()
+
+					 

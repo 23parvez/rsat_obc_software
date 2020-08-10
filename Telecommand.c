@@ -979,7 +979,7 @@ void rDifferential_TimeTag_Execute()
 }
 
 //Delete the node for the given position
-void rAbsoluteTTC_Delete()
+/*void rAbsoluteTTC_Delete()
 {
 	unsigned short traverse_count = 0;
 	Nodeptrtype temp = head;
@@ -1003,7 +1003,80 @@ void rAbsoluteTTC_Delete()
 		ATTC_count--;
 	}
 
+}*/
+
+
+
+// Test variables
+/*
+unsigned int delete_count1,delete_count2;
+void rAbsoluteTTC_Delete()
+{
+	delete_count1 = 0;
+	delete_count2 =0;
+	Nodeptrtype temp = head;
+	Nodeptrtype prev = NULL;
+
+	while ((temp != NULL) && (temp->command.TC_time < u_TC.ATTC_Exe_cmd.TC_time))	  // Search for the ATT command to be deleted using the unique TC_time data
+	{
+		delete_count1++;
+		prev = temp;
+		temp = temp->next;
+	}
+	if(temp == NULL) return;
+
+	prev->next = temp->next;
+	temp->next = NULL;
+	temp->command.TC_time = 0;
+	freeNode(temp);
+	ATTC_count--;
+	delete_count2++;
+
 }
+*/
+
+
+void rAbsoluteTTC_Delete()
+{
+	Nodeptrtype temp = head;
+	Nodeptrtype prev = NULL;
+
+	// Return if no linked list exists
+
+	if (temp == NULL) return;
+
+	if (temp->command.TC_time == u_TC.ATTC_Exe_cmd.TC_time)
+	{
+		// Data key match found in head node, so delete the node.
+
+		head = temp->next;
+		temp->command.TC_time = 0;
+		freeNode(temp);
+		ATTC_count--;
+	}
+
+	else
+	{
+		while ((temp != NULL) && (temp->command.TC_time < u_TC.ATTC_Exe_cmd.TC_time))	  // Search for the ATT command to be deleted using the unique TC_time data
+		{
+			prev = temp;
+			temp = temp->next;
+
+		}
+
+		if ((temp != NULL) && (temp->command.TC_time == u_TC.ATTC_Exe_cmd.TC_time))
+		{
+			prev->next = temp->next;
+			temp->next = NULL;
+			temp->command.TC_time = 0;
+			freeNode(temp);
+			ATTC_count--;
+		}
+
+	}
+
+}
+
 
 
 // Clear the Telecommand data

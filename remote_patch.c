@@ -7,98 +7,63 @@
 #include "remote_patch.h"
 void rSus_mode_remote_entry_hook ()
 {
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-
+	nop();
 }
 
 void rSus_mode_remote_exit_hook ()
 {
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-
+	nop();
 }
 
 void rDBDOT_mode_remote_entry_hook ()
 {
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-
+	nop();
 }
 
 void rDBDOT_mode_remote_exit_hook ()
 {
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-
+	nop();
 }
 
 void rDGYRO_mode_remote_entry_hook ()
 {
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-
+	nop();
 }
 
 void rDGYRO_mode_remote_exit_hook ()
 {
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-
+	nop();
 }
 
 void rSACQ_mode_remote_entry_hook ()
 {
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-
+	nop();
 }
 
 void rSACQ_mode_remote_exit_hook ()
 {
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-
+	nop();
 }
 
 void r3AXIS_mode_remote_entry_hook ()
 {
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-
+	nop();
 }
 
 void r3AXIS_mode_remote_exit_hook ()
 {
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-	nop();	nop(); nop();
 
+	nop();
 }
 
 void rSAFE_mode_remote_entry_hook ()
 {
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-
+	nop();
 }
 
 void rSAFE_mode_remote_exit_hook()
 {
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-	nop();	nop(); nop();
-
+	nop();
 }
 
 /******************************************************************/
@@ -112,87 +77,382 @@ void rSAFE_mode_remote_exit_hook()
  *@
  ******************************************************************/
 
-void rRemote_patch_area_1 ()
+#pragma GCC optimize ("O0")
+
+// Function having 1000 nops creating space of 200 (instructions) * 4 (bytes) = 800 Bytes
+void rRemote_patch_area_S1 ()
 {
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+}	
+
+#pragma GCC optimize ("O0")
+
+// Function having 1000 nops creating space of 200 (instructions) * 4 (bytes) = 800 Bytes
+void rRemote_patch_area_S2 ()
+{
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
 
 }
 
-void rRemote_patch_area_2 ()
+#pragma GCC optimize ("O0")
+
+// Function having 1000 nops creating space of 200 (instructions) * 4 (bytes) = 800 Bytes
+void rRemote_patch_area_S3 ()
 {
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
 }
 
-void rRemote_patch_area_3 ()
+#pragma GCC optimize ("O0")
+
+// Function having 1000 nops creating space of 200 (instructions) * 4 (bytes) = 800 Bytes
+void rRemote_patch_area_S4 ()
 {
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
 }
 
-void rRemote_patch_area_4 ()
+#pragma GCC optimize ("O0")
+
+// Function having 1000 nops creating space of 200 (instructions) * 4 (bytes) = 800 Bytes
+void rRemote_patch_area_S5 ()
 {
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
 }
 
-void rRemote_patch_area_5 ()
+#pragma GCC optimize ("O0")
+
+// Function having 1000 nops creating space of 200 (instructions) * 4 (bytes) = 800 Bytes
+void rRemote_patch_area_S6 ()
 {
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+
 }
 
-void rRemote_patch_area_6 ()
+#pragma GCC optimize ("O0")
+
+// Function having 1000 nops creating space of 1000 (instructions) * 4 (bytes) = 4000 Bytes
+void rRemote_patch_area_L1 ()
 {
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
-	nop();	nop(); nop(); nop(); nop(); nop();	nop(); nop(); nop(); nop();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+
+
+}
+
+#pragma GCC optimize ("O0")
+
+// Function having 1000 nops creating space of 1000 (instructions) * 4 (bytes) = 4000 Bytes
+void rRemote_patch_area_L2 ()
+{
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
+	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
 }
