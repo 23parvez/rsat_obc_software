@@ -343,101 +343,34 @@ void rIMUDataProcessing(void)
 
 		TM.Buffer.TM_IMU_SELECTED = TM_IMU1;
 		IMU_temperature         = IMU1_DATA.IMU_Temp;
-
-		if (TC_boolean_u.TC_Boolean_Table.TC_GND_Drift_Compensation_Enable_or_Disable == Enable)
+		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable == Enable)
+		{
+			w_BODY[0] = w_BODY[0] - Xk[3];
+			w_BODY[1] = w_BODY[1] - Xk[4];
+			w_BODY[2] = w_BODY[2] - Xk[5];
+		}
+		else
 		{
 			w_BODY[0] = w_BODY[0] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[0]);
 			w_BODY[1] = w_BODY[1] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[1]);
 			w_BODY[2] = w_BODY[2] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[2]);
 		}
 
-		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable == Enable && TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == Enable)
-		{
-			w_BODY[0] = w_BODY[0] - Xk[3];
-			w_BODY[1] = w_BODY[1] - Xk[4];
-			w_BODY[2] = w_BODY[2] - Xk[5];
-		}
-
-
 		w_BODYdeg[0] = w_BODY[0] * c_R2D;
 		w_BODYdeg[1] = w_BODY[1] * c_R2D;
 		w_BODYdeg[2] = w_BODY[2] * c_R2D;
 
-		if(TC_boolean_u.TC_Boolean_Table.TC_Mag_Torquer_Bias_Enable_or_Disable == Enable)
-		{
-			if (Roll_MTREnable == Enable || Pitch_MTREnable == Enable || Yaw_MTREnable == Enable)  // Software..hw enable/disable
-			{
-				for(i = 0; i < 27; i++)
-				{
-					if(DPM_Polarity[0] == c_DPM_Pol_LookUpTable[i][0] && DPM_Polarity[1] == c_DPM_Pol_LookUpTable[i][1] && DPM_Polarity[2] == c_DPM_Pol_LookUpTable[i][2])  // Actual polarity status from rHAL_MTR
-					{
-						PolCheck_LUT = i;
-						break;
-					}
-				}
-
-				B_BODY[0] -= MagBias_act_LUT[PolCheck_LUT][0];
-				B_BODY[1] -= MagBias_act_LUT[PolCheck_LUT][1];
-				B_BODY[2] -= MagBias_act_LUT[PolCheck_LUT][2];
-
-			}
-			else
-			{
-				for(i = 0; i < 27; i++)
-				{
-					if(DPM_Pol_prev[0] == c_DPM_Pol_LookUpTable[i][0] && DPM_Pol_prev[1] == c_DPM_Pol_LookUpTable[i][1] && DPM_Pol_prev[2] == c_DPM_Pol_LookUpTable[i][2])
-					{
-						PolChec_LUT_res = i;
-						break;
-					}
-				}
-
-				B_BODY[0] -= MagBias_residue_LUT[PolChec_LUT_res][0];
-				B_BODY[1] -= MagBias_residue_LUT[PolChec_LUT_res][1];
-				B_BODY[2] -= MagBias_residue_LUT[PolChec_LUT_res][2];
-
-
-			}
-		}
-
-		B_BODY_LUT[0] = B_BODY[0];
-		B_BODY_LUT[1] = B_BODY[1];
-		B_BODY_LUT[2] = B_BODY[2];
-
-		if (TC_boolean_u.TC_Boolean_Table.TC_GND_MagBias_Compensation_Enable_or_Disable == Enable)
-		{
-			B_BODY[0] = B_BODY[0] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[0]);
-			B_BODY[1] = B_BODY[1] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[1]);
-			B_BODY[2] = B_BODY[2] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[2]);
-		}
-
 		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable == Enable)
 		{
-			if (TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == 0 && TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == Enable)
-			{
-				B_BODY[0] = B_BODY[0] - (Xk[6] * 1.0e9);
-				B_BODY[1] = B_BODY[1] - (Xk[7] * 1.0e9);
-				B_BODY[2] = B_BODY[2] - (Xk[8] * 1.0e9);
-			}
-			else
-				{
-					if (TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == Enable)
-					{
-						if (f_station_tracking_enabled == 0 && Sunlit_presence_timer > 4650)
-						{
-							B_BODY[0] = B_BODY[0] - lpfb_k[0] * 1.0e9;
-							B_BODY[1] = B_BODY[1] - lpfb_k[1] * 1.0e9;
-							B_BODY[2] = B_BODY[2] - lpfb_k[2] * 1.0e9;
-						}
-						else// if (f_station_tracking_enabled == 1 || Sunlit_presence_timer < 9375)
-						{
-							B_BODY[0] = B_BODY[0] - lpfb_k_prev[0] * 1.0e9;
-							B_BODY[1] = B_BODY[1] - lpfb_k_prev[1] * 1.0e9;
-							B_BODY[2] = B_BODY[2] - lpfb_k_prev[2] * 1.0e9;
-						}
-					}
-
-				}
+			B_BODY[0] = B_BODY[0] - (Xk[6] * 1.0e9);
+			B_BODY[1] = B_BODY[1] - (Xk[7] * 1.0e9);
+			B_BODY[2] = B_BODY[2] - (Xk[8] * 1.0e9);
+		}
+		else
+		{
+			B_BODY[0] = B_BODY[0] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[0]);
+			B_BODY[1] = B_BODY[1] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[1]);
+			B_BODY[2] = B_BODY[2] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[2]);
 		}
 
 		B_BODYtesla[0] = B_BODY[0] * 1.0E-9;
@@ -445,6 +378,7 @@ void rIMUDataProcessing(void)
 		B_BODYtesla[2] = B_BODY[2] * 1.0E-9;
 
 		Bsq = (B_BODYtesla[0]*B_BODYtesla[0] + B_BODYtesla[1]*B_BODYtesla[1] + B_BODYtesla[2]*B_BODYtesla[2]);
+		Bsq = Bsq * Bsq;
 
 		w_BODYnorm = (w_BODYdeg[0]*w_BODYdeg[0] + w_BODYdeg[1]*w_BODYdeg[1] + w_BODYdeg[2]*w_BODYdeg[2]) * c_R2D;
 
@@ -503,101 +437,34 @@ void rIMUDataProcessing(void)
 		ST_special.ST_SP_Buffer.TM_IMU_2_Temp     = (unsigned short)(IMU2_DATA.IMU_Temp); //IMU Temperature
 		ST_normal.ST_NM_Buffer.TM_IMU_2_Diag_STS = (unsigned short)(IMU2_DATA.IMU_Diag_STS); //IMU DIAG STATUS
 
-		if (TC_boolean_u.TC_Boolean_Table.TC_GND_Drift_Compensation_Enable_or_Disable == Enable)
-		{
-			w_BODY[0] = w_BODY[0] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[0]);
-			w_BODY[1] = w_BODY[1] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[1]);
-			w_BODY[2] = w_BODY[2] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[2]);
-		}
-
 		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable == Enable)
 		{
 			w_BODY[0] = w_BODY[0] - Xk[3];
 			w_BODY[1] = w_BODY[1] - Xk[4];
 			w_BODY[2] = w_BODY[2] - Xk[5];
 		}
-
+		else
+		{
+			w_BODY[0] = w_BODY[0] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[0]);
+			w_BODY[1] = w_BODY[1] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[1]);
+			w_BODY[2] = w_BODY[2] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[2]);
+		}
 
 		w_BODYdeg[0] = w_BODY[0] * c_R2D;
 		w_BODYdeg[1] = w_BODY[1] * c_R2D;
 		w_BODYdeg[2] = w_BODY[2] * c_R2D;
 
-
-		if(TC_boolean_u.TC_Boolean_Table.TC_Mag_Torquer_Bias_Enable_or_Disable == Enable)
+		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable == Enable)
 		{
-			if (Roll_MTREnable == Enable || Pitch_MTREnable == Enable || Yaw_MTREnable == Enable)  // Software..hw enable/disable
-			{
-				for(i = 0; i < 27; i++)
-				{
-					if(DPM_Polarity[0] == c_DPM_Pol_LookUpTable[i][0] && DPM_Polarity[1] == c_DPM_Pol_LookUpTable[i][1] && DPM_Polarity[2] == c_DPM_Pol_LookUpTable[i][2])  // Actual polarity status from rHAL_MTR
-					{
-						PolCheck_LUT = i;
-						break;
-					}
-				}
-
-				B_BODY[0] -= MagBias_act_LUT[PolCheck_LUT][0];
-				B_BODY[1] -= MagBias_act_LUT[PolCheck_LUT][1];
-				B_BODY[2] -= MagBias_act_LUT[PolCheck_LUT][2];
-
-			}
-			else
-			{
-				for(i = 0; i < 27; i++)
-				{
-					if(DPM_Pol_prev[0] == c_DPM_Pol_LookUpTable[i][0] && DPM_Pol_prev[1] == c_DPM_Pol_LookUpTable[i][1] && DPM_Pol_prev[2] == c_DPM_Pol_LookUpTable[i][2])
-					{
-						PolChec_LUT_res = i;
-						break;
-					}
-				}
-
-				B_BODY[0] -= MagBias_residue_LUT[PolChec_LUT_res][0];
-				B_BODY[1] -= MagBias_residue_LUT[PolChec_LUT_res][1];
-				B_BODY[2] -= MagBias_residue_LUT[PolChec_LUT_res][2];
-
-
-			}
+			B_BODY[0] = B_BODY[0] - (Xk[6] * 1.0e9);
+			B_BODY[1] = B_BODY[1] - (Xk[7] * 1.0e9);
+			B_BODY[2] = B_BODY[2] - (Xk[8] * 1.0e9);
 		}
-
-		B_BODY_LUT[0] = B_BODY[0];
-		B_BODY_LUT[1] = B_BODY[1];
-		B_BODY_LUT[2] = B_BODY[2];
-
-		if (TC_boolean_u.TC_Boolean_Table.TC_GND_MagBias_Compensation_Enable_or_Disable == Enable)
+		else
 		{
 			B_BODY[0] = B_BODY[0] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[0]);
 			B_BODY[1] = B_BODY[1] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[1]);
 			B_BODY[2] = B_BODY[2] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[2]);
-		}
-
-		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable == Enable)
-		{
-			if (TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == 0 && TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == Enable)
-			{
-				B_BODY[0] = B_BODY[0] - (Xk[6] * 1.0e9);
-				B_BODY[1] = B_BODY[1] - (Xk[7] * 1.0e9);
-				B_BODY[2] = B_BODY[2] - (Xk[8] * 1.0e9);
-			}
-			else
-				{
-					if (TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == Enable)
-					{
-						if (f_station_tracking_enabled == 0 && Sunlit_presence_timer > 4650)
-						{
-							B_BODY[0] = B_BODY[0] - lpfb_k[0] * 1.0e9;
-							B_BODY[1] = B_BODY[1] - lpfb_k[1] * 1.0e9;
-							B_BODY[2] = B_BODY[2] - lpfb_k[2] * 1.0e9;
-						}
-						else// if (f_station_tracking_enabled == 1 || Sunlit_presence_timer < 9375)
-						{
-							B_BODY[0] = B_BODY[0] - lpfb_k_prev[0] * 1.0e9;
-							B_BODY[1] = B_BODY[1] - lpfb_k_prev[1] * 1.0e9;
-							B_BODY[2] = B_BODY[2] - lpfb_k_prev[2] * 1.0e9;
-						}
-					}
-
-				}
 		}
 
 		B_BODYtesla[0] = B_BODY[0] * 1.0E-9;
@@ -726,106 +593,91 @@ void rBDOT_Computation(void)
 
 void rSunSensorDataProcessing(void)
 {
-	if (f_Sunlit_Presence == 1)
+	rSS_Read_Data(SS_Data,ADC_Buffer);
+	SS_prcd_data_ptr = rSunSensorVectorComp(&SS_Data[0],&SS_Main_2Exe_DB);
+	SB_MAIN[0] = *SS_prcd_data_ptr++;
+	SB_MAIN[1] = *SS_prcd_data_ptr++;
+	SB_MAIN[2] = *SS_prcd_data_ptr;
+
+	SS_prcd_data_ptr = rSunSensorVectorComp(&SS_Data[8],&SS_Main_2Exe_DB);
+	SB_RED[0] = *SS_prcd_data_ptr++;
+	SB_RED[1] = *SS_prcd_data_ptr++;
+	SB_RED[2] = *SS_prcd_data_ptr;
+
+	TM.Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
+	TM.Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
+	TM.Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
+
+	ST_normal.ST_NM_Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
+	ST_normal.ST_NM_Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
+	ST_normal.ST_NM_Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
+
+	//for special_str s_body datatype(int) as to be changed to datatype(short)
+
+	ST_special.ST_SP_Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
+	ST_special.ST_SP_Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
+	ST_special.ST_SP_Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
+
+	//--------------------------------------------------------------------
+
+	/*TM.Buffer.TM_S_BODY_Red[0] = (int)(SB_RED[0]/4.65661287E-7);
+	TM.Buffer.TM_S_BODY_Red[1] = (int)(SB_RED[1]/4.65661287E-7);
+	TM.Buffer.TM_S_BODY_Red[2] = (int)(SB_RED[2]/4.65661287E-7);*/
+
+	if (TC_boolean_u.TC_Boolean_Table.TC_SS_Cells_Sel == TC_Main_Cells)
 	{
-		rSS_Read_Data(SS_Data,ADC_Buffer);
-		SS_prcd_data_ptr = rSunSensorVectorComp(&SS_Data[0],&SS_Main_2Exe_DB);
-		SB_MAIN[0] = *SS_prcd_data_ptr++;
-		SB_MAIN[1] = *SS_prcd_data_ptr++;
-		SB_MAIN[2] = *SS_prcd_data_ptr;
+		S_BODY[0] = SB_MAIN[0];
+		S_BODY[1] = SB_MAIN[1];
+		S_BODY[2] = SB_MAIN[2];
+	}
+	else
+	{
+		S_BODY[0] = SB_RED[0];
+		S_BODY[1] = SB_RED[1];
+		S_BODY[2] = SB_RED[2];
+	}
 
-		SS_prcd_data_ptr = rSunSensorVectorComp(&SS_Data[8],&SS_Main_2Exe_DB);
-		SB_RED[0] = *SS_prcd_data_ptr++;
-		SB_RED[1] = *SS_prcd_data_ptr++;
-		SB_RED[2] = *SS_prcd_data_ptr;
+	rVectorNorm(S_BODY);
+	S_BODYn[0] = Norm_out[0];
+	S_BODYn[1] = Norm_out[1];
+	S_BODYn[2] = Norm_out[2];
 
-		TM.Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
-		TM.Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
-		TM.Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
+	///Roll and Yaw angle errors' computation
+	Roll_ang_err = atan2(S_BODYn[2], -S_BODYn[1]);
+	Yaw_ang_err = ((-1.0) * atan2(S_BODYn[0], -S_BODYn[1]));
 
-		ST_normal.ST_NM_Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
-		ST_normal.ST_NM_Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
-		ST_normal.ST_NM_Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
+	TM.Buffer.TM_SunSens_Roll_Error = (int)(Roll_ang_err/0.01);
+	ST_normal.ST_NM_Buffer.TM_SunSens_Roll_Error = (int)(Roll_ang_err/0.01);
 
-		//for special_str s_body datatype(int) as to be changed to datatype(short)
+	TM.Buffer.TM_SunSens_Yaw_Error = (int)(Yaw_ang_err/0.01);
+	ST_normal.ST_NM_Buffer.TM_SunSens_Yaw_Error = (int)(Yaw_ang_err/0.01);
 
-		ST_special.ST_SP_Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
-		ST_special.ST_SP_Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
-		ST_special.ST_SP_Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
+	///Angle Deviation Computation
+	Ang_Deviation = acos((-1.0) * (S_BODYn[1]));
+	TM.Buffer.TM_SunSens_Pitch_Error = (int)Ang_Deviation;
+	ST_normal.ST_NM_Buffer.TM_SunSens_Pitch_Error = (int)Ang_Deviation;
 
-		//--------------------------------------------------------------------
 
-		/*TM.Buffer.TM_S_BODY_Red[0] = (int)(SB_RED[0]/4.65661287E-7);
-		TM.Buffer.TM_S_BODY_Red[1] = (int)(SB_RED[1]/4.65661287E-7);
-		TM.Buffer.TM_S_BODY_Red[2] = (int)(SB_RED[2]/4.65661287E-7);*/
+	if(abs_f(Ang_Deviation) < AngDev_SAMtransit_thrsld)
+	{
+		SunNPP_SAMtransit_counter++;
 
-		if (TC_boolean_u.TC_Boolean_Table.TC_SS_Cells_Sel == TC_Main_Cells)
+		if(SunNPP_SAMtransit_counter >= SunNPP_SAMtransit_count_limit)
 		{
-			S_BODY[0] = SB_MAIN[0];
-			S_BODY[1] = SB_MAIN[1];
-			S_BODY[2] = SB_MAIN[2];
-		}
-		else
-		{
-			S_BODY[0] = SB_RED[0];
-			S_BODY[1] = SB_RED[1];
-			S_BODY[2] = SB_RED[2];
+			SunNPP_SAMtransit = True;
+			SunNPP_SAMtransit_counter = SunNPP_SAMtransit_count_limit;
 		}
 
-		rVectorNorm(S_BODY);
-		S_BODYn[0] = Norm_out[0];
-		S_BODYn[1] = Norm_out[1];
-		S_BODYn[2] = Norm_out[2];
-
-		///Roll and Yaw angle errors' computation
-
-		if(abs_f(S_BODYn) <= c_dividebyzerovalue)
-		{
-			S_BODYn = c_dividebyzerovalue;
-		}
-
-		Roll_ang_err = atan2(S_BODYn[2], -S_BODYn[1]);
-		Yaw_ang_err = ((-1.0) * atan2(S_BODYn[0], -S_BODYn[1]));
-
-		TM.Buffer.TM_SunSens_Roll_Error = (int)(Roll_ang_err/0.01);
-		ST_normal.ST_NM_Buffer.TM_SunSens_Roll_Error = (int)(Roll_ang_err/0.01);
-
-		TM.Buffer.TM_SunSens_Yaw_Error = (int)(Yaw_ang_err/0.01);
-		ST_normal.ST_NM_Buffer.TM_SunSens_Yaw_Error = (int)(Yaw_ang_err/0.01);
-
-		///Angle Deviation Computation
-		Ang_Deviation = acos((-1.0) * (S_BODYn[1]));
-		TM.Buffer.TM_SunSens_Pitch_Error = (int)Ang_Deviation;
-		ST_normal.ST_NM_Buffer.TM_SunSens_Pitch_Error = (int)Ang_Deviation;
-
-
-		if(abs_f(Ang_Deviation) < c_AngDev_SAMtransit_thrsld)
-		{
-			SunNPP_SAMtransit_counter++;
-
-			if(SunNPP_SAMtransit_counter >= SunNPP_SAMtransit_count_limit)
-			{
-				SunNPP_SAMtransit = True;
-				SunNPP_SAMtransit_counter = SunNPP_SAMtransit_count_limit;
-			}
-
-			else
-			{
-				SunNPP_SAMtransit = False;
-			}
-		}
 		else
 		{
 			SunNPP_SAMtransit = False;
-
-			SunNPP_SAMtransit_counter = 0;
 		}
 	}
 	else
 	{
-		S_BODY[0] = S_BODYn[0] = 0.0;
-		S_BODY[1] = S_BODYn[1] = 0.0;
-		S_BODY[2] = S_BODYn[2] = 0.0;
+		SunNPP_SAMtransit = False;
+
+		SunNPP_SAMtransit_counter = 0;
 	}
 }
 
@@ -839,21 +691,6 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 	SS_M6 = *SS_Data_Addr++;			//SSCAT32//SSCAT72:://SS M6//SS M14
 	SS_M7 = *SS_Data_Addr++;			//SSCAT41//SSCAT81:://SS M7//SS M15
 	SS_M8 = *SS_Data_Addr;				//SSCAT42//SSCAT82:://SS M8//SS M16
-
-	if (SS_M1 > SS_M3)
-		SS_M3 = 0;
-	else
-		SS_M1 = 0;
-
-	if (SS_M2 > SS_M4)
-		SS_M4 = 0;
-	else
-		SS_M2 = 0;
-
-	if (SS_M5 > SS_M6)
-		SS_M6 = 0;
-	else
-		SS_M5 = 0;
 
 	/// Different deployment selections
 	 if(ADCS_TC_data_command_Table.TC_PanelD_Status_Sel == TC_Not_Deployed)///Both the panels are Not deployed
@@ -895,21 +732,7 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 	///Assignment of variables for different sensors (Yaw and Pitch)
 
 	SC2 = SS_M2;
-
-	if ((TC_boolean_u.TC_Boolean_Table.TC_H8Backup_H4_Main == 1) || (TC_boolean_u.TC_Boolean_Table.TC_H8Backup_H4_Redt == 1))
-	{
-		SC4 = SS_M8;
-	}
-	else if ((TC_boolean_u.TC_Boolean_Table.TC_H7Backup_H4_Main == 1) || (TC_boolean_u.TC_Boolean_Table.TC_H7Backup_H4_Redt == 1))
-	{
-		SC4 = SS_M7;
-	}
-	else
-	{
-		SC4 = SS_M4;
-	}
-
-	//SC4 = SS_M4;
+	SC4 = SS_M4;
 	SC5 = SS_M5;
 	SC6 = SS_M6;
 

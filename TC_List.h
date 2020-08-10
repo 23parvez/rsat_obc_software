@@ -74,26 +74,6 @@ unsigned int Remote_data_addr;
 			uint8 NMI_test_enable;                                                /* offset =   60  */
 			uint8 ST_dump_abort;												  /* offset =   61  */
 			uint8 TC_TCH_Full_Segment_Dump_mode;   								  /* offset =   62  */
-			//added on 05-08-2020
-
-			uint8 TC_wheel_index_ground_RW1_enable;								  /* offset =   63  */
-			uint8 TC_wheel_index_ground_RW1_disable;						      /* offset =   64  */
-			uint8 TC_wheel_index_ground_RW2_enable;								  /* offset =   65  */
-			uint8 TC_wheel_index_ground_RW2_disable;							  /* offset =   66  */
-			uint8 TC_wheel_index_ground_RW3_enable;								  /* offset =   67  */
-			uint8 TC_wheel_index_ground_RW3_disable;							  /* offset =   68  */
-			uint8 TC_wheel_index_ground_RW4_enable;								  /* offset =   69  */
-			uint8 TC_wheel_index_ground_RW4_disable;							  /* offset =   70  */
-			uint8 TC_GND_Drift_Compensation_Enable_or_Disable;					  /* offset =   71  */
-			uint8 TC_GND_MagBias_Compensation_Enable_or_Disable;				  /* offset =   72  */
-			uint8 TC_H8Backup_H4_Main;											  /* offset =   73  */
-			uint8 TC_H8Backup_H4_Redt;											  /* offset =   74  */
-			uint8 TC_H7Backup_H4_Main;											  /* offset =   75  */
-			uint8 TC_H7Backup_H4_Redt;											  /* offset =   76  */
-			uint8 TC_MiddayOrbitFrame;											  /* offset =   77  */
-			uint8 TC_Sunlitdec_sensor_based;									  /* offset =   78  */
-			uint8 TC_Sunlitdec_Orbit_based;                                       /* offset =   79  */
-			uint8 TC_Sunlitdec_timer_based;										  /* offset =   80  */
 	    };
 
 #define TC_BOOLEAN_MAX_LIMIT 63
@@ -176,28 +156,6 @@ unsigned int Remote_data_addr;
 			uint8 ST_dump_abort                                   :1;
 			//uint8 TCH_dump_mode                                 :1;
 			uint8 TC_TCH_Full_Segment_Dump_mode                   :1;
-			//added on 5-08-2020
-			uint8 TC_wheel_index_ground_RW1_enable				  :1;
-			uint8 TC_wheel_index_ground_RW1_disable				  :1;
-			uint8 TC_wheel_index_ground_RW2_enable				  :1;
-			uint8 TC_wheel_index_ground_RW2_disable				  :1;
-			uint8 TC_wheel_index_ground_RW3_enable				  :1;
-			uint8 TC_wheel_index_ground_RW3_disable				  :1;
-			uint8 TC_wheel_index_ground_RW4_enable				  :1;
-			uint8 TC_wheel_index_ground_RW4_disable			      :1;
-			uint8 TC_GND_Drift_Compensation_Enable_or_Disable     :1;
-			uint8 TC_GND_MagBias_Compensation_Enable_or_Disable   :1;
-			uint8 TC_H8Backup_H4_Main							  :1;
-			uint8 TC_H8Backup_H4_Redt							  :1;
-			uint8 TC_H7Backup_H4_Main							  :1;
-			uint8 TC_H7Backup_H4_Redt							  :1;
-			uint8 TC_MiddayOrbitFrame							  :1;
-			uint8 TC_Sunlitdec_sensor_based						  :1;
-			uint8 TC_Sunlitdec_Orbit_based						  :1;
-			uint8 TC_Sunlitdec_timer_based						  :1;
-
-
-
 	    };
 
 	union TMTC_boolean_U
@@ -343,16 +301,16 @@ unsigned int Remote_data_addr;
 			float TC_Drift_Uplink_Compensation_IMU2[3];									/*offset = 3 - 5*/
 			float TC_MagBias_Uplink_Compensation_IMU1[3];							    /*offset = 6 - 8*/
 			float TC_MagBias_Uplink_Compensation_IMU2[3];								/*offset = 9 - 11*/
-			/*float TC_Mag_Misalignment_IMU1;												offset = 12
-			float TC_Mag_Misalignment_IMU2;												offset = 13
-			float TC_Mag_Scale_Factor_IMU1;												offset = 14
-			float TC_Mag_Scale_Factor_IMU2;												offset = 15
-			float TC_ACC_Ang_RESET;														offset = 16
-			float TC_SS_misalnCM1256;													offset = 17
-			float TC_SS_misalnCM2356;													offset = 18
-			float TC_SS_misalnCM3456;													offset = 19
-			float TC_SS_misalnCM4156;													offset = 20
-			float TC_SS_Imax_ALPHA;														offset = 21*/ //To be removed from here. Shifted to remote data commands
+			float TC_Mag_Misalignment_IMU1;												/*offset = 12*/
+			float TC_Mag_Misalignment_IMU2;												/*offset = 13*/
+			float TC_Mag_Scale_Factor_IMU1;												/*offset = 14*/
+			float TC_Mag_Scale_Factor_IMU2;												/*offset = 15*/
+			float TC_ACC_Ang_RESET;														/*offset = 16*/
+			float TC_SS_misalnCM1256;													/*offset = 17*/
+			float TC_SS_misalnCM2356;													/*offset = 18*/
+			float TC_SS_misalnCM3456;													/*offset = 19*/
+			float TC_SS_misalnCM4156;													/*offset = 20*/
+			float TC_SS_Imax_ALPHA;														/*offset = 21*/
 			float TC_eclipse_entrytime;													/*offset = 22*/
 			float TC_eclipse_exittime;													/*offset = 23*/
 			float TC_elapsed_orbitTimer;												/*offset = 24*/
@@ -388,14 +346,6 @@ unsigned int Remote_data_addr;
 			float TC_wAD_BODYminThYaw;                                                  /*offset = 54*/
 			float TC_wAD_updateTimeThresh;                                              /*offset = 55*/
 			float TC_wp_QDP;                                                            /*offset = 56*/
-			// added on 5_8_2020
-			float TC_nut_dpsi;                                                          /*offset = 57*/
-			float TC_nut_deps;                                                          /*offset = 58*/
-			float TC_ref_svn_bias_off_deg;												/*offset = 59*/
-			float TC_q_command_0;														/*offset = 60*/
-			float TC_q_command_1;														/*offset = 61*/
-			float TC_q_command_2;														/*offset = 62*/
-			float TC_q_command_3;														/*offset = 63*/
 
 	  	    }ADCS_TC_data_command_Table;
 #define ADCS_TC_data_command_MAX_LIMIT 57
@@ -702,43 +652,6 @@ typedef struct TC_ADCS_gainset
 	double TC_SpeedDump_TimeSelect_0_10;
 
 	double TC_SpeedDump_TimeSelect_0_11;
-
-
-	//offset 4
-	float Tc_nominal_speed_rw1_00;
-
-	float Tc_nominal_speed_rw1_01;
-
-	float Tc_nominal_speed_rw1_10;
-
-	float Tc_nominal_speed_rw1_11;
-
-	//offset 5
-	float Tc_nominal_speed_rw2_00;
-
-	float Tc_nominal_speed_rw2_01;
-
-	float Tc_nominal_speed_rw2_10;
-
-	float Tc_nominal_speed_rw2_11;
-
-	//offset 6
-	float Tc_nominal_speed_rw3_00;
-
-	float Tc_nominal_speed_rw3_01;
-
-	float Tc_nominal_speed_rw3_10;
-
-	float Tc_nominal_speed_rw3_11;
-
-	//offset 7
-	float Tc_nominal_speed_rw4_00;
-
-	float Tc_nominal_speed_rw4_01;
-
-	float Tc_nominal_speed_rw4_10;
-
-	float Tc_nominal_speed_rw4_11;
 
 }GAIN_DATA_SET;
 

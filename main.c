@@ -227,7 +227,8 @@ void OBC_Process()
 		rSun_Ephemeris();
 		rSl_Ecl_OnBrd_detection();
 		rGH_generation();
-		rMagFieldComp();
+		rMagFieldComp1();
+		rMagFieldComp2();
 		rReferenceQuatComputation();
 		rRefVectorGeneration();
 		rRefRate_Computation();

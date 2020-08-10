@@ -39,9 +39,7 @@ void rScModeSelection(void)
 			case Safe_ModePreprocessing:
 				rSafeMode_Preprocessing();
 			break;
-			default: //Suspended_ModePreprocessing
-				rSuspended_ModePreprocessing();
-			break;
+			default : break;
 	}
 }
 
@@ -95,7 +93,7 @@ void rSuspended_ModePreprocessing(void)
     {
         Susp_cnt = 0;
         rADCS_Pon_vars();
-        Spacecraft_Mode = Detumbling_ModePreprocessing_BDOT;
+        //rTC_Detumbling_ModePreprocessing_BDOT();
         return;
     }
     else
@@ -133,9 +131,10 @@ void rDetumbling_ModePreprocessing_BDOT_Logic(void)
     CB_DutyCycleGeneration = 1;
     CB_AngularMomentumDumping = 0;
     CB_SpeedBasedMomentumDumping = 0;
+    CB_Wheel_Dynamic_Friction = 0;
     CB_Wheel_Spin_updown = 0;
     CB_Wheel_Auto_Reconfiguration = 0;
-    CB_Torquer_Polarity_Check = 1;
+    CB_Two_RW_control = 0;
     CB_MagFieldComp = 0;
     CB_Sun_model = 0;
     CB_ReferenceQuatComputation = 0;
@@ -154,7 +153,7 @@ void rDetumbling_ModePreprocessing_BDOT_Logic(void)
             if(GYRO_max_threshold_count >= c_onesecond)
             {
                 GYRO_max_threshold_count = 0;
-                Spacecraft_Mode = Detumbling_ModePreprocessing_GYRO;
+                //rTC_Detumbling_ModePreprocessing_GYRO();
                 return;
             }
         }
@@ -169,15 +168,15 @@ void rDetumbling_ModePreprocessing_BDOT_Logic(void)
         BDOT_Threshold_Count++;
         if(BDOT_Threshold_Count >= c_oneminute)
         {
-        	TorquerPolaritySetFlag = 0;
+            CB_Torquer_Polarity_Check = 0;
 
             if(TC_boolean_u.TC_Boolean_Table.TC_AutoTransit_Det2SunAquisition == Enable)
             {
-                entrytime2eclipse = ADCS_TC_data_command_Table.TC_eclipse_entrytime - elapsed_running_timer;
+                entrytime2eclipse = ADCS_TC_data_command_Table.TC_eclipse_entrytime - orbit_time;
                 //entrytime2eclipse = 1000; /// test
-                if (entrytime2eclipse < 900.0)
+                if ((ADCS_TC_data_command_Table.TC_elapsed_orbitTimer < ADCS_TC_data_command_Table.TC_eclipse_entrytime - 900.0) || (ADCS_TC_data_command_Table.TC_elapsed_orbitTimer > ADCS_TC_data_command_Table.TC_eclipse_exittime))
                 {
-                	Spacecraft_Mode = SunAcquisition_ModePreprocessing;
+                    //rTC_SunAcquisition_ModePreprocessing();
                     return;
                 }
             }
@@ -185,20 +184,19 @@ void rDetumbling_ModePreprocessing_BDOT_Logic(void)
 
         else
         {
-        	BDOT_Threshold_Count = 0;
-			TorquerPolaritySetFlag = 1;
+            CB_Torquer_Polarity_Check = 1;
         }
     }
     else
     {
         BDOT_Threshold_Count = 0;
-        TorquerPolaritySetFlag = 1;
+        CB_Torquer_Polarity_Check = 1;
     }
 
-    DPM[0] = -1.0 * BDOT[0];
-    DPM[1] = -1.0 * BDOT[1];
-    DPM[2] = -1.0 * BDOT[2];
-    Ton[0] = Ton[1] = Ton[2] = 8;
+    DPM[0] = -1.0*TC_detumbling_bdot_gain[0] * BDOT[0];
+    DPM[1] = -1.0*TC_detumbling_bdot_gain[1] * BDOT[1];
+    DPM[2] = -1.0*TC_detumbling_bdot_gain[2] * BDOT[2];
+
 
     TM.Buffer.TM_DPM[0] = (int)(DPM[0] / 0.001);
 	TM.Buffer.TM_DPM[1] = (int)(DPM[1] / 0.001);
@@ -236,9 +234,10 @@ void rDetumbling_ModePreprocessing_GYRO_Logic(void)
     CB_DutyCycleGeneration = 1;
     CB_AngularMomentumDumping = 0;
     CB_SpeedBasedMomentumDumping = 0;
+    CB_Wheel_Dynamic_Friction = 0;
     CB_Wheel_Spin_updown = 0;
     CB_Wheel_Auto_Reconfiguration = 0;
-    CB_Torquer_Polarity_Check = 1;
+    CB_Two_RW_control = 0;
     CB_MagFieldComp = 0;
     CB_Sun_model = 0;
     CB_ReferenceQuatComputation = 0;
@@ -254,29 +253,29 @@ void rDetumbling_ModePreprocessing_GYRO_Logic(void)
         GYRO_Threshold_Count++;
         if(GYRO_Threshold_Count >= c_oneminute)
         {
-            TorquerPolaritySetFlag = 0;
+            GYRO_Threshold_Count = 0;
+            CB_Torquer_Polarity_Check = 0;
 
             if(TC_boolean_u.TC_Boolean_Table.TC_AutoTransit_Det2SunAquisition == Enable)
             {
-                entrytime2eclipse = ADCS_TC_data_command_Table.TC_eclipse_entrytime - elapsed_running_timer;
+                entrytime2eclipse = ADCS_TC_data_command_Table.TC_eclipse_entrytime - orbit_time;
                 //entrytime2eclipse = 1000; /// test
-                if (entrytime2eclipse < 900.0)
+                if (ADCS_TC_data_command_Table.TC_elapsed_orbitTimer < ADCS_TC_data_command_Table.TC_eclipse_entrytime - 900.0)
                 {
-                	Spacecraft_Mode = SunAcquisition_ModePreprocessing;
+                    //rTC_SunAcquisition_ModePreprocessing();
                     return;
                 }
             }
         }
         else
         {
-        	GYRO_Threshold_Count = 0;
-			TorquerPolaritySetFlag = 1;
+            CB_Torquer_Polarity_Check = 1;
         }
     }
     else
     {
         GYRO_Threshold_Count = 0;
-        TorquerPolaritySetFlag = 1;
+        CB_Torquer_Polarity_Check = 1;
     }
 
     GYRO_Counter++;
@@ -293,15 +292,14 @@ void rDetumbling_ModePreprocessing_GYRO_Logic(void)
         GYRO_Counter = 0;
     }
 
-    Tdet[0] = -1.0 * sign_f(gyrodet_w[0]);
-    Tdet[1] = -1.0 * sign_f(gyrodet_w[1]);
-    Tdet[2] = -1.0 * sign_f(gyrodet_w[2]);
+    Tdet[0] = -1.0 * TC_detumbling_rate_gain[0]*sign_f(gyrodet_w[0]);
+    Tdet[1] = -1.0 * TC_detumbling_rate_gain[1]*sign_f(gyrodet_w[1]);
+    Tdet[2] = -1.0 * TC_detumbling_rate_gain[2]*sign_f(gyrodet_w[2]);
 
     rCross_Product(gyrodet_B, Tdet);
     DPM[0] = Cross_Product[0];
     DPM[1] = Cross_Product[1];
     DPM[2] = Cross_Product[2];
-    Ton[0] = Ton[1] = Ton[2] = 8;
 
     TM.Buffer.TM_DPM[0] = (int)(DPM[0] / 4.65661287E-8);
 	TM.Buffer.TM_DPM[1] = (int)(DPM[1] / 4.65661287E-8);
@@ -329,26 +327,27 @@ void rSunAcquisition_ModePreprocessing(void)
 	TM.Buffer.TM_TC_Buffer[11]	= 0x0;
 
     CB_Detumbling_Mode = 0;
-    CB_OrbitModel = 1;
-    CB_Q_propagation = 1;
-    CB_DAD_quest = 1;
-    CB_QuestDataProcessing = 1;
+    CB_OrbitModel = 0;
+    CB_Q_propagation = 0;
+    CB_DAD_quest = 0;
+    CB_QuestDataProcessing = 0;
     CB_ErrorComputation = 0;
     CB_ExtendedKalmanFilter = 0;
     CB_LinearController = 1;
     CB_Wheel_OverSpeed_TorqueCutOff = 1;
     CB_DutyCycleGeneration = 1;
     CB_AngularMomentumDumping = 1;
-    CB_SpeedBasedMomentumDumping = 1;
+    CB_SpeedBasedMomentumDumping = 0;
+    CB_Wheel_Dynamic_Friction = 0;
     CB_Wheel_Spin_updown = 0;
     CB_Wheel_Auto_Reconfiguration = 0;
-    CB_Torquer_Polarity_Check = 1;
+    CB_Two_RW_control = 0;
     CB_MagFieldComp = 0;
-    CB_Sun_model = 1;
-    CB_ReferenceQuatComputation = 1;
-    CB_RefVectorGeneration = 1;
-    CB_RefRate_Computation = 1;
-    CB_Sl_Ecl_OnBrd_detection = 1;
+    CB_Sun_model = 0;
+    CB_ReferenceQuatComputation = 0;
+    CB_RefVectorGeneration = 0;
+    CB_RefRate_Computation = 0;
+    //CB_Sl_Ecl_OnBrd_detection = 1;
     CB_IMUDataProcessing = 1;
     CB_SunSensorDataProcessing = 1;
     CB_BDOT_Computation = 1;
@@ -378,11 +377,13 @@ void rSunAcquisition_ModePreprocessing(void)
                 SunAcq3ThreeAx_trsit_cnt++;
                 if (SunAcq3ThreeAx_trsit_cnt >= SunAcq2ThreeAx_trsit_cnt_thres)
                 {
-                	Spacecraft_Mode = ThreeAxis_ModePreprocessing;
-                	Qbody[0] = Q_REF[0];
-					Qbody[1] = Q_REF[1];
-					Qbody[2] = Q_REF[2];
-					Qbody[3] = Q_REF[3];
+                    entrytime2eclipse = ADCS_TC_data_command_Table.TC_eclipse_entrytime - orbit_time;
+                    //entrytime2eclipse = 1000; /// test
+                    if (TC_elapsed_orbitTimer < ADCS_TC_data_command_Table.TC_eclipse_entrytime - 600.0)
+                    {
+                        //rTC_ThreeAxis_ModePreprocessing();
+                        return;
+                    }
                 }
             }
         }
@@ -395,7 +396,7 @@ void rSunAcquisition_ModePreprocessing(void)
 
 				if(SunAcq2DetMode_counter >= c_oneminute)
 				{
-					Spacecraft_Mode = Detumbling_ModePreprocessing_BDOT;
+					//rTC_Detumbling_ModePreprocessing_BDOT();
 					return;
 				}
 			}
@@ -413,7 +414,6 @@ void rSunAcquisition_ModePreprocessing(void)
     else
     {
         SunAcq3ThreeAx_trsit_cnt = 0;
-        SunAcq2DetMode_counter = 0;
     }
 
     // Remote patch exit hook function
@@ -443,28 +443,29 @@ void rThreeAxis_ModePreprocessing(void)
     CB_Wheel_OverSpeed_TorqueCutOff = 1;
     CB_DutyCycleGeneration = 1;
     CB_AngularMomentumDumping = 1;
-    CB_SpeedBasedMomentumDumping = 1;
+    CB_SpeedBasedMomentumDumping = 0;
+    CB_Wheel_Dynamic_Friction = 0;
     CB_Wheel_Spin_updown = 0;
     CB_Wheel_Auto_Reconfiguration = 0;
-    CB_Torquer_Polarity_Check = 1;
+    CB_Two_RW_control = 0;
     CB_MagFieldComp = 1;
     CB_Sun_model = 1;
     CB_ReferenceQuatComputation = 1;
     CB_RefVectorGeneration = 1;
     CB_RefRate_Computation = 1;
-    CB_Sl_Ecl_OnBrd_detection = 1; // COMMENTED FOR GROUND TESTING
+    //CB_Sl_Ecl_OnBrd_detection = 1; // COMMENTED FOR GROUND TESTING
     CB_IMUDataProcessing = 1;
     CB_SunSensorDataProcessing = 1;
     CB_BDOT_Computation = 0;
 
-	if(abs_f(Ang_Deviation) < c_AngDev_SMtransit_thrsld)
+	if(abs_f(Ang_Deviation) < AngDev_SMtransit_thrsld)
 	{
 		SunNPP_SMtransit_counter++;
 
 		if(SunNPP_SMtransit_counter >= SunNPP_SMtransit_count_limit)
 		{
 			SunNPP_SMtransit = True;
-			//SunNPP_SMtransit_counter = SunNPP_SMtransit_count_limit;
+			SunNPP_SMtransit_counter = SunNPP_SMtransit_count_limit;
 		}
 
 		else
@@ -484,7 +485,6 @@ void rThreeAxis_ModePreprocessing(void)
 
 		if(ThreeAxis2DetMode_counter >= c_oneminute)
 		{
-			ThreeAxis2DetMode_counter = 0;
 			f_threeaxis2safe = True;
 		}
 	}
@@ -495,12 +495,16 @@ void rThreeAxis_ModePreprocessing(void)
 
     if ((TC_boolean_u.TC_Boolean_Table.TC_ThreeAxis2SafeMode_autotransit == Enable))
 	{
-    	if ((SunNPP_SMtransit == True) || (f_threeaxis2safe == True) || (f_battery_safemode == True)) //ADD BATTERY CONDITION
+    	if ((SunNPP_SMtransit == True) || (f_threeaxis2safe == True)) //ADD BATTERY CONDITION
     	{
-    		Spacecraft_Mode = Safe_ModePreprocessing;
+    		//Spacecraft_Mode = Safe_ModePreprocessing;
     		return;
     	}
 
+	}
+	else
+	{
+		ThreeAxis2DetMode_counter = 0;
 	}
 
     // Remote patch exit hook function
@@ -557,20 +561,11 @@ void rSafeMode_Preprocessing(void)
 		// Turn off loads
 		if (w_BODYnorm > 1.0)
 		{
-			Spacecraft_Mode = Detumbling_ModePreprocessing_BDOT;
+			//rTC_Detumbling_ModePreprocessing_BDOT;
 		}
 		else
 		{
-			entrytime2eclipse = ADCS_TC_data_command_Table.TC_eclipse_entrytime - elapsed_running_timer;
-			//entrytime2eclipse = 1000; /// test
-			if (entrytime2eclipse < 900.0)
-			{
-				Spacecraft_Mode = SunAcquisition_ModePreprocessing;
-			}
-			else
-			{
-				Spacecraft_Mode = Detumbling_ModePreprocessing_BDOT;
-			}
+			//rTC_SunAcquisition_ModePreprocessing;
 		}
 	}
 

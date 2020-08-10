@@ -90,7 +90,6 @@ double rk_Qk_rk_T[9][9];
 double Qk[9][9];
 double  phi_k_T[9][9];
 double phi_k[9][9];
-double F_k1[3][3], mod_of_w_k, jw_cross[3][3], F_k4_temp1[3][3], F_k4_temp2[3][3], F_k4[3][3], F_k[9][9];
 double phi_12[3][3];
 double phi_12_temp2[3][3];
 double Result_of_sine_Delta_cube;
@@ -113,7 +112,7 @@ double mod_of_Wk1;
 double pk_plus[9][9];
 double Kk_Hk_with_minus_one[9][9];
 double Kk_Hk[9][9];
-double qk_plus[4], qk_plus_conj[4];
+double qk_plus[4];
 double qk_plus_temp[4];
 double Yk[3];
 double Xk[9];
@@ -138,25 +137,6 @@ double sun_noise;
 double mag_noise;
 double w_prop[3], q_prop[3];
 
-// Extended Kalman Filter 2
-
-int ecl_ekf, kfmeas, tor_counterk;
-
-double T_RW_NETk[3], T_MTk[3], Mk[3], T_MTk[3], T_NETk[3], w_k[3], RWSpeedk[4];
-double b_k[3], lpfx_magbk, lpfy_magbk, lpfz_magbk, lpfb_k[3], lpfb_k_prev[3];
-double pbk, qqbk;
-
-double kfk1[4], kfq_dot[4], kfg1[3], kfw_dot[3], kfv1[4], kfv_dot[4], kfq01[4], kfw01[3], kfv01[4];
-double kfk2[4], kfg2[3], kfv2[4], kfq02[4], kfw02[3], kfv02[4];
-double kfk3[4], kfg3[3], kfv3[4], kfq03[4], kfw03[3], kfv03[4];
-double kfk4[4], kfg4[3], kfv4[4];
-
-double kfom[4][4], kfq_dot[4], kfv_dot[4], kfT_RW_NET_temp[4], kfT_RW_NET[3], kfH_wh_ind[4], kfH_wh2body[3], kfI_MAT_w0[3], kfI_MAT_w0_HW2B[3], kfT_NET[3], kfw0crossI_MAT_w0_HW2B[3], kfw_dot_temp[3], kfw_dot[3];
-int f_EKF2_prop_en,f_EKF2_mag_bias_dis;
-double I_MAT[3][3], I_MAT_Inv[3][3];
-double MOI_wh_mat_Inv[4][4];
-double MOI_wh_mat[4][4];
-
 ///Function Declarations
 void rQ_Propagation(double q_prop[4], double w_prop[3]);
 void rDAD_quest(void);
@@ -164,11 +144,5 @@ void rErrorComputation(void);
 void rExtendedKalmanFilter1_p1(void);
 void rExtendedKalmanFilter1_p2(void);
 void rQuestDataProcessing(void);
-
-void rExtendedKalmanFilter2_p1(void);
-void rExtendedKalmanFilter2_Prop(void);
-void rExtendedKalmanFilter2_p2(void);
-void rEKFDynamics(void);
-void rEKF_dy_int(double kfq_dy[4], double kfw_dy[3], double kfv_dy);
 
 #endif // ADCS_ADANDEST_H_INCLUDED

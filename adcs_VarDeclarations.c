@@ -11,10 +11,6 @@ double w_BODY_IMU1[3], w_BODY_IMU2[3], B_BODY_IMU1[3], B_BODY_IMU2[3];
 double IMU_prcd_data[6];
 double* IMU_prcd_data_ptr;
 double IMU_Sen2Bdy[3][3];
-double B_BODY_LUT[3];
-
-int PolCheck_LUT, PolChec_LUT_res;
-double MagBias_residue_LUT[27][3], MagBias_act_LUT[27][3];
 
 int DelThta_cat_x; //Delta Theta data for x axis after concatenating LSB and MSB bits
 int DelThta_cat_y; //Delta Theta data for y axis after concatenating LSB and MSB bits
@@ -58,7 +54,6 @@ double L_Msun, Msun, L_Ecliptic, Sun_Dis, Epsilon;
 double SUN_ECI_mag, X_SVO2ECI_mag, Z_SVO2ECI_mag, Y_EPO2ECI_mag, X_EPO2ECI_mag, Z_SFAO2ECI_mag, X_SFAO2ECI_mag;
 double X_SFDO2ECI_mag, Z_SFDO2ECI_mag;
 double Y_SVO2ECI[3], Z_SVO2ECI[3], X_SVO2ECI[3], R_SVO2ECI[3][3], Q_SVO2ECI[4];
-double X_MDO2ECI[3],Y_MDO2ECI[3],Z_MDO2ECI[3],R_MDO2ECI[3][3],Q_MDO2ECI[4],R_MDO_CB[3][3];
 double Z_EPO2ECI[3], Y_EPO2ECI[3], X_EPO2ECI[3], R_EPO2ECI[3][3], Q_EPO2ECI[4];
 double Y_SFAO2ECI[3], Z_SFAO2ECI[3], X_SFAO2ECI[3], R_SFAO2ECI[3][3], Q_SFAO2ECI[4];
 double Y_SFDO2ECI[3], Z_SFDO2ECI[3], X_SFDO2ECI[3], R_SFDO2ECI[3][3], Q_SFDO2ECI[4];
@@ -75,22 +70,19 @@ double R_SPO2ECI[3][3], Q_SPO2ECI[4];
 
 ///Ref Vector Generation
 double Q_REF[4],Q_REF_conj[4], Q_StP2ECI[4], R_StP2ECI[3][3];
-double Q_svn_off[4], Q_stn_off[4], Q_REF_GND[4];
 double B_REF[3], S_REF[3], B_REFn[3], S_REFn[3];
 
 /// Ref Gyro
 
-double w_REF[3], w_REF_prev[3];
+double w_REF[3];
 double Q_REF_pres[4], Q_REF_prev[4], Q_REF_prev_conj[4];
 double Q_REF_diff[4], QRD_vect_norm;
 double Q_angle, Q_axis[3];
 
 /// Onboard Eclipse Algorithm
-double theta1_se, theta2_se;
-double psi_sl_ecl, elapsed_running_timer;
-int f_Sunlit_Presence_orbit, f_Sunlit_Presence_timer, f_Sunlit_Presence_sensor;
-
-int f_station_tracking_enabled,f_station_tracking_enabled_pre;
+double theta1, theta2;
+double psi_sl_ecl, TC_elapsed_orbitTimer;
+int f_Sunlit_Presence_OBC;
 double rsun[3], rsat[3], magrsun;
 
 double tempse  = 0.0;
@@ -264,7 +256,7 @@ double Pos_ECIn[3], Vel_ECIn[3], Pos_ECEFn[3], Vel_ECEFn[3];
 ///Orbital elements computation
 double semimajoraxis, ecc, Alti, inclination_temp, inclination, RAAN, trueanomoly, argofperigee, eccanomaly, ecc_r;
 double longitude, latitude_temp, latitude, longitude_tan_num, longitude_tan_den;
-double xa_gcgd, mua_gcgd,ra_gcgd,l_gcgd,dlambda_gcgd,h_gcgd,den_gcgd,rhoa_gcgd,dmu_gcgd,gd_gcgd;
+
 
 ///Ecef to ECI to ecef
 double UT1, UTC, TC_delUT1, TAI, JDTDT, M_quad, sine1, sine2, TDB, TDT, TTDB, JDTDB, TTDB2, TTDB3, zeta, z, theta;
@@ -300,15 +292,15 @@ double ss2b[3][3];
 
 double Ang_Deviation; ///arccos(dot(S_BODY,[0,-1,0]))
 
-int f_Sunlit_Presence, f_Sunlit_Presence_previous;
-int f_aft_statn_wait,aft_statn_cnt;
+int f_Sunlit_Presence;
 
 double SS_Data[16];
 int inter_sunsensor_i,inter_sunsensor_j;
 
 int i_MatEq, j_MatEq;
-int Sunlit_presence_timer, Eclipse_presence_timer;
+int Sunlit_presence_timer;
 
+double AngDev_SMtransit_thrsld;
 int SunNPP_SMtransit_counter;
 int SunNPP_SMtransit_count_limit;
 int SunNPP_SMtransit;
@@ -374,7 +366,7 @@ double out_Quat_mult[4]; ///Global Variable of the Out_Quat from Q Multiplicatio
 int DutyCycleGenEnable, TorquerPolaritySetFlag;
 double MR, MP, MY;
 int Roll_MTR_Pol_Reversal, Pitch_MTR_Pol_Reversal, Yaw_MTR_Pol_Reversal;
-int DPM_Polarity[3], Ton[3], Toff[3], DPM_Pol_prev[3];
+int MR_Polarity, MP_Polarity, MY_Polarity, DPM_Polarity[3], Ton[3], Toff[3];
 int Roll_MTREnable, Pitch_MTREnable, Yaw_MTREnable;
 int MTR_ActuationCycle;
 double DPM[3];
@@ -400,12 +392,11 @@ double DFCGainHigh, LPFK1HighSL, LPFK2HighSL, DFCGainLow, LPFK1LowSL, LPFK2LowSL
 double ExWhMom[4], DFCGainSL[4], LPFK1SL[4], LPFK2SL[4], WhMom0[4], ActWhMom[4], LossWhMom[4], LossWhMomFilt[4], DFCTorq[4];
 int DFCCountLimSL[4], DFCcountHigh, DFCcountLow;
 int wheel_spin_logic, spin_up_avg_count, spin_up_avg_count_2;
-double del_v0[4],  del_v0a, T_RW_spin[4];
+double del_v0[4], v0c[4], del_v0a, T_RW_spin[4];
 int wheel_index[4], wheel_index_ARCsum, Wheel_Config, RW_ARC_Logic, RW_ARC_Count, TC_RW_ARC_Count_thres, count_arc_w0, TC_ARC_Time_Cycle, count_arc_w1, count_arc_w2, count_arc_w3;
 double pres_exp_whsp_ch[4], exp_whsp_ch[4], ch_obs_whsp[4], prev_obs_whsp_ch[4], diff_obs_exp_ch[4];
 double TC_ARC_RPM_Thres;
 
-float TC_RW1_Nominal,TC_RW2_Nominal,TC_RW3_Nominal,TC_RW4_Nominal;
 
 //const double c_MOI_wh1, c_MOI_wh2, c_MOI_wh3, c_MOI_wh4, c_MOI_wh;
 
@@ -457,7 +448,6 @@ double rk_Qk_rk_T[9][9];
 double Qk[9][9];
 double  phi_k_T[9][9];
 double phi_k[9][9];
-double F_k1[3][3], mod_of_w_k, jw_cross[3][3], F_k4_temp1[3][3], F_k4_temp2[3][3], F_k4[3][3], F_k[9][9];
 double phi_12[3][3];
 double phi_12_temp2[3][3];
 double Result_of_sine_Delta_cube;
@@ -480,7 +470,7 @@ double mod_of_Wk1;
 double pk_plus[9][9];
 double Kk_Hk_with_minus_one[9][9];
 double Kk_Hk[9][9];
-double qk_plus[4], qk_plus_conj[4];
+double qk_plus[4];
 double qk_plus_temp[4];
 double Yk[3];
 double Xk[9];
@@ -505,25 +495,6 @@ double qk_minus[4], hk_xk_minus[3];
 int TC_KalmanFilter_ENABLE;
 double sun_noise;
 double mag_noise;
-
-// Extended Kalman Filter 2
-
-int ecl_ekf, kfmeas, tor_counterk;
-
-double T_RW_NETk[3], T_MTk[3], Mk[3], T_MTk[3], T_NETk[3], w_k[3], RWSpeedk[4];
-double b_k[3], lpfx_magbk, lpfy_magbk, lpfz_magbk, lpfb_k[3], lpfb_k_prev[3];
-double pbk, qqbk;
-
-double kfk1[4], kfq_dot[4], kfg1[3], kfw_dot[3], kfv1[4], kfv_dot[4], kfq01[4], kfw01[3], kfv01[4];
-double kfk2[4], kfg2[3], kfv2[4], kfq02[4], kfw02[3], kfv02[4];
-double kfk3[4], kfg3[3], kfv3[4], kfq03[4], kfw03[3], kfv03[4];
-double kfk4[4], kfg4[3], kfv4[4];
-
-double kfom[4][4], kfq_dot[4], kfv_dot[4], kfT_RW_NET_temp[4], kfT_RW_NET[3], kfH_wh_ind[4], kfH_wh2body[3], kfI_MAT_w0[3], kfI_MAT_w0_HW2B[3], kfT_NET[3], kfw0crossI_MAT_w0_HW2B[3], kfw_dot_temp[3], kfw_dot[3];
-int f_EKF2_prop_en,f_EKF2_mag_bias_dis;
-double I_MAT[3][3], I_MAT_Inv[3][3];
-double MOI_wh_mat_Inv[4][4];
-double MOI_wh_mat[4][4];
 
 //int ThreeAxis_ModePreprocessing;
 
