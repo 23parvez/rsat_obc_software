@@ -381,23 +381,6 @@ void rIMUDataProcessing(void)
 				B_BODY[2] -= MagBias_act_LUT[PolCheck_LUT][2];
 
 			}
-			else
-			{
-				for(i = 0; i < 27; i++)
-				{
-					if(DPM_Pol_prev[0] == c_DPM_Pol_LookUpTable[i][0] && DPM_Pol_prev[1] == c_DPM_Pol_LookUpTable[i][1] && DPM_Pol_prev[2] == c_DPM_Pol_LookUpTable[i][2])
-					{
-						PolChec_LUT_res = i;
-						break;
-					}
-				}
-
-				B_BODY[0] -= MagBias_residue_LUT[PolChec_LUT_res][0];
-				B_BODY[1] -= MagBias_residue_LUT[PolChec_LUT_res][1];
-				B_BODY[2] -= MagBias_residue_LUT[PolChec_LUT_res][2];
-
-
-			}
 		}
 
 		B_BODY_LUT[0] = B_BODY[0];
@@ -539,23 +522,6 @@ void rIMUDataProcessing(void)
 				B_BODY[0] -= MagBias_act_LUT[PolCheck_LUT][0];
 				B_BODY[1] -= MagBias_act_LUT[PolCheck_LUT][1];
 				B_BODY[2] -= MagBias_act_LUT[PolCheck_LUT][2];
-
-			}
-			else
-			{
-				for(i = 0; i < 27; i++)
-				{
-					if(DPM_Pol_prev[0] == c_DPM_Pol_LookUpTable[i][0] && DPM_Pol_prev[1] == c_DPM_Pol_LookUpTable[i][1] && DPM_Pol_prev[2] == c_DPM_Pol_LookUpTable[i][2])
-					{
-						PolChec_LUT_res = i;
-						break;
-					}
-				}
-
-				B_BODY[0] -= MagBias_residue_LUT[PolChec_LUT_res][0];
-				B_BODY[1] -= MagBias_residue_LUT[PolChec_LUT_res][1];
-				B_BODY[2] -= MagBias_residue_LUT[PolChec_LUT_res][2];
-
 
 			}
 		}
@@ -779,9 +745,9 @@ void rSunSensorDataProcessing(void)
 
 		///Roll and Yaw angle errors' computation
 
-		if(abs_f(S_BODYn) <= c_dividebyzerovalue)
+		if(abs_f(S_BODYn[1]) <= c_dividebyzerovalue)
 		{
-			S_BODYn = c_dividebyzerovalue;
+			S_BODYn[1] = c_dividebyzerovalue;
 		}
 
 		Roll_ang_err = atan2(S_BODYn[2], -S_BODYn[1]);
@@ -831,6 +797,9 @@ void rSunSensorDataProcessing(void)
 
 double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS_2Exe_Addr)
 {
+
+
+
 	SS_M1 = *SS_Data_Addr++;			//SSCAT11//SSCAT51:://SS M1//SS M9
 	SS_M2 = *SS_Data_Addr++;			//SSCAT12//SSCAT52:://SS M2//SS M10
 	SS_M3 = *SS_Data_Addr++;			//SSCAT21//SSCAT61:://SS M3//SS M11
@@ -856,7 +825,7 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 		SS_M5 = 0;
 
 	/// Different deployment selections
-	 if(ADCS_TC_data_command_Table.TC_PanelD_Status_Sel == TC_Not_Deployed)///Both the panels are Not deployed
+	 if(panel_deploy_sts == TC_Not_Deployed)///Both the panels are Not deployed
 	{
 		SC1 = (SS_M7);
 		SC3 = (SS_M8);
@@ -865,7 +834,7 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 		SC3ImaxF = SS_2Exe_Addr->DB_Imax_RNND;
 	}
 
-	 else if(ADCS_TC_data_command_Table.TC_PanelD_Status_Sel == TC_All_Deployed)//Both the panels deployed
+	 else if(panel_deploy_sts == TC_All_Deployed)//Both the panels deployed
 	{
 		SC1 = (SS_M1);
 		SC3 = (SS_M3);
@@ -874,7 +843,7 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 		SC3ImaxF = SS_2Exe_Addr->DB_Imax_RND;
 	}
 
-	 else if(ADCS_TC_data_command_Table.TC_PanelD_Status_Sel == TC_PosR_Deployed)//Positive Roll Panel deployed
+	 else if(panel_deploy_sts == TC_PosR_Deployed)//Positive Roll Panel deployed
 	{
 		SC1 = (SS_M1);
 		SC3 = (SS_M8);

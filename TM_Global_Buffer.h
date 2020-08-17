@@ -148,6 +148,7 @@ struct TM_BUFFER_STUCTURE{
 	unsigned short TM_Bus_voltage2;
 	unsigned short TM_SA_current;
 	unsigned short TM_AGC;
+	//unsigned char TM_AGC;
 	unsigned short SA1_Shunt_sw;
 	unsigned short SA2_Shunt_sw;
 	unsigned short SA3_Shunt_sw;

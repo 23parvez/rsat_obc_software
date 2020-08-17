@@ -169,6 +169,6 @@ void rExtendedKalmanFilter2_p1(void);
 void rExtendedKalmanFilter2_Prop(void);
 void rExtendedKalmanFilter2_p2(void);
 void rEKFDynamics(void);
-void rEKF_dy_int(double kfq_dy[4], double kfw_dy[3], double kfv_dy);
+void rEKF_dy_int(double kfq_dy[4], double kfw_dy[3], double kfv_dy[4]);
 
 #endif // ADCS_ADANDEST_H_INCLUDED

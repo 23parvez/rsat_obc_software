@@ -290,11 +290,11 @@ unsigned int rHAL_GPS_Read(struct HAL_GPS_registers GPS_No, unsigned long int* G
 	  if(GPS_Status_Data & 0x00000008)//0b0000_0000_0000_1000 ------Check Data Ready Bit
 	  {
 		  gps_test_counter++;
-		  GPS_OBT_Latch_enable          =  	(unsigned short)(GPS_Latch_enable & 0x0000FFFF);
-		  GPS_OBT_Read_1                =  	(unsigned short)(GPS_OBT_Count_1 & 0x0000FFFF);
+		 // GPS_OBT_Latch_enable          =  	(unsigned short)(GPS_Latch_enable & 0x0000FFFF);
+		  /*GPS_OBT_Read_1                =  	(unsigned short)(GPS_OBT_Count_1 & 0x0000FFFF);
 		  TM.Buffer.TM_GPS_OBT_Read_1   = GPS_OBT_Read_1;
 		  GPS_OBT_Read_2                = 	(unsigned short)(GPS_OBT_Count_2 & 0x0000FFFF);
-		  TM.Buffer.TM_GPS_OBT_Read_2   = GPS_OBT_Read_2;
+		  TM.Buffer.TM_GPS_OBT_Read_2   = GPS_OBT_Read_2;*/
 		  gps_ready_bit = GPS_Status_Data;
 		  REG32(GPS_No.GPS_Status_Register_1) = (GPS_Status_Data | 0x00000400);//0b0000_0000_0010_0000 ---------Set Read Enable Bit
 		  for(GPS_Addr_Count=0;GPS_Addr_Count<=GPS_Locations;GPS_Addr_Count++)
@@ -861,7 +861,8 @@ unsigned long int rHAL_GPS_Config(struct HAL_GPS_registers GPS_No,unsigned long 
 }
 
 
-
+unsigned char bist,bist_data,bist1;
+unsigned short checksum_data,checksum_data1,checksum_data2;
 unsigned long int gpstest = 0;
 void rGPS_TM_Extract(void)
 {
@@ -869,6 +870,7 @@ void rGPS_TM_Extract(void)
 	if(GPS_Data_Read_Status == TRUE) //Transfer to TM Buffer Only after checking the availability and validity of GPS data
 	{
 		GPS_TM_Buffer_Addr_USC = (unsigned char*)GPS_RCVD_DATA;
+
 		gpstest = 1;
 
 			TM.Buffer.TM_GPS.TM_No_Of_Sat = *(GPS_TM_Buffer_Addr_USC+4);
@@ -908,23 +910,32 @@ void rGPS_TM_Extract(void)
 			ST_special.ST_SP_Buffer.TM_GPS.TM_Pos_Validity = *(GPS_TM_Buffer_Addr_USC+186);
 			TM.Buffer.TM_GPS.TM_BIST_Info = *(GPS_TM_Buffer_Addr_USC+203);
 			ST_normal.ST_NM_Buffer.TM_GPS.TM_BIST_Info = *(GPS_TM_Buffer_Addr_USC+203);
+			bist_data  = *(GPS_TM_Buffer_Addr_USC+203);
 			TM.Buffer.TM_GPS.TM_CheckSum = *(GPS_TM_Buffer_Addr_USC+204);
 
 			//Computation of On board Checksum of GPS data
-			GPS_obc_checkum = checksum_u8(GPS_TM_Buffer_Addr_USC,204);
+			checksum_u8();
+			GPS_obc_checkum =chk_sum_u8;
 
 			//Check for BIST Information and Checksum for the validation of Data
 			//Check the above mentioned info to raise "GPS_Data_Validity_flag" (which will be used for OBC_GPS processing)
 			if(GPS_obc_checkum == TM.Buffer.TM_GPS.TM_CheckSum)
 			{
-				if(TM.Buffer.TM_GPS.TM_BIST_Info == 0x0002)
+				if (TC_boolean_u.TC_Boolean_Table.TC_BIST_override == 1)
 				{
 					f_GPS_Valid_Data = True;
 				}
-
 				else
 				{
-					f_GPS_Valid_Data = False;
+					if(bist_data == BIST_DATA)
+					{
+						f_GPS_Valid_Data = True;
+					}
+
+					else
+					{
+						f_GPS_Valid_Data = False;
+					}
 				}
 			}
 			else

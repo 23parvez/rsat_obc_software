@@ -10,6 +10,8 @@
 
 #define NO_BYTES 423
 
+#define BIST_DATA 0x7F
+
 #define Buffer_inc(a) a = a + 0x00000004
 
 
@@ -23,8 +25,11 @@ unsigned int  GPS_pulse_rcvd;
 unsigned long int gps_obt_counter;
 unsigned long int gps_obt_count_prev;
 unsigned short GPS_OBT_Latch_enable;
-unsigned short GPS_OBT_Read_1;
-unsigned short GPS_OBT_Read_2;
+//unsigned short GPS_OBT_Read_1;
+//unsigned short GPS_OBT_Read_2;
+
+unsigned int GPS_OBT_Read_1;
+unsigned int GPS_OBT_Read_2;
 
 unsigned long int GPS_Status_Data;
 unsigned long int GPS_Data;

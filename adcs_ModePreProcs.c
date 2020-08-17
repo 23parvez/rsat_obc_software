@@ -93,10 +93,13 @@ void rSuspended_ModePreprocessing(void)
 
     if (Susp_cnt >= c_oneminute)
     {
-        Susp_cnt = 0;
-        rADCS_Pon_vars();
-        Spacecraft_Mode = Detumbling_ModePreprocessing_BDOT;
-        return;
+    	if (TC_boolean_u.TC_Boolean_Table.TC_Sus2det_transit_en_dis == 1)
+    	{
+			Susp_cnt = 0;
+			rADCS_Pon_vars();
+			Spacecraft_Mode = Detumbling_ModePreprocessing_BDOT;
+			return;
+    	}
     }
     else
     {

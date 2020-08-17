@@ -61,10 +61,10 @@ extern void rHILS_packets();
 #define TC_Main_Cells 0
 #define TC_Redundant_Cells 1
 
-#define TC_Not_Deployed  0
-#define TC_PosR_Deployed 1
-#define TC_NegR_Deployed 2
-#define TC_All_Deployed  3
+#define TC_Not_Deployed  3
+#define TC_PosR_Deployed 2
+#define TC_NegR_Deployed 1
+#define TC_All_Deployed  0
 
 #define IMU1 1
 #define IMU2 0
@@ -155,6 +155,8 @@ extern const double c_Epsilon2;
 extern const double c_KDset1;
 extern const double c_KDset2;
 extern const double c_KDset3;
+
+extern const int c_DPM_Pol_LookUpTable[27][3];
 
 ///Kalman Filter
 extern const double c_I_nine_cross_nine[9][9];
@@ -489,7 +491,7 @@ extern double cos_and_sin[4][4];
 extern int GPSDataReady_NA_count;
 extern int TC_GPS2TLE_Switch;
 extern int Present_OBT;
-extern int OBT_at_TLE_uplink;
+extern int OBT_at_TLE_epoch;
 extern int Delta_TLE;
 extern int TC_GPSvalidity_Threshold;
 
@@ -500,6 +502,8 @@ extern unsigned long int GPS_Buffer_Data[106];
 extern unsigned long int GPS_RCVD_DATA[106];
 extern unsigned char GPS_obc_checkum;
 extern unsigned int f_GPS_Valid_Data;
+
+
 
 ///Julian Day
 extern double jd_time, tut;
@@ -545,6 +549,7 @@ extern double rtom, ao_sfour, pow_psisq, psetasq, intermediate, am_den, temp_tem
 extern double Tsince, Tsince_TLE;
 extern double Tsince_TLE_tc, Day_Of_Year_DeltaT, Delta_T, Orbit_Period_Comp, wo, inclo, nodeo, argpo, mo, ecco, no, ibexp, bstar;
 extern int CB_OrbitModel, OrbitModel_Start;
+extern char chksum_tle;
 
 extern double con41, cc1, cc4, cc5, d2, d3, d4, delmo, eta, argpdot, omgcof, sinmao, aycof, t2cof, t3cof;
 
@@ -744,7 +749,7 @@ extern double pres_exp_whsp_ch[4], exp_whsp_ch[4], ch_obs_whsp[4], prev_obs_whsp
 extern double TC_ARC_RPM_Thres;
 extern double speedDFCch;
 
-extern float TC_RW1_Nominal,TC_RW2_Nominal,TC_RW3_Nominal,TC_RW4_Nominal;
+extern float TC_RW1_Nominal,TC_RW2_Nominal,TC_RW3_Nominal,TC_RW4_Nominal, RW_Nominal[4];
 
 extern const double c_MOI_wh1, c_MOI_wh2, c_MOI_wh3, c_MOI_wh4, c_MOI_wh;
 
@@ -912,6 +917,9 @@ extern int GYRO_Counter;
 extern int TC_Det_GYRO_Compute_Count;
 extern double gyrodet_w[3];
 
+// gps
+extern unsigned int GPS_PPS_OBT;
+extern unsigned int GPS_READ_OBT;
 
 
 ///Rate reduction routine
@@ -1049,9 +1057,18 @@ extern void rSpeedBasedMomentumDumping(void);
 extern void rErrorComputation(void);
 extern void rExtendedKalmanFilter1_p1(void);
 extern void rExtendedKalmanFilter1_p2(void);
+
+extern void rExtendedKalmanFilter2_p1(void);
+extern void rExtendedKalmanFilter2_Prop(void);
+extern void rExtendedKalmanFilter2_p2(void);
+extern void rEKFDynamics(void);
+extern void rEKF_dy_int(double kfq_dy[4], double kfw_dy[3], double kfv_dy[4]);
+
 extern void rTwo_RW_control(void);
 extern void rDutyCycleGeneration(void);
 extern void rTorquer_Polarity_Check(void);
+
+
 /// for dynamics
 
 int tor_counter;

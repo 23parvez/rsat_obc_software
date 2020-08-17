@@ -106,7 +106,7 @@ void rHAL_TM_HW_Status_Update(void)
 	int HW_sts_update_index;
 
 	//OBT Update
-	TM.Buffer.OBT = Major_Cycle_Count;
+	TM.Buffer.OBT = Minor_Cycle_Count;
 	ST_special.ST_SP_Buffer.OBT = Major_Cycle_Count;
 	ST_normal.ST_NM_Buffer.OBT = Major_Cycle_Count;
 	TM.Buffer.TC_rcvd_cntr2 = TC_count;

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-
+#include "HAL_Address.h"
 #include "adcs_VarDeclarations.h"
 #include "Global.h"
 #include "Telecommand.h"
@@ -8,6 +8,7 @@
 #include "TM_Global_Buffer.h"
 #include "Telemetry.h"
 #include "TC_List.h"
+#include "HAL_GPS.h"
 
 void rGPSTLEProcessing(void)
 {
@@ -15,12 +16,6 @@ void rGPSTLEProcessing(void)
 
 	rGPS_TM_Extract();						//Extract GPS data for telemetry
 	ST_TM_gps_data();
-
-	if(TLE_Data_Available == 1) //TLE data availability flag irrespective of TLE or GPS selection
-	{
-		Tsince_TLE_tc = 0.0;
-		TLE_Data_Available = 0;
-	}
 
 	if(TC_boolean_u.TC_Boolean_Table.TC_GPS_TLE_Select== True)
 	{
@@ -817,88 +812,86 @@ void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], do
 	return;
 }
 
-
 void rTLEDataProcessing(void)
 {
     if (CB_OrbitModel == Enable)
     {
-        for(i_jday = 1; i_jday <= 12; i_jday++)
-        {
-            lmonth[i_jday] = 0;
-        }
+    	if (TLE_Data_Available == 1)
+    	{
+			for(i_jday = 1; i_jday <= 12; i_jday++)
+			{
+				lmonth[i_jday] = 0;
+			}
 
-        year_TLE_tc = Epochyear_TLE_tc + 2000;
+			year_TLE_tc = Epochyear_TLE_tc + 2000;
 
-        for (i_jday = 1; i_jday <=12; i_jday++)
-        {
-            lmonth[i_jday] = 31;
-            if (i_jday == 2)
-            {
-                lmonth[i_jday] = 28;
-            }
+			for (i_jday = 1; i_jday <=12; i_jday++)
+			{
+				lmonth[i_jday] = 31;
+				if (i_jday == 2)
+				{
+					lmonth[i_jday] = 28;
+				}
 
-            if (i_jday == 4 || i_jday == 6 || i_jday == 9 || i_jday == 11)
-            {
-                lmonth[i_jday] = 30;
-            }
+				if (i_jday == 4 || i_jday == 6 || i_jday == 9 || i_jday == 11)
+				{
+					lmonth[i_jday] = 30;
+				}
 
-        }
+			}
 
-        dayofyr = (int)(epochdays_TLE_tc);
+			dayofyr = (int)(epochdays_TLE_tc);
 
-        /*if (fmod(year_TLE_tc-1900,4.0) == 0.0)
-        {
-            lmonth[2]= 29;
-        }*/
+			/*if (fmod(year_TLE_tc-1900,4.0) == 0.0)
+			{
+				lmonth[2]= 29;
+			}*/
 
-        if (((year_TLE_tc-1900) % 4) == 0)
-        {
-            lmonth[2]= 29;
-        }
+			if (((year_TLE_tc-1900) % 4) == 0)
+			{
+				lmonth[2]= 29;
+			}
 
 
-        i_jday= 1;
-        inttemp= 0;
+			i_jday= 1;
+			inttemp= 0;
 
-        while (( dayofyr > (inttemp + lmonth[i_jday] )) && ( i_jday < 12 ))
-        {
-            inttemp= inttemp + lmonth[i_jday];
-            i_jday= i_jday + 1;
-        }
+			while (( dayofyr > (inttemp + lmonth[i_jday] )) && ( i_jday < 12 ))
+			{
+				inttemp= inttemp + lmonth[i_jday];
+				i_jday= i_jday + 1;
+			}
 
-        //mon_TLE_tc= i_jday;
-		mon_TLE_tc= dayofyr - inttemp;
-		temp_jday= (epochdays_TLE_tc - (double)dayofyr )*24.0;
-		hr_TLE_tc  = (int)( temp_jday );
-		temp_jday= (temp_jday - (double)hr_TLE_tc) * 60.0;
-		minute_TLE_tc = (int)(temp_jday);
-		sec_TLE_tc = (temp_jday - (double)minute_TLE_tc) * 60.0;
+			mon_TLE_tc= i_jday;
+			//mon_TLE_tc= dayofyr - inttemp;
+			temp_jday= (epochdays_TLE_tc - (double)dayofyr )*24.0;
+			hr_TLE_tc  = (int)( temp_jday );
+			temp_jday= (temp_jday - (double)hr_TLE_tc) * 60.0;
+			minute_TLE_tc = (int)(temp_jday);
+			sec_TLE_tc = (temp_jday - (double)minute_TLE_tc) * 60.0;
 
-		/*ibexp_TLE_tc = TC_ibexp_TLE * (-1.0);
-		bstar_TLE_tc = TC_bstar_TLE * pow(10.0, ibexp);
-		inclination_TLE_tc = TC_inclo_TLE*c_D2R;
-		nodeo_TLE_tc = TC_nodeo_TLE*c_D2R;
-		argpo_TLE_tc = TC_argpo_TLE*c_D2R;
-		mo_TLE_tc    = TC_mo_TLE*c_D2R;*/
 
-		Tsince = Tsince_TLE_tc;
-		epochdays_sel = epochdays_TLE_tc;
-		inclination_sel = inclination_TLE_tc*c_D2R;
-		nodeo_sel = nodeo_TLE_tc*c_D2R;
-		//trueanomoly_sel = trueanomoly_TLE_tc;
-		mo_sel = mo_TLE_tc*c_D2R;
-		argpo_sel = argpo_TLE_tc*c_D2R;
-		epochyr_sel = Epochyear_TLE_tc;
-		ecc_sel = ecc_TLE_tc;
-		no_sel = no_TLE_tc;
-		ibexp_sel = ibexp_TLE_tc;
-		bstar_sel = bstar_TLE_tc * pow(10.0, ibexp_TLE_tc);
-		year_sel = year_TLE_tc;
-		mon_sel = mon_TLE_tc;
-		days_sel = day_TLE_tc;
-		hr_sel = hr_TLE_tc;
-		minute_sel = minute_TLE_tc;
-		sec_sel = sec_TLE_tc;
+			//Tsince = Tsince_TLE_tc;
+			Delta_TLE = Minor_Cycle_Count - OBT_at_TLE_epoch;
+			Tsince = (double)Delta_TLE * c_MiC/c_min_per_day;
+			epochdays_sel = epochdays_TLE_tc;
+			inclination_sel = inclination_TLE_tc*c_D2R;
+			nodeo_sel = nodeo_TLE_tc*c_D2R;
+			mo_sel = mo_TLE_tc*c_D2R;
+			argpo_sel = argpo_TLE_tc*c_D2R;
+			epochyr_sel = Epochyear_TLE_tc;
+			ecc_sel = ecc_TLE_tc;
+			no_sel = no_TLE_tc;
+			ibexp_sel = ibexp_TLE_tc;
+			bstar_sel = bstar_TLE_tc * pow(10.0, ibexp_TLE_tc);
+			year_sel = year_TLE_tc;
+			mon_sel = mon_TLE_tc;
+			days_sel = day_TLE_tc;
+			hr_sel = hr_TLE_tc;
+			minute_sel = minute_TLE_tc;
+			sec_sel = sec_TLE_tc;
+			TLE_Data_Available = 0;
+		}
     }
 }
 
@@ -1150,9 +1143,10 @@ void rnut_iau1980(double TTDBin, const double *fin)
 
 void rGPSDataProcessing(void)
 {
+	unsigned int tempdata;
     if (CB_OrbitModel == Enable)
     {
-        if(GPSDataReady ==1 && (Major_Cycle_Count % TC_GPS_pulse_duration == 0))
+        if(f_GPS_Valid_Data ==1 && (Major_Cycle_Count % TC_GPS_pulse_duration == 0))
         {
         	Pos_ECEF_GPS[0] =(*((int*)(GPS_TM_Buffer_Addr_USC+160))) * 0.00001;
 			Pos_ECEF_GPS[1] = (*((int*)(GPS_TM_Buffer_Addr_USC+164))) * 0.00001;
@@ -1166,8 +1160,18 @@ void rGPSDataProcessing(void)
 			UTC_hr_GPS = *(GPS_TM_Buffer_Addr_USC+154);
 			UTC_min_GPS = *(GPS_TM_Buffer_Addr_USC+155);
 			UTC_sec_GPS = (*((unsigned short*)(GPS_TM_Buffer_Addr_USC+156))) * 0.001;
+			GPS_PPS_OBT = *(GPS_TM_Buffer_Addr_USC+207);
 
-            UTC_sec_GPS = UTC_sec_GPS + gps_pulse_mic_cnt * c_MiC;
+			GPS_OBT_Latch_enable          =  	(unsigned short)(GPS_Latch_enable & 0x0000FFFF);
+			GPS_OBT_Read_1  =  GPS_OBT_Count_1 & 0x0000FFFF;
+			TM.Buffer.TM_GPS_OBT_Read_1   = GPS_OBT_Read_1;
+			tempdata = GPS_OBT_Count_2 & 0x0000FFFF;
+			 GPS_OBT_Read_2 = ((tempdata << 16) & 0xFFFF0000);
+			TM.Buffer.TM_GPS_OBT_Read_2   = GPS_OBT_Read_2;
+			GPS_READ_OBT = (unsigned int)((GPS_OBT_Read_2 | GPS_OBT_Read_1) & 0xFFFFFFFF);
+			gps_pulse_mic_cnt = GPS_READ_OBT - GPS_PPS_OBT;
+
+            UTC_sec_GPS = UTC_sec_GPS + gps_pulse_mic_cnt * 0.001;
 
             rJulian_Day(year_GPS,UTC_mon_GPS,UTC_day_GPS,UTC_hr_GPS,UTC_min_GPS,UTC_sec_GPS);
             rECEFtoECItoECEF();
@@ -1258,7 +1262,7 @@ void rGPSDataProcessing(void)
 
             ///rGPS_data_validity();
             GPS_Elements_Available = 1;
-            GPSDataReady = 0; //RESET BY OBC DISCUSSED 11 SEP
+            f_GPS_Valid_Data = 0; //RESET BY OBC DISCUSSED 11 SEP
             GPS_pulse_rcvd = 0;
             gps_pulse_mic_cnt = 0;
             GPSDataReady_NA_count = 0;
@@ -1275,7 +1279,7 @@ void rGPSDataProcessing(void)
 			ecc_sel = ecc_GPS;
 			no_sel = no_GPS;
 			ibexp_sel = ibexp_TLE_tc;
-			bstar_sel = bstar_TLE_tc;
+			bstar_sel = bstar_TLE_tc * pow(10.0, ibexp_TLE_tc);
 			year_sel = year_GPS;
 			mon_sel = UTC_mon_GPS;
 			days_sel = UTC_day_GPS;
@@ -1290,7 +1294,7 @@ void rGPSDataProcessing(void)
             {
                 //TLE_Select = 1;
                 //GPS_Select = 0;
-                //Delta_TLE = Present_OBT - OBT_at_TLE_uplink;
+                //Delta_TLE = Present_OBT - OBT_at_TLE_epoch;
                 //Tsince = (float)Delta_TLE * c_MaC/c_min_per_day;
             }
         }

@@ -57,7 +57,7 @@ typedef long long int int64;
 #define Not_Deploy	0
 
 #define REG16(a) *((volatile uint16*) (a))   //For 16 Bit Addressing
-#define REG8(a)  *((volatile uint8*)  (a))   //For  8 Bit Addressin
+#define REG8(a)  *((volatile uint8*)  (a))   //For  8 Bit Addressing
 #define REG32(a) *((volatile uint32*) (a))   //For 32 Bit Addressing
 #define REG32f(a) *((volatile float*) (a))   //For 32 Bit Addressing
 
@@ -179,6 +179,9 @@ extern unsigned int TC_buffer_count[300];
 extern unsigned short ST_frame_count;
 extern unsigned short ST_TCH_frame_count;
 
+extern unsigned short tempdata;
+extern unsigned short panel_deploy_sts;
+
 extern void rHAL_TM_HW_Status_Update(void);
 extern void rTM_Address_Table_Init(void);
 extern void Storage_Telemetry_Write();
@@ -286,7 +289,7 @@ extern unsigned long long int block_test_array[50];  //to be removed
 
 #define TC_data_command_MAX_LIMIT 27
 #define ADCS_TC_data_command_MAX_LIMIT 57
-#define TC_func_exe_MAX_LIMIT 150
+#define TC_func_exe_MAX_LIMIT 156
 extern float Resol_Table[TC_data_command_MAX_LIMIT];
 extern float Resol_Table_Adcs[ADCS_TC_data_command_MAX_LIMIT];
 extern void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])(void);

@@ -9,6 +9,7 @@ extern unsigned long int GPS_RCVD_DATA[106];
 extern unsigned char GPS_obc_checkum;
 extern unsigned int f_GPS_Valid_Data;
 
+
 //Function Declarations
 void rGPS_TM_Extract(void);
 
@@ -17,7 +18,7 @@ unsigned int f_GPS_Valid_Data;
 
 int GPSDataReady_NA_count;
 int Present_OBT;
-int OBT_at_TLE_uplink;
+int OBT_at_TLE_epoch;
 int Delta_TLE;
 
 ///Julian Day

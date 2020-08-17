@@ -158,7 +158,7 @@ unsigned short data;
 	{
 		unsigned filler			:6;
 		unsigned ANTENNA_DEPLOY	:1;
-		unsigned SPARE1_ON_OFF	:1;
+		unsigned SPARE1_ON_OFF	:1;        // red_panel_deploy
 		unsigned SA2_DEPLOY		:1;
 		unsigned SA1_DEPLOY		:1;
 		unsigned SA3_ON_OFF		:1;
@@ -366,7 +366,8 @@ unsigned long int TC_input_cmd[2];
 //Function Declarations
 void Init_Memory(void);
 unsigned long int checksum_u32(unsigned long int *db_start_address,unsigned long int size_of_db);
-unsigned char checksum_u8(unsigned char* db_start_address,unsigned int size_of_db);
+//unsigned char checksum_u8(unsigned char* db_start_address,unsigned int size_of_db);
+void checksum_u8(void);
 void rOutput_Latch_Update();
 void ST_output_update();
 void NMI_interrupt_test();
@@ -404,6 +405,9 @@ unsigned long int IO_Latch_Register_2_Data;
 unsigned long int IO_Latch_Register_3_Data;
 unsigned long int IO_Latch_Register_4_Data;
 unsigned long int IO_Latch_Register_5_Data;
+
+
+unsigned char chk_sum_u8;		//Check sum (8 bits)
 
 extern void rGPS_pulsecheck();
 

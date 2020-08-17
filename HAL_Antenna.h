@@ -19,6 +19,9 @@ unsigned long int SA2_Deploy_cmd_rcvd_time = 0U;
 unsigned long int SA_Command_Type = 0;
 unsigned short Antenna_ACK;
 
+unsigned short tempdata;
+unsigned short panel_deploy_sts;
+
 unsigned long int TC_HAL_SA_Deploy = HAL_SA_Deploy_Disable; //To be deleted TESTING!!!
 
 void rHAL_Antenna_Write(unsigned long int Command);

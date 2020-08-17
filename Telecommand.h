@@ -10,7 +10,8 @@ typedef unsigned long long int uint64;
 #define MAX_TIMETAG_CMD_LIMIT   1000
 #define MAX_BLKS  64
 #define MAX_BLK_CMD_SIZE 64
-#define TC_TLE_MAX_LIMIT 17
+#define TC_TLE_MAX_LIMIT 18
+#define TC_TLE_MAX_LIMITs 9
 
 //enum {FALSE,TRUE};
 
@@ -568,6 +569,23 @@ void gain_sets();
 // TeleCommand
 
 // TLE based array
-unsigned long int TC_TLE_data[TC_TLE_MAX_LIMIT];
+	struct TLE_Update
+	{
+		float TC_TLE_data1;
+		double TC_TLE_data2;
+		float TC_TLE_data3;
+		float TC_TLE_data4;
+		float TC_TLE_data5;
+		float TC_TLE_data6;
+		double TC_TLE_data7;
+		float TC_TLE_data8;
+		float TC_TLE_data9;
+		double TC_TLE_data10;
+		int TC_TLE_data11;
+		char TC_TLE_data12;
+	}TLE_data;
+
+// TLE based array
+//float TC_TLE_data[TC_TLE_MAX_LIMIT];
 
 #endif // TELECOMMAND

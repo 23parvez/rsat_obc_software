@@ -172,7 +172,7 @@ double cos_and_sin[4][4];
 int GPSDataReady_NA_count;
 int TC_GPS2TLE_Switch;
 int Present_OBT;
-int OBT_at_TLE_uplink;
+int OBT_at_TLE_epoch;
 int Delta_TLE;
 int TC_GPSvalidity_Threshold;
 
@@ -227,6 +227,7 @@ double rtom, ao_sfour, pow_psisq, psetasq, intermediate, am_den, temp_temp, temp
 double Tsince, Tsince_TLE;
 double Tsince_TLE_tc, Day_Of_Year_DeltaT, Delta_T, Orbit_Period_Comp, wo, inclo, nodeo, argpo, mo, ecco, no, ibexp, bstar;
 int CB_OrbitModel, OrbitModel_Start;
+char chksum_tle;
 
 double con41, cc1, cc4, cc5, d2, d3, d4, delmo, eta, argpdot, omgcof, sinmao, aycof, t2cof, t3cof;
 
@@ -271,6 +272,10 @@ double UT1, UTC, TC_delUT1, TAI, JDTDT, M_quad, sine1, sine2, TDB, TDT, TTDB, JD
 double pre_temp[3][3], precession[3][3], eps, dpsi, nut_temp[3][3], xin_temp, nutation[3][3], tut1, gmst0, gmst_, gast;
 double sidereal[3][3], TC_xp, TC_yp, polarmotion[3][3], nut_sid_temp[3][3], ECEFtoECI[3][3], ECItoECEF[3][3],ang;
 double TC_delAT, TTDT, deps;
+
+// gps
+unsigned int GPS_PPS_OBT;
+unsigned int GPS_READ_OBT;
 
 ///NED to ECEF
 double NEDtoECEF[3][3];
@@ -405,7 +410,7 @@ int wheel_index[4], wheel_index_ARCsum, Wheel_Config, RW_ARC_Logic, RW_ARC_Count
 double pres_exp_whsp_ch[4], exp_whsp_ch[4], ch_obs_whsp[4], prev_obs_whsp_ch[4], diff_obs_exp_ch[4];
 double TC_ARC_RPM_Thres;
 
-float TC_RW1_Nominal,TC_RW2_Nominal,TC_RW3_Nominal,TC_RW4_Nominal;
+float TC_RW1_Nominal,TC_RW2_Nominal,TC_RW3_Nominal,TC_RW4_Nominal,RW_Nominal[4];
 
 //const double c_MOI_wh1, c_MOI_wh2, c_MOI_wh3, c_MOI_wh4, c_MOI_wh;
 

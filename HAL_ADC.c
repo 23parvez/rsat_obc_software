@@ -54,6 +54,7 @@ void rHAL_ADC_TM_Copy(uint32* ADC_Addr)
 
 	AGC_Data = ADC_Buffer[31];
 	TM.Buffer.TM_AGC = (unsigned short)(AGC_Data & 0x00000FFF);
+	//TM.Buffer.TM_AGC = (unsigned char)((AGC_Data>>3) & 0x000000FF);
 	ST_normal.ST_NM_Buffer.TM_AGC = (unsigned short)(AGC_Data & 0x00000FFF);
 
 

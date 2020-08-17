@@ -17,7 +17,7 @@ unsigned int Remote_data_addr;
 			uint8 Pitch_Torquer_Enable_or_Disable;								  /* offset =    3  */
 			uint8 Yaw_Torquer_Enable_or_Disable;								  /* offset =    4  */
 			uint8 Roll_Torquer_Enable_or_Disable;								  /* offset =    5  */
-			uint8 TC_Sun_Acquisition_Mode_select;								  /* offset =    6  */		//REMOVE
+			uint8 TC_Sus2det_transit_en_dis;								      /* offset =    6  */		//REMOVE
 			uint8 TC_AutoTransit_Det2SunAquisition;								  /* offset =    7  */
 			uint8 TC_SunAq2DetMode_autotransit;								      /* offset =    8  */
 			uint8 TC_mom_dumping_ang_mom_based;									  /* offset =    9  */
@@ -94,9 +94,10 @@ unsigned int Remote_data_addr;
 			uint8 TC_Sunlitdec_sensor_based;									  /* offset =   78  */
 			uint8 TC_Sunlitdec_Orbit_based;                                       /* offset =   79  */
 			uint8 TC_Sunlitdec_timer_based;										  /* offset =   80  */
+			uint8 TC_BIST_override;												  /* offset =   81  */
 	    };
 
-#define TC_BOOLEAN_MAX_LIMIT 63
+#define TC_BOOLEAN_MAX_LIMIT 82
 	union TC_boolean_U
 	    {
 			uint8 Pos[TC_BOOLEAN_MAX_LIMIT];
@@ -114,7 +115,7 @@ unsigned int Remote_data_addr;
 			uint8 Pitch_Torquer_Enable_or_Disable                 :1;
 			uint8 Yaw_Torquer_Enable_or_Disable                   :1;
 			uint8 Roll_Torquer_Enable_or_Disable                  :1;
-			uint8 TC_Sun_Acquisition_Mode_select                  :1;
+			uint8 TC_Sus2det_transit_en_dis                       :1;
 			uint8 TC_AutoTransit_Det2SunAquisition                :1;
 			uint8 TC_SunAq2DetMode_autotransit                    :1;
 			uint8 TC_mom_dumping_ang_mom_based                    :1;
@@ -195,6 +196,7 @@ unsigned int Remote_data_addr;
 			uint8 TC_Sunlitdec_sensor_based						  :1;
 			uint8 TC_Sunlitdec_Orbit_based						  :1;
 			uint8 TC_Sunlitdec_timer_based						  :1;
+			uint8 TC_BIST_override								  :1;
 
 
 
@@ -411,7 +413,7 @@ float Resol_Table[TC_data_command_MAX_LIMIT];
 double gain_set[300];
 //List of Function execute commands
 
-#define TC_func_exe_MAX_LIMIT 150
+#define TC_func_exe_MAX_LIMIT 156
 
 void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])();
 

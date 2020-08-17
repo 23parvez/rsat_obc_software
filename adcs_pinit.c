@@ -659,7 +659,7 @@ void rADCS_Pon_vars(void)
 	///rOrbitalElements_generation_GPS
 
 	GPS_Select = 1;
-	GPSDataReady = 0;
+	f_GPS_Valid_Data = 0;
 	i_jday = 0.0;
 
 	for (i_pini=0; i_pini<13; i_pini++)
@@ -1029,7 +1029,7 @@ void rADCS_Pon_vars(void)
 
 	GPSDataReady_NA_count = 0.0;
 	Present_OBT = 0.0;
-	OBT_at_TLE_uplink = 0.0;
+	OBT_at_TLE_epoch = 0.0;
 	Delta_TLE = 0.0;
 
 	///Julian Day
@@ -1642,6 +1642,7 @@ void rADCS_Pon_vars(void)
 	TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable = Disable;
 	TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable = Enable;
 	TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_BIST_override = Disable;
 
 	ADCS_TC_data_command_Table.TC_PanelD_Status_Sel = TC_All_Deployed;
 	ADCS_TC_data_command_Table.TC_GYRO_Det_Max_Thresh = 40.0;
@@ -1710,6 +1711,13 @@ void rADCS_Pon_vars(void)
 	TC_wh_speed_thres=GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_0_00;
 
 	TC_momentum_dumping_gain = GAIN_DATA_SET.TC_momentum_dumping_gain_0_00;
+
+	TC_GPS_pulse_duration=GAIN_DATA_SET.TC_GPS_pulse_duration_0_00;
+
+	RW_Nominal[0] = TC_RW1_Nominal;
+	RW_Nominal[1] = -1 * TC_RW1_Nominal;
+	RW_Nominal[2] = TC_RW1_Nominal;
+	RW_Nominal[3] = -1 * TC_RW1_Nominal;
 
 	//////////////////////////////////////////////////////////////   TEST
 

@@ -213,7 +213,7 @@ void rHAL_Antenna_Read()
 }*/
 unsigned int sa_test;
 unsigned short sa_data;
-void rHAL_SA_MAIN_Deploy_on()
+void rHAL_SA_MAIN_Deploy_on()                  // -ve roll
 {
 	uint32 tempdata;
 	sa_test = 1;
@@ -232,7 +232,7 @@ void rHAL_SA_MAIN_Deploy_on()
 }
 
 
-void rHAL_SA_RED_Deploy_on()
+void rHAL_SA_RED_Deploy_on()                      // +ve roll
 {
 	uint32 tempdata;
 
@@ -390,6 +390,9 @@ void rHAL_SA_Deploy_Status_new()
 
 	SA2_Status = rHAL_SA2_Deploy_status_check();
 	SA1_Status = rHAL_SA1_Deploy_status_check();
+
+	tempdata = IO_IN_LATCH_REGISTER_4;
+	panel_deploy_sts= ((tempdata >> 8) & 0x0003);
 
 	if(SA_Command_Type == SA_MAIN)//check main or red command received
 	{

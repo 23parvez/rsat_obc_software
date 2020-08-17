@@ -179,10 +179,10 @@ void OBC_Process()
 		LTP_selection();
 		Heater_control_auto_manual();
 
-
         //*******GPS_ADCS_Routines*******//
 
-		rGPSDataProcessing();
+		//rGPSDataProcessing();
+		rGPSTLEProcessing();
 		rOrbit_Initialization();
 		rJulian_Day(year_sel,mon_sel,days_sel,hr_sel,minute_sel,sec_sel);
 		rECEFtoECItoECEF();

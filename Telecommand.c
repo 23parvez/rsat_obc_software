@@ -1234,7 +1234,7 @@ void TMTC_Assignment()
 	TMTC_boolean_u.Boolean_Table.Pitch_Torquer_Enable_or_Disable               = TC_boolean_u.TC_Boolean_Table.Pitch_Torquer_Enable_or_Disable;
 	TMTC_boolean_u.Boolean_Table.Yaw_Torquer_Enable_or_Disable                 = TC_boolean_u.TC_Boolean_Table.Yaw_Torquer_Enable_or_Disable;
 	TMTC_boolean_u.Boolean_Table.Roll_Torquer_Enable_or_Disable                = TC_boolean_u.TC_Boolean_Table.Roll_Torquer_Enable_or_Disable;
-	TMTC_boolean_u.Boolean_Table.TC_Sun_Acquisition_Mode_select                = TC_boolean_u.TC_Boolean_Table.TC_Sun_Acquisition_Mode_select;
+	TMTC_boolean_u.Boolean_Table.TC_Sus2det_transit_en_dis                     = TC_boolean_u.TC_Boolean_Table.TC_Sus2det_transit_en_dis; // Changed on 17-8-2020
 	TMTC_boolean_u.Boolean_Table.TC_AutoTransit_Det2SunAquisition              = TC_boolean_u.TC_Boolean_Table.TC_AutoTransit_Det2SunAquisition;
 	TMTC_boolean_u.Boolean_Table.TC_SunAq2DetMode_autotransit                  = TC_boolean_u.TC_Boolean_Table.TC_SunAq2DetMode_autotransit;
 	TMTC_boolean_u.Boolean_Table.TC_mom_dumping_ang_mom_based                  = TC_boolean_u.TC_Boolean_Table.TC_mom_dumping_ang_mom_based;
@@ -1309,6 +1309,7 @@ void TMTC_Assignment()
 	TMTC_boolean_u.Boolean_Table.TC_Sunlitdec_sensor_based                     = TC_boolean_u.TC_Boolean_Table.TC_Sunlitdec_sensor_based;
 	TMTC_boolean_u.Boolean_Table.TC_Sunlitdec_Orbit_based                      = TC_boolean_u.TC_Boolean_Table.TC_Sunlitdec_Orbit_based;
 	TMTC_boolean_u.Boolean_Table.TC_Sunlitdec_timer_based                      = TC_boolean_u.TC_Boolean_Table.TC_Sunlitdec_timer_based;
+	TMTC_boolean_u.Boolean_Table.TC_BIST_override							   = TC_boolean_u.TC_Boolean_Table.TC_BIST_override;
 
 
 
@@ -1937,21 +1938,52 @@ void ss_redundant_db_checksum()
 		//Add here for telemetry: ss_redundant_db_checksum_obc;
 }
 
+/*void rTLE_Update()
+{
+	long long int TLE_E_DAY_temp1;
+	long long int  no_TLE_temp1;
+
+	Epochyear_TLE_tc = (int)TC_TLE_data[0];
+
+	TLE_E_DAY_temp1 = ((int)(TC_TLE_data[1]) & 0xFFFFFFFF);
+	epochdays_TLE_tc = (double)(((TLE_E_DAY_temp1 << 32) | (int)TC_TLE_data[2]) & 0xFFFFFFFFFFFFFFFF);
+
+	ibexp_TLE_tc = (double)TC_TLE_data[3];
+	bstar_TLE_tc = (double)TC_TLE_data[4];
+	inclination_TLE_tc = (double)TC_TLE_data[5];
+	nodeo_TLE_tc = (double)TC_TLE_data[6];
+	ecc_TLE_tc = (double)TC_TLE_data[7];
+	argpo_TLE_tc = (double)TC_TLE_data[8];
+	mo_TLE_tc = (double)TC_TLE_data[9];
+
+	no_TLE_temp1 = ((int)(TC_TLE_data[10]) & 0xFFFFFFFF);
+	no_TLE_tc = (double)(((no_TLE_temp1 << 32) | (int)TC_TLE_data[11]) & 0xFFFFFFFFFFFFFFFF);
+	Tsince_TLE_tc = (double)TC_TLE_data[12];
+}*/
+
+
 void rTLE_Update()
 {
-	Epochyear_TLE_tc = TC_TLE_data[0];
-	epochdays_TLE_tc = TC_TLE_data[1];
-	ibexp_TLE_tc = TC_TLE_data[2];
-	bstar_TLE_tc = TC_TLE_data[3];
-	inclination_TLE_tc = TC_TLE_data[4];
-	nodeo_TLE_tc = TC_TLE_data[5];
-	ecc_TLE_tc = TC_TLE_data[6];
-	argpo_TLE_tc = TC_TLE_data[7];
-	mo_TLE_tc = TC_TLE_data[8];
-	no_TLE_tc = TC_TLE_data[9];
-	Tsince_TLE_tc = TC_TLE_data[10];
-	//Epochyear_TLE_tc = TC_TLE_data[11];
+
+	Epochyear_TLE_tc = (int)TLE_data.TC_TLE_data1;
+
+
+	epochdays_TLE_tc = TLE_data.TC_TLE_data2;
+
+	ibexp_TLE_tc = (double)TLE_data.TC_TLE_data3;
+	bstar_TLE_tc = (double)TLE_data.TC_TLE_data4;
+	inclination_TLE_tc = (double)TLE_data.TC_TLE_data5;
+	nodeo_TLE_tc = (double)TLE_data.TC_TLE_data6;
+	ecc_TLE_tc = TLE_data.TC_TLE_data7;
+	argpo_TLE_tc = (double)TLE_data.TC_TLE_data8;
+	mo_TLE_tc = (double)TLE_data.TC_TLE_data9;
+
+	no_TLE_tc = TLE_data.TC_TLE_data10;
+	OBT_at_TLE_epoch = TLE_data.TC_TLE_data11;
+	chksum_tle = TLE_data.TC_TLE_data12;
+	TLE_Data_Available = 1;
 }
+
 
 void TC_init_RW1()
 {
@@ -2275,6 +2307,7 @@ void TC_q_body_init()
 	Qbody[1] = out_Quat_norm[1];
 	Qbody[2] = out_Quat_norm[2];
 	Qbody[3] = out_Quat_norm[3];
+}
 	
 void rElapsedTimerAssign()
 {
@@ -2449,7 +2482,7 @@ void TC_GYRO_Det_Min_Thres_1()
 
 void rTc_nominal_speed_RW1()
 {
-	if(TC_gain_select_u.TC_gain_select_Table.TC_W1_Commanded_Nominal_Speed)
+	if(TC_gain_select_u.TC_gain_select_Table.TC_W1_Commanded_Nominal_Speed == 01)
 	{
 		TC_RW1_Nominal = GAIN_DATA_SET.Tc_nominal_speed_rw1_01;
 	}
@@ -2474,7 +2507,7 @@ void rTc_nominal_speed_RW1()
 
 void rTc_nominal_speed_RW2()
 {
-	if(TC_gain_select_u.TC_gain_select_Table.TC_W2_Commanded_Nominal_Speed)
+	if(TC_gain_select_u.TC_gain_select_Table.TC_W2_Commanded_Nominal_Speed == 1)
 	{
 		TC_RW2_Nominal = GAIN_DATA_SET.Tc_nominal_speed_rw1_01;
 	}
@@ -2499,7 +2532,7 @@ void rTc_nominal_speed_RW2()
 
 void rTc_nominal_speed_RW3()
 {
-	if(TC_gain_select_u.TC_gain_select_Table.TC_W3_Commanded_Nominal_Speed)
+	if(TC_gain_select_u.TC_gain_select_Table.TC_W3_Commanded_Nominal_Speed == 1)
 	{
 		TC_RW3_Nominal = GAIN_DATA_SET.Tc_nominal_speed_rw3_01;
 	}
@@ -2524,20 +2557,20 @@ void rTc_nominal_speed_RW3()
 
 void rTc_nominal_speed_RW4()
 {
-	if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed)
+	if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed == 1)
 	{
 		TC_RW4_Nominal = GAIN_DATA_SET.Tc_nominal_speed_rw4_01;
 	}
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed==02)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed == 2)
 	{
 		TC_RW4_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw4_10;
 	}
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed==03)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed== 3)
 	{
 		TC_RW4_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw4_11;
 	}
 
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed==00)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed== 0)
 	{
 		TC_RW4_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw4_00;
 	}
