@@ -1292,10 +1292,9 @@ void rGPSDataProcessing(void)
             GPSDataReady_NA_count = GPSDataReady_NA_count + 1;
             if (GPSDataReady_NA_count >= ADCS_TC_data_command_Table.TC_Time_GPS2TLE)
             {
-                //TLE_Select = 1;
-                //GPS_Select = 0;
-                //Delta_TLE = Present_OBT - OBT_at_TLE_epoch;
-                //Tsince = (float)Delta_TLE * c_MaC/c_min_per_day;
+            	TC_boolean_u.TC_Boolean_Table.TC_GPS_TLE_Select = 0;
+                Delta_TLE = Present_OBT - OBT_at_TLE_epoch;
+                Tsince = (double)Delta_TLE * c_MaC/c_min_per_day;
             }
         }
     }

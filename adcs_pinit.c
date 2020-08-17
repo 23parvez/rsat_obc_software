@@ -11,6 +11,31 @@
 
 void rADCS_Pon_vars(void)
 {
+
+	CB_Detumbling_Mode = 0;
+	CB_OrbitModel = 0;
+	CB_Q_propagation = 0;
+	CB_DAD_quest = 0;
+	CB_QuestDataProcessing = 0;
+	CB_ErrorComputation = 0;
+	CB_ExtendedKalmanFilter = 0;
+	CB_LinearController = 0;
+	CB_Wheel_OverSpeed_TorqueCutOff = 0;
+	CB_DutyCycleGeneration = 0;
+	CB_AngularMomentumDumping = 0;
+	CB_SpeedBasedMomentumDumping = 0;
+	CB_Wheel_Dynamic_Friction = 0;
+	CB_Wheel_Spin_updown = 0;
+	CB_Wheel_Auto_Reconfiguration = 0;
+	CB_Two_RW_control = 0;
+	CB_MagFieldComp = 0;
+	CB_Sun_model = 0;
+	CB_ReferenceQuatComputation = 0;
+	CB_RefVectorGeneration = 0;
+	CB_RefRate_Computation = 0;
+	CB_Sl_Ecl_OnBrd_detection = 0;
+	CB_BDOT_Computation = 0;
+
 	/// IMU ///////////////////////////////////////////////////////////
 
 	for (i_pini=0; i_pini<3; i_pini++)
@@ -43,9 +68,9 @@ void rADCS_Pon_vars(void)
     IMU1_Corr.DB_w_BiasCor[1] = 0.0;
     IMU1_Corr.DB_w_BiasCor[2] = 0.0;*/
 
-    IMU1_Corr.DB_w_BiasCor[0] = -0.173789276*3.1415926535/180.0;
-    IMU1_Corr.DB_w_BiasCor[1] = 0.117619003*3.1415926535/180.0;
-    IMU1_Corr.DB_w_BiasCor[2] = 0.161998119*3.1415926535/180.0;
+    IMU1_Corr.DB_w_BiasCor[0] = 0.0;
+    IMU1_Corr.DB_w_BiasCor[1] = 0.0;
+    IMU1_Corr.DB_w_BiasCor[2] = 0.0;
 
     IMU1_Corr.DB_wSFC_Neg[0] = 1.000133267;
     IMU1_Corr.DB_wSFC_Neg[1] = 1.010407138;
@@ -63,9 +88,9 @@ void rADCS_Pon_vars(void)
     IMU1_Corr.DB_wSFC_Pos[1] = 1.0;
     IMU1_Corr.DB_wSFC_Pos[2] = 1.0;*/
 
-    IMU1_Corr.DB_B_BiasCor[0] = 7133.0;
-    IMU1_Corr.DB_B_BiasCor[1] = -14998.0;
-    IMU1_Corr.DB_B_BiasCor[2] = 11901.0;
+    IMU1_Corr.DB_B_BiasCor[0] = 0.0;
+    IMU1_Corr.DB_B_BiasCor[1] = 0.0;
+    IMU1_Corr.DB_B_BiasCor[2] = 0.0;
 
     IMU1_Corr.DB_BSFC_Neg[0] = 1.0;
     IMU1_Corr.DB_BSFC_Neg[1] = 1.0;
@@ -202,23 +227,24 @@ void rADCS_Pon_vars(void)
 
 	/// Sun Sensors ///////////////////////////////////////////////////////////
 
-	SS_Main_2Exe_DB.DB_Imax_RPD = 1.073296595956431;
-	SS_Main_2Exe_DB.DB_Imax_RND = 1.172387413685503;
-	SS_Main_2Exe_DB.DB_Imax_RPND = 1.143227326266195;
-	SS_Main_2Exe_DB.DB_Imax_RNND = 1.113413888039156;
-	SS_Main_2Exe_DB.DB_Imax_PP = 1.0;;
-	SS_Main_2Exe_DB.DB_Imax_PN = 1.127119300147093;
-	SS_Main_2Exe_DB.DB_Imax_YP = 1.060224293620740;
-	SS_Main_2Exe_DB.DB_Imax_YN = 1.075774928880186;
+	SS_Main_2Exe_DB.DB_Imax_RPD = 7.4536;//1.073296595956431;
+	SS_Main_2Exe_DB.DB_Imax_RND = 6.8237;//1.172387413685503;
+	SS_Main_2Exe_DB.DB_Imax_RPND = 6.9977;//1.143227326266195;
+	SS_Main_2Exe_DB.DB_Imax_RNND = 7.1851;//1.113413888039156;
+	SS_Main_2Exe_DB.DB_Imax_PP = 8.0;//1.0;
+	SS_Main_2Exe_DB.DB_Imax_PN = 7.0977;//1.127119300147093;
+	SS_Main_2Exe_DB.DB_Imax_YP = 7.5456;//1.060224293620740;
+	SS_Main_2Exe_DB.DB_Imax_YN = 7.4365;//1.075774928880186;
 
-	SS_Redundant_2Exe_DB.DB_Imax_RPD = 1.096912051131744;
-	SS_Redundant_2Exe_DB.DB_Imax_RND = 1.132238986590674;
-	SS_Redundant_2Exe_DB.DB_Imax_RPND = 1.125363752764521;
-	SS_Redundant_2Exe_DB.DB_Imax_RNND = 1.089843309660692;
-	SS_Redundant_2Exe_DB.DB_Imax_PP	= 1.0;
-	SS_Redundant_2Exe_DB.DB_Imax_PN = 1.076554757530204;
-	SS_Redundant_2Exe_DB.DB_Imax_YP = 1.015119697606048;
-	SS_Redundant_2Exe_DB.DB_Imax_YN = 1.144345150026632;
+	SS_Redundant_2Exe_DB.DB_Imax_RPD = 7.2932;//1.096912051131744;
+	SS_Redundant_2Exe_DB.DB_Imax_RND = 7.0657;//1.132238986590674;
+	SS_Redundant_2Exe_DB.DB_Imax_RPND = 7.10883;//1.125363752764521;
+	SS_Redundant_2Exe_DB.DB_Imax_RNND = 7.3405;//1.089843309660692;
+	SS_Redundant_2Exe_DB.DB_Imax_PP	= 8.0;//1.0;
+	SS_Redundant_2Exe_DB.DB_Imax_PN = 7.4311;//1.076554757530204;
+	SS_Redundant_2Exe_DB.DB_Imax_YP = 7.8809;//1.015119697606048;
+	SS_Redundant_2Exe_DB.DB_Imax_YN = 6.9909;//1.144345150026632;
+
 
 	/*SS_Main_2Exe_DB.DB_misaln_cor125[0][0] = 1.0;
 	SS_Main_2Exe_DB.DB_misaln_cor125[0][1] = 0.0;
@@ -1662,9 +1688,9 @@ void rADCS_Pon_vars(void)
 
 	//TC_Bdot_Gain = 1.0;
 
-	Roll_MTREnable = 1;
-	Pitch_MTREnable = 1;
-	Yaw_MTREnable = 1;
+	TC_boolean_u.TC_Boolean_Table.Roll_Torquer_Enable_or_Disable = 1;
+	TC_boolean_u.TC_Boolean_Table.Pitch_Torquer_Enable_or_Disable = 1;
+	TC_boolean_u.TC_Boolean_Table.Yaw_Torquer_Enable_or_Disable = 1;
 
 
 	//power on init
@@ -1714,17 +1740,14 @@ void rADCS_Pon_vars(void)
 
 	TC_GPS_pulse_duration=GAIN_DATA_SET.TC_GPS_pulse_duration_0_00;
 
-	RW_Nominal[0] = TC_RW1_Nominal;
-	RW_Nominal[1] = -1 * TC_RW1_Nominal;
-	RW_Nominal[2] = TC_RW1_Nominal;
-	RW_Nominal[3] = -1 * TC_RW1_Nominal;
+	TC_RW_Nominal[0] = GAIN_DATA_SET.Tc_nominal_speed_rw1_01;
+	TC_RW_Nominal[1] = GAIN_DATA_SET.Tc_nominal_speed_rw2_01;
+	TC_RW_Nominal[2] = GAIN_DATA_SET.Tc_nominal_speed_rw3_01;
+	TC_RW_Nominal[3] = GAIN_DATA_SET.Tc_nominal_speed_rw4_01;
 
 	//////////////////////////////////////////////////////////////   TEST
 
-	/*TC_IMU2_On();
-	TC_boolean_u.TC_Boolean_Table.TC_IMU_Select = IMU2;
-	eclipse();
-	rTC_ThreeAxis_ModePreprocessing();*/
+	//TC_data_command_Table.TC_HILS_test = 0x01;
 
 
 }

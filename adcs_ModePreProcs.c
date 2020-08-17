@@ -46,37 +46,48 @@ void rScModeSelection(void)
 }
 
 /*
-unsigned short Check_sum_data =0;
-void rHILS_packets()
+//unsigned short Check_sum_data =0;
+void rHILS_packets(void)
 {
+
 	int i;
 	unsigned short temp_hils;
-	HILS_packet.header          = 0x07e0;
-	HILS_packet.len             = 0x40;
-	HILS_packet.aux             = 0x01;
-	HILS_packet.mode_flag 		= (char)Spacecraft_Mode; //HILS
-	HILS_packet.mag_field[0] 	= (int)(B_BODY[0]/c_TM_Resol_B);
-	HILS_packet.mag_field[1] 	= (int)(B_BODY[1]/c_TM_Resol_B);
-	HILS_packet.mag_field[2] 	= (int)(B_BODY[2]/c_TM_Resol_B);
-	temp_hils                	= input_latch_1.data;
-	HILS_packet.polarity     	= (char)((temp_hils & 0xFC00)>>8);
-	HILS_packet.rw_torque[0] 	= (int)(T_RW[0]/c_TM_RW_Resol);
-	HILS_packet.rw_torque[1] 	= (int)(T_RW[1]/c_TM_RW_Resol);
-	HILS_packet.rw_torque[2] 	= (int)(T_RW[2]/c_TM_RW_Resol);
-	HILS_packet.rw_torque[3] 	= (int)(T_RW[3]/c_TM_RW_Resol);
-	HILS_packet.Mic_time     	= Minor_Cycle_Count;
-	HILS_packet.reserved_byte   = 0x55;
-	for(i = 0; i<= 29 ; i++)
+	unsigned short temp_aux;
+	HILS_packet.header               = 0x07e0;
+	HILS_packet.len                  = 0x40;
+	temp_aux 					     = TC_data_command_Table.TC_HILS_test;
+	HILS_packet.aux                  = (char)(temp_aux & 0x00FF);
+	HILS_packet.mode_flag 		     = (char)Spacecraft_Mode; //HILS
+	HILS_packet.mag_field[0] 	     = (int)(B_BODY[0]/c_TM_Resol_B);
+	HILS_packet.mag_field[1] 	     = (int)(B_BODY[1]/c_TM_Resol_B);
+	HILS_packet.mag_field[2] 	     = (int)(B_BODY[2]/c_TM_Resol_B);
+	temp_hils                	     = input_latch_1.data;
+	HILS_packet.polarity     	     = (char)((temp_hils & 0xFC00)>>8);
+	HILS_packet.rw_torque[0] 	     = (int)(T_RW[0]/c_TM_RW_Resol);
+	HILS_packet.rw_torque[1] 	     = (int)(T_RW[1]/c_TM_RW_Resol);
+	HILS_packet.rw_torque[2] 	     = (int)(T_RW[2]/c_TM_RW_Resol);
+	HILS_packet.rw_torque[3] 	     = (int)(T_RW[3]/c_TM_RW_Resol);
+	HILS_packet.wbody[0] 	     	 = (int)(w_BODY[0]/c_TM_Resol_w);
+	HILS_packet.wbody[1] 	     	 = (int)(w_BODY[1]/c_TM_Resol_w);
+	HILS_packet.wbody[2] 	     	 = (int)(w_BODY[2]/c_TM_Resol_w);
+
+	HILS_packet.Mic_time     	     = Minor_Cycle_Count;
+	HILS_packet.reserved_byte        = 0x55;
+	unsigned short Check_sum_data    = 0x0000;
+	for(i = 2; i<= 59 ; i++)
 	{
-		unsigned short temp;
 
-		temp                  = HILS_packet.HILS_data_16bit[i];
-		Check_sum_data        = (Check_sum_data ^ temp);
-		HILS_packet.checksum  = Check_sum_data;
+		unsigned char temp_1;
+		unsigned short temp_2;
+
+		temp_1                       = HILS_packet.HILS_data_8bit[i];
+		temp_2                       = (unsigned short)(temp_1 & 0xFF);
+		Check_sum_data               = (Check_sum_data ^ (temp_2 & 0x00FF));
+		HILS_packet.checksum         = Check_sum_data;
+
 	}
-
-		HILS_packet.Footer    = 0x7ffe;
-	 //rHILS_payload(&HILS_packet);
+	HILS_packet.Footer    = 0x7ffe;
+	rHILS_payload(&HILS_packet);
 }
 */
 
@@ -90,13 +101,14 @@ void rSuspended_ModePreprocessing(void)
 	TM.Buffer.TM_TC_Buffer[9]	= 0x0;
 	TM.Buffer.TM_TC_Buffer[10]	= 0x0;
 	TM.Buffer.TM_TC_Buffer[11]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[12] = 0x00;
 
     if (Susp_cnt >= c_oneminute)
     {
     	if (TC_boolean_u.TC_Boolean_Table.TC_Sus2det_transit_en_dis == 1)
     	{
 			Susp_cnt = 0;
-			rADCS_Pon_vars();
+			//rADCS_Pon_vars();
 			Spacecraft_Mode = Detumbling_ModePreprocessing_BDOT;
 			return;
     	}
@@ -124,6 +136,8 @@ void rDetumbling_ModePreprocessing_BDOT_Logic(void)
 	TM.Buffer.TM_TC_Buffer[9]	= 0x0;
 	TM.Buffer.TM_TC_Buffer[10]	= 0x0;
 	TM.Buffer.TM_TC_Buffer[11]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[12] = 0x00;
+
     CB_Detumbling_Mode = 1;
     CB_OrbitModel = 0;
     CB_Q_propagation = 0;
@@ -226,6 +240,7 @@ void rDetumbling_ModePreprocessing_GYRO_Logic(void)
 	TM.Buffer.TM_TC_Buffer[7]	= 0x0;
 	TM.Buffer.TM_TC_Buffer[10]	= 0x0;
 	TM.Buffer.TM_TC_Buffer[11]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[12] = 0x00;
 
     CB_Detumbling_Mode = 1;
     CB_OrbitModel = 0;
@@ -330,6 +345,7 @@ void rSunAcquisition_ModePreprocessing(void)
 	TM.Buffer.TM_TC_Buffer[9]	= 0x0;
 	TM.Buffer.TM_TC_Buffer[7]	= 0x0;
 	TM.Buffer.TM_TC_Buffer[11]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[12] = 0x00;
 
     CB_Detumbling_Mode = 0;
     CB_OrbitModel = 1;
@@ -434,6 +450,7 @@ void rThreeAxis_ModePreprocessing(void)
 	TM.Buffer.TM_TC_Buffer[9]	= 0x0;
 	TM.Buffer.TM_TC_Buffer[10]	= 0x0;
 	TM.Buffer.TM_TC_Buffer[7]	= 0x0;
+	TM.Buffer.TM_TC_Buffer[12] = 0x00;
 
     CB_Detumbling_Mode = 0;
     CB_OrbitModel = 1;

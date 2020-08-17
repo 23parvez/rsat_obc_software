@@ -60,6 +60,9 @@
 #define PL_TM_DATA            		0x10
 #define PL_MODE_ALL           		0x1F
 
+void HILS_mode_enable();
+void HILS_mode_disable();
+
 uint32 PL_1_on_off_flag;
 uint32 PL_2_on_off_flag;
 unsigned int pl_data_rcvd;

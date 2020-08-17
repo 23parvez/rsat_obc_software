@@ -54,7 +54,7 @@ void rLinearController(void)
         if ((Wheel_Config == 0) || (Wheel_Config == 1))
         {
 
-            rMatMul43x1(c_B2wh_mat_4RW,Tc);
+            rMatMul43x1(B2wh_mat,Tc);
             T_RW[0] = Matout431[0];
             T_RW[1] = Matout431[1];
             T_RW[2] = Matout431[2];
@@ -65,7 +65,7 @@ void rLinearController(void)
 			H_wh[2] = (c_MOI_wh)* (double)RW_Wheel_Speed[RWHEEL2];
 			H_wh[3] = (c_MOI_wh)* (double)RW_Wheel_Speed[RWHEEL3];
 
-			rMatMul34x1(c_wh2B_mat_4RW,H_wh);
+			rMatMul34x1(wh2B_mat,H_wh);
 			HB[0] = Matout341[0];
 			HB[1] = Matout341[1];
 			HB[2] = Matout341[2];
@@ -311,7 +311,7 @@ void rTorquer_Polarity_Check(void)
 
 		if (TorquerPolaritySetFlag == 1)
 		{
-			if(Roll_MTREnable == 1) // 1 - Enable, 0 - Disable
+			if(TC_boolean_u.TC_Boolean_Table.Roll_Torquer_Enable_or_Disable == 1) // 1 - Enable, 0 - Disable
 			{
 				if(DPM[0] == 0.0)
 				{
@@ -333,7 +333,7 @@ void rTorquer_Polarity_Check(void)
 				DPM_Polarity[0]  = No_Current;
 			}
 
-			if(Pitch_MTREnable == 1)
+			if(TC_boolean_u.TC_Boolean_Table.Pitch_Torquer_Enable_or_Disable == 1)
 			{
 				if(DPM[1] == 0)
 				{
@@ -354,7 +354,7 @@ void rTorquer_Polarity_Check(void)
 				DPM_Polarity[1] = No_Current;
 			}
 
-			if(Yaw_MTREnable ==1)
+			if(TC_boolean_u.TC_Boolean_Table.Yaw_Torquer_Enable_or_Disable ==1)
 			{
 				if(DPM[2] == 0)
 				{
@@ -543,7 +543,7 @@ void rWheel_Spin_updown(void)
                 del_v0a = 0.0;
                 for (i_lict=0; i_lict<=3; i_lict++)
                 {
-                    del_v0[i_lict] = RW_Nominal[i_lict] - RWSpeed[i_lict];//RW_Nominal[i_lict] should be assigned with Telecommanded value for nominal speed
+                    del_v0[i_lict] = TC_RW_Nominal[i_lict] - RWSpeed[i_lict];//RW_Nominal[i_lict] should be assigned with Telecommanded value for nominal speed
                     del_v0a = del_v0a + abs_f(del_v0[i_lict]);
                 }
                 del_v0a = del_v0a/4.0;

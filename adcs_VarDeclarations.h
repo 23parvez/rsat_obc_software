@@ -749,7 +749,7 @@ extern double pres_exp_whsp_ch[4], exp_whsp_ch[4], ch_obs_whsp[4], prev_obs_whsp
 extern double TC_ARC_RPM_Thres;
 extern double speedDFCch;
 
-extern float TC_RW1_Nominal,TC_RW2_Nominal,TC_RW3_Nominal,TC_RW4_Nominal, RW_Nominal[4];
+extern float TC_RW_Nominal[4];
 
 extern const double c_MOI_wh1, c_MOI_wh2, c_MOI_wh3, c_MOI_wh4, c_MOI_wh;
 

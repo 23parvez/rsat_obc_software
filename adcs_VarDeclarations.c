@@ -410,7 +410,7 @@ int wheel_index[4], wheel_index_ARCsum, Wheel_Config, RW_ARC_Logic, RW_ARC_Count
 double pres_exp_whsp_ch[4], exp_whsp_ch[4], ch_obs_whsp[4], prev_obs_whsp_ch[4], diff_obs_exp_ch[4];
 double TC_ARC_RPM_Thres;
 
-float TC_RW1_Nominal,TC_RW2_Nominal,TC_RW3_Nominal,TC_RW4_Nominal,RW_Nominal[4];
+float TC_RW_Nominal[4];
 
 //const double c_MOI_wh1, c_MOI_wh2, c_MOI_wh3, c_MOI_wh4, c_MOI_wh;
 

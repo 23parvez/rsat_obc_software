@@ -369,30 +369,68 @@ void rRW_Data_Write(void)
 	    RWS[3] = -(TC_data_command_Table.RW4_Speed);
 	}
 	else
-	 {*/
+	 {
 		RWS[0] = TC_data_command_Table.RW1_Speed;
 		RWS[1] = TC_data_command_Table.RW2_Speed;
 		RWS[2] = TC_data_command_Table.RW3_Speed;
 		RWS[3] = TC_data_command_Table.RW4_Speed;
 
-	//}
+	//}*/
 
-    if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_1_speed_enable)
+	if (f_RW_nominal == 1)
 	{
 
-		rHAL_RW_TC_Write(RW_1, RW_TC, RWS[0], RWHEEL0);	// Command Wheel Speed to RW1
+		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_1_speed_enable)
+		{
+			rHAL_RW_TC_Write(RW_1, RW_TC, (float)(TC_RW_Nominal[0]), RWHEEL0);	// Command Wheel Speed to RW1
+		}
+		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_2_speed_enable)
+		{
+			rHAL_RW_TC_Write(RW_2, RW_TC, (float)(TC_RW_Nominal[1]), RWHEEL1);					// Command Wheel Speed to RW1
+		}
+		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_3_speed_enable )
+		{
+			rHAL_RW_TC_Write(RW_3, RW_TC, (float)(TC_RW_Nominal[2]), RWHEEL2); 					// Command Wheel Speed to RW1
+		}
+		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_4_speed_enable )
+		{
+			rHAL_RW_TC_Write(RW_4, RW_TC, (float)(TC_RW_Nominal[3]), RWHEEL3); 					// Command Wheel Speed to RW1
+		}
+
+		if (((RW_Wheel_Speed[0] > TC_RW_Nominal[0] + 0.8726) && (RW_Wheel_Speed[1] < TC_RW_Nominal[1] - 0.8726)&& (RW_Wheel_Speed[2] > TC_RW_Nominal[2] + 0.8726) && (RW_Wheel_Speed[3] < TC_RW_Nominal[3] - 0.8726))
+				|| ((RW_Wheel_Speed[0] > TC_RW_Nominal[0] - 0.8726) && (RW_Wheel_Speed[1] < TC_RW_Nominal[1] + 0.8726)&& (RW_Wheel_Speed[2] > TC_RW_Nominal[2] - 0.8726) && (RW_Wheel_Speed[3] < TC_RW_Nominal[3] + 0.8726)))
+		{
+			RW_nominal_speed_cnt++;
+
+			if (RW_nominal_speed_cnt >= 32)
+			{
+				//aaaa=0xa1a2;
+				f_RW_nominal = 0;
+				f_RW_control = Enable;
+				RW_nominal_speed_cnt= 0;
+			}
+		}
+
 	}
-	if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_2_speed_enable)
+
+	if (f_RW_control == Enable)
 	{
-		rHAL_RW_TC_Write(RW_2, RW_TC, RWS[1], RWHEEL1);					// Command Wheel Speed to RW1
-	}
-	if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_3_speed_enable )
-	{
-		rHAL_RW_TC_Write(RW_3, RW_TC, RWS[2], RWHEEL2); 					// Command Wheel Speed to RW1
-	}
-	if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_4_speed_enable )
-	{
-		rHAL_RW_TC_Write(RW_4, RW_TC, RWS[3], RWHEEL3); 					// Command Wheel Speed to RW1
+		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_1_speed_enable)
+		{
+			rHAL_RW_TC_Write(RW_1, RW_TC, RW_Wheel_Speed[0]+(float)del_Vw[0], RWHEEL0);	// Command Wheel Speed to RW1
+		}
+		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_2_speed_enable)
+		{
+			rHAL_RW_TC_Write(RW_2, RW_TC, RW_Wheel_Speed[1]+(float)del_Vw[1], RWHEEL1);					// Command Wheel Speed to RW1
+		}
+		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_3_speed_enable )
+		{
+			rHAL_RW_TC_Write(RW_3, RW_TC, RW_Wheel_Speed[2]+(float)del_Vw[2], RWHEEL2); 					// Command Wheel Speed to RW1
+		}
+		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_4_speed_enable )
+		{
+			rHAL_RW_TC_Write(RW_4, RW_TC, RW_Wheel_Speed[3]+(float)del_Vw[3], RWHEEL3); 					// Command Wheel Speed to RW1
+		}
 	}
 
   }

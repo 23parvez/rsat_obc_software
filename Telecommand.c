@@ -2314,6 +2314,15 @@ void rElapsedTimerAssign()
 	elapsed_running_timer = ADCS_TC_data_command_Table.TC_elapsed_orbitTimer;
 }
 
+void HILS_MODE_ENABLE()
+{
+	HILS_mode_enable();
+}
+void HILS_MODE_DISABLE()
+{
+	HILS_mode_disable();
+}
+
 void adcsgains()
 {
 	switch(u_TC.GainSelect.offset_addr)
@@ -2484,20 +2493,20 @@ void rTc_nominal_speed_RW1()
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_W1_Commanded_Nominal_Speed == 01)
 	{
-		TC_RW1_Nominal = GAIN_DATA_SET.Tc_nominal_speed_rw1_01;
+		TC_RW_Nominal[0] = GAIN_DATA_SET.Tc_nominal_speed_rw1_01;
 	}
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_W1_Commanded_Nominal_Speed==02)
 	{
-		TC_RW1_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw1_10;
+		TC_RW_Nominal[0] =GAIN_DATA_SET.Tc_nominal_speed_rw1_10;
 	}
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_W1_Commanded_Nominal_Speed==03)
 	{
-		TC_RW1_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw1_11;
+		TC_RW_Nominal[0] =GAIN_DATA_SET.Tc_nominal_speed_rw1_11;
 	}
 
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_W1_Commanded_Nominal_Speed==00)
 	{
-		TC_RW1_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw1_00;
+		TC_RW_Nominal[0] =GAIN_DATA_SET.Tc_nominal_speed_rw1_00;
 	}
 	else
 	{
@@ -2509,20 +2518,20 @@ void rTc_nominal_speed_RW2()
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_W2_Commanded_Nominal_Speed == 1)
 	{
-		TC_RW2_Nominal = GAIN_DATA_SET.Tc_nominal_speed_rw1_01;
+		TC_RW_Nominal[1] = GAIN_DATA_SET.Tc_nominal_speed_rw1_01;
 	}
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_W2_Commanded_Nominal_Speed==02)
 	{
-		TC_RW2_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw2_10;
+		TC_RW_Nominal[1]=GAIN_DATA_SET.Tc_nominal_speed_rw2_10;
 	}
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_W2_Commanded_Nominal_Speed==03)
 	{
-		TC_RW2_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw2_11;
+		TC_RW_Nominal[1]=GAIN_DATA_SET.Tc_nominal_speed_rw2_11;
 	}
 
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_W2_Commanded_Nominal_Speed==00)
 	{
-		TC_RW2_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw2_00;
+		TC_RW_Nominal[1]=GAIN_DATA_SET.Tc_nominal_speed_rw2_00;
 	}
 	else
 	{
@@ -2534,20 +2543,20 @@ void rTc_nominal_speed_RW3()
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_W3_Commanded_Nominal_Speed == 1)
 	{
-		TC_RW3_Nominal = GAIN_DATA_SET.Tc_nominal_speed_rw3_01;
+		TC_RW_Nominal[2] = GAIN_DATA_SET.Tc_nominal_speed_rw3_01;
 	}
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_W3_Commanded_Nominal_Speed==02)
 	{
-		TC_RW3_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw3_10;
+		TC_RW_Nominal[2]=GAIN_DATA_SET.Tc_nominal_speed_rw3_10;
 	}
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_W3_Commanded_Nominal_Speed==03)
 	{
-		TC_RW3_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw3_11;
+		TC_RW_Nominal[2]=GAIN_DATA_SET.Tc_nominal_speed_rw3_11;
 	}
 
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_W3_Commanded_Nominal_Speed==00)
 	{
-		TC_RW3_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw3_00;
+		TC_RW_Nominal[2]=GAIN_DATA_SET.Tc_nominal_speed_rw3_00;
 	}
 	else
 	{
@@ -2559,20 +2568,20 @@ void rTc_nominal_speed_RW4()
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed == 1)
 	{
-		TC_RW4_Nominal = GAIN_DATA_SET.Tc_nominal_speed_rw4_01;
+		TC_RW_Nominal[3] = GAIN_DATA_SET.Tc_nominal_speed_rw4_01;
 	}
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed == 2)
 	{
-		TC_RW4_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw4_10;
+		TC_RW_Nominal[3] =GAIN_DATA_SET.Tc_nominal_speed_rw4_10;
 	}
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed== 3)
 	{
-		TC_RW4_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw4_11;
+		TC_RW_Nominal[3] =GAIN_DATA_SET.Tc_nominal_speed_rw4_11;
 	}
 
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed== 0)
 	{
-		TC_RW4_Nominal=GAIN_DATA_SET.Tc_nominal_speed_rw4_00;
+		TC_RW_Nominal[3] =GAIN_DATA_SET.Tc_nominal_speed_rw4_00;
 	}
 	else
 	{

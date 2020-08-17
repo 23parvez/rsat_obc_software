@@ -229,18 +229,42 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.TC_GYRO_Det_Min_Thres_0_11 = 0.01;
 
 	//offset 04
+	GAIN_DATA_SET.Tc_nominal_speed_rw1_01 = 157.0796; //1500rpm
+	GAIN_DATA_SET.Tc_nominal_speed_rw1_10 = 104.7197; //1000
+	GAIN_DATA_SET.Tc_nominal_speed_rw1_11 = 209.4395; //2000
+	GAIN_DATA_SET.Tc_nominal_speed_rw1_00 = 261.7993; //2500
+
+	//offset 05
+	GAIN_DATA_SET.Tc_nominal_speed_rw2_01 = -157.0796;
+	GAIN_DATA_SET.Tc_nominal_speed_rw2_10 = -104.7197;
+	GAIN_DATA_SET.Tc_nominal_speed_rw2_11 = -209.4395;
+	GAIN_DATA_SET.Tc_nominal_speed_rw2_00 = -261.7993;
+
+	//offset 06
+	GAIN_DATA_SET.Tc_nominal_speed_rw3_01 = 157.0796;
+	GAIN_DATA_SET.Tc_nominal_speed_rw3_10 = 104.7197;
+	GAIN_DATA_SET.Tc_nominal_speed_rw3_11 = 209.4395;
+	GAIN_DATA_SET.Tc_nominal_speed_rw3_00 = 261.7993;
+
+	//offset 07
+	GAIN_DATA_SET.Tc_nominal_speed_rw4_01 = -157.0796;
+	GAIN_DATA_SET.Tc_nominal_speed_rw4_10 = -104.7197;
+	GAIN_DATA_SET.Tc_nominal_speed_rw4_11 = -209.4395;
+	GAIN_DATA_SET.Tc_nominal_speed_rw4_00 = -261.7993;
+
+	//offset 08
 	GAIN_DATA_SET.TC_momentum_dumping_gain_0_00 = 0.001;
 	GAIN_DATA_SET.TC_momentum_dumping_gain_0_01 = 0.0001;
 	GAIN_DATA_SET.TC_momentum_dumping_gain_0_10 = 0.005;
 	GAIN_DATA_SET.TC_momentum_dumping_gain_0_11 = 0.01;
 
-	//offset 05//TBD
+	//offset 09//TBD
 	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_00;
 	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_01;
 	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_10;
 	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_11;
 
-	//offset 06
+	//offset 10
 	GAIN_DATA_SET.TC_Gyro_LPF_Gain_IMU1_0_00 = 0.0;
 	GAIN_DATA_SET.TC_Gyro_LPF_Gain_IMU1_1_00 = 1.0;
 
@@ -253,7 +277,7 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.TC_Gyro_LPF_Gain_IMU1_0_11 = 0.0;
 	GAIN_DATA_SET.TC_Gyro_LPF_Gain_IMU1_1_11 = 1.0;
 
-	//offset 07
+	//offset 11
 	GAIN_DATA_SET.TC_Gyro_LPF_Gain_IMU2_0_00 = 0.0;
 	GAIN_DATA_SET.TC_Gyro_LPF_Gain_IMU2_1_00 = 1.0;
 
@@ -266,7 +290,7 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.TC_Gyro_LPF_Gain_IMU2_0_11 = 0.0;
 	GAIN_DATA_SET.TC_Gyro_LPF_Gain_IMU2_1_11 = 1.0;
 
-	//offset 08
+	//offset 12
 	GAIN_DATA_SET.TC_Mag_LPF_Gain_IMU1_0_00 = 0.0;
 	GAIN_DATA_SET.TC_Mag_LPF_Gain_IMU1_1_00 = 1.0;
 
@@ -279,7 +303,7 @@ void rPOR_Init(void)
 	GAIN_DATA_SET. TC_Mag_LPF_Gain_IMU1_0_11 = 0.0;
 	GAIN_DATA_SET.TC_Mag_LPF_Gain_IMU1_1_11 = 1.0;
 
-	//offset 09
+	//offset 13
 	GAIN_DATA_SET.TC_Mag_LPF_Gain_IMU2_0_00 = 0.0;
 	GAIN_DATA_SET.TC_Mag_LPF_Gain_IMU2_1_00 = 1.0;
 
@@ -292,7 +316,7 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.TC_Mag_LPF_Gain_IMU2_0_11 = 0.0;
 	GAIN_DATA_SET.TC_Mag_LPF_Gain_IMU2_1_11 = 1.0;
 
-	//offset 10
+	//offset 14
 	GAIN_DATA_SET.TC_SS_Currents_LPF_Gain_0_00 = 0.0;
 	GAIN_DATA_SET.TC_SS_Currents_LPF_Gain_1_00 = 1.0;
 
@@ -305,7 +329,7 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.TC_SS_Currents_LPF_Gain_0_11 = 0.0;
 	GAIN_DATA_SET.TC_SS_Currents_LPF_Gain_1_11 = 1.0;
 
-	//offset 11
+	//offset 15
 	GAIN_DATA_SET.TC_GPS_pulse_duration_0_00 = 614.4;
 
 	GAIN_DATA_SET.TC_GPS_pulse_duration_0_01 = 307.2;
@@ -314,7 +338,7 @@ void rPOR_Init(void)
 
 	GAIN_DATA_SET.TC_GPS_pulse_duration_0_11 = 1.024;
 
-	//offset 12
+	//offset 16
 	GAIN_DATA_SET.TC_KP_0_00 = 0.0020755;
 	GAIN_DATA_SET.TC_KP_1_00 = 0.002362;
 	GAIN_DATA_SET.TC_KP_2_00 = 0.00211722;
@@ -330,7 +354,7 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.TC_KP_0_11;
 	GAIN_DATA_SET.TC_KP_1_11;
 	GAIN_DATA_SET.TC_KP_2_11;
-	//offset 13
+	//offset 17
 	GAIN_DATA_SET.TC_KR_0_00 = 0.0373666;
 	GAIN_DATA_SET.TC_KR_1_00 = 0.04252567;
 	GAIN_DATA_SET.TC_KR_2_00 = 0.0381176;
@@ -347,7 +371,7 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.TC_KR_1_11;
 	GAIN_DATA_SET.TC_KR_2_11;
 
-	//offset 14
+	//offset 18
 	GAIN_DATA_SET.TC_GPS_Validity_Altitude_Threshold_0_00 = 50.0;
 
 	GAIN_DATA_SET.TC_GPS_Validity_Altitude_Threshold_0_01 = 100.0;
@@ -356,7 +380,7 @@ void rPOR_Init(void)
 
 	GAIN_DATA_SET.TC_GPS_Validity_Altitude_Threshold_0_11 = 5.0;
 
-	//offset 15
+	//offset 19
 	GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_0_00 = 5500.0;
 /*	GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_1_00;
 	GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_2_00;*/
@@ -373,7 +397,7 @@ void rPOR_Init(void)
 /*	GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_1_11;
 	GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_2_11;*/
 
-	//offset 16
+	//offset 19
 	GAIN_DATA_SET.TC_Wh_SpinUD_Thrsld_0_00 = 1500.0;
 /*	GAIN_DATA_SET.TC_Wh_SpinUD_Thrsld_1_00;
 	GAIN_DATA_SET.TC_Wh_SpinUD_Thrsld_2_00;*/
@@ -391,7 +415,7 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.TC_Wh_SpinUD_Thrsld_2_11;*/
 
 
-	//offset 17
+	//offset 19
 	GAIN_DATA_SET.TC_comd_pitch_rate_0_00 = 0.1;
 
 	GAIN_DATA_SET.TC_comd_pitch_rate_0_01 = 0.5;
@@ -400,7 +424,7 @@ void rPOR_Init(void)
 
 	GAIN_DATA_SET.TC_comd_pitch_rate_0_11 = 1.0;
 
-	//offset 18
+	//offset 20
 	GAIN_DATA_SET.TC_AngDev_SafeModetransit_Thrsld_0_00 = 40.0;
 
 	GAIN_DATA_SET.TC_AngDev_SafeModetransit_Thrsld_0_01 = 30.0;
@@ -409,7 +433,7 @@ void rPOR_Init(void)
 
 	GAIN_DATA_SET.TC_AngDev_SafeModetransit_Thrsld_0_11 = 25.0;
 
-	//offset 19
+	//offset 21
 	GAIN_DATA_SET.TC_AngMomDump_Thrsld_0_00 = 0.005;
 
 	GAIN_DATA_SET.TC_AngMomDump_Thrsld_0_01 = 0.01;
@@ -418,7 +442,7 @@ void rPOR_Init(void)
 
 	GAIN_DATA_SET.TC_AngMomDump_Thrsld_0_11 = 0.0065;
 
-	//offset 20
+	//offset 22
 	GAIN_DATA_SET.TC_SpeedDump_Thrsld_0_00 = 6000.0;
 
 	GAIN_DATA_SET.TC_SpeedDump_Thrsld_0_01 = 5500.0;
@@ -427,7 +451,7 @@ void rPOR_Init(void)
 
 	GAIN_DATA_SET.TC_SpeedDump_Thrsld_0_11 = 6500.0;
 
-	//offset 21
+	//offset 23
 	GAIN_DATA_SET.TC_SpeedDump_TimeSelect_0_00 = 921.6;
 
 	GAIN_DATA_SET.TC_SpeedDump_TimeSelect_0_01 = 614.4;
@@ -480,5 +504,8 @@ void rPOR_Init(void)
 	 	}
 
 	 	TM.Buffer.TM_Remote_Addr_SF0 = Remote_data_addr;
+
+	 	f_RW_nominal = 0;
+	    f_RW_control = 0;
 }
 

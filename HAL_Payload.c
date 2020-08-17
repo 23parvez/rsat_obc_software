@@ -14,6 +14,54 @@ uint32 PL_2_on_off_flag;
 
 uint8 pl_HLT_en;
 
+
+unsigned int hils_datas[63];
+void rHILS_payload(union HILS_test* HILS_packets)
+{
+
+	int i;
+	int temp_1;
+	short temp_2;
+	Hils_ptr = &(HILS_packets->HILS_data_16bit[0]);
+	//hils_ptr_sh = &Hils_ptr;
+	pl_config_addr_ptr =(unsigned long int*)PAYLOAD_BUFFER_ADDRESS;
+	for(i = 0 ; i<= 31 ; i++)
+	{
+
+		//hils_datas[i] = *Hils_ptr++;
+		temp_2 							=  *Hils_ptr++;
+		temp_1 							= byte_swap(temp_2);
+		REG32(pl_config_addr_ptr++) 	= temp_1;
+		//REG32(PL_CONFIG_Addr_Ptr++) 	= 0x0000abcd;
+		REG32(PAYLOAD_STATUS2_ADDRESS) 	= 0x00000001;
+		REG32(PAYLOAD_STATUS1_ADDRESS) 	= 0x00002001;
+
+	}
+
+
+}
+
+void HILS_mode_enable()           //HILS_mode enabling by using a GPIO pin no_6
+{
+	unsigned short tempdata;
+
+	GPIO_pins.PIO_6 = 1;
+	tempdata = GPIO_pins.data;
+	IODAT = tempdata;
+}
+
+void HILS_mode_disable()         //HILS_mode disabling by using a GPIO pin no_6
+{
+
+	unsigned short tempdata;
+
+	GPIO_pins.PIO_6 = 0;
+	tempdata = GPIO_pins.data;
+	IODAT = tempdata;
+
+}
+
+
 void rHAL_pl1_ON()
 {
 	unsigned short tempdata;

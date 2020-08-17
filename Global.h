@@ -334,6 +334,9 @@ extern void RW_Init(void);
 extern void rRW_Data_Write();
 extern void rRW_Data_Request();
 extern void rRW_Data_Read();
+extern int f_RW_nominal;
+extern int f_RW_control;
+extern int RW_nominal_speed_cnt;
 
 extern struct HAL_RW_Data_Structure RW_1,RW_2,RW_3,RW_4;
 
@@ -386,6 +389,10 @@ extern void rHAL_pl1_ON();
 extern void rHAL_pl2_ON();
 extern void rHAL_pl1_OFF();
 extern void rHAL_pl2_OFF();
+
+//HILS
+extern void HILS_mode_enable();
+extern void HILS_mode_disable();
 
 extern void rHAL_X_Tx_ON();
 extern void rHAL_X_Tx_OFF();
