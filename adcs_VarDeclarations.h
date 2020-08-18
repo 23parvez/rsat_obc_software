@@ -974,6 +974,8 @@ extern int CB_IMUDataProcessing;
 extern int CB_SunSensorDataProcessing;
 extern int CB_BDOT_Computation;
 
+extern int f_RW_control, f_RW_nominal, RW_nominal_speed_cnt;
+
 /// Power on
 
 void rADCS_Pon_vars(void);

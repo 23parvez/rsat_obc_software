@@ -6,6 +6,7 @@
 #include "TM_Global_Buffer.h"
 #include "adcs_Constants.h"
 #include "TC_List.h"
+#include "adcs_VarDeclarations.h"
 
 void RW_Init(void)
 {

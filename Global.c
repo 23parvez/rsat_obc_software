@@ -504,8 +504,9 @@ void rPOR_Init(void)
 	 	}
 
 	 	TM.Buffer.TM_Remote_Addr_SF0 = Remote_data_addr;
-
-	 	f_RW_nominal = 0;
+		
+		f_RW_nominal = 0;
 	    f_RW_control = 0;
+
 }
 
