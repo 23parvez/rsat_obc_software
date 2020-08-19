@@ -26,7 +26,7 @@
     const double c_Twopi = 6.283185307179586;
     const double c_x2o3 = 0.666666666666667;
     const double c_xke    = 0.074366853168714;
-    const double c_dividebyzerovalue = 0.00000000000001;
+    const double c_dividebyzerovalue = 0.0000000001;
     const double c_mu     = 398600.4418;
     const double c_invmu = 0.000002508777951886354381858088547658;
     const double c_Day_To_Seconds = 86400.0;
@@ -879,3 +879,7 @@ const double c_I_nine_cross_nine[9][9] = {{1,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,1,0},
 		{0,0,0,0,0,0,0,0,1},
 };
+
+const double c_R_MDO_CB[3][3] = {{1, 0, 0},
+								{0, cos(10*c_D2R), sin(10*c_D2R)},
+								{0, -sin(10*c_D2R), cos(10*c_D2R)}};

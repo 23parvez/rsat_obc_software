@@ -236,7 +236,6 @@ void rOrbit_Initialization(void)
                 }
             }
 
-            eeta = c_dividebyzerovalue;
             xmcof = -c_x2o3 * coef * bstar / eeta;
             nodecf = 3.5 * omeosq * xhdot1 * cc1;
             t2cof = 1.5 * cc1;
@@ -684,6 +683,11 @@ void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], do
 		e_vecdtr = (Pos_ECI_in[0] * e_vec[0]) + (Pos_ECI_in[1] * e_vec[1]) + (Pos_ECI_in[2] * e_vec[2]);
 
 		ecc_r = ecc * radialdistance;
+
+		if(ecc_r <= c_dividebyzerovalue)
+		{
+			ecc_r = c_dividebyzerovalue;
+		}
 
 		tempta = e_vecdtr/ecc_r;
 		if(abs_f(tempta) >= 1.0)
@@ -1147,7 +1151,6 @@ void rnut_iau1980(double TTDBin, const double *fin)
 
 void rGPSDataProcessing(void)
 {
-	unsigned int tempdata;
     if (CB_OrbitModel == Enable)
     {
         if(f_GPS_Valid_Data ==1 && (Major_Cycle_Count % TC_GPS_pulse_duration == 0))

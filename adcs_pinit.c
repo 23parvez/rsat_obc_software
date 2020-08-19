@@ -442,12 +442,12 @@ void rADCS_Pon_vars(void)
 	for (i_pini=0; i_pini<3; i_pini++)
 	{
 		Tc[i_pini] = 0.0;
+		HB[i_pini] = 0.0;
 	}
 
 	for (i_pini=0; i_pini<4; i_pini++)
 	{
 		H_wh[i_pini] = 0.0;
-		HB[i_pini] = 0.0;
 		T_RW[i_pini] = 0.0;
 	}
 

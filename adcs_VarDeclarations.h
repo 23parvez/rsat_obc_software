@@ -164,6 +164,8 @@ extern const double c_I_three_cross_three[3][3];
 extern const double  c_rk_T[9][9];
 extern const double c_rk[9][9];
 
+const double c_R_MDO_CB[3][3];
+
 ///16 Imax extern constants of for all sensors (Main and Redundant cells) ( NOTE: extern constant = Overall_Imax / Individual_Imax)
 extern const double c_Imax_RPD_Red;
 extern const double c_Imax_RND_Red;
@@ -371,7 +373,7 @@ extern double L_Msun, Msun, L_Ecliptic, Sun_Dis, Epsilon;
 extern double SUN_ECI_mag, X_SVO2ECI_mag, Z_SVO2ECI_mag, Y_EPO2ECI_mag, X_EPO2ECI_mag, Z_SFAO2ECI_mag, X_SFAO2ECI_mag;
 extern double X_SFDO2ECI_mag, Z_SFDO2ECI_mag;
 extern double Y_SVO2ECI[3], Z_SVO2ECI[3], X_SVO2ECI[3], R_SVO2ECI[3][3], Q_SVO2ECI[4];
-double X_MDO2ECI[3],Y_MDO2ECI[3],Z_MDO2ECI[3],R_MDO2ECI[3][3],Q_MDO2ECI[4],R_MDO_CB[3][3];
+double X_MDO2ECI[3],Y_MDO2ECI[3],Z_MDO2ECI[3],R_MDO2ECI[3][3],Q_MDO2ECI[4];
 extern double Z_EPO2ECI[3], Y_EPO2ECI[3], X_EPO2ECI[3], R_EPO2ECI[3][3], Q_EPO2ECI[4];
 extern double Y_SFAO2ECI[3], Z_SFAO2ECI[3], X_SFAO2ECI[3], R_SFAO2ECI[3][3], Q_SFAO2ECI[4];
 extern double Y_SFDO2ECI[3], Z_SFDO2ECI[3], X_SFDO2ECI[3], R_SFDO2ECI[3][3], Q_SFDO2ECI[4];

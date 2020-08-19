@@ -339,11 +339,7 @@ void rReferenceQuatComputation(void)
 			R_MDO2ECI[2][i] = Z_MDO2ECI[i];
 		}
 
-		double R_MDO_CB[3][3] = {{1, 0, 0},
-								{0, cos(10*c_D2R), sin(10*c_D2R)},
-								{0, -sin(10*c_D2R), cos(10*c_D2R)}};
-
-		rMatMul3x3(R_MDO_CB,R_MDO2ECI);
+		rMatMul3x3(c_R_MDO_CB,R_MDO2ECI);
 		for(i=0; i<3; i++)
 		{
 			for(j=0; j<3; j++)

@@ -211,6 +211,8 @@ const double c_I_nine_cross_nine[9][9];
 const double c_rk[9][9];
 const double c_rk_T[9][9];
 
+const double c_R_MDO_CB[3][3];
+
 #endif // ADCS_CONSTANTS_H_INCLUDED
 
 
