@@ -303,10 +303,6 @@ extern void Block_update();
 extern void rInit_Block();
 
 //SunSensors
-extern void rSS_Main_DB_Init(void);
-extern void rSS_Redundant_DB_Init(void);
-extern void rSS_Main_DB_Copy(void);
-extern void rSS_Redundant_DB_Copy(void);
 
 //GPS
 extern unsigned long int GPS_Data_Read_Status;
@@ -317,6 +313,7 @@ extern void rGPS_TM_Extract(void);
 extern void rGPS_Buffer_Init();
 extern void GPS_1_DATA();
 extern void ST_TM_gps_data();
+extern void rGPS_OBT_timer();
 
 
 //MTR
@@ -423,8 +420,6 @@ extern void rIMU1_DB_Execute();
 extern void rIMU2_DB_Execute();
 
 //SS
-extern void rSS_Main_DB_Execute();
-extern void rSS_Redundant_DB_Execute();
 
 extern void rOutput_Latch_Update();
 extern void ST_output_update();

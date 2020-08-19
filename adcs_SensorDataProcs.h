@@ -88,10 +88,6 @@ double gyrodet_w[3], gyrodet_B[3];
 void rBDOT_Computation(void);
 
 void rSunSensorDataProcessing(void);
-void rSS_Main_DB_Init(void);
-void rSS_Redundant_DB_Init(void);
-void rSS_Main_DB_Copy(void);
-void rSS_Redundant_DB_Copy(void);
 void rSS_Read_Data(double *SS_Data_Addr,unsigned long int *ADC_Data_Addr);
 
 void rIMU_1_DB_Copy(void);

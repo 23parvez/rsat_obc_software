@@ -1653,6 +1653,8 @@ void rADCS_Pon_vars(void)
 
 	// Telecommands INIT
 
+	TC_boolean_u.TC_Boolean_Table.TC_Sun_Ephemeris_en_dis = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_Mag_Refeci_en_dis = Enable;
 	TC_boolean_u.TC_Boolean_Table.TC_GPS_TLE_Select = 1;
 	TC_boolean_u.TC_Boolean_Table.TC_SS_Cells_Sel = TC_Main_Cells;
 	TC_boolean_u.TC_Boolean_Table.TC_Sun_Varying_Mode = Enable;
@@ -1747,7 +1749,7 @@ void rADCS_Pon_vars(void)
 
 	//////////////////////////////////////////////////////////////   TEST
 
-	//TC_data_command_Table.TC_HILS_test = 0x01;
+	hils_mode_select = 1;
 
 
 }

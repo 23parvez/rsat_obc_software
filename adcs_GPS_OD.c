@@ -872,25 +872,29 @@ void rTLEDataProcessing(void)
 
 
 			//Tsince = Tsince_TLE_tc;
-			Delta_TLE = Minor_Cycle_Count - OBT_at_TLE_epoch;
-			Tsince = (double)Delta_TLE * c_MiC/c_min_per_day;
-			epochdays_sel = epochdays_TLE_tc;
-			inclination_sel = inclination_TLE_tc*c_D2R;
-			nodeo_sel = nodeo_TLE_tc*c_D2R;
-			mo_sel = mo_TLE_tc*c_D2R;
-			argpo_sel = argpo_TLE_tc*c_D2R;
-			epochyr_sel = Epochyear_TLE_tc;
-			ecc_sel = ecc_TLE_tc;
-			no_sel = no_TLE_tc;
-			ibexp_sel = ibexp_TLE_tc;
-			bstar_sel = bstar_TLE_tc * pow(10.0, ibexp_TLE_tc);
-			year_sel = year_TLE_tc;
-			mon_sel = mon_TLE_tc;
-			days_sel = day_TLE_tc;
-			hr_sel = hr_TLE_tc;
-			minute_sel = minute_TLE_tc;
-			sec_sel = sec_TLE_tc;
-			TLE_Data_Available = 0;
+
+			if (OBT_at_TLE_epoch > Minor_Cycle_Count)
+			{
+				Delta_TLE = Minor_Cycle_Count - OBT_at_TLE_epoch;
+				Tsince = (double)Delta_TLE * c_MiC/c_min_per_day;
+				epochdays_sel = epochdays_TLE_tc;
+				inclination_sel = inclination_TLE_tc*c_D2R;
+				nodeo_sel = nodeo_TLE_tc*c_D2R;
+				mo_sel = mo_TLE_tc*c_D2R;
+				argpo_sel = argpo_TLE_tc*c_D2R;
+				epochyr_sel = Epochyear_TLE_tc;
+				ecc_sel = ecc_TLE_tc;
+				no_sel = no_TLE_tc;
+				ibexp_sel = ibexp_TLE_tc;
+				bstar_sel = bstar_TLE_tc * pow(10.0, ibexp_TLE_tc);
+				year_sel = year_TLE_tc;
+				mon_sel = mon_TLE_tc;
+				days_sel = day_TLE_tc;
+				hr_sel = hr_TLE_tc;
+				minute_sel = minute_TLE_tc;
+				sec_sel = sec_TLE_tc;
+				TLE_Data_Available = 0;
+			}
 		}
     }
 }
@@ -1160,15 +1164,9 @@ void rGPSDataProcessing(void)
 			UTC_hr_GPS = *(GPS_TM_Buffer_Addr_USC+154);
 			UTC_min_GPS = *(GPS_TM_Buffer_Addr_USC+155);
 			UTC_sec_GPS = (*((unsigned short*)(GPS_TM_Buffer_Addr_USC+156))) * 0.001;
-			GPS_PPS_OBT = *(GPS_TM_Buffer_Addr_USC+207);
+			GPS_PPS_OBT = *(GPS_TM_Buffer_Addr_USC+208);
 
-			GPS_OBT_Latch_enable          =  	(unsigned short)(GPS_Latch_enable & 0x0000FFFF);
-			GPS_OBT_Read_1  =  GPS_OBT_Count_1 & 0x0000FFFF;
-			TM.Buffer.TM_GPS_OBT_Read_1   = GPS_OBT_Read_1;
-			tempdata = GPS_OBT_Count_2 & 0x0000FFFF;
-			 GPS_OBT_Read_2 = ((tempdata << 16) & 0xFFFF0000);
-			TM.Buffer.TM_GPS_OBT_Read_2   = GPS_OBT_Read_2;
-			GPS_READ_OBT = (unsigned int)((GPS_OBT_Read_2 | GPS_OBT_Read_1) & 0xFFFFFFFF);
+
 			gps_pulse_mic_cnt = GPS_READ_OBT - GPS_PPS_OBT;
 
             UTC_sec_GPS = UTC_sec_GPS + gps_pulse_mic_cnt * 0.001;
@@ -1263,7 +1261,6 @@ void rGPSDataProcessing(void)
             ///rGPS_data_validity();
             GPS_Elements_Available = 1;
             f_GPS_Valid_Data = 0; //RESET BY OBC DISCUSSED 11 SEP
-            GPS_pulse_rcvd = 0;
             gps_pulse_mic_cnt = 0;
             GPSDataReady_NA_count = 0;
 

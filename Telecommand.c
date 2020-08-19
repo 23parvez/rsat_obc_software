@@ -50,7 +50,7 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 		TC_ACC_Ang_RESET,												/* offset =    25 */
 		//TC_Panel1_Deploy,
 		TC_NMI_count_reset,                                             /* offset =    26 */
-		TC_Panel2_Deploy,												/* offset =    27 */
+		rMag_Refeci_update,												/* offset =    27 */ // Renamed from Panel2 deploy 18-08-2020
 		TC_GPS1_ON,														/* offset =    28 */
 		TC_GPS1_OFF,													/* offset =    29 */
 		TC_GPS1_NMEA_VTG_enable,										/* offset =    30 */
@@ -84,8 +84,8 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 		Pitch_Torquer_ON,												/* offset =    58 */
 		Yaw_Torquer_ON,													/* offset =    59 */
 		TC_MTR_OFF,										        		/* offset =    60 */
-		Pitch_Torquer_OFF,												/* offset =    61 */
-		Yaw_Torquer_OFF,												/* offset =    62 */
+		rTC_HILS_ENABLE,												/* offset =    61 */// replaced pitch torquer off (not used)
+		rTC_HILS_DISABLE,												/* offset =    62 */// replaced yaw torquer off (not used)
 		rTC_Detumbling_ModePreprocessing_BDOT,							/* offset =    63 */
 		rTC_Detumbling_ModePreprocessing_GYRO,							/* offset =    64 */
 		rTC_SunAcquisition_ModePreprocessing,							/* offset =    65 */
@@ -112,11 +112,11 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 		PL_K_DIAG,														/* offset =    86 */
 		PL_K_CMD_OFF,													/* offset =    87 */
 		PL_K_CMD_ON,													/* offset =    88 */
-		ss_main_db_execute,												/* offset =    89 */
-		ss_redundant_db_execute,										/* offset =    90 */
-		ss_main_db_checksum,											/* offset =    91 */
-		ss_redundant_db_checksum,										/* offset =    92 */
-		rTLE_Update,												    /* offset =    93 */  //Renamed from TC_Qinit
+		rTC_HILS_MODE_IDLE,												/* offset =    89 */ //Renamed from ss 18-08-2020
+		rTC_HILS_MODE_START,										    /* offset =    90 */ //Renamed from ss 18-08-2020
+		rTC_HILS_MODE_STOP,												/* offset =    91 */ //Renamed from ss 18-08-2020
+		rSun_Ephemeris_update,										    /* offset =    92 */ //Renamed from ss 18-08-2020
+		rTLE_Update,												    /* offset =    93 */  //Renamed from TC_Qinit 14-08-2020
 		TC_init_RW1,													/* offset =    94 */
 		TC_init_RW2,													/* offset =    95 */
 		TC_init_RW3,													/* offset =    96 */
@@ -1247,11 +1247,11 @@ void TMTC_Assignment()
 	TMTC_boolean_u.Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable   = TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable;
 	TMTC_boolean_u.Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable = TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable;
 	TMTC_boolean_u.Boolean_Table.TC_Mag_Torquer_Bias_Enable_or_Disable         = TC_boolean_u.TC_Boolean_Table.TC_Mag_Torquer_Bias_Enable_or_Disable;
-	TMTC_boolean_u.Boolean_Table.TC_DFC_Logic                                  = TC_boolean_u.TC_Boolean_Table.TC_DFC_Logic;
-	TMTC_boolean_u.Boolean_Table.TC_Dither_Logic                               = TC_boolean_u.TC_Boolean_Table.TC_Dither_Logic;
+	TMTC_boolean_u.Boolean_Table.TC_Sun_Ephemeris_en_dis                       = TC_boolean_u.TC_Boolean_Table.TC_Sun_Ephemeris_en_dis;
+	TMTC_boolean_u.Boolean_Table.TC_Mag_Refeci_en_dis                          = TC_boolean_u.TC_Boolean_Table.TC_Mag_Refeci_en_dis;
 	TMTC_boolean_u.Boolean_Table.TC_Wheel_AutoReConfig_Logic                   = TC_boolean_u.TC_Boolean_Table.TC_Wheel_AutoReConfig_Logic;
 	TMTC_boolean_u.Boolean_Table.TC_Wheel_SpinUpDown_Logic                     = TC_boolean_u.TC_Boolean_Table.TC_Wheel_SpinUpDown_Logic;
-	TMTC_boolean_u.Boolean_Table.TC_ThreeAxis2SafeMode_autotransit              = TC_boolean_u.TC_Boolean_Table.TC_ThreeAxis2SafeMode_autotransit;
+	TMTC_boolean_u.Boolean_Table.TC_ThreeAxis2SafeMode_autotransit             = TC_boolean_u.TC_Boolean_Table.TC_ThreeAxis2SafeMode_autotransit;
 	TMTC_boolean_u.Boolean_Table.TC_SunAq2ThreeAxis_autotransit                = TC_boolean_u.TC_Boolean_Table.TC_SunAq2ThreeAxis_autotransit;
 	TMTC_boolean_u.Boolean_Table.TC_Det_AutoTransitionBDOTtoGYRO               = TC_boolean_u.TC_Boolean_Table.TC_Det_AutoTransitionBDOTtoGYRO;
 	TMTC_boolean_u.Boolean_Table.TC_Detumbling_Logic_select                    = TC_boolean_u.TC_Boolean_Table.TC_Detumbling_Logic_select;
@@ -1570,9 +1570,20 @@ void TC_NMI_count_reset()
 	NMI_fail_count = 0;
 	FDI_NMI_Count = 0;
 }
-void TC_Panel2_Deploy()
+void rMag_Refeci_update()
 {
-	//rHAL_SA_RED_Deploy_on();
+	B_ECI[0] = (double)TC_B_ECI[0];
+	B_ECI[1] = (double)TC_B_ECI[1];
+	B_ECI[2] = (double)TC_B_ECI[2];
+
+	B_ECItesla[0] = B_ECI[0]*1.0E-9;
+	B_ECItesla[1] = B_ECI[1]*1.0E-9;
+	B_ECItesla[2] = B_ECI[2]*1.0E-9;
+
+	rVectorNorm(B_ECI);
+	B_ECIn[0] = Norm_out[0];
+	B_ECIn[1] = Norm_out[1];
+	B_ECIn[2] = Norm_out[2];
 }
 void TC_GPS1_ON()
 {
@@ -1919,23 +1930,28 @@ void PL_K_CMD_ON()
 {
 	rHAL_pl_x_tx_data_on();
 }
-void ss_main_db_execute()
+void rTC_HILS_MODE_IDLE()
 {
-	rSS_Main_DB_Execute();
+	hils_mode_select = 1;
 }
-void ss_redundant_db_execute()
+void rTC_HILS_MODE_START()
 {
-	rSS_Redundant_DB_Execute();
+	hils_mode_select = 2;
 }
-void ss_main_db_checksum()
+void rTC_HILS_MODE_STOP()
 {
-	//ss_main_db_checksum_obc = checksum_u32((unsigned long int *)&SS_Main_DB,160);
-		//Add here for telemetry: ss_main_db_checksum_obc;
+	hils_mode_select = 3;
 }
-void ss_redundant_db_checksum()
+void rSun_Ephemeris_update()
 {
-	//ss_redundant_db_checksum_obc = checksum_u32((unsigned long int *)&SS_Redundant_DB,160);
-		//Add here for telemetry: ss_redundant_db_checksum_obc;
+	S_ECI[0] = (double)TC_S_ECI[0];
+	S_ECI[1] = (double)TC_S_ECI[1];
+	S_ECI[2] = (double)TC_S_ECI[2];
+
+	rVectorNorm(S_ECI);
+	S_ECIn[0] = Norm_out[0];
+	S_ECIn[1] = Norm_out[1];
+	S_ECIn[2] = Norm_out[2];
 }
 
 /*void rTLE_Update()
@@ -1961,15 +1977,14 @@ void ss_redundant_db_checksum()
 	Tsince_TLE_tc = (double)TC_TLE_data[12];
 }*/
 
-
+unsigned char TLE_chksum;
 void rTLE_Update()
 {
+	unsigned char* TLE_ptr;
+	TLE_ptr = (unsigned char*)&TLE_data;
 
 	Epochyear_TLE_tc = (int)TLE_data.TC_TLE_data1;
-
-
 	epochdays_TLE_tc = TLE_data.TC_TLE_data2;
-
 	ibexp_TLE_tc = (double)TLE_data.TC_TLE_data3;
 	bstar_TLE_tc = (double)TLE_data.TC_TLE_data4;
 	inclination_TLE_tc = (double)TLE_data.TC_TLE_data5;
@@ -1977,11 +1992,21 @@ void rTLE_Update()
 	ecc_TLE_tc = TLE_data.TC_TLE_data7;
 	argpo_TLE_tc = (double)TLE_data.TC_TLE_data8;
 	mo_TLE_tc = (double)TLE_data.TC_TLE_data9;
-
 	no_TLE_tc = TLE_data.TC_TLE_data10;
 	OBT_at_TLE_epoch = TLE_data.TC_TLE_data11;
 	chksum_tle = TLE_data.TC_TLE_data12;
-	TLE_Data_Available = 1;
+
+	//checksum_u8(TLE_ptr,52);
+	TLE_chksum = chksum8(TLE_ptr,52);
+	if(chksum_tle == TLE_chksum)
+	{
+		TLE_Data_Available = 1;
+	}
+	else
+	{
+		TLE_Data_Available = 0;
+	}
+
 }
 
 
@@ -2314,11 +2339,11 @@ void rElapsedTimerAssign()
 	elapsed_running_timer = ADCS_TC_data_command_Table.TC_elapsed_orbitTimer;
 }
 
-void HILS_MODE_ENABLE()
+void rTC_HILS_ENABLE()
 {
 	HILS_mode_enable();
 }
-void HILS_MODE_DISABLE()
+void rTC_HILS_DISABLE()
 {
 	HILS_mode_disable();
 }

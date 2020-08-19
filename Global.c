@@ -119,10 +119,6 @@ void rPOR_Init(void)
 	rGPS_Buffer_Init();
 
 	//SunSensor
-	rSS_Main_DB_Init();              // Initialize Sun Sensor Main Database (TC)
-	rSS_Main_DB_Copy();              // Copy TC Database to Execute Database
-	rSS_Redundant_DB_Init();         // Initialize Sun Sensor Redundant Database (TC)
-	rSS_Redundant_DB_Copy();         // Copy TC Database to Execute Database
 
 	//MTR
 	//MTR_Current_Data   = 0x00000000u;
@@ -507,6 +503,14 @@ void rPOR_Init(void)
 		
 		f_RW_nominal = 0;
 	    f_RW_control = 0;
+
+
+	    /*************************testing************************/
+
+	   // TC_GPS1_ON();
+	   // TC_boolean_u.TC_Boolean_Table.TC_GPS12_Select = GPS_1;
+
+	    /********************************************************/
 
 }
 

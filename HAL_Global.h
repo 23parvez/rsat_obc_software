@@ -367,7 +367,9 @@ unsigned long int TC_input_cmd[2];
 void Init_Memory(void);
 unsigned long int checksum_u32(unsigned long int *db_start_address,unsigned long int size_of_db);
 //unsigned char checksum_u8(unsigned char* db_start_address,unsigned int size_of_db);
-void checksum_u8(void);
+//void checksum_u8(void);
+void checksum_u8(unsigned char* db_start_address,unsigned short size_of_data);
+unsigned char chksum8(const unsigned char *buff, unsigned int len);
 void rOutput_Latch_Update();
 void ST_output_update();
 void NMI_interrupt_test();
@@ -396,7 +398,6 @@ void MUX_Output();
 #define NMEA_GLL_Disable 15
 
 extern unsigned short gps_pulse_mic_cnt;
-extern unsigned int GPS_pulse_rcvd;
 extern unsigned long int gps_obt_counter;
 extern unsigned long int gps_obt_count_prev;
 
@@ -409,7 +410,6 @@ unsigned long int IO_Latch_Register_5_Data;
 
 unsigned char chk_sum_u8;		//Check sum (8 bits)
 
-extern void rGPS_pulsecheck();
 
 extern void UTP_selection();
 extern void LTP_selection();

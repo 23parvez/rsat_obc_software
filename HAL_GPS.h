@@ -21,7 +21,6 @@ unsigned int GPS_msg_header_MSB;
 unsigned int GPS_msg_header_LSB;
 
 unsigned short  gps_pulse_mic_cnt;
-unsigned int  GPS_pulse_rcvd;
 unsigned long int gps_obt_counter;
 unsigned long int gps_obt_count_prev;
 unsigned short GPS_OBT_Latch_enable;
@@ -48,7 +47,7 @@ unsigned int rHAL_GPS_Read(struct HAL_GPS_registers GPS_No, unsigned long int* G
 void ST_TM_gps_data();
 void rGPS_Buffer_Init();
 void GPS_1_DATA();
-void rGPS_pulsecheck();
+void rGPS_OBT_timer();
 
 #pragma pack(1)
 union GPS_Config_Message
@@ -94,6 +93,7 @@ unsigned int* GPS2_ptr;
 #define OBC_GPS
 
 unsigned char* GPS_TM_Buffer_Addr_USC;
+unsigned char *db_gps_start_address ;
 
 unsigned long int GPS_RCVD_DATA[106];
 

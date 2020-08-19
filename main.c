@@ -118,7 +118,6 @@ void OBC_Process()
 		rErrorComputation();
 		rLinearController();
 		rHAL_MTR();
-		rGPS_pulsecheck();
 		//rHILS_packets();
 		// ADCS Processing ends here
 
@@ -163,7 +162,6 @@ void OBC_Process()
 		//rIMUDataProcessing();                        // IMU Data Processing : Minor Cycle 2
 		rErrorComputation();
 		rLinearController();
-		rGPS_pulsecheck();
 		rSunSensorDataProcessing();
 
 		rBDOT_Computation();
@@ -215,7 +213,6 @@ void OBC_Process()
 		rErrorComputation();
 		rLinearController();
 		rHAL_MTR();
-		rGPS_pulsecheck();
 		//rHILS_packets();
 
 		rHAL_ADC_StatusREG_Enable();			      // Set ADC Status Register
@@ -259,7 +256,7 @@ void OBC_Process()
 
 		rErrorComputation();
 		rLinearController();
-		rGPS_pulsecheck();
+		rGPS_OBT_timer();
 		rQuestDataProcessing();
 		rDAD_quest();
 
@@ -300,7 +297,6 @@ void OBC_Process()
 		rDutyCycleGeneration();
 		rScModeSelection();
 		rHAL_MTR();
-		rGPS_pulsecheck();
 		//rHILS_packets();
 		//ADCS routines ends//
 
@@ -336,7 +332,6 @@ void OBC_Process()
 		rErrorComputation();
 		rLinearController();
 		rHAL_MTR();
-		rGPS_pulsecheck();
 		rExtendedKalmanFilter1_p1();
 		//ADCS routines ends//
 
@@ -368,7 +363,6 @@ void OBC_Process()
 		rErrorComputation();
 		rLinearController();
 		rHAL_MTR();
-		rGPS_pulsecheck();
 		rExtendedKalmanFilter1_p2();
 		//rHILS_packets();
 		//ADCS routines ends//
@@ -402,7 +396,6 @@ void OBC_Process()
 		rErrorComputation();
 		rLinearController();
 		rHAL_MTR();
-		rGPS_pulsecheck();
 		//ADCS routines ends//
 
 		//PL_TM_read();                                  // Read the Payload data

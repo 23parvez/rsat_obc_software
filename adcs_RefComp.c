@@ -56,7 +56,7 @@ void rGH_generation(void)
 
 void rMagFieldComp(void)
 {
-    if (CB_MagFieldComp == Enable)
+    if (CB_MagFieldComp == Enable && TC_boolean_u.TC_Boolean_Table.TC_Mag_Refeci_en_dis == 1)
     {
         //Initialization of parameters
         for(I_MFC=1; I_MFC < c_Nmax+1; I_MFC++)
@@ -224,7 +224,7 @@ void rMagFieldComp(void)
 
 void rSun_Ephemeris(void)
 {
-    if (CB_Sun_model == Enable)
+    if (CB_Sun_model == Enable && TC_boolean_u.TC_Boolean_Table.TC_Sun_Ephemeris_en_dis == 1)
     {
         L_Msun = c_L_Msun1*c_D2R + c_L_Msun2*c_D2R * tut; //mean longitude of Sun
         Msun = c_Msun1*c_D2R + c_Msun2*c_D2R * tut; //mean anomaly of Sun
@@ -241,18 +241,6 @@ void rSun_Ephemeris(void)
         S_ECIn[0] = Norm_out[0];
         S_ECIn[1] = Norm_out[1];
         S_ECIn[2] = Norm_out[2];
-
-        rsun[0]= S_ECI[0]*c_au;
-		rsun[1]= S_ECI[1]*c_au;
-		rsun[2]= S_ECI[2]*c_au;
-
-		magrsun = sqrt((rsun[0] * rsun[0]) + (rsun[1] * rsun[1]) + (rsun[2] * rsun[2]));
-
-		theta1_se = acos((c_radiusearthkm) / radialdistance);
-		theta2_se = acos((c_radiusearthkm) / (magrsun));
-
-		///Angle between s/c position vector and Sun position vector (radians)
-		psi_sl_ecl = acos(((Pos_ECI[0] * rsun[0]) + (Pos_ECI[1] * rsun[1]) + (Pos_ECI[2] * rsun[2])) / (radialdistance * magrsun));
 
         return;
     }
@@ -881,6 +869,18 @@ void rSl_Ecl_OnBrd_detection(void)
 {
     if (CB_Sl_Ecl_OnBrd_detection == Enable)
     {
+    	rsun[0]= S_ECI[0]*c_au;
+		rsun[1]= S_ECI[1]*c_au;
+		rsun[2]= S_ECI[2]*c_au;
+
+		magrsun = sqrt((rsun[0] * rsun[0]) + (rsun[1] * rsun[1]) + (rsun[2] * rsun[2]));
+
+		theta1_se = acos((c_radiusearthkm) / radialdistance);
+		theta2_se = acos((c_radiusearthkm) / (magrsun));
+
+		///Angle between s/c position vector and Sun position vector (radians)
+		psi_sl_ecl = acos(((Pos_ECI[0] * rsun[0]) + (Pos_ECI[1] * rsun[1]) + (Pos_ECI[2] * rsun[2])) / (radialdistance * magrsun));
+
     	///If psi is >= thetal+theta2_se, the s/c is in eclipse, otherwise it's in sunlight
 		if(psi_sl_ecl <= (theta1_se + theta2_se))
 		{

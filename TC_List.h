@@ -30,8 +30,8 @@ unsigned int Remote_data_addr;
 			uint8 TC_EKF_Drift_Compensation_Enable_or_Disable;					  /* offset =   16  */
 			uint8 TC_EKF_MagBias_Compensation_Enable_or_Disable;				  /* offset =   17  */
 			uint8 TC_Mag_Torquer_Bias_Enable_or_Disable;						  /* offset =   18  */
-			uint8 TC_DFC_Logic;													  /* offset =   19  */
-			uint8 TC_Dither_Logic;												  /* offset =   20  */
+			uint8 TC_Sun_Ephemeris_en_dis;										  /* offset =   19  */
+			uint8 TC_Mag_Refeci_en_dis;										      /* offset =   20  */
 			uint8 TC_Wheel_AutoReConfig_Logic;									  /* offset =   21  */
 			uint8 TC_Wheel_SpinUpDown_Logic;									  /* offset =   22  */
 			uint8 TC_ThreeAxis2SafeMode_autotransit;							  /* offset =   23  */
@@ -128,8 +128,8 @@ unsigned int Remote_data_addr;
 			uint8 TC_EKF_Drift_Compensation_Enable_or_Disable     :1;
 			uint8 TC_EKF_MagBias_Compensation_Enable_or_Disable   :1;
 			uint8 TC_Mag_Torquer_Bias_Enable_or_Disable           :1;
-			uint8 TC_DFC_Logic                                    :1;
-			uint8 TC_Dither_Logic                                 :1;
+			uint8 TC_Sun_Ephemeris_en_dis                         :1;
+			uint8 TC_Mag_Refeci_en_dis                            :1;
 			uint8 TC_Wheel_AutoReConfig_Logic                     :1;
 			uint8 TC_Wheel_SpinUpDown_Logic                       :1;
 			uint8 TC_ThreeAxis2SafeMode_autotransit               :1;

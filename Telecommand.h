@@ -426,7 +426,7 @@ void TC_Gyro_LPF_Gain_Update_IMU2();
 void TC_ACC_Ang_RESET();
 //void TC_Panel1_Deploy();
 void TC_NMI_count_reset();
-void TC_Panel2_Deploy();
+void rMag_Refeci_update();
 void TC_GPS1_ON();
 void TC_GPS1_OFF();
 void TC_GPS1_NMEA_VTG_enable();
@@ -462,6 +462,8 @@ void Yaw_Torquer_ON();
 void TC_MTR_OFF();
 void Pitch_Torquer_OFF();
 void Yaw_Torquer_OFF();
+void rTC_HILS_ENABLE();									/* offset =    61 */// replaced pitch torquer off (not used)
+void rTC_HILS_DISABLE();
 void TC_Detumbling_Mode_Select();
 void TC_Safe_Mode_Select();
 void TC_Threeaxis_Mode_Select();
@@ -486,10 +488,10 @@ void PL_K_CMD_HLT();
 void PL_K_DIAG();
 void PL_K_CMD_OFF();
 void PL_K_CMD_ON();
-void ss_main_db_execute();
-void ss_redundant_db_execute();
-void ss_main_db_checksum();
-void ss_redundant_db_checksum();
+void rTC_HILS_MODE_IDLE();
+void rTC_HILS_MODE_START();
+void rTC_HILS_MODE_STOP();
+void rSun_Ephemeris_update();
 void rTLE_Update();
 void TC_init_RW1();
 void TC_init_RW2();
@@ -584,6 +586,9 @@ void gain_sets();
 		int TC_TLE_data11;
 		char TC_TLE_data12;
 	}TLE_data;
+
+
+float TC_S_ECI[3], TC_B_ECI[3];
 
 // TLE based array
 //float TC_TLE_data[TC_TLE_MAX_LIMIT];

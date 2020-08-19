@@ -106,7 +106,7 @@ void rHAL_TM_HW_Status_Update(void)
 	int HW_sts_update_index;
 
 	//OBT Update
-	TM.Buffer.OBT = Minor_Cycle_Count;
+	TM.Buffer.OBT = Major_Cycle_Count;
 	ST_special.ST_SP_Buffer.OBT = Major_Cycle_Count;
 	ST_normal.ST_NM_Buffer.OBT = Major_Cycle_Count;
 	TM.Buffer.TC_rcvd_cntr2 = TC_count;
@@ -1320,12 +1320,12 @@ void rTM_Address_Table_Init()
 	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_GPS_OBT_Read_1;//Copy address of GPS2 Status
-	TM_Table[TM_Table_Row_No].Length_Field = 2;
+	TM_Table[TM_Table_Row_No].Length_Field = 4;
 	TM_Table_Row_No++;
 
-	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_GPS_OBT_Read_2;//Copy address of GPS2 Status
+	/*TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_GPS_OBT_Read_2;//Copy address of GPS2 Status
 	TM_Table[TM_Table_Row_No].Length_Field = 2;                // 245 bytes
-	TM_Table_Row_No++;
+	TM_Table_Row_No++;*/
 
 	TM_Table[TM_Table_Row_No].Addr_Field = (unsigned char*)&TM.Buffer.TM_inter_HAL_IMU_Status_Data_2;
 	TM_Table[TM_Table_Row_No].Length_Field = 2;

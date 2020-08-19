@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include "HAL_Global.h"
 #include "HAL_Address.h"
 #include "Telemetry.h"
@@ -27,7 +29,7 @@ unsigned long int checksum_u32(unsigned long int *db_start_address,unsigned long
 	return inter_at697f_checksum;
 }
 
-unsigned char *db_start_address ;
+/*unsigned char *db_start_address ;
 void checksum_u8(void)
 {
 	db_start_address = (unsigned char*)GPS_RCVD_DATA;
@@ -42,6 +44,31 @@ void checksum_u8(void)
 		chk_sum_u8 = chk_sum;
 		db_start_address = db_start_address + 1;
 	}
+}*/
+
+void checksum_u8(unsigned char* db_start_address,unsigned short size_of_data)
+{
+
+	unsigned char inter_val_u8;		//dereferenced value
+	unsigned char chk_sum = 0;
+
+	for(inter_at697f_count = 0;inter_at697f_count < size_of_data;inter_at697f_count++)
+	{
+		inter_val_u8 = *(db_start_address); // #define REG8(a)  *((volatile unsigned char*) (a))//For 8Bit Addressing
+
+		chk_sum = chk_sum ^ inter_val_u8;
+		chk_sum_u8 = chk_sum;
+		db_start_address = db_start_address + 1;
+	}
+	return;
+}
+
+unsigned char chksum8(const unsigned char *buff, unsigned int len)
+{
+    unsigned int xor_8;       // nothing gained in using smaller types!
+    for ( xor_8 = 0 ; len != 0 ; len-- )
+    	xor_8 = xor_8 ^ (*(buff++));
+    return (unsigned char)xor_8;
 }
 
 void rOutput_Latch_Update()

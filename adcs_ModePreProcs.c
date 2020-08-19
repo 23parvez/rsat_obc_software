@@ -55,7 +55,7 @@ void rHILS_packets(void)
 	unsigned short temp_aux;
 	HILS_packet.header               = 0x07e0;
 	HILS_packet.len                  = 0x40;
-	temp_aux 					     = TC_data_command_Table.TC_HILS_test;
+	temp_aux 					     = hils_mode_select;
 	HILS_packet.aux                  = (char)(temp_aux & 0x00FF);
 	HILS_packet.mode_flag 		     = (char)Spacecraft_Mode; //HILS
 	HILS_packet.mag_field[0] 	     = (int)(B_BODY[0]/c_TM_Resol_B);

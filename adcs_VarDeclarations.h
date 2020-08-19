@@ -24,7 +24,7 @@ union HILS_test
 		unsigned short Footer;
 	};
 }HILS_packet;
-
+extern unsigned short hils_mode_select;
 extern void rHILS_payload(union HILS_test* HILS_packets);
 extern void rHILS_packets();
 

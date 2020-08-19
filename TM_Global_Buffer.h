@@ -183,7 +183,7 @@ struct TM_BUFFER_STUCTURE{
     unsigned short TM_GPS1_Status;
     unsigned short TM_GPS2_Status;
     unsigned short TM_GPS_OBT_Latch_enable;
-    unsigned short TM_GPS_OBT_Read_1;
+    unsigned int TM_GPS_OBT_Read_1;
     unsigned short TM_GPS_OBT_Read_2;
 
 

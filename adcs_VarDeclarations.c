@@ -639,3 +639,4 @@ int CB_SunSensorDataProcessing;
 int CB_BDOT_Computation;
 
 int f_RW_control, f_RW_nominal, RW_nominal_speed_cnt;
+unsigned short hils_mode_select;
