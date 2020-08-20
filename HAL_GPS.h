@@ -102,8 +102,7 @@ void rGPS_TM_Extract(void);
 
 unsigned char GPS_obc_checkum;
 unsigned int f_GPS_Valid_Data;
-
-
+unsigned char bist_data;
 
 #endif // OBC_GPS
 

@@ -2303,10 +2303,20 @@ void rEKFDynamics(void)
 
 void rEKF_dy_int(double kfq_dy[4], double kfw_dy[3], double kfv_dy[4])
 {
-    double kfom[4][4] = {{0, kfw_dy[2], -kfw_dy[1], kfw_dy[0]},
-                {-kfw_dy[2], 0, kfw_dy[0], kfw_dy[1]},
-                {kfw_dy[1], -kfw_dy[0], 0, kfw_dy[2]},
-                {-kfw_dy[0], -kfw_dy[1], -kfw_dy[2], 0}};
+
+    kfom[0][0] = kfom[1][1] = kfom[2][2] = kfom[3][3] = 0.0;
+    kfom[0][1] = kfw_dy[2];
+    kfom[0][1] = -kfw_dy[1];
+    kfom[0][1] = kfw_dy[0];
+    kfom[1][0] = -kfw_dy[2];
+    kfom[1][2] = kfw_dy[0];
+    kfom[1][3] = kfw_dy[1];
+    kfom[2][0] = kfw_dy[1];
+    kfom[2][1] = -kfw_dy[0];
+    kfom[2][3] = kfw_dy[2];
+    kfom[3][0] = -kfw_dy[0];
+    kfom[3][1] = -kfw_dy[1];
+    kfom[3][2] = -kfw_dy[2];
 
     rMatMul44x1(kfom, kfq_dy);
     kfq_dot[0] = 0.5 * Matout441[0];
