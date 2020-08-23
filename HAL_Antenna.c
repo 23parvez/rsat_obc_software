@@ -247,7 +247,7 @@ void rHAL_SA_RED_Deploy_on()                      // +ve roll
 	SA_Command_Type = SA_RED;
 
 }
-
+unsigned int panel_test ;
 SA1_status_t rHAL_SA1_Deploy_status_check()
 {
 	SWHW_STATUS.SA_status_1 = (unsigned char)SA1_status;
@@ -403,6 +403,7 @@ void rHAL_SA_Deploy_Status_new()
 			(SA2_status == SA2_OVER_HEAT))
 		{
 			// Abort the deployment
+			panel_test = 1;
 			Out_latch_5.SA1_DEPLOY = 0;
 			tempdata = Out_latch_5.data;
 			IO_LATCH_REGISTER_5;
@@ -412,6 +413,7 @@ void rHAL_SA_Deploy_Status_new()
 
 		else
 		{
+			panel_test = 2;
 			// continue with deployment
 		}
 	}

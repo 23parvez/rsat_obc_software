@@ -418,8 +418,8 @@ void TC_Mag_Misalignment_Update_IMU2();
 void TC_Mag_Scale_Factor_Update_IMU1();
 void TC_Mag_Scale_Factor_Update_IMU2();
 
-void TC_Mag_LPF_Gain_Update_IMU1();
-void TC_Mag_LPF_Gain_Update_IMU2();
+void rSSmain_ImaxF_update();
+void rSSredt_ImaxF_update();
 void TC_Gyro_LPF_Gain_Update_IMU1();
 void TC_Gyro_LPF_Gain_Update_IMU2();
 
@@ -573,7 +573,7 @@ void gain_sets();
 // TLE based array
 	struct TLE_Update
 	{
-		float TC_TLE_data1;
+		int TC_TLE_data1;
 		double TC_TLE_data2;
 		float TC_TLE_data3;
 		float TC_TLE_data4;
@@ -588,7 +588,13 @@ void gain_sets();
 	}TLE_data;
 
 
-float TC_S_ECI[3], TC_B_ECI[3];
+
+	float TC_drift_compensation_IMU1[3], TC_drift_compensation_IMU2[3];
+	float TC_magbias_compensation_IMU1[3], TC_magbias_compensation_IMU2[3];
+	float TC_w_miscor_IMU1[6], TC_w_miscor_IMU2[6];
+	float TC_w_sf_IMU1[3], TC_w_sf_IMU2[3];
+	float TC_S_ECI[3], TC_B_ECI[3];
+	float TC_SSmain_ImaxF[8], TC_SSredt_ImaxF[8];
 
 // TLE based array
 //float TC_TLE_data[TC_TLE_MAX_LIMIT];

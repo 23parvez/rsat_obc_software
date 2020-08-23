@@ -146,11 +146,11 @@ void rADCS_Pon_vars(void)
 	IMU1_Corr.DB_B_MisCor[2][2] = 1.0;
 
 
-    IMU1_Corr.DB_GyroLPF[0] = 0.0;
+    /*IMU1_Corr.DB_GyroLPF[0] = 0.0;
 	IMU1_Corr.DB_GyroLPF[1] = 1.0;
 
 	IMU1_Corr.DB_MagLPF[0] = 0.0;
-	IMU1_Corr.DB_MagLPF[1] = 1.0;
+	IMU1_Corr.DB_MagLPF[1] = 1.0;*/
 
 	// IMU2
 
@@ -219,11 +219,11 @@ void rADCS_Pon_vars(void)
 	IMU2_Corr.DB_B_MisCor[2][2] = 1.0;
 
 
-	IMU2_Corr.DB_GyroLPF[0] = 0.0;
+	/*IMU2_Corr.DB_GyroLPF[0] = 0.0;
 	IMU2_Corr.DB_GyroLPF[1] = 1.0;
 
 	IMU2_Corr.DB_MagLPF[0] = 0.0;
-	IMU2_Corr.DB_MagLPF[1] = 1.0;
+	IMU2_Corr.DB_MagLPF[1] = 1.0;*/
 
 	/// Sun Sensors ///////////////////////////////////////////////////////////
 
@@ -1641,38 +1641,97 @@ void rADCS_Pon_vars(void)
 	orbit_time = 5688.0;
 	TC_Hmin = 0.001;
 
-	// Remote data
+	TC_SpeedDumpLimit = 1500.0;
+	TC_min_whsp_spdump = 1000.0;
 
-	ADCS_TC_data_command_Table.TC_wAD_BODYminThRoll = -0.1;
-	ADCS_TC_data_command_Table.TC_wAD_BODYminThPitch = -0.2;
-	ADCS_TC_data_command_Table.TC_wAD_BODYminThYaw = -0.1;
-	ADCS_TC_data_command_Table.TC_wAD_updateTimeThresh = 6000;
-	ADCS_TC_data_command_Table.TC_wp_QDP = 60;
-
-	// Boolean//
+	double R_MDO_CB[3][3] = {{1, 0, 0},
+							{0, -0.839071529076, -0.544021110889},
+							{0, 0.544021110889, -0.839071529076}};
 
 	// Telecommands INIT
 
+	TC_boolean_u.TC_Boolean_Table.Roll_Torquer_Polarity_Reversal = 0;
+	TC_boolean_u.TC_Boolean_Table.Pitch_Torquer_Polarity_Reversal = 0;
+	TC_boolean_u.TC_Boolean_Table.Yaw_Torquer_Polarity_Reversal = 0;
+	TC_boolean_u.TC_Boolean_Table.Roll_Torquer_Enable_or_Disable = 1;
+	TC_boolean_u.TC_Boolean_Table.Pitch_Torquer_Enable_or_Disable = 1;
+	TC_boolean_u.TC_Boolean_Table.Yaw_Torquer_Enable_or_Disable = 1;
+	TC_boolean_u.TC_Boolean_Table.TC_Sus2det_transit_en_dis = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_AutoTransit_Det2SunAquisition = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_SunAq2DetMode_autotransit = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_mom_dumping_ang_mom_based = Enable;
+	//TC_boolean_u.TC_Boolean_Table.TC_IMU_Select = IMU1;
+	TC_boolean_u.TC_Boolean_Table.TC_SS_Cells_Sel = TC_Main_Cells;
+	//TC_boolean_u.TC_Boolean_Table.TC_GPS12_Select = GPS_1;
+	TC_boolean_u.TC_Boolean_Table.TC_GPS_TLE_Select = 1;
+	TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable = Disable;
+	TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable = Disable;
+	TC_boolean_u.TC_Boolean_Table.TC_Mag_Torquer_Bias_Enable_or_Disable = Enable;
 	TC_boolean_u.TC_Boolean_Table.TC_Sun_Ephemeris_en_dis = Enable;
 	TC_boolean_u.TC_Boolean_Table.TC_Mag_Refeci_en_dis = Enable;
-	TC_boolean_u.TC_Boolean_Table.TC_GPS_TLE_Select = 1;
-	TC_boolean_u.TC_Boolean_Table.TC_SS_Cells_Sel = TC_Main_Cells;
-	TC_boolean_u.TC_Boolean_Table.TC_Sun_Varying_Mode = Enable;
-	TC_boolean_u.TC_Boolean_Table.TC_SunAq2DetMode_autotransit = Disable;
-	TC_boolean_u.TC_Boolean_Table.TC_ThreeAxis2SafeMode_autotransit = Disable;
+	TC_boolean_u.TC_Boolean_Table.TC_Wheel_AutoReConfig_Logic = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_Wheel_SpinUpDown_Logic = Disable;
+	TC_boolean_u.TC_Boolean_Table.TC_ThreeAxis2SafeMode_autotransit = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_SunAq2ThreeAxis_autotransit = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_Det_AutoTransitionBDOTtoGYRO = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_Speed_Dumping = Disable;
+	TC_boolean_u.TC_Boolean_Table.TC_Sun_Varying_Mode = Disable;
+	TC_boolean_u.TC_Boolean_Table.TC_MiddayOrbitFrame = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_Orbit_Reference_Mode = Disable;
+	TC_boolean_u.TC_Boolean_Table.TC_Asd_Node_Mode = Disable;
+	TC_boolean_u.TC_Boolean_Table.TC_Des_Node_Mode = Disable;
+	TC_boolean_u.TC_Boolean_Table.TC_Station_Tracking_Mode = Disable;
 	TC_boolean_u.TC_Boolean_Table.TC_QuestUpdate_Enable = Disable;
-	TC_boolean_u.TC_Boolean_Table.TC_mom_dumping_ang_mom_based = Enable;
-
 	TC_boolean_u.TC_Boolean_Table.TC_EKFControl_Enable = Disable;
-	TC_boolean_u.TC_Boolean_Table.TC_Det_AutoTransitionBDOTtoGYRO = Disable;
-	TC_boolean_u.TC_Boolean_Table.TC_AutoTransit_Det2SunAquisition = Disable;
+	TC_boolean_u.TC_Boolean_Table.SunMagAD = Enable; //check
+	TC_boolean_u.TC_Boolean_Table.magAD = Enable; //check
 	TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable = Disable;
 	TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable = Disable;
-	TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable = Enable;
-	TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW1_enable = 0;
+	TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW2_enable = 0;
+	TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW3_enable = 0;
+	TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW4_enable = 0;
+	TC_boolean_u.TC_Boolean_Table.TC_GND_Drift_Compensation_Enable_or_Disable = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_GND_MagBias_Compensation_Enable_or_Disable = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_H8Backup_H4_Main = 0;
+	TC_boolean_u.TC_Boolean_Table.TC_H8Backup_H4_Redt = 0;
+	TC_boolean_u.TC_Boolean_Table.TC_H7Backup_H4_Main = 0;
+	TC_boolean_u.TC_Boolean_Table.TC_H7Backup_H4_Redt = 0;
+	TC_boolean_u.TC_Boolean_Table.TC_Sunlitdec_sensor_based = 1;
+	TC_boolean_u.TC_Boolean_Table.TC_Sunlitdec_Orbit_based = 0;
+	TC_boolean_u.TC_Boolean_Table.TC_Sunlitdec_timer_based = 0;
 	TC_boolean_u.TC_Boolean_Table.TC_BIST_override = Disable;
 
-	ADCS_TC_data_command_Table.TC_PanelD_Status_Sel = TC_All_Deployed;
+	// Data Commands
+
+	ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[0] = 0.0;
+    ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[1] = 0.0;
+    ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[2] = 0.0;
+    ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[0] = 0.0;
+	ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[1] = 0.0;
+	ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[2] = 0.0;
+	ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[0] = 0.0;
+	ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[1] = 0.0;
+	ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[2] = 0.0;
+	ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[0] = 0.0;
+	ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[1] = 0.0;
+	ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[2] = 0.0;
+	ADCS_TC_data_command_Table.TC_eclipse_entrytime = 0;
+	ADCS_TC_data_command_Table.TC_eclipse_exittime = 0;
+	ADCS_TC_data_command_Table.TC_elapsed_orbitTimer = 0;
+	//ADCS_TC_data_command_Table.TC_Sunlit_detctn_timer = 0;
+	ADCS_TC_data_command_Table.TC_Time_GPS2TLE = 21094; // 45 minutes
+	//ADCS_TC_data_command_Table.TC_GPS_OFFSET_UTC = 0;
+	ADCS_TC_data_command_Table.TC_delUT1_ECEF2ECI = -37.0;
+	ADCS_TC_data_command_Table.TC_delAT_ECEF2ECI = -0.2;
+	ADCS_TC_data_command_Table.TC_xp_ECEF2ECI = 0.0;
+	ADCS_TC_data_command_Table.TC_yp_ECEF2ECI = 0.0;
+	//ADCS_TC_data_command_Table.TC_JulianDay_at_OBT0 = 0;
+	//ADCS_TC_data_command_Table.TC_OBT_Drift_Corr = 0;
+	//ADCS_TC_data_command_Table.TC_JulianDate_at_OrbitalEpoch = 0;
+	//ADCS_TC_data_command_Table.TC_OBT_with_TLE_Update = 0;
+	//ADCS_TC_data_command_Table.TC_Wheel_Configuration_Index = 0;
+	//ADCS_TC_data_command_Table.TC_PanelD_Status_Sel = TC_All_Deployed;
 	ADCS_TC_data_command_Table.TC_GYRO_Det_Max_Thresh = 40.0;
 	ADCS_TC_data_command_Table.TC_eclipse_entrytime = 900.0;
 	ADCS_TC_data_command_Table.TC_Det_BDOT_Compute_Count = 5;
@@ -1686,31 +1745,40 @@ void rADCS_Pon_vars(void)
 	ADCS_TC_data_command_Table.TC_magMax_angle = 135.0;
 	ADCS_TC_data_command_Table.TC_ECEF_stationlatitude = 0.303425;
 	ADCS_TC_data_command_Table.TC_ECEF_stationLongitude = 1.300038;
-	TC_boolean_u.TC_Boolean_Table.TC_Station_Tracking_Mode = 1;
 
-	//TC_Bdot_Gain = 1.0;
-
-	TC_boolean_u.TC_Boolean_Table.Roll_Torquer_Enable_or_Disable = 1;
-	TC_boolean_u.TC_Boolean_Table.Pitch_Torquer_Enable_or_Disable = 1;
-	TC_boolean_u.TC_Boolean_Table.Yaw_Torquer_Enable_or_Disable = 1;
+	ADCS_TC_data_command_Table.TC_wAD_BODYminThRoll = -0.1;
+	ADCS_TC_data_command_Table.TC_wAD_BODYminThPitch = -0.2;
+	ADCS_TC_data_command_Table.TC_wAD_BODYminThYaw = -0.1;
+	ADCS_TC_data_command_Table.TC_wAD_updateTimeThresh = 6000;
+	ADCS_TC_data_command_Table.TC_wp_QDP = 60;
+	ADCS_TC_data_command_Table.TC_nut_dpsi = 0.0;
+	ADCS_TC_data_command_Table.TC_nut_deps = 0.0;
+	ADCS_TC_data_command_Table.TC_ref_svn_bias_off_deg = 0.0;
+	ADCS_TC_data_command_Table.TC_q_command_0 = 0.0;
+	ADCS_TC_data_command_Table.TC_q_command_1 = 0.0;
+	ADCS_TC_data_command_Table.TC_q_command_2 = 0.0;
+	ADCS_TC_data_command_Table.TC_q_command_3 = 1.0;
 
 
 	//power on init
+	TC_detumbling_bdot_gain[0]=GAIN_DATA_SET.TC_detumbling_bdot_gain_0_00;
+	TC_detumbling_bdot_gain[1]=GAIN_DATA_SET.TC_detumbling_bdot_gain_1_00;
+	TC_detumbling_bdot_gain[2]=GAIN_DATA_SET.TC_detumbling_bdot_gain_2_00;
+
 	TC_detumbling_rate_gain[0]=GAIN_DATA_SET.TC_detumbling_rate_gain_0_00;
 	TC_detumbling_rate_gain[1]=GAIN_DATA_SET.TC_detumbling_rate_gain_1_00;
 	TC_detumbling_rate_gain[2]=GAIN_DATA_SET.TC_detumbling_rate_gain_2_00;
 
-	TC_KP[0]=GAIN_DATA_SET.TC_KP_0_00;
-	TC_KP[1]=GAIN_DATA_SET.TC_KP_1_00;
-	TC_KP[2]=GAIN_DATA_SET.TC_KP_2_00;
+	TC_BDOT_Det_Thresh = GAIN_DATA_SET.TC_BDOT_Det_Thresh_0_00;
 
-	TC_KR[0]=GAIN_DATA_SET.TC_KR_0_00;
-	TC_KR[1]=GAIN_DATA_SET.TC_KR_1_00;
-	TC_KR[2]=GAIN_DATA_SET.TC_KR_2_00;
+	TC_GYRO_Det_Min_Thresh=GAIN_DATA_SET.TC_GYRO_Det_Min_Thres_0_00;
 
-	TC_detumbling_bdot_gain[0]=GAIN_DATA_SET.TC_detumbling_bdot_gain_0_00;
-	TC_detumbling_bdot_gain[1]=GAIN_DATA_SET.TC_detumbling_bdot_gain_1_00;
-	TC_detumbling_bdot_gain[2]=GAIN_DATA_SET.TC_detumbling_bdot_gain_2_00;
+	TC_RW_Nominal[0] = GAIN_DATA_SET.Tc_nominal_speed_rw1_00;
+	TC_RW_Nominal[1] = GAIN_DATA_SET.Tc_nominal_speed_rw2_00;
+	TC_RW_Nominal[2] = GAIN_DATA_SET.Tc_nominal_speed_rw3_00;
+	TC_RW_Nominal[3] = GAIN_DATA_SET.Tc_nominal_speed_rw4_00;
+
+	TC_momentum_dumping_gain = GAIN_DATA_SET.TC_momentum_dumping_gain_0_00;
 
 	IMU1_Corr.DB_GyroLPF[0] =GAIN_DATA_SET.TC_Gyro_LPF_Gain_IMU1_0_00;
 	IMU1_Corr.DB_GyroLPF[1] =GAIN_DATA_SET.TC_Gyro_LPF_Gain_IMU1_1_00;
@@ -1724,32 +1792,36 @@ void rADCS_Pon_vars(void)
 	IMU2_Corr.DB_MagLPF[0] =GAIN_DATA_SET.TC_Mag_LPF_Gain_IMU2_0_00;
 	IMU2_Corr.DB_MagLPF[1] =GAIN_DATA_SET.TC_Mag_LPF_Gain_IMU2_1_00;
 
+	TC_GPS_pulse_duration = GAIN_DATA_SET.TC_GPS_pulse_duration_0_00;
+
+	TC_KP[0]=GAIN_DATA_SET.TC_KP_0_00;
+	TC_KP[1]=GAIN_DATA_SET.TC_KP_1_00;
+	TC_KP[2]=GAIN_DATA_SET.TC_KP_2_00;
+
+	TC_KR[0]=GAIN_DATA_SET.TC_KR_0_00;
+	TC_KR[1]=GAIN_DATA_SET.TC_KR_1_00;
+	TC_KR[2]=GAIN_DATA_SET.TC_KR_2_00;
+
+	TC_wh_speed_cutoff = GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_0_00;
+
 	TC_comd_pitch_rate=GAIN_DATA_SET.TC_comd_pitch_rate_0_00;
 
-	TC_SpeedDumpLimit=GAIN_DATA_SET.TC_SpeedDump_TimeSelect_0_00;
+	TC_max_whsp_spdump=GAIN_DATA_SET.TC_SpeedDump_Thrsld_0_00;
 
-	TC_SpeedDumpLimit=GAIN_DATA_SET.TC_SpeedDump_TimeSelect_0_00;
+	TC_SpeedDumpTime=GAIN_DATA_SET.TC_SpeedDump_TimeSelect_0_00;
 
-	TC_AngMomDump_Thrsld=GAIN_DATA_SET.TC_AngMomDump_Thrsld_0_00;
 
-	TC_GYRO_Det_Min_Thresh=GAIN_DATA_SET.TC_GYRO_Det_Min_Thres_0_00;
 
-	TC_BDOT_Det_Thresh=GAIN_DATA_SET.TC_BDOT_Det_Thresh_0_00;
-
-	TC_wh_speed_thres=GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_0_00;
-
-	TC_momentum_dumping_gain = GAIN_DATA_SET.TC_momentum_dumping_gain_0_00;
-
-	TC_GPS_pulse_duration=GAIN_DATA_SET.TC_GPS_pulse_duration_0_00;
-
-	TC_RW_Nominal[0] = GAIN_DATA_SET.Tc_nominal_speed_rw1_01;
-	TC_RW_Nominal[1] = GAIN_DATA_SET.Tc_nominal_speed_rw2_01;
-	TC_RW_Nominal[2] = GAIN_DATA_SET.Tc_nominal_speed_rw3_01;
-	TC_RW_Nominal[3] = GAIN_DATA_SET.Tc_nominal_speed_rw4_01;
 
 	//////////////////////////////////////////////////////////////   TEST
 
 	hils_mode_select = 1;
+
+	//TC_IMU2_On();
+	//TC_boolean_u.TC_Boolean_Table.TC_IMU_Select = IMU2;
+
+
+
 
 
 }

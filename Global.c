@@ -71,7 +71,8 @@ void rPOR_Init(void)
 	TC_data_command_Table.BATTERY_HEATER1_UTP	= 0x00000155;     // 0.919v(temp_25 deg)
 	TC_data_command_Table.BATTERY_HEATER1_LTP   = 0x0000017d;     // 1.08v(temp_20 deg)
 
-	TC_data_command_Table.TC_over_Heat = 0x0000054A ;    // 160 degree centigrade (Vpm = 3.31v)
+	TC_data_command_Table.TC_over_Heat = 0x00000538 ;    // 160 degree centigrade (Vpm = 3.28v)
+
 
 	Thermister_select();
 	//S_band_on(14-10-19)
@@ -104,8 +105,6 @@ void rPOR_Init(void)
 	IMU_Diag_Done = FALSE;
 	rIMU_Init();
 	//rPOR_IMU_Parameters_Init();
-	rIMU_1_DB_Init();
-	rIMU_2_DB_Init();
 	//TC_boolean_u.TC_Boolean_Table.TC_IMU_Select = IMU2;
 
 	//ADC
@@ -170,12 +169,12 @@ void rPOR_Init(void)
 
 	TC_data_command_Table.TC_heaters_auto_manual 	= 0x000000FF;
 	TC_data_command_Table.TC_heaters_manual   		= 0x00000000;
-	TC_data_command_Table.SA1_SHUNT_UTP 			= 0x00000471;            //0x0000046f;             //   16.4
-	TC_data_command_Table.SA1_SHUNT_LTP 			= 0x0000045a;            //0x00000453;             //   16.0
-	TC_data_command_Table.SA2_SHUNT_UTP 			= 0x0000047c;            //0x0000047d;             //   16.6
-	TC_data_command_Table.SA2_SHUNT_LTP 			= 0x00000465;            //0x00000461;             // 	16.2
-	TC_data_command_Table.SA3_SHUNT_UTP 			= 0x0000048d;            //0x0000048a;             // 	16.8
-	TC_data_command_Table.SA3_SHUNT_LTP 			= 0x00000471;            //0x0000046f;             //	16.4
+	TC_data_command_Table.SA1_SHUNT_UTP 			= 0x0000066A;                        // 16.4v
+	TC_data_command_Table.SA1_SHUNT_LTP 			= 0x00000642;                        // 16.0v
+	TC_data_command_Table.SA2_SHUNT_UTP 			= 0x0000067E;                        // 16.6v
+	TC_data_command_Table.SA2_SHUNT_LTP 			= 0x00000656;                        // 16.2v
+	TC_data_command_Table.SA3_SHUNT_UTP 			= 0x00000692;                        // 16.8v
+	TC_data_command_Table.SA3_SHUNT_LTP 			= 0x0000066A;                        //	16.4v
 
 	//GAIN_DATA_SET.TC_detumbling_bdot_gain_0_00 = 1.00;
 	//offset 00
@@ -225,28 +224,28 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.TC_GYRO_Det_Min_Thres_0_11 = 0.01;
 
 	//offset 04
-	GAIN_DATA_SET.Tc_nominal_speed_rw1_01 = 157.0796; //1500rpm
-	GAIN_DATA_SET.Tc_nominal_speed_rw1_10 = 104.7197; //1000
-	GAIN_DATA_SET.Tc_nominal_speed_rw1_11 = 209.4395; //2000
-	GAIN_DATA_SET.Tc_nominal_speed_rw1_00 = 261.7993; //2500
+	GAIN_DATA_SET.Tc_nominal_speed_rw1_01 = 104.7197; //1000rpm
+	GAIN_DATA_SET.Tc_nominal_speed_rw1_10 = 209.4395; //2000
+	GAIN_DATA_SET.Tc_nominal_speed_rw1_11 = 261.7993; //2500
+	GAIN_DATA_SET.Tc_nominal_speed_rw1_00 = 157.0796; //1500
 
 	//offset 05
-	GAIN_DATA_SET.Tc_nominal_speed_rw2_01 = -157.0796;
-	GAIN_DATA_SET.Tc_nominal_speed_rw2_10 = -104.7197;
-	GAIN_DATA_SET.Tc_nominal_speed_rw2_11 = -209.4395;
-	GAIN_DATA_SET.Tc_nominal_speed_rw2_00 = -261.7993;
+	GAIN_DATA_SET.Tc_nominal_speed_rw2_01 = 104.7197; //1000rpm
+	GAIN_DATA_SET.Tc_nominal_speed_rw2_10 = 209.4395; //2000
+	GAIN_DATA_SET.Tc_nominal_speed_rw2_11 = 261.7993; //2500
+	GAIN_DATA_SET.Tc_nominal_speed_rw2_00 = 157.0796; //1500
 
 	//offset 06
-	GAIN_DATA_SET.Tc_nominal_speed_rw3_01 = 157.0796;
-	GAIN_DATA_SET.Tc_nominal_speed_rw3_10 = 104.7197;
-	GAIN_DATA_SET.Tc_nominal_speed_rw3_11 = 209.4395;
-	GAIN_DATA_SET.Tc_nominal_speed_rw3_00 = 261.7993;
+	GAIN_DATA_SET.Tc_nominal_speed_rw3_01 = 104.7197; //1000rpm
+	GAIN_DATA_SET.Tc_nominal_speed_rw3_10 = 209.4395; //2000
+	GAIN_DATA_SET.Tc_nominal_speed_rw3_11 = 261.7993; //2500
+	GAIN_DATA_SET.Tc_nominal_speed_rw3_00 = 157.0796; //1500
 
 	//offset 07
-	GAIN_DATA_SET.Tc_nominal_speed_rw4_01 = -157.0796;
-	GAIN_DATA_SET.Tc_nominal_speed_rw4_10 = -104.7197;
-	GAIN_DATA_SET.Tc_nominal_speed_rw4_11 = -209.4395;
-	GAIN_DATA_SET.Tc_nominal_speed_rw4_00 = -261.7993;
+	GAIN_DATA_SET.Tc_nominal_speed_rw4_01 = 104.7197; //1000rpm
+	GAIN_DATA_SET.Tc_nominal_speed_rw4_10 = 209.4395; //2000
+	GAIN_DATA_SET.Tc_nominal_speed_rw4_11 = 261.7993; //2500
+	GAIN_DATA_SET.Tc_nominal_speed_rw4_00 = 157.0796; //1500
 
 	//offset 08
 	GAIN_DATA_SET.TC_momentum_dumping_gain_0_00 = 0.001;

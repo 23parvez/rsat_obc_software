@@ -164,8 +164,6 @@ extern const double c_I_three_cross_three[3][3];
 extern const double  c_rk_T[9][9];
 extern const double c_rk[9][9];
 
-const double c_R_MDO_CB[3][3];
-
 ///16 Imax extern constants of for all sensors (Main and Redundant cells) ( NOTE: extern constant = Overall_Imax / Individual_Imax)
 extern const double c_Imax_RPD_Red;
 extern const double c_Imax_RND_Red;
@@ -220,7 +218,6 @@ extern const double c_DPMMAX;
 extern const double c_RPM2RADpS;
 extern const double c_RADps2RPM;
 extern const double TC_T_RW_MAX;
-extern double TC_wh_speed_thres;
 
 extern const double c_wh2B_mat_4RW[3][4];
 
@@ -231,18 +228,6 @@ extern const double c_wh2B_mat_1204[3][4];
 extern const double c_wh2B_mat_1034[3][4];
 
 extern const double c_wh2B_mat_0234[3][4];
-
-extern const double c_wh2B_mat_1200[3][4];
-
-extern const double c_wh2B_mat_1030[3][4];
-
-extern const double c_wh2B_mat_1004[3][4];
-
-extern const double c_wh2B_mat_0230[3][4];
-
-extern const double c_wh2B_mat_0204[3][4];
-
-extern const double c_wh2B_mat_0034[3][4];
 
 extern const double c_B2wh_mat_4RW[4][3];
 
@@ -255,20 +240,6 @@ extern const double c_B2wh_mat_1034[4][3];
 
 
 extern const double c_B2wh_mat_0234[4][3];
-
-extern const double c_B2wh_mat_1200[4][3];
-
-extern const double c_B2wh_mat_1030[4][3];
-
-extern const double c_B2wh_mat_1004[4][3];
-
-extern const double c_B2wh_mat_0230[4][3];
-
-extern const double c_B2wh_mat_0204[4][3];
-
-extern const double c_B2wh_mat_0034[4][3];
-
-extern const double c_Tv_wof_1200[3][3],c_Tv_wof_1030[3][3],c_Tv_wof_1004[3][3],c_Tv_wof_0230[3][3],c_Tv_wof_0204[3][3],c_Tv_wof_0034[3][3];
 
 
 ///ADandEstimation
@@ -316,7 +287,7 @@ struct IMU_Database
 	double DB_GyroLPF[2]; //Angular rates LPF constants
 	double DB_MagLPF[2]; //Magnetometer LPF constants
 	unsigned long int DB_imu_checksum;
-} IMU_1_DB,IMU_2_DB,IMU1_Corr,IMU2_Corr;
+} IMU1_Corr,IMU2_Corr;
 
 struct IMU_READ_DATA
 {
@@ -377,6 +348,8 @@ double X_MDO2ECI[3],Y_MDO2ECI[3],Z_MDO2ECI[3],R_MDO2ECI[3][3],Q_MDO2ECI[4];
 extern double Z_EPO2ECI[3], Y_EPO2ECI[3], X_EPO2ECI[3], R_EPO2ECI[3][3], Q_EPO2ECI[4];
 extern double Y_SFAO2ECI[3], Z_SFAO2ECI[3], X_SFAO2ECI[3], R_SFAO2ECI[3][3], Q_SFAO2ECI[4];
 extern double Y_SFDO2ECI[3], Z_SFDO2ECI[3], X_SFDO2ECI[3], R_SFDO2ECI[3][3], Q_SFDO2ECI[4];
+
+extern double R_MDO_CB[3][3];
 
 extern double rdotrst, SAT_ANGLE_STAT;
 extern double STATION_ECEF[3], STATION_ECI[3], STATION_vector[3], STATION_ECIn[3];
@@ -442,7 +415,7 @@ extern double NMS[3][8]; ///Measurement Matrix (sun sensor) for sunmagAD
 extern double NRS[3][8];  ///Reference Matrix (sun model) for sunmagAD
 extern int f_DataSort_MAG,f_DataSort_SUNMAG; ///Flags that are raised to tell data matrices are ready for Quaternion computation in QUEST
 extern int i_QDP;
-extern int CB_Q_propagation, TC_enQuest_update, Quest_update_available, w_q_update_satisfy;
+extern int CB_Q_propagation, OBC_Quest_update, Quest_update_available, w_q_update_satisfy;
 
 extern int CB_DAD_quest;
 extern double B_DAD[3][3], Bt_DAD[3][3];
@@ -731,7 +704,7 @@ extern int i_lict, j_lict;
 extern float RW_Wheel_Speed[4];
 extern double TC_KR[3];
 extern double TC_KP[3];
-extern double TC_wh_speed_thres;
+extern double TC_wh_speed_cutoff;
 extern double Tc[3],Qerror[4];
 extern double RWSpeed[4], v0_rad_sec[4];
 extern double H_wh[4], HB[3];
@@ -765,8 +738,8 @@ extern double DPM[3];
 extern double TC_MDk;
 
 ///Speed based Momentum Dumping
-extern double TC_max_whspeed, TC_min_whspeed, TC_SpeedDumpLimit, MOI_wh;
-extern int TC_SpeedDumpTime;
+extern double TC_max_whsp_spdump, TC_min_whsp_spdump, TC_SpeedDumpLimit, MOI_wh;
+extern double TC_SpeedDumpTime;
 extern int check_dump_wh[4];
 extern double RWSpeed[4], H_retn;
 extern double T_RW_sdump[4];

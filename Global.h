@@ -51,7 +51,7 @@ typedef long long int int64;
 #define SA_MAIN 1
 #define SA_RED 2
 #define SA_CMD_NOT_RCVD 0
-#define cPANEL_HEATER_TIMEOUT_CONST 16U // 2sec      //   78U // 10 sec
+#define cPANEL_HEATER_TIMEOUT_CONST 78U     //   78U // 10 sec
 
 #define Deploy		1
 #define Not_Deploy	0
@@ -200,11 +200,7 @@ extern void rTM_Real_st_write();
 #define IMU2 0
 
 extern void rIMU_Init(void);
-extern void rIMU_1_DB_Init(void);
-extern void rIMU_2_DB_Init(void);
 extern void rPOR_IMU_Parameters_Init(void);
-extern void rIMU_1_DB_Copy(void);
-extern void rIMU_2_DB_Copy(void);
 extern void rIMU_Angle_Reset(void);
 
 extern unsigned long int inter_HAL_IMU_Data;
@@ -228,7 +224,7 @@ extern unsigned short LTP_data;
 #define ADC_Thermistor 14
 #define ADC_SUN_SENSOR_MAX_LIMIT 16
 unsigned long int ADC_Buffer[ADC_MAX_LIMIT];
-#define EPS_RAW_BUS_VOLTAGE ADC_Buffer[34]
+#define EPS_RAW_BUS_VOLTAGE ADC_Buffer[39]
 #define rBattery_temperature_1  ADC_Buffer[0]
 
 extern unsigned long int inter_HAL_ADC_Data_Ready;
@@ -288,7 +284,7 @@ extern unsigned long long int block_test_array[50];  //to be removed
 
 
 #define TC_data_command_MAX_LIMIT 27
-#define ADCS_TC_data_command_MAX_LIMIT 57
+#define ADCS_TC_data_command_MAX_LIMIT 64
 #define TC_func_exe_MAX_LIMIT 156
 extern float Resol_Table[TC_data_command_MAX_LIMIT];
 extern float Resol_Table_Adcs[ADCS_TC_data_command_MAX_LIMIT];
@@ -416,8 +412,6 @@ extern void MUX_Output();        //EPS_card_MUX_switch_status
 //TC_Definitions
 unsigned long int rHAL_GPS_Config(struct HAL_GPS_registers GPS_No,unsigned long int Config_Type);
 //extern void rHAL_GPS_POWER(unsigned long int GPS_No,unsigned long int GPS_Power);
-extern void rIMU1_DB_Execute();
-extern void rIMU2_DB_Execute();
 
 //SS
 
@@ -531,4 +525,15 @@ extern void rRemote_patch_area_L1 ();
 extern void rRemote_patch_area_L2 ();
 
 /*************************************************/
+
+
+/*********************testing*******************/
+
+union testing_dt
+{
+	unsigned int ar[10];
+	unsigned short ar_16[20];
+}dt_ar;
+
+/***********************************************/
 #endif // GLOBAL

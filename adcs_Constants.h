@@ -165,18 +165,6 @@ const double c_wh2B_mat_1034[3][4];
 
 const double c_wh2B_mat_0234[3][4];
 
-const double c_wh2B_mat_1200[3][4];
-
-const double c_wh2B_mat_1030[3][4];
-
-const double c_wh2B_mat_1004[3][4];
-
-const double c_wh2B_mat_0230[3][4];
-
-const double c_wh2B_mat_0204[3][4];
-
-const double c_wh2B_mat_0034[3][4];
-
 const double c_B2wh_mat_4RW[4][3];
 
 
@@ -189,20 +177,6 @@ const double c_B2wh_mat_1034[4][3];
 
 const double c_B2wh_mat_0234[4][3];
 
-const double c_B2wh_mat_1200[4][3];
-
-const double c_B2wh_mat_1030[4][3];
-
-const double c_B2wh_mat_1004[4][3];
-
-const double c_B2wh_mat_0230[4][3];
-
-const double c_B2wh_mat_0204[4][3];
-
-const double c_B2wh_mat_0034[4][3];
-
-const double c_Tv_wof_1200[3][3],c_Tv_wof_1030[3][3],c_Tv_wof_1004[3][3],c_Tv_wof_0230[3][3],c_Tv_wof_0204[3][3],c_Tv_wof_0034[3][3];
-
 const int c_DPM_Pol_LookUpTable[27][3];
 
 ///Kalman Filter
@@ -210,8 +184,6 @@ const double c_I_three_cross_three[3][3];
 const double c_I_nine_cross_nine[9][9];
 const double c_rk[9][9];
 const double c_rk_T[9][9];
-
-const double c_R_MDO_CB[3][3];
 
 #endif // ADCS_CONSTANTS_H_INCLUDED
 

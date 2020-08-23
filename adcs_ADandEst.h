@@ -17,7 +17,7 @@ double NMS[3][8]; ///Measurement Matrix (sun sensor) for sunmagAD
 double NRS[3][8];  ///Reference Matrix (sun model) for sunmagAD
 int f_DataSort_MAG,f_DataSort_SUNMAG; ///Flags that are raised to tell data matrices are ready for Quaternion computation in QUEST
 int i_QDP;
-int CB_Q_propagation, TC_enQuest_update, Quest_update_available, w_q_update_satisfy;
+int CB_Q_propagation, OBC_Quest_update, Quest_update_available, w_q_update_satisfy;
 
 
 ///DAD Quest

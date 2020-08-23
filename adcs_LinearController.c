@@ -93,42 +93,42 @@ void rLinearController(void)
 
             if (CB_Wheel_OverSpeed_TorqueCutOff == Enable)
             {
-                if  (((RWSpeed[0]) >= TC_wh_speed_thres) && (T_RW[0] > 0.0))
+                if  (((RWSpeed[0]) >= TC_wh_speed_cutoff) && (T_RW[0] > 0.0))
                 {
                     T_RW[0] = 0.0;
                 }
 
-                if (((RWSpeed[0]) <= -TC_wh_speed_thres) && (T_RW[0] < 0.0))
+                if (((RWSpeed[0]) <= -TC_wh_speed_cutoff) && (T_RW[0] < 0.0))
                 {
                     T_RW[0] = 0.0;
                 }
 
-                if  (((RWSpeed[1]) >= TC_wh_speed_thres) && (T_RW[1] > 0.0))
+                if  (((RWSpeed[1]) >= TC_wh_speed_cutoff) && (T_RW[1] > 0.0))
                 {
                     T_RW[1] = 0.0;
                 }
 
-                if (((RWSpeed[1]) <= -TC_wh_speed_thres) && (T_RW[1] < 0.0))
+                if (((RWSpeed[1]) <= -TC_wh_speed_cutoff) && (T_RW[1] < 0.0))
                 {
                     T_RW[1] = 0.0;
                 }
 
-                if  (((RWSpeed[2]) >= TC_wh_speed_thres) && (T_RW[2] > 0.0))
+                if  (((RWSpeed[2]) >= TC_wh_speed_cutoff) && (T_RW[2] > 0.0))
                 {
                     T_RW[2] = 0.0;
                 }
 
-                if (((RWSpeed[2]) <= -TC_wh_speed_thres) && (T_RW[2] < 0.0))
+                if (((RWSpeed[2]) <= -TC_wh_speed_cutoff) && (T_RW[2] < 0.0))
                 {
                     T_RW[2] = 0.0;
                 }
 
-                if  (((RWSpeed[3]) >= TC_wh_speed_thres) && (T_RW[3] > 0.0))
+                if  (((RWSpeed[3]) >= TC_wh_speed_cutoff) && (T_RW[3] > 0.0))
                 {
                     T_RW[3] = 0.0;
                 }
 
-                if (((RWSpeed[3]) <= -TC_wh_speed_thres) && (T_RW[3] < 0.0))
+                if (((RWSpeed[3]) <= -TC_wh_speed_cutoff) && (T_RW[3] < 0.0))
                 {
                     T_RW[3] = 0.0;
                 }
@@ -394,21 +394,21 @@ void rSpeedBasedMomentumDumping(void)
         {
             for(i_lict=0; i_lict<4; i_lict++)
             {
-                if(abs_i(TC_SpeedDumpTime) == 0)
+                if(abs_i(TC_SpeedDumpTime) <= 0.0)
                 {
-                    TC_SpeedDumpTime = 200;
+                    TC_SpeedDumpTime = 921.6;
                 }
 
-                if ((RWSpeed[i_lict] > TC_max_whspeed) && (check_dump_wh[i_lict] == 1))
+                if ((RWSpeed[i_lict] > TC_max_whsp_spdump) && (check_dump_wh[i_lict] == 1))
                 {
                     check_dump_wh[i_lict] = 0;
 
-                    T_RW_sdump[i_lict] = (-TC_SpeedDumpLimit*c_Pi/30.0)*c_MOI_wh/(float)TC_SpeedDumpTime; //TC_SpeedDumpLimit = 500
+                    T_RW_sdump[i_lict] = (-TC_SpeedDumpLimit*c_Pi/30.0)*c_MOI_wh/TC_SpeedDumpTime; //TC_SpeedDumpLimit = 500
                 }
-                if ((RWSpeed[i_lict] < TC_min_whspeed) && (check_dump_wh[i_lict] == 1))
+                if ((RWSpeed[i_lict] < TC_min_whsp_spdump) && (check_dump_wh[i_lict] == 1))
                 {
                     check_dump_wh[i_lict] = 0;
-                    T_RW_sdump[i_lict] = (TC_SpeedDumpLimit*c_Pi/30.0)*c_MOI_wh/(float)TC_SpeedDumpTime;
+                    T_RW_sdump[i_lict] = (TC_SpeedDumpLimit*c_Pi/30.0)*c_MOI_wh/TC_SpeedDumpTime;
                 }
 
                 if (check_dump_wh[i_lict] == 0)
@@ -543,7 +543,7 @@ void rWheel_Spin_updown(void)
                 del_v0a = 0.0;
                 for (i_lict=0; i_lict<=3; i_lict++)
                 {
-                    del_v0[i_lict] = TC_RW_Nominal[i_lict] - RWSpeed[i_lict];//RW_Nominal[i_lict] should be assigned with Telecommanded value for nominal speed
+                    del_v0[i_lict] = TC_RW_Nominal[i_lict] * c_RADps2RPM - RWSpeed[i_lict];//RW_Nominal[i_lict] should be assigned with Telecommanded value for nominal speed
                     del_v0a = del_v0a + abs_f(del_v0[i_lict]);
                 }
                 del_v0a = del_v0a/4.0;
@@ -684,45 +684,37 @@ void rWheel_Auto_Reconfiguration(void)
 			{
 				wheel_index[0] = 1;
 			}
-			else if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW1_disable == 1)
+			else
 			{
 				wheel_index[0] = 0;
 			}
-			else
-				//
 
 			if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW2_enable == 1)
 			{
 				wheel_index[1] = 2;
 			}
-			else if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW2_disable == 1)
+			else
 			{
 				wheel_index[1] = 0;
 			}
-			else
-							//
 
 			if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW3_enable == 1)
 			{
 				wheel_index[2] = 4;
 			}
-			else if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW3_disable == 1)
+			else
 			{
 				wheel_index[2] = 0;
 			}
-			else
-							//
 
 			if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW4_enable == 1)
 			{
 				wheel_index[3] = 8;
 			}
-			else if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW4_disable == 1)
+			else
 			{
 				wheel_index[3] = 0;
 			}
-			else
-							//
 
             wheel_index_ARCsum = wheel_index[0] + wheel_index[1] + wheel_index[2] + wheel_index[3];
             tempdata = wheel_index_ARCsum;
@@ -821,162 +813,6 @@ void rWheel_Auto_Reconfiguration(void)
                     for (j_lict=0; j_lict<3; j_lict++)
                     {
                         B2wh_mat[i_lict][j_lict] = c_B2wh_mat_1230[i_lict][j_lict];
-                    }
-                }
-            }
-
-            if (wheel_index_ARCsum == 3)
-            {
-                Wheel_Config = 2;
-                for (i_lict=0; i_lict<3; i_lict++)
-                {
-                    for (j_lict=0; j_lict<4; j_lict++)
-                    {
-                        wh2B_mat[i_lict][j_lict] = c_wh2B_mat_1200[i_lict][j_lict];
-                    }
-                }
-                for (i_lict=0; i_lict<4; i_lict++)
-                {
-                    for (j_lict=0; j_lict<3; j_lict++)
-                    {
-                        B2wh_mat[i_lict][j_lict] = c_B2wh_mat_1200[i_lict][j_lict];
-                    }
-                }
-                for (i_lict=0; i_lict<3; i_lict++)
-                {
-                    for (j_lict=0; j_lict<3; j_lict++)
-                    {
-                        Tv_wof[i_lict][j_lict] = c_Tv_wof_1200[i_lict][j_lict];
-                    }
-                }
-            }
-
-            if (wheel_index_ARCsum == 5)
-            {
-                Wheel_Config = 2;
-                for (i_lict=0; i_lict<3; i_lict++)
-                {
-                    for (j_lict=0; j_lict<4; j_lict++)
-                    {
-                        wh2B_mat[i_lict][j_lict] = c_wh2B_mat_1030[i_lict][j_lict];
-                    }
-                }
-                for (i_lict=0; i_lict<4; i_lict++)
-                {
-                    for (j_lict=0; j_lict<3; j_lict++)
-                    {
-                        B2wh_mat[i_lict][j_lict] = c_B2wh_mat_1030[i_lict][j_lict];
-                    }
-                }
-                for (i_lict=0; i_lict<3; i_lict++)
-                {
-                    for (j_lict=0; j_lict<3; j_lict++)
-                    {
-                        Tv_wof[i_lict][j_lict] = c_Tv_wof_1030[i_lict][j_lict];
-                    }
-                }
-            }
-
-            if (wheel_index_ARCsum == 9)
-            {
-                Wheel_Config = 2;
-                for (i_lict=0; i_lict<3; i_lict++)
-                {
-                    for (j_lict=0; j_lict<4; j_lict++)
-                    {
-                        wh2B_mat[i_lict][j_lict] = c_wh2B_mat_1004[i_lict][j_lict];
-                    }
-                }
-                for (i_lict=0; i_lict<4; i_lict++)
-                {
-                    for (j_lict=0; j_lict<3; j_lict++)
-                    {
-                        B2wh_mat[i_lict][j_lict] = c_B2wh_mat_1004[i_lict][j_lict];
-                    }
-                }
-                for (i_lict=0; i_lict<3; i_lict++)
-                {
-                    for (j_lict=0; j_lict<3; j_lict++)
-                    {
-                        Tv_wof[i_lict][j_lict] = c_Tv_wof_1004[i_lict][j_lict];
-                    }
-                }
-            }
-
-            if (wheel_index_ARCsum == 6)
-            {
-                Wheel_Config = 2;
-                for (i_lict=0; i_lict<3; i_lict++)
-                {
-                    for (j_lict=0; j_lict<4; j_lict++)
-                    {
-                        wh2B_mat[i_lict][j_lict] = c_wh2B_mat_0230[i_lict][j_lict];
-                    }
-                }
-                for (i_lict=0; i_lict<4; i_lict++)
-                {
-                    for (j_lict=0; j_lict<3; j_lict++)
-                    {
-                        B2wh_mat[i_lict][j_lict] = c_B2wh_mat_0230[i_lict][j_lict];
-                    }
-                }
-                for (i_lict=0; i_lict<3; i_lict++)
-                {
-                    for (j_lict=0; j_lict<3; j_lict++)
-                    {
-                        Tv_wof[i_lict][j_lict] = c_Tv_wof_0230[i_lict][j_lict];
-                    }
-                }
-            }
-
-            if (wheel_index_ARCsum == 10)
-            {
-                Wheel_Config = 2;
-                for (i_lict=0; i_lict<3; i_lict++)
-                {
-                    for (j_lict=0; j_lict<4; j_lict++)
-                    {
-                        wh2B_mat[i_lict][j_lict] = c_wh2B_mat_0204[i_lict][j_lict];
-                    }
-                }
-                for (i_lict=0; i_lict<4; i_lict++)
-                {
-                    for (j_lict=0; j_lict<3; j_lict++)
-                    {
-                        B2wh_mat[i_lict][j_lict] = c_B2wh_mat_0204[i_lict][j_lict];
-                    }
-                }
-                for (i_lict=0; i_lict<3; i_lict++)
-                {
-                    for (j_lict=0; j_lict<3; j_lict++)
-                    {
-                        Tv_wof[i_lict][j_lict] = c_Tv_wof_0204[i_lict][j_lict];
-                    }
-                }
-            }
-
-            if (wheel_index_ARCsum == 12)
-            {
-                Wheel_Config = 2;
-                for (i_lict=0; i_lict<3; i_lict++)
-                {
-                    for (j_lict=0; j_lict<4; j_lict++)
-                    {
-                        wh2B_mat[i_lict][j_lict] = c_wh2B_mat_0034[i_lict][j_lict];
-                    }
-                }
-                for (i_lict=0; i_lict<4; i_lict++)
-                {
-                    for (j_lict=0; j_lict<3; j_lict++)
-                    {
-                        B2wh_mat[i_lict][j_lict] = c_B2wh_mat_0034[i_lict][j_lict];
-                    }
-                }
-                for (i_lict=0; i_lict<3; i_lict++)
-                {
-                    for (j_lict=0; j_lict<3; j_lict++)
-                    {
-                        Tv_wof[i_lict][j_lict] = c_Tv_wof_0034[i_lict][j_lict];
                     }
                 }
             }

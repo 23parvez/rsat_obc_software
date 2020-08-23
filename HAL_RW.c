@@ -398,19 +398,24 @@ void rRW_Data_Write(void)
 			rHAL_RW_TC_Write(RW_4, RW_TC, (float)(TC_RW_Nominal[3]), RWHEEL3); 					// Command Wheel Speed to RW1
 		}
 
-		if (((RW_Wheel_Speed[0] > TC_RW_Nominal[0] + 0.8726) && (RW_Wheel_Speed[1] < TC_RW_Nominal[1] - 0.8726)&& (RW_Wheel_Speed[2] > TC_RW_Nominal[2] + 0.8726) && (RW_Wheel_Speed[3] < TC_RW_Nominal[3] - 0.8726))
-				|| ((RW_Wheel_Speed[0] > TC_RW_Nominal[0] - 0.8726) && (RW_Wheel_Speed[1] < TC_RW_Nominal[1] + 0.8726)&& (RW_Wheel_Speed[2] > TC_RW_Nominal[2] - 0.8726) && (RW_Wheel_Speed[3] < TC_RW_Nominal[3] + 0.8726)))
-		{
-			RW_nominal_speed_cnt++;
+		if (((RW_Wheel_Speed[0]  > TC_RW_Nominal[0] + 0.8726)  &&
+		     (RW_Wheel_Speed[1]  < TC_RW_Nominal[1] - 0.8726)  &&
+			 (RW_Wheel_Speed[2]  > TC_RW_Nominal[2] + 0.8726)  &&
+			 (RW_Wheel_Speed[3]  < TC_RW_Nominal[3] - 0.8726)) ||
+			((RW_Wheel_Speed[0]  > TC_RW_Nominal[0] - 0.8726)  &&
+			 (RW_Wheel_Speed[1]  < TC_RW_Nominal[1] + 0.8726)  &&
+			 (RW_Wheel_Speed[2]  > TC_RW_Nominal[2] - 0.8726)  &&
+			 (RW_Wheel_Speed[3]  < TC_RW_Nominal[3] + 0.8726)  ))
+		  {
+				RW_nominal_speed_cnt++;
 
-			if (RW_nominal_speed_cnt >= 32)
-			{
-				//aaaa=0xa1a2;
-				f_RW_nominal = 0;
-				f_RW_control = Enable;
-				RW_nominal_speed_cnt= 0;
-			}
-		}
+				if (RW_nominal_speed_cnt >= 32)
+				{
+					f_RW_nominal = 0;
+					f_RW_control = Enable;
+					RW_nominal_speed_cnt= 0;
+				}
+		  }
 
 	}
 

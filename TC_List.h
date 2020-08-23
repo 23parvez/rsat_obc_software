@@ -355,41 +355,41 @@ unsigned int Remote_data_addr;
 			float TC_SS_misalnCM3456;													offset = 19
 			float TC_SS_misalnCM4156;													offset = 20
 			float TC_SS_Imax_ALPHA;														offset = 21*/ //To be removed from here. Shifted to remote data commands
-			float TC_eclipse_entrytime;													/*offset = 22*/
-			float TC_eclipse_exittime;													/*offset = 23*/
-			float TC_elapsed_orbitTimer;												/*offset = 24*/
-			float TC_Sunlit_detctn_timer;												/*offset = 25*/
-			float TC_Time_GPS2TLE;														/*offset = 26*/
-			float TC_GPS_OFFSET_UTC;													/*offset = 27*/
+			int TC_eclipse_entrytime;													/*offset = 22*/
+			int TC_eclipse_exittime;													/*offset = 23*/
+			int TC_elapsed_orbitTimer;												/*offset = 24*/
+			//float TC_Sunlit_detctn_timer;												/*offset = 25*/
+			int TC_Time_GPS2TLE;														/*offset = 26*/
+			//float TC_GPS_OFFSET_UTC;													/*offset = 27*/
 			float TC_delUT1_ECEF2ECI;													/*offset = 28*/
 			float TC_delAT_ECEF2ECI;													/*offset = 29*/
 			float TC_xp_ECEF2ECI;														/*offset = 30*/
 			float TC_yp_ECEF2ECI;														/*offset = 31*/
-			float TC_JulianDay_at_OBT0;													/*offset = 32*/
-			float TC_OBT_Drift_Corr;													/*offset = 33*/
-			float TC_JulianDate_at_OrbitalEpoch;										/*offset = 34*/
-			float TC_OBT_with_TLE_Update;												/*offset = 35*/
-			float TC_Wheel_Configuration_Index;											/*offset = 36*/
-			float TC_Det_Bprev_Count;													/*offset = 37*/
-			float TC_Det_BDOT_Compute_Count;											/*offset = 38*/
-			float TC_Det_GYRO_Compute_Count;											/*offset = 39*/
-			float TC_Rate_Chk_Safe2Det;													/*offset = 40*/
+			//float TC_JulianDay_at_OBT0;													/*offset = 32*/
+			//float TC_OBT_Drift_Corr;													/*offset = 33*/
+			//float TC_JulianDate_at_OrbitalEpoch;										/*offset = 34*/
+			//float TC_OBT_with_TLE_Update;												/*offset = 35*/
+			//float TC_Wheel_Configuration_Index;											/*offset = 36*/
+			int TC_Det_Bprev_Count;													/*offset = 37*/
+			int TC_Det_BDOT_Compute_Count;											/*offset = 38*/
+			int TC_Det_GYRO_Compute_Count;											/*offset = 39*/
+			//float TC_Rate_Chk_Safe2Det;													/*offset = 40*/
 			float TC_ECEF_stationlatitude;												/*offset = 41*/
 			float TC_ECEF_stationLongitude;												/*offset = 42*/
-			float TC_Error_dev_SunlitAD;												/*offset = 43*/
-			float TC_Error_dev_EclipseAD;												/*offset = 44*/
+			//float TC_Error_dev_SunlitAD;												/*offset = 43*/
+			//float TC_Error_dev_EclipseAD;												/*offset = 44*/
 			float TC_wAD_BODYmaxThRoll;													/*offset = 45*/
 			float TC_wAD_BODYmaxThPitch;												/*offset = 46*/
 			float TC_wAD_BODYmaxThYaw;													/*offset = 47*/
 			float TC_magMin_angle;														/*offset = 48*/
 			float TC_magMax_angle;														/*offset = 49*/
 			float TC_GYRO_Det_Max_Thresh;												/*offset = 50*/
-			float TC_PanelD_Status_Sel;                                                 /*offset = 51*/
+			//float TC_PanelD_Status_Sel;                                                 /*offset = 51*/
 			float TC_wAD_BODYminThRoll;                                                 /*offset = 52*/
 			float TC_wAD_BODYminThPitch;                                                /*offset = 53*/
 			float TC_wAD_BODYminThYaw;                                                  /*offset = 54*/
-			float TC_wAD_updateTimeThresh;                                              /*offset = 55*/
-			float TC_wp_QDP;                                                            /*offset = 56*/
+			int TC_wAD_updateTimeThresh;                                              /*offset = 55*/
+			int TC_wp_QDP;                                                            /*offset = 56*/
 			// added on 5_8_2020
 			float TC_nut_dpsi;                                                          /*offset = 57*/
 			float TC_nut_deps;                                                          /*offset = 58*/
@@ -400,7 +400,7 @@ unsigned int Remote_data_addr;
 			float TC_q_command_3;														/*offset = 63*/
 
 	  	    }ADCS_TC_data_command_Table;
-#define ADCS_TC_data_command_MAX_LIMIT 57
+#define ADCS_TC_data_command_MAX_LIMIT 64
 //---------------------------Data command telemetry-------------------------------
 
 //TBD

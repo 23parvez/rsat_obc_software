@@ -90,15 +90,9 @@ void rBDOT_Computation(void);
 void rSunSensorDataProcessing(void);
 void rSS_Read_Data(double *SS_Data_Addr,unsigned long int *ADC_Data_Addr);
 
-void rIMU_1_DB_Copy(void);
-void rIMU_2_DB_Copy(void);
-void rIMU_1_DB_Init(void);
-void rIMU_2_DB_Init(void);
 void rIMU_Angle_Reset(void);
 void rIMUDataProcessing(void);
 void rPOR_IMU_Parameters_Init(void);
-void rIMU1_DB_Execute();
-void rIMU2_DB_Execute();
 double rTheta_Limit(double inter_theta);
 void rSl_Ecl_OnBrd_detection(void);
 

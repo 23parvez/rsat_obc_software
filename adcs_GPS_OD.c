@@ -939,11 +939,11 @@ void rECEFtoECItoECEF(void)
         /// compute julian day of UT1 JDUT1
         UT1 = jd_time * c_min_per_day;
 
-        UTC = UT1*60.0 - ADCS_TC_data_command_Table.TC_delUT1_ECEF2ECI;
+        UTC = UT1*60.0 - (double)ADCS_TC_data_command_Table.TC_delUT1_ECEF2ECI;
 
         /// compute julian day of UTC JDUTC
 
-        TAI = UTC + ADCS_TC_data_command_Table.TC_delAT_ECEF2ECI;
+        TAI = UTC + (double)ADCS_TC_data_command_Table.TC_delAT_ECEF2ECI;
 
         TDT = TAI + 32.184;
 
@@ -1005,7 +1005,7 @@ void rECEFtoECItoECEF(void)
         // iau 1980 nutation
 		eps=0.40909280 - 0.000226966*TTDB - 2.86E-9*TTDB2 + 8.8E-9*TTDB3;
 		rxRot(-eps);
-		rzRot(ADCS_TC_data_command_Table.TC_nut_dpsi);
+		rzRot((double)ADCS_TC_data_command_Table.TC_nut_dpsi);
 		rMatMul3x3(Rz, Rx);
 		for(i_god=0; i_god<3; i_god++)
 		{
@@ -1015,7 +1015,7 @@ void rECEFtoECItoECEF(void)
 			}
 		}
 
-		xin_temp = eps+ADCS_TC_data_command_Table.TC_nut_deps;
+		xin_temp = eps+(double)ADCS_TC_data_command_Table.TC_nut_deps;
 		rxRot(xin_temp);
 		rMatMul3x3(Rx, nut_temp);
 		for(i_god=0; i_god<3; i_god++)
@@ -1072,8 +1072,8 @@ void rECEFtoECItoECEF(void)
             }
         }
 
-        ryRot(ADCS_TC_data_command_Table.TC_xp_ECEF2ECI*c_AS2R);
-        rxRot(ADCS_TC_data_command_Table.TC_yp_ECEF2ECI*c_AS2R);
+        ryRot((double)ADCS_TC_data_command_Table.TC_xp_ECEF2ECI*c_AS2R);
+        rxRot((double)ADCS_TC_data_command_Table.TC_yp_ECEF2ECI*c_AS2R);
         rMatMul3x3(Ry, Rx);
         for(i_god=0; i_god<3; i_god++)
         {

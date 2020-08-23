@@ -339,7 +339,7 @@ void rReferenceQuatComputation(void)
 			R_MDO2ECI[2][i] = Z_MDO2ECI[i];
 		}
 
-		rMatMul3x3(c_R_MDO_CB,R_MDO2ECI);
+		rMatMul3x3(R_MDO_CB,R_MDO2ECI);
 		for(i=0; i<3; i++)
 		{
 			for(j=0; j<3; j++)
@@ -362,9 +362,9 @@ void rReferenceQuatComputation(void)
 
         ///---------------------------------------SPO to ECI Transformation--------------------------------------------------
 
-        STATION_ECEF[0] = c_radiusearthkm * (cos(ADCS_TC_data_command_Table.TC_ECEF_stationLongitude) * cos(ADCS_TC_data_command_Table.TC_ECEF_stationlatitude));
-        STATION_ECEF[1] = c_radiusearthkm * (sin(ADCS_TC_data_command_Table.TC_ECEF_stationLongitude) * cos(ADCS_TC_data_command_Table.TC_ECEF_stationlatitude));
-        STATION_ECEF[2] = c_radiusearthkm * sin(ADCS_TC_data_command_Table.TC_ECEF_stationlatitude);
+        STATION_ECEF[0] = c_radiusearthkm * (cos((double)ADCS_TC_data_command_Table.TC_ECEF_stationLongitude) * cos((double)ADCS_TC_data_command_Table.TC_ECEF_stationlatitude));
+        STATION_ECEF[1] = c_radiusearthkm * (sin((double)ADCS_TC_data_command_Table.TC_ECEF_stationLongitude) * cos((double)ADCS_TC_data_command_Table.TC_ECEF_stationlatitude));
+        STATION_ECEF[2] = c_radiusearthkm * sin((double)ADCS_TC_data_command_Table.TC_ECEF_stationlatitude);
 
         rMatMul3x1(ECEFtoECI,STATION_ECEF);
         STATION_ECI[0] = Matout31[0];
@@ -722,16 +722,16 @@ void rRefVectorGeneration(void)
 			f_Momentum_Dumping = 0;
 
             if (f_Sunlit_Presence == 1)
-                TC_enQuest_update = 1;
+            	OBC_Quest_update = 1;
             else
-                TC_enQuest_update = 0;
+            	OBC_Quest_update = 0;
 
         }
         else
         {
 
             f_Momentum_Dumping = 1;
-            TC_enQuest_update = 1;
+            OBC_Quest_update = 1;
             f_station_tracking_enabled = 0;
         }
 

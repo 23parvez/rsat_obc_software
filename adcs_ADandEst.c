@@ -199,8 +199,11 @@ void rDAD_quest(void)
 			}
 		}
 
-//        if((magRoll_angle >= TC_data_command_Table.TC_magMin_angle) && (magPitch_angle >= TC_data_command_Table.TC_magMin_angle) && (magYaw_angle >= TC_data_command_Table.TC_magMin_angle) && (magRoll_angle <= TC_data_command_Table.TC_magMax_angle) && (magPitch_angle <= TC_data_command_Table.TC_magMax_angle) && (magYaw_angle <= TC_data_command_Table.TC_magMax_angle)) ///TC_magMin_angle=45deg
-//        {
+        if((magRoll_angle >= ADCS_TC_data_command_Table.TC_magMin_angle) &&
+        		(magPitch_angle >= ADCS_TC_data_command_Table.TC_magMin_angle) && (magYaw_angle >= ADCS_TC_data_command_Table.TC_magMin_angle) &&
+        		(magRoll_angle <= ADCS_TC_data_command_Table.TC_magMax_angle) && (magPitch_angle <= ADCS_TC_data_command_Table.TC_magMax_angle) &&
+        		(magYaw_angle <= ADCS_TC_data_command_Table.TC_magMax_angle)) ///TC_magMin_angle=45deg
+        {
 			if(wAD_updatecount >= ADCS_TC_data_command_Table.TC_wAD_updateTimeThresh)
 			{
 				w_q_update_satisfy = 1;
@@ -209,10 +212,10 @@ void rDAD_quest(void)
 			{
 				w_q_update_satisfy = 0;
 			}
-//        }
+        }
 
         ///TC_SunMagAD = Disable;
-        if(TC_boolean_u.TC_Boolean_Table.SunMagAD == Disable)
+        if(TC_SunMagAD == Disable)
         {
             if(f_DataSort_MAG == True)
             {
@@ -517,9 +520,8 @@ void rDAD_quest(void)
 		TM.Buffer.TM_Q_Magad[2] = (int)(Q_quest_DAD[2]/4.65661287E-7);
 		TM.Buffer.TM_Q_Magad[3] = (int)(Q_quest_DAD[3]/4.65661287E-7);
 
-        ///TC_enQuest_update = Disable;
         ///w_q_update_satisfy = 1;
-        if ((Quest_update_available == 1) && (TC_enQuest_update == 1) && (TC_boolean_u.TC_Boolean_Table.TC_QuestUpdate_Enable == Enable) && (w_q_update_satisfy == 1) && (TC_boolean_u.TC_Boolean_Table.TC_EKFControl_Enable == Disable))
+        if ((Quest_update_available == 1) && (OBC_Quest_update == 1) && (TC_boolean_u.TC_Boolean_Table.TC_QuestUpdate_Enable == Enable) && (w_q_update_satisfy == 1) && (TC_boolean_u.TC_Boolean_Table.TC_EKFControl_Enable == Disable))
         {
             Qbody[0] = Qquest_update[0];
             Qbody[1] = Qquest_update[1];
@@ -528,7 +530,7 @@ void rDAD_quest(void)
             //Quest_update_available = 0;
             w_q_update_satisfy = 0;
 
-            TC_enQuest_update = 0;
+            OBC_Quest_update = 0;
         }
     }
 }
@@ -1689,7 +1691,7 @@ void rExtendedKalmanFilter2_p1(void)
             }
             else
             {
-                if (Quest_update_available == 1 && w_q_update_satisfy == 1 && TC_enQuest_update == 1)
+                if (Quest_update_available == 1 && w_q_update_satisfy == 1 && OBC_Quest_update == 1)
                 {
 
                     Rk[0][0] = 0.000097*0.000097;

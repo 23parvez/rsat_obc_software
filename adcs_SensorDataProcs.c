@@ -145,99 +145,6 @@ double* rIMUDataCorrection(struct IMU_READ_DATA* IMU_DATA_ADDRS,struct IMU_Datab
     return (double*)IMU_prcd_data;
 }
 
-void rIMU_1_DB_Copy(void)
-{
-
-	for(inter_imu_i = 0;inter_imu_i < 3;inter_imu_i++)
-	{
-		for(inter_imu_j = 0; inter_imu_j < 3;inter_imu_j++)
-		{
-			IMU1_Corr.DB_w_MisCor[inter_imu_i][inter_imu_j] = IMU_1_DB.DB_w_MisCor[inter_imu_i][inter_imu_j];
-			IMU1_Corr.DB_B_MisCor[inter_imu_i][inter_imu_j] = IMU_1_DB.DB_B_MisCor[inter_imu_i][inter_imu_j];
-		}
-		IMU1_Corr.DB_wSFC_Neg[inter_imu_i] = IMU_1_DB.DB_wSFC_Neg[inter_imu_i];
-		IMU1_Corr.DB_wSFC_Pos[inter_imu_i] = IMU_1_DB.DB_wSFC_Pos[inter_imu_i];
-		IMU1_Corr.DB_BSFC_Neg[inter_imu_i] = IMU_1_DB.DB_BSFC_Neg[inter_imu_i];
-		IMU1_Corr.DB_BSFC_Pos[inter_imu_i] = IMU_1_DB.DB_BSFC_Pos[inter_imu_i];
-		//IMU1_Corr.DB_Del_Theta_BiasCor[inter_imu_i] = IMU_1_DB.DB_Del_Theta_BiasCor[inter_imu_i];
-		IMU1_Corr.DB_B_BiasCor[inter_imu_i] = IMU_1_DB.DB_B_BiasCor[inter_imu_i];
-	}
-	IMU1_Corr.DB_GyroLPF[0] = IMU_1_DB.DB_GyroLPF[0];
-	IMU1_Corr.DB_GyroLPF[1] = IMU_1_DB.DB_GyroLPF[1];
-	IMU1_Corr.DB_MagLPF[0]  = IMU_1_DB.DB_MagLPF[0];
-	IMU1_Corr.DB_MagLPF[1]  = IMU_1_DB.DB_MagLPF[1];
-
-}
-
-void rIMU_2_DB_Copy(void)
-{
-	for(inter_imu_i = 0;inter_imu_i < 3;inter_imu_i++)
-	{
-		for(inter_imu_j = 0; inter_imu_j < 3;inter_imu_j++)
-		{
-			IMU2_Corr.DB_w_MisCor[inter_imu_i][inter_imu_j] = IMU_2_DB.DB_w_MisCor[inter_imu_i][inter_imu_j];
-			IMU2_Corr.DB_B_MisCor[inter_imu_i][inter_imu_j] = IMU_2_DB.DB_B_MisCor[inter_imu_i][inter_imu_j];
-		}
-		IMU2_Corr.DB_wSFC_Neg[inter_imu_i] = IMU_2_DB.DB_wSFC_Neg[inter_imu_i];
-		IMU2_Corr.DB_wSFC_Pos[inter_imu_i] = IMU_2_DB.DB_wSFC_Pos[inter_imu_i];
-		IMU2_Corr.DB_BSFC_Neg[inter_imu_i] = IMU_2_DB.DB_BSFC_Neg[inter_imu_i];
-		IMU2_Corr.DB_BSFC_Pos[inter_imu_i] = IMU_2_DB.DB_BSFC_Pos[inter_imu_i];
-		//IMU2_Corr.DB_Del_Theta_BiasCor[inter_imu_i] = IMU_2_DB.DB_Del_Theta_BiasCor[inter_imu_i];
-		IMU2_Corr.DB_B_BiasCor[inter_imu_i] = IMU_2_DB.DB_B_BiasCor[inter_imu_i];
-	}
-	IMU2_Corr.DB_GyroLPF[0] = IMU_2_DB.DB_GyroLPF[0];
-	IMU2_Corr.DB_GyroLPF[1] = IMU_2_DB.DB_GyroLPF[1];
-	IMU2_Corr.DB_MagLPF[0] = IMU_2_DB.DB_MagLPF[0];
-	IMU2_Corr.DB_MagLPF[1] = IMU_2_DB.DB_MagLPF[1];
-}
-
-void rIMU_1_DB_Init(void)
-{
-
-	for(inter_imu_i = 0;inter_imu_i < 3;inter_imu_i++)
-	{
-		for(inter_imu_j = 0; inter_imu_j < 3;inter_imu_j++)
-		{
-			IMU_1_DB.DB_w_MisCor[inter_imu_i][inter_imu_j] = IMU1_Corr.DB_w_MisCor[inter_imu_i][inter_imu_j];
-			IMU_1_DB.DB_B_MisCor[inter_imu_i][inter_imu_j] = IMU1_Corr.DB_B_MisCor[inter_imu_i][inter_imu_j];
-		}
-		IMU_1_DB.DB_wSFC_Neg[inter_imu_i] = IMU1_Corr.DB_wSFC_Neg[inter_imu_i];
-		IMU_1_DB.DB_wSFC_Pos[inter_imu_i] = IMU1_Corr.DB_wSFC_Pos[inter_imu_i];
-		IMU_1_DB.DB_BSFC_Neg[inter_imu_i] = IMU1_Corr.DB_BSFC_Neg[inter_imu_i];
-		IMU_1_DB.DB_BSFC_Pos[inter_imu_i] = IMU1_Corr.DB_BSFC_Pos[inter_imu_i];
-		//IMU_1_DB.DB_Del_Theta_BiasCor[inter_imu_i] = IMU1_Corr.DB_Del_Theta_BiasCor[inter_imu_i];
-		IMU_1_DB.DB_B_BiasCor[inter_imu_i] = IMU1_Corr.DB_B_BiasCor[inter_imu_i];
-	}
-	IMU_1_DB.DB_GyroLPF[0] = IMU1_Corr.DB_GyroLPF[0];
-	IMU_1_DB.DB_GyroLPF[1] = IMU1_Corr.DB_GyroLPF[1];
-	IMU_1_DB.DB_MagLPF[0]  = IMU1_Corr.DB_MagLPF[0];
-	IMU_1_DB.DB_MagLPF[1]  = IMU1_Corr.DB_MagLPF[1];
-
-}
-
-void rIMU_2_DB_Init(void)
-{
-
-	for(inter_imu_i = 0;inter_imu_i < 3;inter_imu_i++)
-	{
-		for(inter_imu_j = 0; inter_imu_j < 3;inter_imu_j++)
-		{
-			IMU_2_DB.DB_w_MisCor[inter_imu_i][inter_imu_j] = IMU2_Corr.DB_w_MisCor[inter_imu_i][inter_imu_j];
-			IMU_2_DB.DB_B_MisCor[inter_imu_i][inter_imu_j] = IMU2_Corr.DB_B_MisCor[inter_imu_i][inter_imu_j];
-		}
-		IMU_2_DB.DB_wSFC_Neg[inter_imu_i] = IMU2_Corr.DB_wSFC_Neg[inter_imu_i];
-		IMU_2_DB.DB_wSFC_Pos[inter_imu_i] = IMU2_Corr.DB_wSFC_Pos[inter_imu_i];
-		IMU_2_DB.DB_BSFC_Neg[inter_imu_i] = IMU2_Corr.DB_BSFC_Neg[inter_imu_i];
-		IMU_2_DB.DB_BSFC_Pos[inter_imu_i] = IMU2_Corr.DB_BSFC_Pos[inter_imu_i];
-		//IMU_2_DB.DB_Del_Theta_BiasCor[inter_imu_i] = IMU2_Corr.DB_Del_Theta_BiasCor[inter_imu_i];
-		IMU_2_DB.DB_B_BiasCor[inter_imu_i] = IMU2_Corr.DB_B_BiasCor[inter_imu_i];
-	}
-	IMU_2_DB.DB_GyroLPF[0] = IMU2_Corr.DB_GyroLPF[0];
-	IMU_2_DB.DB_GyroLPF[1] = IMU2_Corr.DB_GyroLPF[1];
-	IMU_2_DB.DB_MagLPF[0]  = IMU2_Corr.DB_MagLPF[0];
-	IMU_2_DB.DB_MagLPF[1]  = IMU2_Corr.DB_MagLPF[1];
-
-}
 void rIMU_Angle_Reset(void)
 {
 	Thta_rawdata[0] = 0;
@@ -346,9 +253,9 @@ void rIMUDataProcessing(void)
 
 		if (TC_boolean_u.TC_Boolean_Table.TC_GND_Drift_Compensation_Enable_or_Disable == Enable)
 		{
-			w_BODY[0] = w_BODY[0] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[0]);
-			w_BODY[1] = w_BODY[1] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[1]);
-			w_BODY[2] = w_BODY[2] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[2]);
+			w_BODY[0] = w_BODY[0] - (double)TC_drift_compensation_IMU1[0];
+			w_BODY[1] = w_BODY[1] - (double)TC_drift_compensation_IMU1[1];
+			w_BODY[2] = w_BODY[2] - (double)TC_drift_compensation_IMU1[2];
 		}
 
 		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable == Enable && TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == Enable)
@@ -389,9 +296,9 @@ void rIMUDataProcessing(void)
 
 		if (TC_boolean_u.TC_Boolean_Table.TC_GND_MagBias_Compensation_Enable_or_Disable == Enable)
 		{
-			B_BODY[0] = B_BODY[0] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[0]);
-			B_BODY[1] = B_BODY[1] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[1]);
-			B_BODY[2] = B_BODY[2] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[2]);
+			B_BODY[0] = B_BODY[0] - (double)TC_magbias_compensation_IMU1[0];
+			B_BODY[1] = B_BODY[1] - (double)TC_magbias_compensation_IMU1[1];
+			B_BODY[2] = B_BODY[2] - (double)TC_magbias_compensation_IMU1[2];
 		}
 
 		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable == Enable)
@@ -488,9 +395,9 @@ void rIMUDataProcessing(void)
 
 		if (TC_boolean_u.TC_Boolean_Table.TC_GND_Drift_Compensation_Enable_or_Disable == Enable)
 		{
-			w_BODY[0] = w_BODY[0] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[0]);
-			w_BODY[1] = w_BODY[1] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[1]);
-			w_BODY[2] = w_BODY[2] - (double)(ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[2]);
+			w_BODY[0] = w_BODY[0] - (double)TC_drift_compensation_IMU2[0];
+			w_BODY[1] = w_BODY[1] - (double)TC_drift_compensation_IMU2[1];
+			w_BODY[2] = w_BODY[2] - (double)TC_drift_compensation_IMU2[2];
 		}
 
 		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable == Enable)
@@ -532,9 +439,9 @@ void rIMUDataProcessing(void)
 
 		if (TC_boolean_u.TC_Boolean_Table.TC_GND_MagBias_Compensation_Enable_or_Disable == Enable)
 		{
-			B_BODY[0] = B_BODY[0] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[0]);
-			B_BODY[1] = B_BODY[1] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[1]);
-			B_BODY[2] = B_BODY[2] - (double)(ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[2]);
+			B_BODY[0] = B_BODY[0] - (double)TC_magbias_compensation_IMU2[0];
+			B_BODY[1] = B_BODY[1] - (double)TC_magbias_compensation_IMU2[1];
+			B_BODY[2] = B_BODY[2] - (double)TC_magbias_compensation_IMU2[2];
 		}
 
 		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable == Enable)
@@ -615,34 +522,6 @@ double rTheta_Limit(double inter_theta)
 		///
 	}
 	return inter_theta;
-}
-
-void rIMU1_DB_Execute()
-{
-
-	imu1_db_checksum_obc = checksum_u32((unsigned long int*)&IMU_1_DB,98);
-	if(imu1_db_checksum_obc == IMU_1_DB.DB_imu_checksum)
-	{
-//		rIMU_1_DB_Copy();
-	}
-	else
-	{
-		//TM false alarm
-	}
-}
-
-void rIMU2_DB_Execute()
-{
-
-	imu2_db_checksum_obc = checksum_u32((unsigned long int*)&IMU_2_DB,98);
-	if(imu2_db_checksum_obc == IMU_2_DB.DB_imu_checksum)
-	{
-//		rIMU_2_DB_Copy();
-	}
-	else
-	{
-		//TM false alarm
-	}
 }
 
 void rBDOT_Computation(void)

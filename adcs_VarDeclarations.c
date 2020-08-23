@@ -63,6 +63,8 @@ double Z_EPO2ECI[3], Y_EPO2ECI[3], X_EPO2ECI[3], R_EPO2ECI[3][3], Q_EPO2ECI[4];
 double Y_SFAO2ECI[3], Z_SFAO2ECI[3], X_SFAO2ECI[3], R_SFAO2ECI[3][3], Q_SFAO2ECI[4];
 double Y_SFDO2ECI[3], Z_SFDO2ECI[3], X_SFDO2ECI[3], R_SFDO2ECI[3][3], Q_SFDO2ECI[4];
 
+double R_MDO_CB[3][3];
+
 double rdotrst, SAT_ANGLE_STAT;
 double STATION_ECEF[3], STATION_ECI[3], STATION_vector[3], STATION_ECIn[3];
 double X_SPO2ECI[3], Y_SPO2ECI[3], Z_SPO2ECI[3];
@@ -123,7 +125,7 @@ double NMS[3][8]; ///Measurement Matrix (sun sensor) for sunmagAD
 double NRS[3][8];  ///Reference Matrix (sun model) for sunmagAD
 int f_DataSort_MAG,f_DataSort_SUNMAG; ///Flags that are raised to tell data matrices are ready for Quaternion computation in QUEST
 int i_QDP;
-int CB_Q_propagation, TC_enQuest_update, Quest_update_available, w_q_update_satisfy;
+int CB_Q_propagation, OBC_Quest_update, Quest_update_available, w_q_update_satisfy;
 
 int CB_DAD_quest;
 double B_DAD[3][3], Bt_DAD[3][3];
@@ -393,7 +395,7 @@ float ActuationCycle;
 int i_lict, j_lict;
 double TC_KR[3];
 double TC_KP[3];
-double TC_wh_speed_thres;
+double TC_wh_speed_cutoff;
 double Qerror[4];
 double RWSpeed[4], v0_rad_sec[4];
 double H_wh[4], HB[3];
@@ -423,8 +425,8 @@ double TC_Hmax;
 double TC_MDk;
 
 ///Speed based Momentum Dumping
-double TC_max_whspeed, TC_min_whspeed, TC_SpeedDumpLimit, MOI_wh;
-int TC_SpeedDumpTime;
+double TC_max_whsp_spdump, TC_min_whsp_spdump, TC_SpeedDumpLimit, MOI_wh;
+double TC_SpeedDumpTime;
 int check_dump_wh[4];
 double H_retn;
 int TC_SpeedAngularMomemtumDumping, wh_sdump_start[4], speed_based_torquer_control;

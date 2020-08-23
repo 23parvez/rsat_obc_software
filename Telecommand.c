@@ -23,10 +23,10 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 		TC_IMU2_On,    													/* offset =    1  */
 		TC_IMU1_Off,													/* offset =    2  */
 		TC_IMU2_Off,													/* offset =    3  */
-		imu1_db_execute,												/* offset =    4  */
-		imu2_db_execute,												/* offset =    5  */
-		imu1_db_checksum,												/* offset =    6  */
-		imu2_db_checksum,												/* offset =    7  */
+		//imu1_db_execute,												/* offset =    4  */
+		//imu2_db_execute,												/* offset =    5  */
+		//imu1_db_checksum,												/* offset =    6  */
+		//imu2_db_checksum,												/* offset =    7  */
 		imu_test_sys_sel,												/* offset =    8  */
 		TC_Drift_Uplink_Compenstation_Update_IMU1,						/* offset =    9  */
 		TC_Drift_Uplink_Compenstation_Update_IMU2,						/* offset =    10 */
@@ -36,15 +36,15 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 		TC_Gyro_Scale_Factor_Update_IMU2,								/* offset =    14 */
 		TC_MagBias_Uplink_Compenstation_Update_IMU1,					/* offset =    15 */
 		TC_MagBias_Uplink_Compenstation_Update_IMU2,					/* offset =    16 */
-		TC_Mag_Misalignment_Update_IMU1,								/* offset =    17 */
-		TC_Mag_Misalignment_Update_IMU2,								/* offset =    18 */
-		TC_Mag_Scale_Factor_Update_IMU1,								/* offset =    19 */
-		TC_Mag_Scale_Factor_Update_IMU2,								/* offset =    20 */
+		//TC_Mag_Misalignment_Update_IMU1,								/* offset =    17 */
+		//TC_Mag_Misalignment_Update_IMU2,								/* offset =    18 */
+		//TC_Mag_Scale_Factor_Update_IMU1,								/* offset =    19 */
+		//TC_Mag_Scale_Factor_Update_IMU2,								/* offset =    20 */
 
-		TC_Mag_LPF_Gain_Update_IMU1,									/* offset =    21 */
-		TC_Mag_LPF_Gain_Update_IMU2,									/* offset =    22 */
-		TC_Gyro_LPF_Gain_Update_IMU1,									/* offset =    23 */
-		TC_Gyro_LPF_Gain_Update_IMU2,									/* offset =    24 */
+		rSSmain_ImaxF_update,											/* offset =    21 */ //Renamed from mag LPF 18-08-2020
+		rSSredt_ImaxF_update,											/* offset =    22 */ //Renamed from mag LPF 18-08-2020
+		//TC_Gyro_LPF_Gain_Update_IMU1,									/* offset =    23 */
+		//TC_Gyro_LPF_Gain_Update_IMU2,									/* offset =    24 */
 
 
 		TC_ACC_Ang_RESET,												/* offset =    25 */
@@ -212,12 +212,12 @@ float Resol_Table[TC_data_command_MAX_LIMIT] =
 // Initialization of Resolution Table-----------------------
 float Resol_Table_Adcs[ADCS_TC_data_command_MAX_LIMIT] =
 {
-		1,              /*offset 1*/
-		1,              /*offset 2*/
-		1,              /*offset 3*/
-		1, 			    /*offset 4*/
-		1,              /*offset 5*/
-		1,              /*offset 6*/
+		1.74532925e-6,              /*offset 1*/
+		1.74532925e-6,              /*offset 2*/
+		1.74532925e-6,              /*offset 3*/
+		1.74532925e-6, 			    /*offset 4*/
+		1.74532925e-6,              /*offset 5*/
+		1.74532925e-6,              /*offset 6*/
 		1,              /*offset 7*/
 		1, 			    /*offset 8*/
 		1,              /*offset 9*/
@@ -240,14 +240,42 @@ float Resol_Table_Adcs[ADCS_TC_data_command_MAX_LIMIT] =
 		1,              /*offset 26*/
 		1,              /*offset 27*/
 		1,              /*offset 28*/
-		1, 			    /*offset 29*/
-		1,              /*offset 30*/
-		1,              /*offset 31 */
+		0.01, 			    /*offset 29*/
+		1.74532925e-6,              /*offset 30*/
+		1.74532925e-6,              /*offset 31 */
 		1,              /*offset 32*/
 		1,              /*offset 33*/
 		1, 			    /*offset 34*/
 		1,              /*offset 35*/
 		1,             /*offset 36 */
+		1,             /*offset 37 */
+		1,             /*offset 38 */
+		1,             /*offset 39 */
+		1,             /*offset 40 */
+		1.74532925e-6,             /*offset 41 */
+		1.74532925e-6,             /*offset 42 */
+		1,             /*offset 43 */
+		1,             /*offset 44 */
+		0.001,             /*offset 45 */
+		0.001,             /*offset 46 */
+		0.001,             /*offset 47 */
+		0.1,             /*offset 48 */
+		0.1,             /*offset 49 */
+		1,             /*offset 50 */
+		1,             /*offset 51 */
+		0.001,             /*offset 52 */
+		0.001,             /*offset 53 */
+		0.001,             /*offset 54 */
+		1,             /*offset 55 */
+		1,             /*offset 56 */
+		1.74532925e-6,             /*offset 57 */
+		1.74532925e-6,             /*offset 58 */
+		0.1,             /*offset 59 */
+		0.0001,             /*offset 60 */
+		0.0001,             /*offset 61 */
+		0.0001,             /*offset 62 */
+		0.0001,             /*offset 63 */
+
    };
 unsigned int atp;
 unsigned short TC_command_pending;
@@ -564,29 +592,41 @@ void rADCS_Data_TC()
 	switch(u_TC.DataCommand.offset_addr)
 		{
 
-			case 0: ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[0]		    = u_TC.DataCommand.Data;
+			case 0: ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[0]		    =
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 1: ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[1]		    = u_TC.DataCommand.Data;
+			case 1: ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[1]		    =
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 2: ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[2]	        = u_TC.DataCommand.Data;
+			case 2: ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[2]	        =
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 3: ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[0]		    = u_TC.DataCommand.Data;
+			case 3: ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[0]		    =
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 4: ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[1]	        = u_TC.DataCommand.Data;
+			case 4: ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[1]	        =
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 5: ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[2]		    = u_TC.DataCommand.Data;
+			case 5: ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[2]		    =
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 6: ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[0] 		= u_TC.DataCommand.Data;
+			case 6: ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[0] 		=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 7: ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[1]		= u_TC.DataCommand.Data;
+			case 7: ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[1]		=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 8: ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[2] 		= u_TC.DataCommand.Data;
+			case 8: ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[2] 		=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 9: ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[0] 		= u_TC.DataCommand.Data;
+			case 9: ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[0] 		=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 10: ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[1]		= u_TC.DataCommand.Data;
+			case 10: ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[1]		=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 11: ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[2] 		= u_TC.DataCommand.Data;
+			case 11: ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[2] 		=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
 			/*case 12: ADCS_TC_data_command_Table.TC_Mag_Misalignment_IMU1 					= u_TC.DataCommand.Data;
 						break;
@@ -614,29 +654,33 @@ void rADCS_Data_TC()
 						break;
 			case 24: ADCS_TC_data_command_Table.TC_elapsed_orbitTimer  						= u_TC.DataCommand.Data;
 						break;
-			case 25: ADCS_TC_data_command_Table.TC_Sunlit_detctn_timer  					= u_TC.DataCommand.Data;
+			case 25: //ADCS_TC_data_command_Table.TC_Sunlit_detctn_timer  					= u_TC.DataCommand.Data;
 						break;
 			case 26: ADCS_TC_data_command_Table.TC_Time_GPS2TLE 							= u_TC.DataCommand.Data;
 						break;
-			case 27: ADCS_TC_data_command_Table.TC_GPS_OFFSET_UTC 							= u_TC.DataCommand.Data;
+			case 27: //ADCS_TC_data_command_Table.TC_GPS_OFFSET_UTC 							= u_TC.DataCommand.Data;
 						break;
-			case 28: ADCS_TC_data_command_Table.TC_delUT1_ECEF2ECI 							= u_TC.DataCommand.Data;
+			case 28: ADCS_TC_data_command_Table.TC_delUT1_ECEF2ECI 							=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 29: ADCS_TC_data_command_Table.TC_delAT_ECEF2ECI 							= u_TC.DataCommand.Data;
+			case 29: ADCS_TC_data_command_Table.TC_delAT_ECEF2ECI 							=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 30: ADCS_TC_data_command_Table.TC_xp_ECEF2ECI 								= u_TC.DataCommand.Data;
+			case 30: ADCS_TC_data_command_Table.TC_xp_ECEF2ECI 								=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 31: ADCS_TC_data_command_Table.TC_yp_ECEF2ECI 								= u_TC.DataCommand.Data;
+			case 31: ADCS_TC_data_command_Table.TC_yp_ECEF2ECI 								=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 32: ADCS_TC_data_command_Table.TC_JulianDay_at_OBT0					    = u_TC.DataCommand.Data;
+			case 32: //ADCS_TC_data_command_Table.TC_JulianDay_at_OBT0					    = u_TC.DataCommand.Data;
 						break;
-			case 33: ADCS_TC_data_command_Table.TC_OBT_Drift_Corr 							= u_TC.DataCommand.Data;
+			case 33: //ADCS_TC_data_command_Table.TC_OBT_Drift_Corr 							= u_TC.DataCommand.Data;
 						break;
-			case 34: ADCS_TC_data_command_Table.TC_JulianDate_at_OrbitalEpoch 				= u_TC.DataCommand.Data;
+			case 34: //ADCS_TC_data_command_Table.TC_JulianDate_at_OrbitalEpoch 				= u_TC.DataCommand.Data;
 						break;
-			case 35: ADCS_TC_data_command_Table.TC_OBT_with_TLE_Update 						= u_TC.DataCommand.Data;
+			case 35: //ADCS_TC_data_command_Table.TC_OBT_with_TLE_Update 						= u_TC.DataCommand.Data;
 						break;
-			case 36: ADCS_TC_data_command_Table.TC_Wheel_Configuration_Index 				= u_TC.DataCommand.Data;
+			case 36: //ADCS_TC_data_command_Table.TC_Wheel_Configuration_Index 				= u_TC.DataCommand.Data;
 						break;
 			case 37: ADCS_TC_data_command_Table.TC_Det_Bprev_Count 							= u_TC.DataCommand.Data;
 						break;
@@ -644,53 +688,71 @@ void rADCS_Data_TC()
 						break;
 			case 39: ADCS_TC_data_command_Table.TC_Det_GYRO_Compute_Count			 		= u_TC.DataCommand.Data;
 						break;
-			case 40: ADCS_TC_data_command_Table.TC_Rate_Chk_Safe2Det 						= u_TC.DataCommand.Data;
+			case 40: //ADCS_TC_data_command_Table.TC_Rate_Chk_Safe2Det 						= u_TC.DataCommand.Data;
 						break;
-			case 41: ADCS_TC_data_command_Table.TC_ECEF_stationlatitude 					= u_TC.DataCommand.Data;
+			case 41: ADCS_TC_data_command_Table.TC_ECEF_stationlatitude 					=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 42: ADCS_TC_data_command_Table.TC_ECEF_stationLongitude 					= u_TC.DataCommand.Data;
+			case 42: ADCS_TC_data_command_Table.TC_ECEF_stationLongitude 					=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 43: ADCS_TC_data_command_Table.TC_Error_dev_SunlitAD 						= u_TC.DataCommand.Data;
+			case 43: //ADCS_TC_data_command_Table.TC_Error_dev_SunlitAD 						= u_TC.DataCommand.Data;
 						break;
-			case 44: ADCS_TC_data_command_Table.TC_Error_dev_EclipseAD 						= u_TC.DataCommand.Data;
+			case 44: //ADCS_TC_data_command_Table.TC_Error_dev_EclipseAD 						= u_TC.DataCommand.Data;
 						break;
-			case 45: ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll 						= u_TC.DataCommand.Data;
+			case 45: ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll 						=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 46: ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch 						= u_TC.DataCommand.Data;
+			case 46: ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch 						=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 47: ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw 						= u_TC.DataCommand.Data;
+			case 47: ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw 						=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 48: ADCS_TC_data_command_Table.TC_magMin_angle 							= u_TC.DataCommand.Data;
+			case 48: ADCS_TC_data_command_Table.TC_magMin_angle 							=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 49: ADCS_TC_data_command_Table.TC_magMax_angle 							= u_TC.DataCommand.Data;
+			case 49: ADCS_TC_data_command_Table.TC_magMax_angle 							=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 50: ADCS_TC_data_command_Table.TC_GYRO_Det_Max_Thresh						= u_TC.DataCommand.Data;
+			case 50: ADCS_TC_data_command_Table.TC_GYRO_Det_Max_Thresh						=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 51: ADCS_TC_data_command_Table.TC_PanelD_Status_Sel					    = u_TC.DataCommand.Data;
+			case 51: //ADCS_TC_data_command_Table.TC_PanelD_Status_Sel					    = u_TC.DataCommand.Data;
 						break;
-			case 52: ADCS_TC_data_command_Table.TC_wAD_BODYminThRoll						= u_TC.DataCommand.Data;
+			case 52: ADCS_TC_data_command_Table.TC_wAD_BODYminThRoll						=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						 break;
-			case 53: ADCS_TC_data_command_Table.TC_wAD_BODYminThPitch						= u_TC.DataCommand.Data;
+			case 53: ADCS_TC_data_command_Table.TC_wAD_BODYminThPitch						=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 54: ADCS_TC_data_command_Table.TC_wAD_BODYminThYaw						    = u_TC.DataCommand.Data;
+			case 54: ADCS_TC_data_command_Table.TC_wAD_BODYminThYaw						    =
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
 			case 55: ADCS_TC_data_command_Table.TC_wAD_updateTimeThresh					    = u_TC.DataCommand.Data;
 						break;
 			case 56: ADCS_TC_data_command_Table.TC_wp_QDP						            = u_TC.DataCommand.Data;
 						break;
-			case 57: ADCS_TC_data_command_Table.TC_nut_dpsi						            = u_TC.DataCommand.Data;
+			case 57: ADCS_TC_data_command_Table.TC_nut_dpsi						            =
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 58: ADCS_TC_data_command_Table.TC_nut_deps						            = u_TC.DataCommand.Data;
+			case 58: ADCS_TC_data_command_Table.TC_nut_deps						            =
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 59: ADCS_TC_data_command_Table.TC_ref_svn_bias_off_deg						= u_TC.DataCommand.Data;
+			case 59: ADCS_TC_data_command_Table.TC_ref_svn_bias_off_deg						=
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 60: ADCS_TC_data_command_Table.TC_q_command_0						        = u_TC.DataCommand.Data;
+			case 60: ADCS_TC_data_command_Table.TC_q_command_0						        =
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 61: ADCS_TC_data_command_Table.TC_q_command_1						        = u_TC.DataCommand.Data;
+			case 61: ADCS_TC_data_command_Table.TC_q_command_1						        =
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 62: ADCS_TC_data_command_Table.TC_q_command_2						        = u_TC.DataCommand.Data;
+			case 62: ADCS_TC_data_command_Table.TC_q_command_2						        =
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 63: ADCS_TC_data_command_Table.TC_q_command_3						        = u_TC.DataCommand.Data;
+			case 63: ADCS_TC_data_command_Table.TC_q_command_3						        =
+					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
 		    default:
 			            break;
@@ -1238,7 +1300,7 @@ void TMTC_Assignment()
 	TMTC_boolean_u.Boolean_Table.TC_AutoTransit_Det2SunAquisition              = TC_boolean_u.TC_Boolean_Table.TC_AutoTransit_Det2SunAquisition;
 	TMTC_boolean_u.Boolean_Table.TC_SunAq2DetMode_autotransit                  = TC_boolean_u.TC_Boolean_Table.TC_SunAq2DetMode_autotransit;
 	TMTC_boolean_u.Boolean_Table.TC_mom_dumping_ang_mom_based                  = TC_boolean_u.TC_Boolean_Table.TC_mom_dumping_ang_mom_based;
-	TMTC_boolean_u.Boolean_Table.TC_SunAq2InertialMode_autotransit             = TC_boolean_u.TC_Boolean_Table.TC_SunAq2InertialMode_autotransit;
+	//TMTC_boolean_u.Boolean_Table.TC_SunAq2InertialMode_autotransit             = TC_boolean_u.TC_Boolean_Table.TC_SunAq2InertialMode_autotransit;
 	TMTC_boolean_u.Boolean_Table.TC_IMU_Select                                 = TC_boolean_u.TC_Boolean_Table.TC_IMU_Select;
 	TMTC_boolean_u.Boolean_Table.TC_SS_Cells_Sel                               = TC_boolean_u.TC_Boolean_Table.TC_SS_Cells_Sel;
 	TMTC_boolean_u.Boolean_Table.TC_GPS12_Select                               = TC_boolean_u.TC_Boolean_Table.TC_GPS12_Select;
@@ -1254,7 +1316,7 @@ void TMTC_Assignment()
 	TMTC_boolean_u.Boolean_Table.TC_ThreeAxis2SafeMode_autotransit             = TC_boolean_u.TC_Boolean_Table.TC_ThreeAxis2SafeMode_autotransit;
 	TMTC_boolean_u.Boolean_Table.TC_SunAq2ThreeAxis_autotransit                = TC_boolean_u.TC_Boolean_Table.TC_SunAq2ThreeAxis_autotransit;
 	TMTC_boolean_u.Boolean_Table.TC_Det_AutoTransitionBDOTtoGYRO               = TC_boolean_u.TC_Boolean_Table.TC_Det_AutoTransitionBDOTtoGYRO;
-	TMTC_boolean_u.Boolean_Table.TC_Detumbling_Logic_select                    = TC_boolean_u.TC_Boolean_Table.TC_Detumbling_Logic_select;
+	//TMTC_boolean_u.Boolean_Table.TC_Detumbling_Logic_select                    = TC_boolean_u.TC_Boolean_Table.TC_Detumbling_Logic_select;
 	TMTC_boolean_u.Boolean_Table.TC_Speed_Dumping                              = TC_boolean_u.TC_Boolean_Table.TC_Speed_Dumping;
 	TMTC_boolean_u.Boolean_Table.TC_Sun_Varying_Mode                           = TC_boolean_u.TC_Boolean_Table.TC_Sun_Varying_Mode;
 	TMTC_boolean_u.Boolean_Table.TC_Orbit_Reference_Mode                       = TC_boolean_u.TC_Boolean_Table.TC_Orbit_Reference_Mode;
@@ -1263,11 +1325,11 @@ void TMTC_Assignment()
 	TMTC_boolean_u.Boolean_Table.TC_Station_Tracking_Mode                      = TC_boolean_u.TC_Boolean_Table.TC_Station_Tracking_Mode;
 	TMTC_boolean_u.Boolean_Table.TC_QuestUpdate_Enable                         = TC_boolean_u.TC_Boolean_Table.TC_QuestUpdate_Enable;
 	TMTC_boolean_u.Boolean_Table.TC_EKFControl_Enable                          = TC_boolean_u.TC_Boolean_Table.TC_EKFControl_Enable;
-	TMTC_boolean_u.Boolean_Table.TC_2RW_Control_Mode                           = TC_boolean_u.TC_Boolean_Table.TC_2RW_Control_Mode;
-	TMTC_boolean_u.Boolean_Table.rTC_mag_detumbling_mode_enable                = TC_boolean_u.TC_Boolean_Table.rTC_mag_detumbling_mode_enable;
-	TMTC_boolean_u.Boolean_Table.rTC_gyro_detumbling_mode                      = TC_boolean_u.TC_Boolean_Table.rTC_gyro_detumbling_mode;
-	TMTC_boolean_u.Boolean_Table.rTC_safe_mode                                 = TC_boolean_u.TC_Boolean_Table.rTC_safe_mode;
-	TMTC_boolean_u.Boolean_Table.TC_detumbling_gyro_select_gnd                 = TC_boolean_u.TC_Boolean_Table.TC_detumbling_gyro_select_gnd;
+	//TMTC_boolean_u.Boolean_Table.TC_2RW_Control_Mode                           = TC_boolean_u.TC_Boolean_Table.TC_2RW_Control_Mode;
+	//TMTC_boolean_u.Boolean_Table.rTC_mag_detumbling_mode_enable                = TC_boolean_u.TC_Boolean_Table.rTC_mag_detumbling_mode_enable;
+	//TMTC_boolean_u.Boolean_Table.rTC_gyro_detumbling_mode                      = TC_boolean_u.TC_Boolean_Table.rTC_gyro_detumbling_mode;
+	//TMTC_boolean_u.Boolean_Table.rTC_safe_mode                                 = TC_boolean_u.TC_Boolean_Table.rTC_safe_mode;
+	//TMTC_boolean_u.Boolean_Table.TC_detumbling_gyro_select_gnd                 = TC_boolean_u.TC_Boolean_Table.TC_detumbling_gyro_select_gnd;
 	TMTC_boolean_u.Boolean_Table.ATTC_Master_enable_flag                       = TC_boolean_u.TC_Boolean_Table.ATTC_Master_enable_flag;
 	TMTC_boolean_u.Boolean_Table.DTTC_exe_flag                                 = TC_boolean_u.TC_Boolean_Table.DTTC_exe_flag;
 	TMTC_boolean_u.Boolean_Table.Reaction_wheel_1_speed_enable                 = TC_boolean_u.TC_Boolean_Table.Reaction_wheel_1_speed_enable ;
@@ -1293,12 +1355,13 @@ void TMTC_Assignment()
 	TMTC_boolean_u.Boolean_Table.TC_TCH_Full_Segment_Dump_mode                 = TC_boolean_u.TC_Boolean_Table.TC_TCH_Full_Segment_Dump_mode;
 	//added on 05-08-2020
 	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW1_enable			   = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW1_enable;
-	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW1_disable			   = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW1_disable;
+	//TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW1_disable			   = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW1_disable;
 	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW2_enable			   = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW2_enable;
-	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW2_disable             = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW2_disable;
-	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW3_disable             = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW3_disable;
+	//TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW2_disable             = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW2_disable;
+	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW3_enable             = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW3_enable;
+	//TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW3_disable             = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW3_disable;
 	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW4_enable              = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW4_enable;
-	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW4_disable             = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW4_disable;
+	//TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW4_disable             = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW4_disable;
 	TMTC_boolean_u.Boolean_Table.TC_GND_Drift_Compensation_Enable_or_Disable   = TC_boolean_u.TC_Boolean_Table.TC_GND_Drift_Compensation_Enable_or_Disable;
 	TMTC_boolean_u.Boolean_Table.TC_GND_MagBias_Compensation_Enable_or_Disable = TC_boolean_u.TC_Boolean_Table.TC_GND_MagBias_Compensation_Enable_or_Disable;
 	TMTC_boolean_u.Boolean_Table.TC_H8Backup_H4_Main                           = TC_boolean_u.TC_Boolean_Table.TC_H8Backup_H4_Main;
@@ -1330,17 +1393,17 @@ void TMTC_Assignment()
 	TMTC_gain_select_u.gain_select_Table.TC_Gyro_LPF_Gain_IMU2                 = TC_gain_select_u.TC_gain_select_Table.TC_Gyro_LPF_Gain_IMU2;
 	TMTC_gain_select_u.gain_select_Table.TC_Mag_LPF_Gain_IMU1                  = TC_gain_select_u.TC_gain_select_Table.TC_Mag_LPF_Gain_IMU1;
 	TMTC_gain_select_u.gain_select_Table.TC_Mag_LPF_Gain_IMU2                  = TC_gain_select_u.TC_gain_select_Table.TC_Mag_LPF_Gain_IMU2;
-	TMTC_gain_select_u.gain_select_Table.TC_SS_Currents_LPF_Gain               = TC_gain_select_u.TC_gain_select_Table.TC_SS_Currents_LPF_Gain;
+	//TMTC_gain_select_u.gain_select_Table.TC_SS_Currents_LPF_Gain               = TC_gain_select_u.TC_gain_select_Table.TC_SS_Currents_LPF_Gain;
 	TMTC_gain_select_u.gain_select_Table.TC_GPS_pulse_duration                 = TC_gain_select_u.TC_gain_select_Table.TC_GPS_pulse_duration;
 	TMTC_gain_select_u.gain_select_Table.TC_KP                                 = TC_gain_select_u.TC_gain_select_Table.TC_KP;
 	TMTC_gain_select_u.gain_select_Table.TC_KR                          	   = TC_gain_select_u.TC_gain_select_Table.TC_KR;
 	/************************************************* Added on 26 JULY 2019 *****************************************************************/
-	TMTC_gain_select_u.gain_select_Table.TC_GPS_Validity_Altitude_Threshold    = TC_gain_select_u.TC_gain_select_Table.TC_GPS_Validity_Altitude_Threshold;
+	//TMTC_gain_select_u.gain_select_Table.TC_GPS_Validity_Altitude_Threshold    = TC_gain_select_u.TC_gain_select_Table.TC_GPS_Validity_Altitude_Threshold;
 	TMTC_gain_select_u.gain_select_Table.TC_Wheel_Cutoff_Threshold			   = TC_gain_select_u.TC_gain_select_Table.TC_Wheel_Cutoff_Threshold;
-	TMTC_gain_select_u.gain_select_Table.TC_Wh_SpinUD_Thrsld				   = TC_gain_select_u.TC_gain_select_Table.TC_Wh_SpinUD_Thrsld;
+	//TMTC_gain_select_u.gain_select_Table.TC_Wh_SpinUD_Thrsld				   = TC_gain_select_u.TC_gain_select_Table.TC_Wh_SpinUD_Thrsld;
 	TMTC_gain_select_u.gain_select_Table.TC_comd_pitch_rate					   = TC_gain_select_u.TC_gain_select_Table.TC_comd_pitch_rate;
-	TMTC_gain_select_u.gain_select_Table.TC_AngDev_SafeModetransit_Thrsld	   = TC_gain_select_u.TC_gain_select_Table.TC_AngDev_SafeModetransit_Thrsld;
-	TMTC_gain_select_u.gain_select_Table.TC_AngMomDump_Thrsld				   = TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld;
+	//TMTC_gain_select_u.gain_select_Table.TC_AngDev_SafeModetransit_Thrsld	   = TC_gain_select_u.TC_gain_select_Table.TC_AngDev_SafeModetransit_Thrsld;
+	//TMTC_gain_select_u.gain_select_Table.TC_AngMomDump_Thrsld				   = TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld;
 	TMTC_gain_select_u.gain_select_Table.TC_SpeedDump_Thrsld				   = TC_gain_select_u.TC_gain_select_Table.TC_SpeedDump_Thrsld;
 	TMTC_gain_select_u.gain_select_Table.TC_SpeedDump_TimeSelect			   = TC_gain_select_u.TC_gain_select_Table.TC_SpeedDump_TimeSelect;
 	TMTC_gain_select_u.gain_select_Table.TC_special_Sampling_rate_Select       = TC_gain_select_u.TC_gain_select_Table.TC_special_Sampling_rate_Select;
@@ -1464,11 +1527,11 @@ void TC_IMU2_Off()
 }
 void imu1_db_execute()
 {
-	rIMU1_DB_Execute();
+	//rIMU1_DB_Execute();
 }
 void imu2_db_execute()
 {
-	rIMU2_DB_Execute();
+	//rIMU2_DB_Execute();
 }
 void imu1_db_checksum()
 {
@@ -1486,36 +1549,71 @@ void imu_test_sys_sel()
 }
 void TC_Drift_Uplink_Compenstation_Update_IMU1()
 {
-	//to be done
+	TC_drift_compensation_IMU1[0] = ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[0];
+	TC_drift_compensation_IMU1[1] = ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[1];
+	TC_drift_compensation_IMU1[2] = ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[2];
 }
 void TC_Drift_Uplink_Compenstation_Update_IMU2()
 {
-	//to be done
+	TC_drift_compensation_IMU2[0] = ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[0];
+	TC_drift_compensation_IMU2[1] = ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[1];
+	TC_drift_compensation_IMU2[2] = ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[2];
 }
 void TC_Gyro_Misalignment_Update_IMU1()
 {
-	//to be done
+	IMU1_Corr.DB_w_MisCor[0][0] = 1.0;
+	IMU1_Corr.DB_w_MisCor[0][1] = (double)TC_w_miscor_IMU1[0];
+	IMU1_Corr.DB_w_MisCor[0][2] = (double)TC_w_miscor_IMU1[1];
+	IMU1_Corr.DB_w_MisCor[1][0] = (double)TC_w_miscor_IMU1[2];
+	IMU1_Corr.DB_w_MisCor[1][1] = 1.0;
+	IMU1_Corr.DB_w_MisCor[1][2] = (double)TC_w_miscor_IMU1[3];
+	IMU1_Corr.DB_w_MisCor[2][0] = (double)TC_w_miscor_IMU1[4];
+	IMU1_Corr.DB_w_MisCor[2][1] = (double)TC_w_miscor_IMU1[5];
+	IMU1_Corr.DB_w_MisCor[2][2] = 1.0;
 }
 void TC_Gyro_Misalignment_Update_IMU2()
 {
-	//to be done
+	IMU2_Corr.DB_w_MisCor[0][0] = 1.0;
+	IMU2_Corr.DB_w_MisCor[0][1] = (double)TC_w_miscor_IMU2[0];
+	IMU2_Corr.DB_w_MisCor[0][2] = (double)TC_w_miscor_IMU2[1];
+	IMU2_Corr.DB_w_MisCor[1][0] = (double)TC_w_miscor_IMU2[2];
+	IMU2_Corr.DB_w_MisCor[1][1] = 1.0;
+	IMU2_Corr.DB_w_MisCor[1][2] = (double)TC_w_miscor_IMU2[3];
+	IMU2_Corr.DB_w_MisCor[2][0] = (double)TC_w_miscor_IMU2[4];
+	IMU2_Corr.DB_w_MisCor[2][1] = (double)TC_w_miscor_IMU2[5];
+	IMU2_Corr.DB_w_MisCor[2][2] = 1.0;
 }
 void TC_Gyro_Scale_Factor_Update_IMU1()
 {
-	return;
-	//to be done
+	IMU1_Corr.DB_wSFC_Neg[0] = (double)TC_w_sf_IMU1[0];
+	IMU1_Corr.DB_wSFC_Neg[1] = (double)TC_w_sf_IMU1[1];
+	IMU1_Corr.DB_wSFC_Neg[2] = (double)TC_w_sf_IMU1[2];
+
+	IMU1_Corr.DB_wSFC_Pos[0] = (double)TC_w_sf_IMU1[0];
+	IMU1_Corr.DB_wSFC_Pos[1] = (double)TC_w_sf_IMU1[1];
+	IMU1_Corr.DB_wSFC_Pos[2] = (double)TC_w_sf_IMU1[2];
 }
 void TC_Gyro_Scale_Factor_Update_IMU2()
 {
-	//to be done
+	IMU2_Corr.DB_wSFC_Neg[0] = (double)TC_w_sf_IMU2[0];
+	IMU2_Corr.DB_wSFC_Neg[1] = (double)TC_w_sf_IMU2[1];
+	IMU2_Corr.DB_wSFC_Neg[2] = (double)TC_w_sf_IMU2[2];
+
+	IMU2_Corr.DB_wSFC_Pos[0] = (double)TC_w_sf_IMU2[0];
+	IMU2_Corr.DB_wSFC_Pos[1] = (double)TC_w_sf_IMU2[1];
+	IMU2_Corr.DB_wSFC_Pos[2] = (double)TC_w_sf_IMU2[2];
 }
 void TC_MagBias_Uplink_Compenstation_Update_IMU1()
 {
-	//to be done
+	TC_magbias_compensation_IMU1[0] = ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[0];
+	TC_magbias_compensation_IMU1[1] = ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[1];
+	TC_magbias_compensation_IMU1[2] = ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[2];
 }
 void TC_MagBias_Uplink_Compenstation_Update_IMU2()
 {
-	//to be done
+	TC_magbias_compensation_IMU2[0] = ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[0];
+	TC_magbias_compensation_IMU2[1] = ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[1];
+	TC_magbias_compensation_IMU2[2] = ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[2];
 }
 void TC_Mag_Misalignment_Update_IMU1()
 {
@@ -1535,13 +1633,27 @@ void TC_Mag_Scale_Factor_Update_IMU2()
 }
 
 
-void TC_Mag_LPF_Gain_Update_IMU1()
+void rSSmain_ImaxF_update()
 {
-
+	SS_Main_2Exe_DB.DB_Imax_RPD = (double)TC_SSmain_ImaxF[0];
+	SS_Main_2Exe_DB.DB_Imax_RND = (double)TC_SSmain_ImaxF[1];
+	SS_Main_2Exe_DB.DB_Imax_RPND = (double)TC_SSmain_ImaxF[2];
+	SS_Main_2Exe_DB.DB_Imax_RNND = (double)TC_SSmain_ImaxF[3];
+	SS_Main_2Exe_DB.DB_Imax_PP = (double)TC_SSmain_ImaxF[4];
+	SS_Main_2Exe_DB.DB_Imax_PN = (double)TC_SSmain_ImaxF[5];
+	SS_Main_2Exe_DB.DB_Imax_YP = (double)TC_SSmain_ImaxF[6];
+	SS_Main_2Exe_DB.DB_Imax_YN = (double)TC_SSmain_ImaxF[7];
 }
-void TC_Mag_LPF_Gain_Update_IMU2()
+void rSSredt_ImaxF_update()
 {
-
+	SS_Redundant_2Exe_DB.DB_Imax_RPD = (double)TC_SSredt_ImaxF[0];
+	SS_Redundant_2Exe_DB.DB_Imax_RND = (double)TC_SSredt_ImaxF[0];
+	SS_Redundant_2Exe_DB.DB_Imax_RPND = (double)TC_SSredt_ImaxF[2];
+	SS_Redundant_2Exe_DB.DB_Imax_RNND = (double)TC_SSredt_ImaxF[3];
+	SS_Redundant_2Exe_DB.DB_Imax_PP	= (double)TC_SSredt_ImaxF[4];
+	SS_Redundant_2Exe_DB.DB_Imax_PN = (double)TC_SSredt_ImaxF[5];
+	SS_Redundant_2Exe_DB.DB_Imax_YP = (double)TC_SSredt_ImaxF[6];
+	SS_Redundant_2Exe_DB.DB_Imax_YN = (double)TC_SSredt_ImaxF[7];
 }
 void TC_Gyro_LPF_Gain_Update_IMU1()
 {
@@ -1996,8 +2108,7 @@ void rTLE_Update()
 	OBT_at_TLE_epoch = TLE_data.TC_TLE_data11;
 	chksum_tle = TLE_data.TC_TLE_data12;
 
-	//checksum_u8(TLE_ptr,52);
-	TLE_chksum = chksum8(TLE_ptr,52);
+	TLE_chksum = chksum8(TLE_ptr,56);
 	if(chksum_tle == TLE_chksum)
 	{
 		TLE_Data_Available = 1;
@@ -2835,20 +2946,20 @@ void TC_Wheel_Cutoff_Threshold_1()
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_Wheel_Cutoff_Threshold==01)
 	{
-		TC_wh_speed_thres=GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_0_01;
+		TC_wh_speed_cutoff=GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_0_01;
 	}
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_Wheel_Cutoff_Threshold==02)
 	{
-		TC_wh_speed_thres=GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_0_10;
+		TC_wh_speed_cutoff=GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_0_10;
 	}
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_Wheel_Cutoff_Threshold==03)
 	{
-		TC_wh_speed_thres=GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_0_11;
+		TC_wh_speed_cutoff=GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_0_11;
 	}
 
 	else if(TC_gain_select_u.TC_gain_select_Table.TC_Wheel_Cutoff_Threshold==00)
 	{
-		TC_wh_speed_thres=GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_0_00;
+		TC_wh_speed_cutoff=GAIN_DATA_SET.TC_Wheel_Cutoff_Threshold_0_00;
 	}
 	else
 	{
