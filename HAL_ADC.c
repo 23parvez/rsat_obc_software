@@ -32,7 +32,7 @@ void rHAL_ADC_TM_Copy(uint32* ADC_Addr)
 		battery_temp_1 = ADC_Buffer[0];
 		battery_temp_2 = ADC_Buffer[1];
 		thermistor_15 = ADC_Buffer[46];
-		TM.Buffer.TM_ADC_Thermistor_15 = thermistor_15;
+		TM.Buffer.TM_ADC_Thermistor_15 = (short)(thermistor_15 & 0x0FFF);
 		SA_thermistor1 = ADC_Buffer[40];
 		SA_thermistor2 = ADC_Buffer[41];
 		TM.Buffer.TM_SA_thermistor1 = (short)(SA_thermistor1 & 0x0FFF);
@@ -54,7 +54,6 @@ void rHAL_ADC_TM_Copy(uint32* ADC_Addr)
 
 	AGC_Data = ADC_Buffer[31];
 	TM.Buffer.TM_AGC = (unsigned short)(AGC_Data & 0x00000FFF);
-	//TM.Buffer.TM_AGC = (unsigned char)((AGC_Data>>3) & 0x000000FF);
 	ST_normal.ST_NM_Buffer.TM_AGC = (unsigned short)(AGC_Data & 0x00000FFF);
 
 
@@ -67,16 +66,52 @@ void rHAL_ADC_TM_Copy(uint32* ADC_Addr)
 	ST_normal.ST_NM_Buffer.TM_Thermistor_3 = temp_data_th3;
 	ST_normal.ST_NM_Buffer.TM_Thermistor_4 = temp_data_th4;
 	ST_normal.ST_NM_Buffer.TM_Thermistor_5 = temp_data_th5;
-	TM.Buffer.SA1_Shunt_sw = ADC_Buffer[35];
-	TM.Buffer.SA2_Shunt_sw = ADC_Buffer[36];
-	TM.Buffer.SA3_Shunt_sw = ADC_Buffer[37];
+	if (ADC_Buffer[35] >= SA1_SW_UTP)
+	{
+		SA_STS.SA1_Shunt_sw = True;
+	}
+	else if (ADC_Buffer[35] < SA1_SW_LTP)
+	{
+		SA_STS.SA1_Shunt_sw = False;
+	}
+	else
+	{
+		//
+	}
+
+	if (ADC_Buffer[36] >= SA2_SW_UTP)
+	{
+		SA_STS.SA2_Shunt_sw = True;
+	}
+	else if (ADC_Buffer[36] < SA2_SW_LTP)
+	{
+		SA_STS.SA2_Shunt_sw = False;
+	}
+	else
+	{
+		//
+	}
+
+	if (ADC_Buffer[37] >= SA3_SW_UTP)
+	{
+		SA_STS.SA3_Shunt_sw = True;
+	}
+	else if (ADC_Buffer[37] < SA3_SW_LTP)
+	{
+		SA_STS.SA3_Shunt_sw = False;
+	}
+	else
+	{
+		//
+	}
+	TM.Buffer.SA_Shunt_sw = SA_STS.sa_data;
 }
 
 unsigned char ss_data_2[16];
 void sun_Sensor_data()
 {
 	unsigned char tempdata;
-	unsigned int tempdata1;;
+	unsigned int tempdata1;
 	unsigned long int *Sun_Sensor_Addr;
 	Sun_Sensor_Addr = &ADC_Buffer[14];
 
@@ -105,7 +140,10 @@ void sun_Sensor_data()
 void rHAL_ADC_StatusREG_Enable()
 {
 	uint16 tempdata;
+	uint32 ADC_STS_data;
 	tempdata = 0x00000001;
 	ADC_STATUS_REGISTER = tempdata;
+	ADC_STS_data = ADC_STATUS_REGISTER;
+	TM.Buffer.TM_ADC_STS_data = (unsigned short)(ADC_STS_data & 0x0000FFFF);
 }
 

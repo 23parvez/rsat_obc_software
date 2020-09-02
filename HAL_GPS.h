@@ -31,7 +31,10 @@ unsigned int GPS_OBT_Read_1;
 unsigned int GPS_OBT_Read_2;
 
 unsigned long int GPS_Status_Data;
-unsigned long int GPS_Data;
+//unsigned long int GPS_Data;
+unsigned short GPS_Data;
+unsigned int GPS_count_TM;
+
 unsigned long int GPS_Buffer_Data[106];
 unsigned long int GPS_Addr_Count;
 unsigned long int* GPS_Buffer_Addr;
@@ -41,7 +44,9 @@ unsigned long int GPS_Locations;
 
 //void rHAL_GPS_POWER(unsigned long int GPS_No,unsigned long int GPS_Power);
 //void rHAL_GPS_Read(struct HAL_GPS_registers GPS_No, unsigned long int* GPS_Addr, unsigned int No_of_Bytes);
-unsigned int rHAL_GPS_Read(struct HAL_GPS_registers GPS_No, unsigned long int* GPS_Addr,unsigned int No_of_Bytes);
+//unsigned int rHAL_GPS_Read(struct HAL_GPS_registers GPS_No, unsigned long int* GPS_Addr,unsigned int No_of_Bytes);
+unsigned int rHAL_GPS_Read(struct HAL_GPS_registers GPS_No, unsigned int No_of_Bytes);
+
 //void rHAL_GPS_Read(struct HAL_GPS_registers , unsigned long int* , unsigned int );
 //unsigned long int rHAL_GPS_Config(struct HAL_GPS_registers GPS_No,unsigned long int Config_Type);
 void ST_TM_gps_data();
@@ -95,7 +100,7 @@ unsigned int* GPS2_ptr;
 unsigned char* GPS_TM_Buffer_Addr_USC;
 unsigned char *db_gps_start_address ;
 
-unsigned long int GPS_RCVD_DATA[106];
+unsigned short GPS_RCVD_DATA[256];
 
 //Function Declarations
 void rGPS_TM_Extract(void);

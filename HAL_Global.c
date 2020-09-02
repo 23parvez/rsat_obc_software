@@ -29,24 +29,6 @@ unsigned long int checksum_u32(unsigned long int *db_start_address,unsigned long
 	return inter_at697f_checksum;
 }
 
-
-/*void checksum_u8(unsigned char* db_start_address,unsigned short size_of_data)
-{
-
-	unsigned char inter_val_u8;		//dereferenced value
-	unsigned char chk_sum = 0;
-
-	for(inter_at697f_count = 0;inter_at697f_count < size_of_data;inter_at697f_count++)
-	{
-		inter_val_u8 = *(db_start_address);
-
-		chk_sum = chk_sum ^ inter_val_u8;
-		chk_sum_u8 = chk_sum;
-		db_start_address = db_start_address + 1;
-	}
-	return;
-}*/
-
 unsigned char chksum8(const unsigned char *buff, unsigned int len)
 {
     unsigned int xor_8;       // nothing gained in using smaller types!
@@ -57,6 +39,8 @@ unsigned char chksum8(const unsigned char *buff, unsigned int len)
 
 void rOutput_Latch_Update()
 {
+	unsigned short temp_data;
+	unsigned char temp_data1;
 	//Update to Telemetry
 	//Output Latches
 	TM.Buffer.TM_Output_Latch[0] = MTR_LATCH_REGISTER;
@@ -64,7 +48,10 @@ void rOutput_Latch_Update()
 	TM.Buffer.TM_Output_Latch[2] = IO_LATCH_REGISTER_3;
 	TM.Buffer.TM_Output_Latch[3] = IO_LATCH_REGISTER_4;
 	TM.Buffer.TM_Output_Latch[4] = IO_LATCH_REGISTER_5;
-	TM.Buffer.TM_Output_Latch[5] = IO_LATCH_REGISTER_6;
+	temp_data =  IO_LATCH_REGISTER_6;
+	temp_data1 = (unsigned short)((Auto_manual_speed_sel << 1) & 0xFF);
+	TM.Buffer.TM_Output_Latch_5 = (unsigned char)(temp_data | temp_data1);
+
 
 	ST_normal.ST_NM_Buffer.TM_Output_Latch[0] = MTR_LATCH_REGISTER;
 	ST_normal.ST_NM_Buffer.TM_Output_Latch[1] = IO_LATCH_REGISTER_2;
@@ -76,12 +63,25 @@ void rOutput_Latch_Update()
 
 	//Input Latches
 	TM.Buffer.TM_Input_Latch[0] = IO_IN_LATCH_REGISTER_1;
-	TM.Buffer.TM_Input_Latch[1] = IO_IN_LATCH_REGISTER_2;
 	TM.Buffer.TM_Input_Latch[2] = IO_IN_LATCH_REGISTER_3;
 	TM.Buffer.TM_Input_Latch[3] = IO_IN_LATCH_REGISTER_4;
 
 }
 
+unsigned short RW1s,RW2s,RW3s,RW4s;
+//this function need to be called in main
+void STS_reg_TM()
+{
+	TM.Buffer.RW1_STS_data = (unsigned short)REG32(RW1_STATUS_REGISTER_2);
+	TM.Buffer.RW2_STS_data = (unsigned short)REG32(RW2_STATUS_REGISTER_2);
+	TM.Buffer.RW3_STS_data = (unsigned short)REG32(RW3_STATUS_REGISTER_2);
+	TM.Buffer.RW4_STS_data = (unsigned short)REG32(RW4_STATUS_REGISTER_2);
+
+	TM.Buffer.TM_Antenna_STS_data = (unsigned short)(REG32(ANTENNA_STATUS_REGISTER_1) & 0x0000FFFF);
+	TM.Buffer.TM_pl_status = (unsigned short)(REG32(PAYLOAD_STATUS1_ADDRESS) & 0x0000FFFF);
+	TM.Buffer.TM_TC_STS_data = (unsigned short)(TC_STATUS_REGISTER & 0x0000FFFF);
+	TM.Buffer.TM_STS_data = (unsigned short)(TM_STATUS_REGISTER & 0x0000FFFF);
+}
 
 void ST_output_update()
 {
@@ -313,7 +313,7 @@ void EEPROM_RES()
  *@			      The function will be called in every minor cycle.
  *@			      It takes about 2min to scrub 512kB of memory location.
  ******************************************************************/
-int ram_scrub_cnt;
+
 void s_ram_scrub(void)
 {
 	uint32 blk_end_addr;
@@ -327,7 +327,7 @@ void s_ram_scrub(void)
 		{
 			while(ram_scrub_addr != blk_end_addr)
 			{
-				ram_scrub_cnt++;
+
 				temp_data 		= REG32(ram_scrub_addr);
 				REG32(ram_scrub_addr) = temp_data;
 				ram_scrub_addr += 4;
@@ -336,6 +336,7 @@ void s_ram_scrub(void)
 		else
 		{
 			ram_scrub_addr = RAM_SEG_START_ADDR;
+			TM.Buffer.TM_ram_scrub_cnt = ram_scrub_cnt++;
 		}
 	}
 	else
@@ -416,6 +417,10 @@ void prom_chksum(void)
 		eeprom_blk_end_addr  = eeprom_cur_addr + EEPROM_BLOCK_SIZE;
 		ee_blk_no = 0;
 		eeprom_flag = 0;
+	}
+	for(eeprom_chksum_index = 0; eeprom_chksum_index < 8; eeprom_chksum_index++)
+	{
+		TM.Buffer.TM_PROM_CHK[eeprom_chksum_index] = chksum_arr[eeprom_chksum_index];
 	}
 }
 

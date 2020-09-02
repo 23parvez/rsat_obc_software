@@ -78,14 +78,6 @@ union heaters_manual_on_off_data
 		};
 }manual_on_off;
 
-/*union heaters_auto_manual
-{		unsigned short data;
-		struct
-		{
-		unsigned int  heater_13_on_off[16]:1;
-		};
-}heaters;*/
-
 unsigned long int LTP[16]={0x000001c1,0x000001c1,0x000001c1,0x000001c1,0x000001c1,0x000001c1,0x000001c1,0x000001c1,0,0,0,0,0,0};   // 20 deg
             //{0x0000017c,0x0000017c,0x0000017c,0x0000017c,0x0000017c,0x0000017c,0x0000017c,0x0000017c,0,0,0,0,0,0};  // 25 deg
 		//{0x0000017c,0x0000017c,0x0000017c,0x0000017c,0x0000017c,0x0000017c,0x0000017c,0x0000017c,0,0,0,0,0,0};  // 25 deg

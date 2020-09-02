@@ -97,14 +97,14 @@ unsigned short PL_TM_Status_flag;
 unsigned short pl_ack_count;
 
 
-void rHAL_X_Tx_ON();
+void rHAL_X_Tx_ON(void);
 void rHAL_X_Tx_OFF();
-void rHAL_pl_sts_check();
-void rHAL_pl_cmd_acq();
-void rHAL_pl_cmd_hlt();
+void rHAL_pl_sts_check(void);
+void rHAL_pl_cmd_acq(void);
+void rHAL_pl_cmd_hlt(void);
 void rHAL_pl_diag(void);
-void rHAL_pl_x_tx_data_on();
-void rHAL_pl_x_tx_data_off();
+void rHAL_pl_x_tx_data_on(void);
+void rHAL_pl_x_tx_data_off(void);
 void rHAL_pl_debug(void);
 void rpl_tm_write();
 void rpl_read ();

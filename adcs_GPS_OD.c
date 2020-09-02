@@ -1,7 +1,17 @@
 #include <stdio.h>
 #include <math.h>
 #include "HAL_Address.h"
+
+#include "adcs_ADandEst.h"
+#include "adcs_CommonRoutines.h"
+#include "adcs_Constants.h"
+#include "adcs_GPS_OD.h"
+#include "adcs_LinearController.h"
+#include "adcs_ModePreProcs.h"
+#include "adcs_RefComp.h"
+#include "adcs_SensorDataProcs.h"
 #include "adcs_VarDeclarations.h"
+
 #include "Global.h"
 #include "Telecommand.h"
 #include "HAL_Global.h"
@@ -9,6 +19,9 @@
 #include "Telemetry.h"
 #include "TC_List.h"
 #include "HAL_GPS.h"
+
+static void rGPSDataProcessing(void);
+static void rTLEDataProcessing(void);
 
 void rGPSTLEProcessing(void)
 {
@@ -38,7 +51,7 @@ void rOrbit_Initialization(void)
         ///----------------------Initialization------------------------------------------------------------
         //DeltaT computation using TLE data added on 4-3-2016
         Day_Of_Year_DeltaT = epochdays_sel + (Tsince/1440.0);
-        if((int)epochyr_sel % 4 == 0)///epochyr is not got by GPS, how to implement this logic?
+        if(((int)epochyr_sel % 4) == 0)///epochyr is not got by GPS, how to implement this logic?
         {
             Delta_T = (((2000.0 + (float)epochyr_sel) + ((float)Day_Of_Year_DeltaT / 366.0)) - 2015.0);/// replace (2000.0 + epochyr_sel) with year_sel
             ///DeltaT_MFC = DeltaT_Updated;
@@ -51,14 +64,14 @@ void rOrbit_Initialization(void)
 
         //Orbit frequency computation added on 4-3-16
 
-        if(abs_f(no_sel) <= c_dividebyzerovalue)
+        if(fabs(no_sel) <= c_dividebyzerovalue)
         {
             no_sel = c_dividebyzerovalue;
         }
 
         Orbit_Period_Comp = c_Day_To_Seconds / no_sel;
 
-        if(abs_f(Orbit_Period_Comp) <= c_dividebyzerovalue)
+        if(fabs(Orbit_Period_Comp) <= c_dividebyzerovalue)
         {
             Orbit_Period_Comp = c_dividebyzerovalue;
         }
@@ -94,7 +107,7 @@ void rOrbit_Initialization(void)
         cosio2 = cosio * cosio;
 
         //Block7: Compute un-kozai the mean motion
-        if (abs_f (no) <= c_dividebyzerovalue)
+        if (fabs (no) <= c_dividebyzerovalue)
         {
             no = c_dividebyzerovalue;
         }
@@ -104,23 +117,23 @@ void rOrbit_Initialization(void)
         ak    = pow(ak_temp, c_x2o3);
         rtom = (rteosq * omeosq);
 
-        if(abs_f(rtom) <= c_dividebyzerovalue)
+        if(fabs(rtom) <= c_dividebyzerovalue)
         {
             rtom = c_dividebyzerovalue;
         }
 
 
-        d1    = 0.75 * c_j2 * (3.0 * cosio2 - 1.0) / rtom;
+        d1    = 0.75 * c_j2 * (((3.0 * cosio2) - 1.0) / rtom);
 
-        if(abs_f(ak) <= c_dividebyzerovalue)
+        if(fabs(ak) <= c_dividebyzerovalue)
         {
             ak = c_dividebyzerovalue;
         }
 
         del   = d1 / (ak * ak);
-        adel  = ak * (1.0 - del * del - del *(1.0 / 3.0 + 134.0 * del * del / 81.0));
+        adel  = ak * (1.0 - (del * del) - (del *((1.0 / 3.0) + ((134.0 * del) * (del / 81.0)))));
 
-        if(abs_f(adel) <= c_dividebyzerovalue)
+        if(fabs(adel) <= c_dividebyzerovalue)
         {
             adel = c_dividebyzerovalue;
         }
@@ -128,7 +141,7 @@ void rOrbit_Initialization(void)
         del   = d1/(adel * adel);
         no    = no / (1.0 + del);
 
-        if (abs_f (no) <= c_dividebyzerovalue)
+        if (fabs (no) <= c_dividebyzerovalue)
         {
             no = c_dividebyzerovalue;
         }
@@ -137,7 +150,7 @@ void rOrbit_Initialization(void)
         ao    = pow(ao_temp,c_x2o3);
         sinio = sin(inclo);
         po    = ao * omeosq;
-        con42 = 1.0 - 5.0 * cosio2;
+        con42 = 1.0 - (5.0 * cosio2);
         con41 = -con42-cosio2-cosio2;
         posq = po * po;
         rp    = ao * (1.0 - ecco);
@@ -145,26 +158,26 @@ void rOrbit_Initialization(void)
         if ((omeosq >= 0.0 ) || ( no >= 0.0)) //Block8:if condition check is then go to next computation,else return
         {
             //Block9: Compute Perigee
-            sfour = c_ss;
+        	sfour = c_ss;
             qzms24 = c_qzms2t;
             perigee = (rp - 1.0) * c_radiusearthkm;
 
-
-            if (perigee < 156.0)	//Block10: For perigees below 156 km, s and qoms2t are altered
+            //Block10: For perigees below 156 km, s and qoms2t are altered //Commented to correct MISRA C (Ideally not required)
+            /*if (perigee < 156.0)
             {
                 //Block11: Then sfour and qzms24 are altered
-                sfour = perigee - 78.0;
+            	sfour = perigee - 78.0;
                 if(perigee < 98.0)
                 {
                     sfour = 20.0;
                 }
                 qzms24_temp = (120.0 - sfour) / c_radiusearthkm ;
                 qzms24 = pow(qzms24_temp, 4.0);
-                sfour  = sfour / c_radiusearthkm + 1.0;
-            }
+                sfour  = (sfour / c_radiusearthkm) + 1.0;
+            }*/
 
             //Block12: Compute intermediate variables.
-            if(abs_f(posq) <= c_dividebyzerovalue)
+            if(fabs(posq) <= c_dividebyzerovalue)
             {
                 posq = c_dividebyzerovalue;
             }
@@ -172,7 +185,7 @@ void rOrbit_Initialization(void)
             pinvsq = 1.0 / posq;
             ao_sfour = (ao - sfour);
 
-            if (abs_f(ao_sfour) <= c_dividebyzerovalue)
+            if (fabs(ao_sfour) <= c_dividebyzerovalue)
             {
                 ao_sfour = c_dividebyzerovalue;
             }
@@ -181,91 +194,93 @@ void rOrbit_Initialization(void)
             eta = ao * ecco * tsi;
             etasq = eta * eta;
             eeta = ecco * eta;
-            psisq = abs_f(1.0 - etasq);
+            psisq = fabs(1.0 - etasq);
             coef = qzms24 * pow(tsi,4.0);
             pow_psisq = pow(psisq,3.5);
 
-            if(abs_f(pow_psisq) <= c_dividebyzerovalue)
+            if(fabs(pow_psisq) <= c_dividebyzerovalue)
             {
                 pow_psisq = c_dividebyzerovalue;
             }
 
             coef1 = coef / pow_psisq; //Corrected on 13-5-2015
-            psetasq =  psisq * con41 * (8.0 + 3.0 * etasq * (8.0 + etasq));
+            psetasq =  psisq * con41 * (8.0 + (3.0 * etasq * (8.0 + etasq)));
 
-            if(abs_f(psetasq) <= c_dividebyzerovalue)
+            if(fabs(psetasq) <= c_dividebyzerovalue)
             {
                 psetasq = c_dividebyzerovalue;
             }
 
-            cc2   = coef1 * no * (ao * (1.0 + 1.5 * etasq + eeta * (4.0 + etasq)) + 0.375 * c_j2 * tsi / psetasq);   // need to put divide by zero exception check condition for psisq
+            cc2   = coef1 * (no * ((ao * (1.0 + (1.5 * etasq) + (eeta * (4.0 + etasq)))) + ((0.375 * c_j2) * (tsi / psetasq))));   // need to put divide by zero exception check condition for psisq
             cc1   = bstar * cc2;
             cc3 = 0.0;
 
             if(ecco > 0.0001)
             {
-                cc3 = -2.0 * coef * tsi * c_j3oj2 * no * sinio / ecco;           // (not needed divided by zero check as this happens only if ecco > 0.0001)
+                cc3 = -2.0 * coef * tsi * c_j3oj2 * no * (sinio / ecco);           // (not needed divided by zero check as this happens only if ecco > 0.0001)
             }
 
             x1mth2 = 1.0 - cosio2;
             intermediate = (ao * psisq);
 
-            if (abs_f(intermediate) <= c_dividebyzerovalue)
+            if (fabs(intermediate) <= c_dividebyzerovalue)
             {
                 intermediate = c_dividebyzerovalue;
             }
 
-            cc4    = 2.0* no * coef1 * ao * omeosq *(eta * (2.0 + 0.5 * etasq) + ecco * (0.5 + 2.0 * etasq) - c_j2 * tsi / intermediate * (-3.0 * con41 * (1.0 - 2.0 * eeta + etasq * (1.5 - 0.5 * eeta)) + 0.75 * x1mth2 *(2.0 * etasq - eeta * (1.0 + etasq)) * cos(2.0 * argpo)));    // need to put divide by zero exception check condition
-            cc5 = 2.0 * coef1 * ao * omeosq * (1.0 + 2.75 *(etasq + eeta) + eeta * etasq);
+            cc4    = (2.0* no * coef1 * ao * omeosq *((eta * (2.0 + (0.5 * etasq))) + (ecco * (0.5 + (2.0 * etasq)))
+            		- (c_j2 * (tsi / intermediate) * ((-3.0 * (con41 * (1.0 - (2.0 * eeta) + (etasq * (1.5 - (0.5 * eeta))))))
+            				+ (0.75 * x1mth2 *((2.0 * etasq) - (eeta * (1.0 + etasq))) * cos(2.0 * argpo))))));    // need to put divide by zero exception check condition
+            cc5 = 2.0 * coef1 * ao * omeosq * (1.0 + (2.75 *(etasq + eeta)) + (eeta * etasq));
             cosio4 = cosio2 * cosio2;
             temp1_or_init = 1.5 * c_j2 * pinvsq * no;
             temp2 = 0.5 * temp1_or_init * c_j2 * pinvsq;
             temp3 = -0.46875 * c_j4 * pinvsq * pinvsq * no;
-            mdot   = no + 0.5 * temp1_or_init * rteosq * con41 + 0.0625 * temp2 * rteosq * (13.0 - 78.0 * cosio2 + 137.0 * cosio4);
-            argpdot = -0.5 * temp1_or_init * con42 + 0.0625 * temp2 * (7.0 - 114.0 * cosio2 + 395.0 * cosio4) + temp3 * (3.0 - 36.0 * cosio2 + 49.0 * cosio4);
+            mdot   = no + (0.5 * temp1_or_init * rteosq * con41) + (0.0625 * temp2 * rteosq * (13.0 - (78.0 * cosio2) + (137.0 * cosio4)));
+            argpdot = (-0.5 * temp1_or_init * con42) + (0.0625 * temp2 * (7.0 - ((114.0 * cosio2) + (395.0 * cosio4)))) + (temp3 * (3.0 - (36.0 * cosio2) + (49.0 * cosio4)));
             xhdot1 = -temp1_or_init * cosio;
-            nodedot = xhdot1 + (0.5 * temp2 * (4.0 - 19.0 * cosio2) + 2.0 * temp3 * (3.0 - 7.0 * cosio2)) * cosio;
+            nodedot = xhdot1 + (((0.5 * temp2 * (4.0 - (19.0 * cosio2))) + (2.0 * temp3 * (3.0 - (7.0 * cosio2)))) * cosio);
             omgcof = bstar * cc3 * cos(argpo);
             xmcof = 0.0;
 
             if(ecco > 0.0001) //Corrected on 13-5-2015
             {
-                if(abs_f(eeta) <= c_dividebyzerovalue)
+                if(fabs(eeta) <= c_dividebyzerovalue)
                 {
                     eeta = c_dividebyzerovalue;
                 }
             }
 
-            xmcof = -c_x2o3 * coef * bstar / eeta;
+            xmcof = -c_x2o3 * coef * (bstar / eeta);
             nodecf = 3.5 * omeosq * xhdot1 * cc1;
             t2cof = 1.5 * cc1;
 
             //Block13: sgp4fix for divide by zero with xinco = 180 deg
-            if (abs_f (cosio + 1.0) > (0.0000000000015))//Corrected on 13-5-2015
+            if (fabs (cosio + 1.0) > (0.0000000000015))//Corrected on 13-5-2015
             {
-                xlcof = -0.25 * c_j3oj2 * sinio *(3.0 + 5.0 * cosio) / (1.0 + cosio);          // as + condition is present, divide by zero exception will not arise
+                xlcof = -0.25 * c_j3oj2 * sinio *((3.0 +( 5.0 * cosio)) / (1.0 + cosio));          // as + condition is present, divide by zero exception will not arise
             }
             else
             {
-                xlcof = -0.25 * c_j3oj2 * sinio *(3.0 + 5.0 * cosio) / c_temp4;
+                xlcof = -0.25 * c_j3oj2 * sinio *((3.0 + (5.0 * cosio)) / c_temp4);
             }
 
 
             aycof = -0.5 * c_j3oj2 * sinio;
-            delmo_temp = (1.0 +eta * cos(mo));
+            delmo_temp = (1.0 +(eta * cos(mo)));
             delmo = pow(delmo_temp, 3.0);
             sinmao = sin(mo);
-            x7thm1 = 7.0 * cosio2 - 1.0;
+            x7thm1 = (7.0 * cosio2) - 1.0;
 
             //Block14: Set variables if not deep space
             cc1sq = cc1 * cc1;
             d2 = 4.0 * ao * tsi * cc1sq;
-            temp_or_init = d2 * tsi * cc1 / 3.0;
-            d3 = (17.0 * ao + sfour) * temp_or_init;
-            d4 = 0.5 * temp_or_init * ao * tsi *(221.0 * ao + 31.0 * sfour) *cc1;
-            t3cof = d2 + 2.0 * cc1sq;
-            t4cof = 0.25 * (3.0 *d3 + cc1 *(12.0 * d2 + 10.0 * cc1sq));
-            t5cof = 0.2 * (3.0 * d4 + 12.0 * cc1 * d3 +6.0 * d2 * d2 + 15.0 * cc1sq * (2.0 * d2 + cc1sq));
+            temp_or_init = d2 * tsi * (cc1 / 3.0);
+            d3 = ((17.0 * ao) + sfour) * temp_or_init;
+            d4 = 0.5 * temp_or_init * ao * tsi *((221.0 * ao) + (31.0 * sfour)) *cc1;
+            t3cof = d2 + (2.0 * cc1sq);
+            t4cof = 0.25 * ((3.0 *d3) + (cc1 *((12.0 * d2) + (10.0 * cc1sq))));
+            t5cof = 0.2 * ((3.0 * d4) + (12.0 * cc1 * d3) +(6.0 * d2 * d2) + (15.0 * cc1sq * ((2.0 * d2) + cc1sq)));
         }
     }
 }
@@ -276,35 +291,35 @@ void rOrbit_Propagation(void)
 	if(CB_OrbitModel == Enable)// && OrbitModel_Start ==Set)
 	{
 //Block1: Update for secular gravity and atmospheric
-		xmdf    = mo + mdot * Tsince;
-		argpdf = argpo + argpdot * Tsince;
-		nodedf = nodeo + nodedot * Tsince;
+		xmdf    = mo + (mdot * Tsince);
+		argpdf = argpo + (argpdot * Tsince);
+		nodedf = nodeo + (nodedot * Tsince);
 		argpm   = argpdf;
 		mm = xmdf;
 		t2 = Tsince * Tsince;
-		nodem   = nodedf + nodecf * t2;
-		tempa   = 1.0 - cc1 * Tsince;
+		nodem   = nodedf + (nodecf * t2);
+		tempa   = 1.0 - (cc1 * Tsince);
 		tempe   = bstar * cc4 * Tsince;
-		templ   = t2cof * t2;
+		templ_op   = t2cof * t2;
 
 		delomg = omgcof * Tsince;
 
-		del_temp = (1.0 + eta * cos(xmdf));
-		delm   = xmcof * (pow(del_temp,3.0) - delmo);
+		del_temp = (1.0 + (eta * cos(xmdf)));
+		delm   = (xmcof * (pow(del_temp,3.0))) - delmo;
 
 		temp_om   = delomg + delm;
 		mm     = xmdf + temp_om;
 		argpm = argpdf - temp_om;
 		t3 = t2 * Tsince;
 		t4 = t3 * Tsince;
-		tempa  = tempa - d2 * t2 - d3 * t3 - d4 * t4;
-		etempe = tempe + bstar * cc5 * (sin(mm) - sinmao);
-		templ = templ + t3cof * t3 + t4 * (t4cof + Tsince * t5cof);
+		tempa  = tempa - (d2 * t2) - (d3 * t3) - (d4 * t4);
+		etempe = tempe + (bstar * cc5 * (sin(mm) - sinmao));
+		templ_op = templ_op + (t3cof * t3) + (t4 * (t4cof + (Tsince * t5cof)));
 		nm    = no;
 		em    = ecco;
 		inclm = inclo;
 
-		if(abs_f(nm) <= c_dividebyzerovalue)
+		if(fabs(nm) <= c_dividebyzerovalue)
         {
             nm = c_dividebyzerovalue;
         }
@@ -314,7 +329,7 @@ void rOrbit_Propagation(void)
 		am = (pow(am_temp, c_x2o3)) * tempa * tempa;
 		nm_temp = pow(am,1.5);
 
-		if(abs_f(nm_temp) <= c_dividebyzerovalue)
+		if(fabs(nm_temp) <= c_dividebyzerovalue)
         {
             nm_temp = c_dividebyzerovalue;
         }
@@ -330,7 +345,7 @@ void rOrbit_Propagation(void)
         }
 
 
-		mm = mm + no * templ;
+		mm = mm + (no * templ_op);
 		xlm = mm + argpm + nodem;
 		emsq   = em * em;
 		temp_om   = 1.0 - emsq;
@@ -355,16 +370,16 @@ void rOrbit_Propagation(void)
 
 		//block5: long period periodic
 		axnl = ep * cos(argpp);
-		am_den = (am * (1.0 - ep * ep));
+		am_den = (am * (1.0 - (ep * ep)));
 
-		if(abs_f(am_den) <= c_dividebyzerovalue)
+		if(fabs(am_den) <= c_dividebyzerovalue)
         {
             am_den = c_dividebyzerovalue;
         }
 
 		temp_om = 1.0 / am_den;
-		aynl = ep* sin(argpp) + temp_om * aycof;
-		xl   = mp + argpp + nodep + temp_om * xlcof * axnl;
+		aynl = (ep* sin(argpp)) + (temp_om * aycof);
+		xl   = mp + argpp + nodep + (temp_om * xlcof * axnl);
 
 		//Block6: solve Kepler's equation
 		u_temp = xl - nodep;
@@ -375,15 +390,15 @@ void rOrbit_Propagation(void)
 
 		//Block7: Kepler's iteration
 
-        while ((abs_f(var) >= (0.000000000001))&&(ktr <= 10))
+        while ((fabs(var) >= (0.000000000001))&&(ktr <= 10))
         {
-            //if(abs_f(var) >= (0.000000000001))
+            //if(fabs(var) >= (0.000000000001))
             {
                 sinkp = sin(eol);
                 coskp = cos(eol);
                 temp_prop = 1.0 - (coskp * axnl) - (sinkp * aynl);
-                var = (uuu - aynl * coskp + axnl * sinkp - eol);
-                if(abs_f(temp_prop) <= c_dividebyzerovalue)
+                var = (uuu - (aynl * coskp) + (axnl * sinkp) - eol);
+                if(fabs(temp_prop) <= c_dividebyzerovalue)
                 {
                     temp_prop = c_dividebyzerovalue;
                 }
@@ -391,7 +406,7 @@ void rOrbit_Propagation(void)
 
                 var1 = var / temp_prop;
 
-                if(abs_f(var1) >= 0.95)
+                if(fabs(var1) >= 0.95)
                 {
                     if (var1 > 0.0)
                     {
@@ -409,9 +424,9 @@ void rOrbit_Propagation(void)
         }
 
 		//Block8: short period preliminary quantities
-		ecose = axnl*coskp + aynl*sinkp;
-		esine = axnl*sinkp - aynl*coskp;
-		el2   = axnl*axnl + aynl*aynl;
+		ecose = (axnl*coskp) + (aynl*sinkp);
+		esine = (axnl*sinkp) - (aynl*coskp);
+		el2   = (axnl*axnl) + (aynl*aynl);
 		pl = am * (1.0 - el2);
 
 		if (pl < 0.0)
@@ -428,30 +443,24 @@ void rOrbit_Propagation(void)
 		{
 			rl = am * (1.0 - ecose);
 
-			if(abs_f(r1) <= c_dividebyzerovalue)
+			if(fabs(rl) <= c_dividebyzerovalue)
             {
-                r1= c_dividebyzerovalue;
+                rl= c_dividebyzerovalue;
             }
 
 
-			rdotl  = sqrt(am) * esine/rl;
+			rdotl  = sqrt(am) * (esine/rl);
 			rvdotl = sqrt(pl) / rl;
 			betal  = sqrt(1.0 - el2);
 			temp_temp   = esine / (1.0 + betal);
 
-			if(abs_f(r1) <= c_dividebyzerovalue)
-            {
-                r1 = c_dividebyzerovalue;
-            }
-
-
-			sinu   = am / rl * (sinkp - aynl - axnl * temp_temp);
-			cosu   = am / rl * (coskp - axnl + aynl * temp_temp);
+			sinu   = (am / rl) * (sinkp - aynl - (axnl * temp_temp));
+			cosu   = (am / rl) * (coskp - axnl + (aynl * temp_temp));
 			suu     = atan2(sinu, cosu);
 			sin2u  = (cosu + cosu) * sinu;
-			cos2u  = 1.0 - 2.0 * sinu * sinu;
+			cos2u  = 1.0 - (2.0 * sinu * sinu);
 
-			if(abs_f(pl) <= c_dividebyzerovalue)
+			if(fabs(pl) <= c_dividebyzerovalue)
             {
                 pl = c_dividebyzerovalue;
             }
@@ -462,12 +471,12 @@ void rOrbit_Propagation(void)
 			temp2  = temp1 * temp_om;
 
 			//Block9:update for short period periodic
-			mrt   = rl * (1.0 - 1.5 * temp2 * betal * con41) + 0.5 * temp1 * x1mth2 * cos2u;
-			suu    = suu - 0.25 * temp2 * x7thm1 * sin2u;
-			xnode = nodep + 1.5 * temp2 * cosip * sin2u;
-			xinc  = xincp + 1.5 * temp2 * cosip * sinip * cos2u;
-			mvt   = rdotl - nm * temp1 * x1mth2 * sin2u / c_xke;
-			rvdot = rvdotl + nm * temp1 * (x1mth2 * cos2u + 1.5 * con41) / c_xke;
+			mrt   = (rl * (1.0 - (1.5 * temp2 * betal * con41))) + (0.5 * temp1 * x1mth2 * cos2u);
+			suu    = suu - (0.25 * temp2 * x7thm1 * sin2u);
+			xnode = nodep + (1.5 * temp2 * cosip * sin2u);
+			xinc  = xincp + (1.5 * temp2 * cosip * sinip * cos2u);
+			mvt   = rdotl - (nm * temp1 * x1mth2 * (sin2u / c_xke));
+			rvdot = rvdotl + (nm * temp1 * (((x1mth2 * cos2u) + (1.5 * con41)) / c_xke));
 
 			//Block10: Orientation vectors
 			sinsu = sin(suu);
@@ -479,20 +488,20 @@ void rOrbit_Propagation(void)
 
 			xmx   = -snod * cosi;
 			xmy   =  cnod * cosi;
-			ux    =  xmx * sinsu + cnod * cossu;
-			uy    =  xmy * sinsu + snod * cossu;
+			ux    =  (xmx * sinsu) + (cnod * cossu);
+			uy    =  (xmy * sinsu) + (snod * cossu);
 			uz    =  sini * sinsu;
-			vx    =  xmx * cossu - cnod * sinsu;
-			vy    =  xmy * cossu - snod * sinsu;
+			vx    =  (xmx * cossu) - (cnod * sinsu);
+			vy    =  (xmy * cossu) - (snod * sinsu);
 			vz    =  sini * cossu;
 
 			//Block11: position and velocity [ECI frame]
 			Pos_ECI[0] = (mrt * ux)* c_radiusearthkm;
 			Pos_ECI[1] = (mrt * uy)* c_radiusearthkm;
 			Pos_ECI[2] = (mrt * uz)* c_radiusearthkm;
-			Vel_ECI[0] = (mvt * ux + rvdot * vx) * c_vkmpersec;
-			Vel_ECI[1] = (mvt * uy + rvdot * vy) * c_vkmpersec;
-			Vel_ECI[2] = (mvt * uz + rvdot * vz) * c_vkmpersec;
+			Vel_ECI[0] = ((mvt * ux) + (rvdot * vx)) * c_vkmpersec;
+			Vel_ECI[1] = ((mvt * uy) + (rvdot * vy)) * c_vkmpersec;
+			Vel_ECI[2] = ((mvt * uz) + (rvdot * vz)) * c_vkmpersec;
 
 			TM.Buffer.TM_Pos_ECI[0] = (int)(Pos_ECI[0]/9.31322575E-6);
 			TM.Buffer.TM_Pos_ECI[1] = (int)(Pos_ECI[1]/9.31322575E-6);
@@ -568,18 +577,18 @@ void rOrbit_Propagation(void)
 }
 
 
-void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], double Pos_ECEF_in[3])
+void rOrbitalElements_computation(const double Pos_ECI_in[3], const double Vel_ECI_in[3], const double Pos_ECEF_in[3])
 {
 	if(CB_OrbitModel == Set)// && CB_OrbitModel == Enable)
 	{
 		//Block1: Compute the radial distance using the position vector
-		radialdistance = sqrt(Pos_ECI_in[0] * Pos_ECI_in[0] + Pos_ECI_in[1] * Pos_ECI_in[1] + Pos_ECI_in[2] * Pos_ECI_in[2]);
+		radialdistance = sqrt((Pos_ECI_in[0] * Pos_ECI_in[0]) + (Pos_ECI_in[1] * Pos_ECI_in[1]) + (Pos_ECI_in[2] * Pos_ECI_in[2]));
 
-		radialdistance_ecef = sqrt(Pos_ECEF_in[0] * Pos_ECEF_in[0] + Pos_ECEF_in[1] * Pos_ECEF_in[1] + Pos_ECEF_in[2] * Pos_ECEF_in[2]);
+		radialdistance_ecef = sqrt((Pos_ECEF_in[0] * Pos_ECEF_in[0]) + (Pos_ECEF_in[1] * Pos_ECEF_in[1]) + (Pos_ECEF_in[2] * Pos_ECEF_in[2]));
 
-		r_delta = sqrt(Pos_ECEF_in[0] * Pos_ECEF_in[0] + Pos_ECEF_in[1] * Pos_ECEF_in[1]);
+		r_delta = sqrt((Pos_ECEF_in[0] * Pos_ECEF_in[0]) + (Pos_ECEF_in[1] * Pos_ECEF_in[1]));
 
-		velmag = sqrt(Vel_ECI_in[0] * Vel_ECI_in[0] + Vel_ECI_in[1] * Vel_ECI_in[1] + Vel_ECI_in[2] * Vel_ECI_in[2]);
+		velmag = sqrt((Vel_ECI_in[0] * Vel_ECI_in[0]) + (Vel_ECI_in[1] * Vel_ECI_in[1]) + (Vel_ECI_in[2] * Vel_ECI_in[2]));
 
 		//Block4: compute the square of the magnitude of the velocity vector
 		velmagsq = velmag * velmag;
@@ -587,10 +596,10 @@ void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], do
 		/// Compute the Eccentricity
 		rdtv = (Pos_ECI_in[0] * Vel_ECI_in[0]) + (Pos_ECI_in[1] * Vel_ECI_in[1]) + (Pos_ECI_in[2] * Vel_ECI_in[2]);
 
-		if(abs_f(radialdistance) <= c_dividebyzerovalue)
+		/*if(fabs(radialdistance) <= c_dividebyzerovalue)
         {
             radialdistance = c_dividebyzerovalue;
-        }
+        }*/
 
 		ecc_temp1 = velmagsq - (c_mu/radialdistance);
 
@@ -612,23 +621,23 @@ void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], do
 
 		e_vec[2] = (ecc_temp4 - ecc_temp7) * c_invmu;
 
-		ecc = sqrt(e_vec[0]*e_vec[0] + e_vec[1]*e_vec[1] + e_vec[2]*e_vec[2]);
+		ecc = sqrt((e_vec[0]*e_vec[0]) + (e_vec[1]*e_vec[1]) + (e_vec[2]*e_vec[2]));
 
-		if(abs_f(ecc) <= c_dividebyzerovalue)
+		if(fabs(ecc) <= c_dividebyzerovalue)
         {
             ecc = c_dividebyzerovalue;
         }
 		///Compute the semimajor axis
-		semi_den = (c_twomu-radialdistance*velmagsq);
+		semi_den = (c_twomu-(radialdistance*velmagsq));
 
-		if(abs_f(semi_den) <= c_dividebyzerovalue)
+		if(fabs(semi_den) <= c_dividebyzerovalue)
         {
             semi_den = c_dividebyzerovalue;
         }
 
-		semimajoraxis= (radialdistance*c_mu / semi_den);
+		semimajoraxis= (radialdistance*(c_mu / semi_den));
 
-		if((1.0-abs_f(ecc)) <= c_dividebyzerovalue)
+		if((1.0-fabs(ecc)) <= c_dividebyzerovalue)
         {
             semimajoraxis = c_dividebyzerovalue;
         }
@@ -642,12 +651,12 @@ void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], do
 		angmomentumvec[2] = Cross_Product[2];
 
 		/// compute square of the magnitude of angular momentum vector
-		angmomentumvecmag = sqrt(angmomentumvec[0] * angmomentumvec[0] + angmomentumvec[1] * angmomentumvec[1] + angmomentumvec[2] * angmomentumvec[2]);
+		angmomentumvecmag = sqrt((angmomentumvec[0] * angmomentumvec[0]) + (angmomentumvec[1] * angmomentumvec[1]) + (angmomentumvec[2] * angmomentumvec[2]));
 
-		delta_hmag = sqrt(angmomentumvec[1] * angmomentumvec[1] + angmomentumvec[0] * angmomentumvec[0]);
+		delta_hmag = sqrt((angmomentumvec[1] * angmomentumvec[1]) + (angmomentumvec[0] * angmomentumvec[0]));
 
         /// compute the inverse of the square of angular momentum vector magnitude
-		if(abs_f(angmomentumvecmag) <= c_dividebyzerovalue)
+		if(fabs(angmomentumvecmag) <= c_dividebyzerovalue)
         {
             angmomentumvecmag = c_dividebyzerovalue;
         }
@@ -665,11 +674,11 @@ void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], do
 		{
 		    delta_hmag = c_dividebyzerovalue;
 		}
-		coslongacnode = -1.0*angmomentumvec[1] / delta_hmag;
+		coslongacnode = -1.0*(angmomentumvec[1] / delta_hmag);
 
-        if(abs_f(coslongacnode) >= 1.0)
+        if(fabs(coslongacnode) >= 1.0)
         {
-            coslongacnode = sign_f(coslongacnode);
+            coslongacnode = rsign_f(coslongacnode);
         }
 
 		RAAN = acos(coslongacnode);
@@ -690,9 +699,9 @@ void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], do
 		}
 
 		tempta = e_vecdtr/ecc_r;
-		if(abs_f(tempta) >= 1.0)
+		if(fabs(tempta) >= 1.0)
         {
-            tempta = sign_f(tempta);
+            tempta = rsign_f(tempta);
         }
 
 		trueanomoly = acos(tempta);
@@ -703,19 +712,19 @@ void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], do
         }
 
 		///Compute the Argument of perigee
-        Ndte_vec = -angmomentumvec[1]*e_vec[0] + angmomentumvec[0]*e_vec[1];
+        Ndte_vec = (-angmomentumvec[1]*e_vec[0]) + (angmomentumvec[0]*e_vec[1]);
 
         N_ecc = delta_hmag * ecc;
 
-        if(abs_f(N_ecc) <= c_dividebyzerovalue)
+        if(fabs(N_ecc) <= c_dividebyzerovalue)
         {
             N_ecc = c_dividebyzerovalue;
         }
 
         temparg = Ndte_vec/N_ecc;
-        if(abs_f(temparg) >= 1.0)
+        if(fabs(temparg) >= 1.0)
         {
-            temparg = sign_f(temparg);
+            temparg = rsign_f(temparg);
         }
 
         argofperigee = acos(temparg);
@@ -726,20 +735,20 @@ void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], do
         }
 
         ///Eccentric anomaly
-        omecc = 1.0 + ecc*cos(trueanomoly);
+        omecc = 1.0 + (ecc*cos(trueanomoly));
 
-        if(abs_f(omecc) <= c_dividebyzerovalue)
+        if(fabs(omecc) <= c_dividebyzerovalue)
         {
             omecc = c_dividebyzerovalue;
         }
 
-        sine = sqrt(1.0-ecc*ecc)*sin(trueanomoly)/omecc;
+        sine = sqrt(1.0-(ecc*ecc))*(sin(trueanomoly)/omecc);
 
-		cose = ecc + cos(trueanomoly)/omecc;
+		cose = ecc + (cos(trueanomoly)/omecc);
         eccanomaly = atan2(sine,cose);
 
-        ///Mean anomaly computation. Is this required here?
-        mo = eccanomaly - ecc*sin(eccanomaly);
+        ///Mean anomaly computation.
+        mo = eccanomaly - (ecc*sin(eccanomaly));
         mo = fmod(mo,c_Twopi);
         if(mo <= 0.0)
         {
@@ -748,62 +757,48 @@ void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], do
 
 		///Compute the longitude of the spacecraft using position in ECF frame
 
-		if(abs_f(r_delta) <= c_dividebyzerovalue)
-        {
-            r_delta = c_dividebyzerovalue;
-        }
+        longitude = 2.0*atan2((r_delta - Pos_ECEF_in[0]),Pos_ECEF_in[1]);
 
-		longitude_tan_num = Pos_ECEF_in[1]/r_delta;
-		longitude_tan_den = Pos_ECEF_in[0]/r_delta;
-
-		longitude = atan2(longitude_tan_num,longitude_tan_den);
+		if (longitude > c_Pi)
+		{
+			longitude = longitude - c_Twopi;
+		}
 
 		///Compute the latitude of the satellite
 
-		if(abs_f(radialdistance_ecef) <= c_dividebyzerovalue)
-		{
-			radialdistance_ecef = c_dividebyzerovalue;
-		}
+		mua_gcgd = pow((r_delta/c_radiusearthkm),2.0);
 
-		latitude_temp = (Pos_ECEF_in[2]/radialdistance_ecef);
-		latitude = asin(latitude_temp);
+		xa_gcgd = pow(((1.0-c_ecc_ellip)*Pos_ECEF_in[2]/c_polarradiuskm),2.0);
 
-		xa_gcgd = 6356752.314245/(sqrt(tan(latitude)*tan(latitude) + 0.99330562));
+		l_gcgd = (c_ecc_ellip/2.0);
 
-		if (xa_gcgd<c_radiusearthkm)
-			mua_gcgd = atan2(sqrt(c_radiusearthkm*c_radiusearthkm*1000000.0 - xa_gcgd*xa_gcgd),0.996647189335*xa_gcgd);
-		else
-			mua_gcgd = 0.0;
+		ra_gcgd = mua_gcgd * xa_gcgd * pow(l_gcgd,2);
 
-		if (latitude < 0)
-		{
-			mua_gcgd = -mua_gcgd;
-		}
+		dlambda_gcgd = (pow((mua_gcgd+xa_gcgd-(4.0*l_gcgd*l_gcgd)),3.0)/216.0) + ra_gcgd;
 
-		ra_gcgd = xa_gcgd/cos(latitude);
+		den_gcgd = sqrt(((2.0*dlambda_gcgd) - ra_gcgd) * ra_gcgd);
 
-		l_gcgd = radialdistance_ecef*1.0 - ra_gcgd;
+		h_gcgd = -((2.0*l_gcgd*l_gcgd) + mua_gcgd + xa_gcgd)/2.0;
 
-		dlambda_gcgd = mua_gcgd - latitude;
+		rhoa_gcgd = (h_gcgd/3.0) - pow((dlambda_gcgd + den_gcgd),(1.0/3.0)) - pow((dlambda_gcgd - den_gcgd),(1.0/3.0));
 
-		h_gcgd = l_gcgd*cos(dlambda_gcgd);
+		dmu_gcgd = l_gcgd*l_gcgd * ((l_gcgd*l_gcgd) - mua_gcgd - xa_gcgd);
 
-		den_gcgd = 1 - (0.00669437999)*sin(mua_gcgd)*sin(mua_gcgd);
-		rhoa_gcgd = (6335439.32722)/sqrt(den_gcgd*den_gcgd*den_gcgd);
+		gd_gcgd = sqrt(sqrt((rhoa_gcgd * rhoa_gcgd) - dmu_gcgd) - ((rhoa_gcgd + h_gcgd)/2.0))
+		 - (rsign_f(mua_gcgd - xa_gcgd) * sqrt((rhoa_gcgd - h_gcgd)/2.0));
 
-		dmu_gcgd = atan2(l_gcgd*sin(dlambda_gcgd),rhoa_gcgd + h_gcgd);
+		latitude_temp = (1.0 - c_ecc_ellip)*(Pos_ECEF_in[2]/(gd_gcgd - l_gcgd));
 
-		gd_gcgd = mua_gcgd - dmu_gcgd;
+		latitude = atan(latitude_temp/((1-c_ecc_ellip)*r_delta/(gd_gcgd+l_gcgd)));
 
-		latitude = gd_gcgd;
         Orbit_Period = c_Twopi*sqrt(pow(semimajoraxis,3.0)/c_mu);
 
-        if(abs_f(Orbit_Period) <= c_dividebyzerovalue)
+        if(fabs(Orbit_Period) <= c_dividebyzerovalue)
         {
             Orbit_Period = c_dividebyzerovalue;
         }
 
-		no = 24.0*3600.0/Orbit_Period;
+		no = 24.0*(3600.0/Orbit_Period);
 
 		TM.Buffer.TM_Latitude = (int)(latitude/4.19095159E-8);
 		ST_special.ST_SP_Buffer.TM_Latitude = (int)(latitude/4.19095159E-8);
@@ -816,7 +811,7 @@ void rOrbitalElements_computation(double Pos_ECI_in[3], double Vel_ECI_in[3], do
 	return;
 }
 
-void rTLEDataProcessing(void)
+static void rTLEDataProcessing(void)
 {
     if (CB_OrbitModel == Enable)
     {
@@ -837,7 +832,7 @@ void rTLEDataProcessing(void)
 					lmonth[i_jday] = 28;
 				}
 
-				if (i_jday == 4 || i_jday == 6 || i_jday == 9 || i_jday == 11)
+				if ((i_jday == 4) || (i_jday == 6) || (i_jday == 9) || (i_jday == 11))
 				{
 					lmonth[i_jday] = 30;
 				}
@@ -877,10 +872,10 @@ void rTLEDataProcessing(void)
 
 			//Tsince = Tsince_TLE_tc;
 
-			if (OBT_at_TLE_epoch > Minor_Cycle_Count)
+			if (OBT_at_TLE_epoch > Major_Cycle_Count)
 			{
-				Delta_TLE = Minor_Cycle_Count - OBT_at_TLE_epoch;
-				Tsince = (double)Delta_TLE * c_MiC/c_min_per_day;
+				Delta_TLE = (double)(Major_Cycle_Count - OBT_at_TLE_epoch);
+				Tsince = Delta_TLE * (c_MaC/c_min_per_day);
 				epochdays_sel = epochdays_TLE_tc;
 				inclination_sel = inclination_TLE_tc*c_D2R;
 				nodeo_sel = nodeo_TLE_tc*c_D2R;
@@ -903,16 +898,14 @@ void rTLEDataProcessing(void)
     }
 }
 
-void rJulian_Day(int year, int mon, int days, int hr, int minute, double sec)
+void rJulian_Day(const int year, const int mon, const int days, const int hr, const int minute, const double sec)
 {
     if (CB_OrbitModel == Enable)
     {
-        Julian_day = 367.0 * (float)year - floor( (7.0 * ((float)year + floor( ((float)mon + 9.0) / 12.0) ) ) * 0.25 )+ floor( 275.0 * (float)mon / 9.0 )+ (float)days + 1721013.5;      // as denominator consists of constant, divide by zero exception will not arise
+        Julian_day = (367.0 * (float)year) - (floor( (7.0 * ((float)year + floor( ((float)mon + 9.0) / 12.0) ) ) * 0.25 ))+ (floor( 275.0 * (float)mon / 9.0 ))+ (float)days + 1721013.5;      // as denominator consists of constant, divide by zero exception will not arise
 
-        jd_time = ((sec/60.0 + (float)minute) / 60.0 + (float)hr ) / 24.0 + Tsince/c_min_per_day;
+        jd_time = (((((sec/60.0) + (float)minute) / 60.0) + (float)hr ) / 24.0) + (Tsince/c_min_per_day);
         tut = ( (Julian_day + jd_time) - 2451545.0 ) / 36525.0;
-
-        return;
     }
 }
 
@@ -939,22 +932,22 @@ void rECEFtoECItoECEF(void)
         /// compute julian day of UT1 JDUT1
         UT1 = jd_time * c_min_per_day;
 
-        UTC = UT1*60.0 - (double)ADCS_TC_data_command_Table.TC_delUT1_ECEF2ECI;
+        UTC_EE = (UT1*60.0) - ADCS_TC_data_command_Table.TC_delUT1_ECEF2ECI;
 
         /// compute julian day of UTC JDUTC
 
-        TAI = UTC + (double)ADCS_TC_data_command_Table.TC_delAT_ECEF2ECI;
+        TAI = UTC_EE + ADCS_TC_data_command_Table.TC_delAT_ECEF2ECI;
 
         TDT = TAI + 32.184;
 
         /// compute julian day of TDT JDTDT
-        JDTDT = Julian_day + TDT/c_Day_To_Seconds;
+        JDTDT = Julian_day + (TDT/c_Day_To_Seconds);
 
         TTDT = (JDTDT - 2451545.0) / 36525.0;
 
         M_quad = (357.5277233 + (35999.05034 * TTDT));
 
-        if (abs_f(M_quad)>= 360.0)
+        if (fabs(M_quad)>= 360.0)
         {
             M_quad = (fmod((M_quad),360.0));
         }
@@ -963,10 +956,10 @@ void rECEFtoECItoECEF(void)
         sine1 =  sin(M_quad*c_D2R);
         sine2 = sin(2.0*M_quad*c_D2R);
 
-        TDB = TDT + (0.00165800000 * sine1 + 0.000013850000 * sine2);
+        TDB = TDT + ((0.00165800000 * sine1) + (0.000013850000 * sine2));
 
         /// compute julian day of TDB JDTDB
-        JDTDB = Julian_day + TDB/c_Day_To_Seconds;
+        JDTDB = Julian_day + (TDB/c_Day_To_Seconds);
 
         TTDB = (JDTDB - 2451545.0) / 36525.0;
 
@@ -976,11 +969,11 @@ void rECEFtoECItoECEF(void)
         /// Precession
 
         zeta= (0.011180860*TTDB) + (1.464E-6*TTDB2)+ ( 8.7E-8*TTDB3);
-        z = (0.011180860*TTDB) + (5.308E-6 * TTDB2)+ (8.9E-8*TTDB3);
-        theta = (0.009717173*TTDB) -( 2.068E-6 *TTDB2) - ( 2.02E-7*TTDB3);
+        z_prsn = (0.011180860*TTDB) + (5.308E-6 * TTDB2)+ (8.9E-8*TTDB3);
+        theta_prsn = (0.009717173*TTDB) -( 2.068E-6 *TTDB2) - ( 2.02E-7*TTDB3);
 
 
-        ryRot(-theta);
+        ryRot(-theta_prsn);
         rzRot(zeta);
 
         rMatMul3x3(Ry, Rz);
@@ -992,7 +985,7 @@ void rECEFtoECItoECEF(void)
             }
         }
 
-        rzRot(z);
+        rzRot(z_prsn);
         rMatMul3x3(Rz, pre_temp);
         for(i_god=0; i_god<3; i_god++)
         {
@@ -1003,9 +996,9 @@ void rECEFtoECItoECEF(void)
         }
 
         // iau 1980 nutation
-		eps=0.40909280 - 0.000226966*TTDB - 2.86E-9*TTDB2 + 8.8E-9*TTDB3;
+		eps=0.40909280 - (0.000226966*TTDB) - (2.86E-9*TTDB2) + (8.8E-9*TTDB3);
 		rxRot(-eps);
-		rzRot((double)ADCS_TC_data_command_Table.TC_nut_dpsi);
+		rzRot(ADCS_TC_data_command_Table.TC_nut_dpsi);
 		rMatMul3x3(Rz, Rx);
 		for(i_god=0; i_god<3; i_god++)
 		{
@@ -1015,7 +1008,7 @@ void rECEFtoECItoECEF(void)
 			}
 		}
 
-		xin_temp = eps+(double)ADCS_TC_data_command_Table.TC_nut_deps;
+		xin_temp = eps+ADCS_TC_data_command_Table.TC_nut_deps;
 		rxRot(xin_temp);
 		rMatMul3x3(Rx, nut_temp);
 		for(i_god=0; i_god<3; i_god++)
@@ -1027,9 +1020,10 @@ void rECEFtoECItoECEF(void)
 		}
 
         // astronomical arguments
+		// iau 1980 nutation
         /*rast_args(TTDB);
 
-        // iau 1980 nutation
+
         eps=0.40909280 - 0.000226966*TTDB - 2.86E-9*TTDB2 + 8.8E-9*TTDB3;
         rnut_iau1980(TTDB,f);
         rxRot(-eps);
@@ -1055,12 +1049,12 @@ void rECEFtoECItoECEF(void)
         }*/
 
         tut1 = ((Julian_day) - 2451545.0)/36525.0;
-        gmst0 = 100.4606184+36000.77005361*tut1+0.000038793*tut1*tut1-2.6E-8*tut1*tut1*tut1;
-        gmst_=gmst0+(0.2506844773374)*UT1;
+        gmst0 = 100.4606184+(36000.77005361*tut1)+(0.000038793*tut1*tut1)-(2.6E-8*tut1*tut1*tut1);
+        gmst_=gmst0+((0.2506844773374)*UT1);
         gmst_=fmod(gmst_,360.0);
         gmst_ = gmst_ * c_D2R;
-        gast=gmst_+dpsi*cos(eps);
-        gast+=(0.00264*sin(f[4])+0.000063*sin(2.0*f[4]))*c_AS2R;
+        gast=gmst_+(dpsi*cos(eps));
+        gast+=((0.00264*sin(f[4]))+(0.000063*sin(2.0*f[4])))*c_AS2R;
         //gast = 2.267539;
         rzRot(gast);
 
@@ -1072,8 +1066,8 @@ void rECEFtoECItoECEF(void)
             }
         }
 
-        ryRot((double)ADCS_TC_data_command_Table.TC_xp_ECEF2ECI*c_AS2R);
-        rxRot((double)ADCS_TC_data_command_Table.TC_yp_ECEF2ECI*c_AS2R);
+        ryRot(ADCS_TC_data_command_Table.TC_xp_ECEF2ECI*c_AS2R);
+        rxRot(ADCS_TC_data_command_Table.TC_yp_ECEF2ECI*c_AS2R);
         rMatMul3x3(Ry, Rx);
         for(i_god=0; i_god<3; i_god++)
         {
@@ -1113,7 +1107,8 @@ void rECEFtoECItoECEF(void)
 
 }
 
-/*void rast_args(double TTDBin)
+// iau 1980 nutation ---------------------------------------------------------
+/*void rast_args(const double TTDBin)
 {
     for(tt[0]=TTDBin,i_god=1 ; i_god<4 ; i_god++)
     {
@@ -1130,8 +1125,8 @@ void rECEFtoECItoECEF(void)
     }
 }
 
-// iau 1980 nutation ---------------------------------------------------------
-void rnut_iau1980(double TTDBin, const double *fin)
+
+void rnut_iau1980(const double TTDBin, const double *fin)
 {
     dpsi=deps=0.0;
 
@@ -1145,15 +1140,15 @@ void rnut_iau1980(double TTDBin, const double *fin)
         dpsi+=(nut[i_god][6]+nut[j_god][7]*TTDBin)*sin(ang);
         deps+=(nut[i_god][8]+nut[i_god][9]*TTDBin)*cos(ang);
     }
-    dpsi*=1.0E-4*c_AS2R; // 0.1 mas -> rad
+    dpsi*=1.0E-4*c_AS2R;
     deps*=1.0E-4*c_AS2R;
 }*/
 
-void rGPSDataProcessing(void)
+static void rGPSDataProcessing(void)
 {
     if (CB_OrbitModel == Enable)
     {
-        if(f_GPS_Valid_Data ==1 && (Major_Cycle_Count % TC_GPS_pulse_duration == 0))
+        if((f_GPS_Valid_Data ==1) && ((Major_Cycle_Count % TC_GPS_pulse_duration) == 0))
         {
         	Pos_ECEF_GPS[0] =(*((int*)(GPS_TM_Buffer_Addr_USC+160))) * 0.00001;
 			Pos_ECEF_GPS[1] = (*((int*)(GPS_TM_Buffer_Addr_USC+164))) * 0.00001;
@@ -1170,9 +1165,9 @@ void rGPSDataProcessing(void)
 			GPS_PPS_OBT = *(GPS_TM_Buffer_Addr_USC+208);
 
 
-			gps_pulse_mic_cnt = GPS_READ_OBT - GPS_PPS_OBT;
+			pps_delta_utc = GPS_READ_OBT - GPS_PPS_OBT;
 
-            UTC_sec_GPS = UTC_sec_GPS + gps_pulse_mic_cnt * 0.001;
+            UTC_sec_GPS = UTC_sec_GPS + ((double)pps_delta_utc * 0.001);
 
             rJulian_Day(year_GPS,UTC_mon_GPS,UTC_day_GPS,UTC_hr_GPS,UTC_min_GPS,UTC_sec_GPS);
             rECEFtoECItoECEF();
@@ -1190,7 +1185,7 @@ void rGPSDataProcessing(void)
                     lmonth[i_jday] = 28;
                 }
 
-                if (i_jday == 4 || i_jday == 6 || i_jday == 9 || i_jday == 11)
+                if ((i_jday == 4) || (i_jday == 6) || (i_jday == 9) || (i_jday == 11))
                 {
                     lmonth[i_jday] = 30;
                 }
@@ -1215,7 +1210,7 @@ void rGPSDataProcessing(void)
 
             Numofdays = tempdays + UTC_day_GPS;
 
-            epochdays_GPS = (float)Numofdays + (float)UTC_hr_GPS/24.0 + (float)UTC_min_GPS/(60.0*24.0) + UTC_sec_GPS/(60.0*60.0*24.0);
+            epochdays_GPS = (float)Numofdays + ((float)UTC_hr_GPS/24.0) +( (double)UTC_min_GPS/(60.0*24.0)) + (UTC_sec_GPS/(60.0*60.0*24.0));
 
             Epochyear_GPS = year_GPS - 2000;
 
@@ -1292,9 +1287,12 @@ void rGPSDataProcessing(void)
             GPSDataReady_NA_count = GPSDataReady_NA_count + 1;
             if (GPSDataReady_NA_count >= ADCS_TC_data_command_Table.TC_Time_GPS2TLE)
             {
-            	TC_boolean_u.TC_Boolean_Table.TC_GPS_TLE_Select = 0;
-                Delta_TLE = Present_OBT - OBT_at_TLE_epoch;
-                Tsince = (double)Delta_TLE * c_MaC/c_min_per_day;
+            	if (OBT_at_TLE_epoch > Major_Cycle_Count)
+				{
+            		TC_boolean_u.TC_Boolean_Table.TC_GPS_TLE_Select = 0;
+					Delta_TLE = (double)(Major_Cycle_Count - OBT_at_TLE_epoch);
+					Tsince = Delta_TLE * (c_MaC/c_min_per_day);
+				}
             }
         }
     }

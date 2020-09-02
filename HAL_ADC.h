@@ -2,9 +2,15 @@
 #define HAL_ADC
 
 #define ADC_READ_DISABLE 0x0000FFFE
-//#define EXTRACT_LSB_11   0x000007FF
 #define EXTRACT_LSB_12   0x00000FFF
 #define ADC_READ_ENABLE  0x00000001
+#define SA1_SW_UTP       0x0130
+#define SA1_SW_LTP       0x00bf
+#define SA2_SW_UTP       0x0080
+#define SA2_SW_LTP       0x000f
+#define SA3_SW_UTP       0x0030
+#define SA3_SW_LTP       0x000f
+
 unsigned long int ADC_Status_Data;
 unsigned long int inter_HAL_ADC_Data_Ready;
 
@@ -46,6 +52,18 @@ union ADC_thermistor_lsb_msb
 
 	};
 }thermistor_lsb;
+
+union SA_SW_STS
+{
+	unsigned char sa_data;
+	struct
+	{
+		unsigned SA1_Shunt_sw:1;
+		unsigned SA2_Shunt_sw:1;
+		unsigned SA3_Shunt_sw:1;
+		unsigned filler      :5;
+	};
+}SA_STS;
 
 //Function Declarations
 void rHAL_ADC_Read(unsigned long int* ADC_Addr);

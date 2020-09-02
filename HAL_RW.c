@@ -1,20 +1,22 @@
+#include "Global.h"
 #include "HAL_Global.h"
 #include "HAL_RW.h"
 #include "HAL_Address.h"
-#include "Global.h"
 #include "Telemetry.h"
 #include "TM_Global_Buffer.h"
-#include "adcs_Constants.h"
 #include "TC_List.h"
+
+#include "adcs_Constants.h"
+#include "adcs_LinearController.h"
 #include "adcs_VarDeclarations.h"
 
 void RW_Init(void)
 {
 	 //Initialize RW Configuration Registers
-	 RW_1.RW_Configure_Register = RW1_CONFIG_REGISTER_1;
-	 RW_2.RW_Configure_Register = RW2_CONFIG_REGISTER_1;
-	 RW_3.RW_Configure_Register = RW3_CONFIG_REGISTER_1;
-	 RW_4.RW_Configure_Register = RW4_CONFIG_REGISTER_1;
+	 RW_1.RW_Configure_Register     = RW1_CONFIG_REGISTER_1;
+	 RW_2.RW_Configure_Register     = RW2_CONFIG_REGISTER_1;
+	 RW_3.RW_Configure_Register     = RW3_CONFIG_REGISTER_1;
+	 RW_4.RW_Configure_Register     = RW4_CONFIG_REGISTER_1;
 
 	 //Initialize RW Status Registers
 	 RW_1.RW_Status_Register_1      = RW1_STATUS_REGISTER;
@@ -26,18 +28,19 @@ void RW_Init(void)
 	 RW_2.RW_Status_Register_2      = RW2_STATUS_REGISTER_2;
 	 RW_3.RW_Status_Register_2      = RW3_STATUS_REGISTER_2;
 	 RW_4.RW_Status_Register_2      = RW4_STATUS_REGISTER_2;
+
 	 //Initialize Buffer Base
-	 RW_1.RW_Buffer_Register      = RW1_BUFFER_BASE;
-	 RW_2.RW_Buffer_Register      = RW2_BUFFER_BASE;
-	 RW_3.RW_Buffer_Register      = RW3_BUFFER_BASE;
-	 RW_4.RW_Buffer_Register      = RW4_BUFFER_BASE;
+	 RW_1.RW_Buffer_Register        = RW1_BUFFER_BASE;
+	 RW_2.RW_Buffer_Register        = RW2_BUFFER_BASE;
+	 RW_3.RW_Buffer_Register        = RW3_BUFFER_BASE;
+	 RW_4.RW_Buffer_Register        = RW4_BUFFER_BASE;
 }
 
 unsigned short HAL_RW_CRC_Check(unsigned char* RW_Buffer_Addr,unsigned long int Byte_Count)
 {
-	//Local variables' declaration
+	//Local variables declaration
 	unsigned int inter_HAL_RW_CRC_Check_Count;
-	unsigned int inter_HAL_RW_CRC;
+	unsigned short inter_HAL_RW_CRC;
 	unsigned char inter_HAL_RW_CRC_Check_Byte;
 
 	inter_HAL_RW_CRC = 0xFFFF;
@@ -48,48 +51,46 @@ unsigned short HAL_RW_CRC_Check(unsigned char* RW_Buffer_Addr,unsigned long int 
 		for(inter_HAL_RW_CRC_Check_Count = 0; inter_HAL_RW_CRC_Check_Count <= 7; inter_HAL_RW_CRC_Check_Count++)
 		{
 			inter_HAL_RW_CRC = (inter_HAL_RW_CRC>>1) ^ (((inter_HAL_RW_CRC_Check_Byte^inter_HAL_RW_CRC)& 0x01)? RW_POLY : 0 );
-			inter_HAL_RW_CRC_Check_Byte  >>=1;
+			inter_HAL_RW_CRC_Check_Byte  >>= 1;
 		}
 	}
-	return (short)inter_HAL_RW_CRC;
+	return inter_HAL_RW_CRC;
 }
 
-unsigned int rw_tc_count;
-unsigned int rw_tc_count_test;
-void rHAL_RW_TC_Write(struct HAL_RW_Data_Structure RW_No,union  RW_TC_Command_u RW,float  RW_Speed,uint8  RW_ID)
+void rHAL_RW_TC_Write(struct HAL_RW_Data_Structure* RW_No, float RW_Speed, uint8 RW_ID)
 {
 	////Local variables' declaration
 	int Byte_count;					//Counter in the loop
 	unsigned int inter_RW_Status_Register_1;
+	unsigned char* TC_ptr;			//Pointer to structure of data frame
+	unsigned char* TC_data_ptr;		//Pointer to union (contains data which can be accessed as short or char)
 
 	// Read the RW Status register
-
-	inter_RW_Status_Register_1 = (REG32(RW_No.RW_Status_Register_2) & 0x0000FFFF);
+	inter_RW_Status_Register_1 = (REG32(RW_No->RW_Status_Register_2) & 0x0000FFFF);
 
 	if ((inter_RW_Status_Register_1 & RW_TX_BUF_BUSY))
 	{
+		RW_TC.Start_Byte  = 0xC0;
+		RW_TC.Dest_Addr   = NSP_addr_table[RW_ID];
+		RW_TC.Source_Addr = 0x11;
+		RW_TC.Poll_Bit    = 0x1;
+		RW_TC.B           = 0x0;
+		RW_TC.ACK         = 0x1;
+		RW_TC.Cmd_Code    = 0x08;
+		RW_TC.Data_MSB    = 0x00;
+		RW_TC.Mode_Type   = 0x05;
+		RW_TC.Stop_Byte   = 0xC0;
 
-		RW.Start_Byte  = 0xC0;
-		RW.Dest_Addr   = NSP_addr_table[RW_ID];
-		RW.Source_Addr = 0x11;
-		RW.Poll_Bit    = 0x1;
-		RW.B           = 0x0;
-		RW.ACK         = 0x1;
-		RW.Cmd_Code    = 0x08;
-		RW.Data_MSB    = 0x00;
-		RW.Mode_Type   = 0x05;
-		RW.Stop_Byte   = 0xC0;
-
-		USIF_u.float_num = RW_Speed;	//Assigning of reaction wheel speed
-		USIF_u.int_num   = reverse_order(USIF_u.int_num);		//Reversing the order of reaction wheel data (byte wise)
-		RW.Data_Value    = USIF_u.float_num;		//Assigning reaction wheel speed data back to structure
-		NOB_CRC_TC       = (((unsigned char*)&RW.CRC) - (&RW.Dest_Addr)) / sizeof(char);
-		NOB_SFC_TC       = (((unsigned char*)&RW.Stop_Byte) - (&RW.Dest_Addr)) / sizeof(char);
-		RW.CRC           = HAL_RW_CRC_Check(&RW.Dest_Addr, NOB_CRC_TC);		// Computation of CRC
-		RW.CRC           = byte_swap(RW.CRC);
+		USIF_u.float_num  = RW_Speed;							//Assigning of reaction wheel speed
+		USIF_u.int_num    = reverse_order(USIF_u.int_num);		//Reversing the order of reaction wheel data (byte wise)
+		RW_TC.Data_Value  = USIF_u.float_num;					//Assigning reaction wheel speed data back to structure
+		NOB_CRC_TC        = (((unsigned char*)&RW_TC.CRC) - (&RW_TC.Dest_Addr)) / sizeof(char);
+		NOB_SFC_TC        = (((unsigned char*)&RW_TC.Stop_Byte) - (&RW_TC.Dest_Addr)) / sizeof(char);
+		RW_TC.CRC         = HAL_RW_CRC_Check(&RW_TC.Dest_Addr, NOB_CRC_TC);		// Computation of CRC
+		RW_TC.CRC         = byte_swap(RW_TC.CRC);
 
 		Byte_count  = 0;
-		TC_ptr      = &RW.Data[0];
+		TC_ptr      = &RW_TC.Data[0];
 
 		TC_data_ptr = &RW_Data_SlipFrame_TC[0];
 
@@ -98,61 +99,58 @@ void rHAL_RW_TC_Write(struct HAL_RW_Data_Structure RW_No,union  RW_TC_Command_u 
 			*TC_data_ptr++ = *TC_ptr++;
 			Byte_count++;
 		}
-
-		rRW_SlipFrame_Check(&RW_No, &RW_Data_SlipFrame_TC[0], NOB_SFC_TC);		//Slip-frame check routine
-
+		rRW_SlipFrame_Check(RW_No, &RW_Data_SlipFrame_TC[0], NOB_SFC_TC);		//Slip-frame check routine
 	}
 }
+
 unsigned char rw_count_test;
 unsigned int rw_tm_count;
 unsigned int rw_tmtc_count;
-void rHAL_RW_TM_Write(struct HAL_RW_Data_Structure RW_No,union RW_TM_Command_u RW,uint8 RW_ID)
+void rHAL_RW_TM_Write (struct HAL_RW_Data_Structure* RW_No, uint8 RW_ID)
 {
 	//Local variables' declaration
 	int Byte_count;					//Counter in the loop
 	unsigned int inter_RW_Status_Register_1;
+	unsigned char* TMC_ptr;			//Pointer to structure of data frame
+	unsigned char* TMC_data_ptr;	//Pointer to union (contains data which can be accessed as short or char)
 	//--------------------------------------------------------------
-
 	// Read the Status Register of Reaction Wheel interface
 
-	inter_RW_Status_Register_1 = (REG32(RW_No.RW_Status_Register_2) & 0x0000FFFF);
+	inter_RW_Status_Register_1 = (REG32(RW_No->RW_Status_Register_2) & 0x0000FFFF);
 
 	if ((inter_RW_Status_Register_1 & RW_TX_BUF_BUSY))
 	{
+		RW_TMC.Start_Byte  = 0xC0;
+		RW_TMC.Dest_Addr   = NSP_addr_table[RW_ID];
+		RW_TMC.Source_Addr = 0x11;
+		RW_TMC.Poll_Bit    = 0x1;
+		RW_TMC.B           = 0x0;
+		RW_TMC.ACK         = 0x1;
+		RW_TMC.Cmd_Code    = 0x07;
+		RW_TMC.Mode_Type   = 0x05;
+		RW_TMC.Stop_Byte   = 0xC0;
 
-		RW.Start_Byte  = 0xC0;
-		RW.Dest_Addr   = NSP_addr_table[RW_ID];
-		RW.Source_Addr = 0x11;
-		RW.Poll_Bit    = 0x1;
-		RW.B           = 0x0;
-		RW.ACK         = 0x1;
-		RW.Cmd_Code    = 0x07;
-		RW.Mode_Type   = 0x05;
-		RW.Stop_Byte   = 0xC0;
+		NOB_CRC_TMC        = (((unsigned char*)&RW_TMC.CRC) - (&RW_TMC.Dest_Addr)) / sizeof(char);
+		NOB_SFC_TMC        = (((unsigned char*)&RW_TMC.Stop_Byte) - (&RW_TMC.Dest_Addr)) / sizeof(char);
+		RW_TMC.CRC         = HAL_RW_CRC_Check(&RW_TMC.Dest_Addr, NOB_CRC_TMC);		// Computation of CRC
+		RW_TMC.CRC         = byte_swap(RW_TMC.CRC);
 
-		NOB_CRC_TMC    = (((unsigned char*)&RW.CRC) - (&RW.Dest_Addr)) / sizeof(char);
-		NOB_SFC_TMC    = (((unsigned char*)&RW.Stop_Byte) - (&RW.Dest_Addr)) / sizeof(char);
-		RW.CRC         = HAL_RW_CRC_Check(&RW.Dest_Addr, NOB_CRC_TMC);		// Computation of CRC
-		RW.CRC         = byte_swap(RW.CRC);
+		Byte_count         = 0;
+		TMC_ptr            = &RW_TMC.Data[0];
 
-		Byte_count     = 0;
-		TMC_ptr        = &RW.Data[0];
-
-
-		TMC_data_ptr   = &RW_Data_SlipFrame_TMC[0];
+		TMC_data_ptr       = &RW_Data_SlipFrame_TMC[0];
 
 		while (Byte_count < 8)
 		{
 			*TMC_data_ptr++ = *TMC_ptr++;
 			Byte_count++;
 		}
-
-		rRW_SlipFrame_Check(&RW_No, &RW_Data_SlipFrame_TMC[0], NOB_SFC_TMC);		//Slip-frame check routine
+		rRW_SlipFrame_Check(RW_No, &RW_Data_SlipFrame_TMC[0], NOB_SFC_TMC);		//Slip-frame check routine
 	}
 }
 
 unsigned short rw_test_array[256];
-int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_TM_data, int wheel_index)
+int rHAL_RW_TM_Read (struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_TM_data, int wheel_index)
 {
 
 	// returns TRUE on the successful availability of wheel_speed data
@@ -165,28 +163,30 @@ int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_
 	int wheel_speed_data_available = FALSE;
 	unsigned int inter_HAL_RW_Status_Register_2;
 	unsigned int inter_HAL_RW_Status_Register;
+	unsigned short RW_STS_data;
 	//-------------------------------------------------------------
 
 	inter_HAL_RW_count = 0;
+	RW_STS_data  = (REG32(RW_No->RW_Status_Register_2) & 0x0000FFFF);
 
 	//TODO: CHECK MAX LIMIT
-	inter_HAL_RW_Status_Register  =(REG32(RW_No->RW_Status_Register_1) & 0x0000FFFF);
+	inter_HAL_RW_Status_Register   =(REG32(RW_No->RW_Status_Register_1) & 0x0000FFFF);
 	inter_HAL_RW_Status_Register_2 = (REG32(RW_No->RW_Status_Register_2) & 0x0000FFFF);
 	inter_HAL_RW_Read_Addr = RW_No->RW_Buffer_Register;
 
-	if((inter_HAL_RW_Status_Register_2 & 0x00000002))		//Check for Data Ready
+	if ((inter_HAL_RW_Status_Register_2 & 0x00000002))		//Check for Data Ready
 	{
-		inter_HAL_RW_Read_Limit  = (inter_HAL_RW_Status_Register_2 & 0x00000FF0)>>4;  //Bytes to be read from RW Buffer
-		inter_Buffer_cpy_limit = ((inter_HAL_RW_Read_Limit+1)>>1);
+		inter_HAL_RW_Read_Limit    = (inter_HAL_RW_Status_Register_2 & 0x00000FF0)>>4;  //Bytes to be read from RW Buffer
+		inter_Buffer_cpy_limit     = ((inter_HAL_RW_Read_Limit+1)>>1);
 
-		REG32(RW_No->RW_Status_Register_1) = ((inter_HAL_RW_Status_Register & 0x000000FE) | 0x00000002);
-		while(inter_HAL_RW_count < inter_Buffer_cpy_limit)
+		REG32 (RW_No->RW_Status_Register_1) = ((inter_HAL_RW_Status_Register & 0x000000FE) | 0x00000002);
+		while (inter_HAL_RW_count < inter_Buffer_cpy_limit)
 		{
-			temp_short = (unsigned short)(REG32(inter_HAL_RW_Read_Addr) & 0x0000FFFF);
-			rw_test_array[inter_HAL_RW_count] = (unsigned short)(REG32(inter_HAL_RW_Read_Addr) & 0x0000FFFF); // Remove
+			temp_short                                    = (unsigned short)(REG32(inter_HAL_RW_Read_Addr) & 0x0000FFFF);
+			rw_test_array[inter_HAL_RW_count]             = (unsigned short)(REG32(inter_HAL_RW_Read_Addr) & 0x0000FFFF); // Remove
 			RW_Buffer_u_rx.data_16bit[inter_HAL_RW_count] = byte_swap(temp_short);
 			inter_HAL_RW_count++;
-			inter_HAL_RW_Read_Addr = inter_HAL_RW_Read_Addr + 4;
+			inter_HAL_RW_Read_Addr                        = inter_HAL_RW_Read_Addr + 4;
 		}
 
 		RW_TM_Raw_Data_ptr = &RW_Buffer_u_rx.data_8bit[0];
@@ -194,11 +194,10 @@ int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_
 		RW_TM_ptr_init = RW_TM_ptr;//test
 		REG32(RW_No->RW_Status_Register_1) = (inter_HAL_RW_Status_Register & 0x00000000);
 
-
 		inter_HAL_RW_count = 0;
-		while(inter_HAL_RW_count < inter_HAL_RW_Read_Limit)
+		while (inter_HAL_RW_count < inter_HAL_RW_Read_Limit)
 		{
-			if(*RW_TM_Raw_Data_ptr == 0xDB)
+			if (*RW_TM_Raw_Data_ptr == 0xDB)
 			{
 				RW_TM_Raw_Data_ptr++;
 				inter_HAL_RW_count++;
@@ -209,7 +208,6 @@ int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_
 					*RW_TM_ptr = 0xC0;
 					RW_TM_ptr++;
 				}
-
 				else if(*RW_TM_Raw_Data_ptr == 0xDD)
 				{
 					RW_TM_Raw_Data_ptr++;
@@ -217,10 +215,8 @@ int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_
 					*RW_TM_ptr = 0xDB;
 					RW_TM_ptr++;
 				}
-
 				else{}
 			}
-
 			else
 			{
 				*RW_TM_ptr = *RW_TM_Raw_Data_ptr;
@@ -229,29 +225,24 @@ int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_
 				inter_HAL_RW_count++;
 			}
 		}
-
-		if(RW_TM_data->ACK == 1)
+		if (RW_TM_data->ACK == 1)
 		{
 
 			// ACK bit is high. Process the data
 
 			NOB_CRC_TMC = (((unsigned char*)&RW_TM_data->CRC) - (&RW_TM_data->Dest_Addr)) / sizeof(char);
-			crc_test = HAL_RW_CRC_Check(&RW_TM_data->Dest_Addr, NOB_CRC_TMC);		// Computation of CRC
-			crc_test = byte_swap(crc_test);
+			crc_test    = HAL_RW_CRC_Check(&RW_TM_data->Dest_Addr, NOB_CRC_TMC);		// Computation of CRC
+			crc_test    = byte_swap(crc_test);
 			if(crc_test == RW_TM_data->CRC)
 			{
-
 				// Checksum test passed..
 				// data is OK! Store it in Global wheel speed buffer
-
 				USIF_u.float_num = RW_TM_data->Data_Value;
 				USIF_u.int_num = reverse_order(USIF_u.int_num);
 				RW_TM_data->Data_Value = USIF_u.float_num;
 
 				wheel_speed_data_available  = TRUE;
 				RW_Wheel_Speed[wheel_index] = RW_TM_data->Data_Value;
-
-
 			}
 			else
 			{
@@ -260,26 +251,22 @@ int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_
 		}
 		else
 		{
-
 			// No_Acknowledgement bit is received. Ignore the data
-
 		}
-
 	}
-
 	return wheel_speed_data_available;
 }
 
-void rRW_SlipFrame_Check(struct HAL_RW_Data_Structure* RW_No_Addr,
+void rRW_SlipFrame_Check (struct HAL_RW_Data_Structure* RW_No_Addr,
 		                 uint8* inter_slipframe_data_addr,
 		                 int NOB_Slipframe_Check)
 {
 	//Local variables' declaration
 
-	static int inter_HAL_Write_Count;					//Local counter variable
-	static uint32 inter_HAL_Config_Addr;			//Local variable that stores address of Config buffer
+	static int inter_HAL_Write_Count;			//Local counter variable
+	static uint32 inter_HAL_Config_Addr;		//Local variable that stores address of Config buffer
 	static uint16* RW_Buffer_cpy_ptr;			//Pointer to the union to copy data to buffer
-	static int32 NOB_Write;								//No of bytes that has to be written to the buffer
+	static int32 NOB_Write;						//No of bytes that has to be written to the buffer
 	static uint8* RW_TC_ptr;					//Pointer to the union (type casted to char*)
 	uint32 swap_temp;
 
@@ -292,18 +279,18 @@ void rRW_SlipFrame_Check(struct HAL_RW_Data_Structure* RW_No_Addr,
 	RW_Write_ptr          = (unsigned char*)(&RW_Buffer_u.data_8bit);
 	RW_Buffer_cpy_ptr     = (unsigned short*)(&RW_Buffer_u.data_16bit);
 
-	*RW_Write_ptr++       = *RW_TC_ptr++;				//Copying the start byte
+	*RW_Write_ptr++       = *RW_TC_ptr++;		//Copying the start byte
 
-	while(inter_HAL_Write_Count < NOB_Slipframe_Check)
+	while (inter_HAL_Write_Count < NOB_Slipframe_Check)
 	{
-		if(*RW_TC_ptr != 0xC0 && *RW_TC_ptr != 0xDB)
+		if (*RW_TC_ptr != 0xC0 && *RW_TC_ptr != 0xDB)
 		{
-			*RW_Write_ptr++ = *RW_TC_ptr++;
+			*RW_Write_ptr++     = *RW_TC_ptr++;
 			inter_HAL_Write_Count++;
 		}
 		else
 		{
-			if(*RW_TC_ptr == 0xC0)
+			if (*RW_TC_ptr == 0xC0)
 			{
 				*RW_Write_ptr++ = 0xDB;
 				*RW_Write_ptr++ = 0xDC;
@@ -320,41 +307,37 @@ void rRW_SlipFrame_Check(struct HAL_RW_Data_Structure* RW_No_Addr,
 			else{}
 		}
 	}
-	*RW_Write_ptr++ = *RW_TC_ptr++;				//Copying of stop byte
+	*RW_Write_ptr++               = *RW_TC_ptr++;	//Copying of stop byte
 
-	NOB_Write = RW_Write_ptr - (unsigned char*)&RW_Buffer_u;
+	NOB_Write                     = RW_Write_ptr - (unsigned char*)&RW_Buffer_u;
 
 	//since FPGA require swapped data
-	for(inter_HAL_Write_Count=0;inter_HAL_Write_Count<((NOB_Write + 1)>>1);inter_HAL_Write_Count++)
+	for (inter_HAL_Write_Count = 0; inter_HAL_Write_Count < ((NOB_Write + 1)>>1); inter_HAL_Write_Count++)
 	{
-		swap_temp = byte_swap(*RW_Buffer_cpy_ptr);
-		(*RW_Buffer_cpy_ptr++) = swap_temp;
+		swap_temp                 = byte_swap(*RW_Buffer_cpy_ptr);
+		(*RW_Buffer_cpy_ptr++)    = swap_temp;
 	}
-
 	rHAL_RW_ConfigBuffer_Write(RW_No_Addr, RW_Buffer_u.data_16bit, NOB_Write);
 
 }
 
-void rHAL_RW_ConfigBuffer_Write(struct HAL_RW_Data_Structure* RW_No_Addr,
+void rHAL_RW_ConfigBuffer_Write (struct HAL_RW_Data_Structure* RW_No_Addr,
 		                        uint16* inter_Buffer_cpy_addr,
 		                        int inter_NOB_Write)
 {
 	int i;
 	uint32 Config_Buffer_Addr, tempdata;
 
-	Config_Buffer_Addr = RW_No_Addr->RW_Configure_Register;
+	Config_Buffer_Addr            = RW_No_Addr->RW_Configure_Register;
 
 	for (i = 0; i < ((inter_NOB_Write+1) << 1); i++)
 	{
-
-		tempdata = *inter_Buffer_cpy_addr++;
-		//REG32(Config_Buffer_Addr);
+		tempdata                  = *inter_Buffer_cpy_addr++;
 		REG32(Config_Buffer_Addr) = tempdata;
-		Config_Buffer_Addr = Config_Buffer_Addr + 0x00000004;
+		Config_Buffer_Addr        = Config_Buffer_Addr + 0x00000004;
 	}
 
 	//Set Configure Enable Bit and update number of bytes
-
 	REG32(RW_No_Addr->RW_Status_Register_1);
 	REG32(RW_No_Addr->RW_Status_Register_1)  = (((inter_NOB_Write & 0x000000FF)<<8) | 0x00000001);
 }
@@ -362,81 +345,97 @@ void rHAL_RW_ConfigBuffer_Write(struct HAL_RW_Data_Structure* RW_No_Addr,
 void rRW_Data_Write(void)
 {
 	// set the wheel speeds to commmand speeds
-	/*if (TC_boolean_u.TC_Boolean_Table.RW_Speed_Negative== 1)
+
+	RWS[0] = TC_data_command_Table.RW1_Speed;
+	RWS[1] = TC_data_command_Table.RW2_Speed;
+	RWS[2] = TC_data_command_Table.RW3_Speed;
+	RWS[3] = TC_data_command_Table.RW4_Speed;
+
+	if(TC_boolean_u.TC_Boolean_Table.TC_RW_Speed_sel)
 	{
-		RWS[0] = -(TC_data_command_Table.RW1_Speed);
-	    RWS[1] = -(TC_data_command_Table.RW2_Speed);
-	    RWS[2] = -(TC_data_command_Table.RW3_Speed);
-	    RWS[3] = -(TC_data_command_Table.RW4_Speed);
+		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_1_speed_enable)
+		{
+			rHAL_RW_TC_Write(&RW_1, RWS[0], RWHEEL0);                                    // Command Wheel Speed to RW1
+		}
+		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_2_speed_enable)
+		{
+			rHAL_RW_TC_Write(&RW_2, RWS[1], RWHEEL1);                                   // Command Wheel Speed to RW2
+		}
+		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_3_speed_enable )
+		{
+			rHAL_RW_TC_Write(&RW_3, RWS[2], RWHEEL2);                                   // Command Wheel Speed to RW3
+		}
+		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_4_speed_enable )
+		{
+			rHAL_RW_TC_Write(&RW_4,RWS[3], RWHEEL3);                                     // Command Wheel Speed to RW4
+		}
+		 Auto_manual_speed_sel = 1;
+		 TM.Buffer.TM_auto_manual_speed_sel = Auto_manual_speed_sel;
 	}
 	else
-	 {
-		RWS[0] = TC_data_command_Table.RW1_Speed;
-		RWS[1] = TC_data_command_Table.RW2_Speed;
-		RWS[2] = TC_data_command_Table.RW3_Speed;
-		RWS[3] = TC_data_command_Table.RW4_Speed;
-
-	//}*/
-
-	if (f_RW_nominal == 1)
 	{
+		if (f_RW_nominal == 1)
+		{
 
-		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_1_speed_enable)
-		{
-			rHAL_RW_TC_Write(RW_1, RW_TC, (float)(TC_RW_Nominal[0]), RWHEEL0);	// Command Wheel Speed to RW1
-		}
-		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_2_speed_enable)
-		{
-			rHAL_RW_TC_Write(RW_2, RW_TC, (float)(TC_RW_Nominal[1]), RWHEEL1);					// Command Wheel Speed to RW1
-		}
-		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_3_speed_enable )
-		{
-			rHAL_RW_TC_Write(RW_3, RW_TC, (float)(TC_RW_Nominal[2]), RWHEEL2); 					// Command Wheel Speed to RW1
-		}
-		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_4_speed_enable )
-		{
-			rHAL_RW_TC_Write(RW_4, RW_TC, (float)(TC_RW_Nominal[3]), RWHEEL3); 					// Command Wheel Speed to RW1
+			if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_1_speed_enable)
+			{
+				rHAL_RW_TC_Write(&RW_1, (float)(TC_RW_Nominal[0]), RWHEEL0); // Command Wheel Speed to RW1
+			}
+			if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_2_speed_enable)
+			{
+				rHAL_RW_TC_Write(&RW_2, (float)(TC_RW_Nominal[1]), RWHEEL1); // Command Wheel Speed to RW2
+			}
+			if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_3_speed_enable )
+			{
+				rHAL_RW_TC_Write(&RW_3, (float)(TC_RW_Nominal[2]), RWHEEL2); // Command Wheel Speed to RW3
+			}
+			if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_4_speed_enable )
+			{
+				rHAL_RW_TC_Write(&RW_4, (float)(TC_RW_Nominal[3]), RWHEEL3); // Command Wheel Speed to RW4
+			}
+
+			if (((RW_Wheel_Speed[0]  > TC_RW_Nominal[0] + 0.8726)  &&
+				 (RW_Wheel_Speed[1]  < TC_RW_Nominal[1] - 0.8726)  &&
+				 (RW_Wheel_Speed[2]  > TC_RW_Nominal[2] + 0.8726)  &&
+				 (RW_Wheel_Speed[3]  < TC_RW_Nominal[3] - 0.8726)) ||
+				((RW_Wheel_Speed[0]  > TC_RW_Nominal[0] - 0.8726)  &&
+				 (RW_Wheel_Speed[1]  < TC_RW_Nominal[1] + 0.8726)  &&
+				 (RW_Wheel_Speed[2]  > TC_RW_Nominal[2] - 0.8726)  &&
+				 (RW_Wheel_Speed[3]  < TC_RW_Nominal[3] + 0.8726)  ))
+			  {
+					RW_nominal_speed_cnt++;
+
+					if (RW_nominal_speed_cnt >= 32)
+					{
+						f_RW_nominal = 0;
+						f_RW_control = Enable;
+						RW_nominal_speed_cnt= 0;
+					}
+			  }
+
 		}
 
-		if (((RW_Wheel_Speed[0]  > TC_RW_Nominal[0] + 0.8726)  &&
-		     (RW_Wheel_Speed[1]  < TC_RW_Nominal[1] - 0.8726)  &&
-			 (RW_Wheel_Speed[2]  > TC_RW_Nominal[2] + 0.8726)  &&
-			 (RW_Wheel_Speed[3]  < TC_RW_Nominal[3] - 0.8726)) ||
-			((RW_Wheel_Speed[0]  > TC_RW_Nominal[0] - 0.8726)  &&
-			 (RW_Wheel_Speed[1]  < TC_RW_Nominal[1] + 0.8726)  &&
-			 (RW_Wheel_Speed[2]  > TC_RW_Nominal[2] - 0.8726)  &&
-			 (RW_Wheel_Speed[3]  < TC_RW_Nominal[3] + 0.8726)  ))
-		  {
-				RW_nominal_speed_cnt++;
-
-				if (RW_nominal_speed_cnt >= 32)
-				{
-					f_RW_nominal = 0;
-					f_RW_control = Enable;
-					RW_nominal_speed_cnt= 0;
-				}
-		  }
-
-	}
-
-	if (f_RW_control == Enable)
-	{
-		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_1_speed_enable)
+		if (f_RW_control == Enable)
 		{
-			rHAL_RW_TC_Write(RW_1, RW_TC, RW_Wheel_Speed[0]+(float)del_Vw[0], RWHEEL0);	// Command Wheel Speed to RW1
+			if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_1_speed_enable)
+			{
+				rHAL_RW_TC_Write(&RW_1, RW_Wheel_Speed[0]+(float)del_Vw[0], RWHEEL0);	// Command Wheel Speed to RW1
+			}
+			if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_2_speed_enable)
+			{
+				rHAL_RW_TC_Write(&RW_2, RW_Wheel_Speed[1]+(float)del_Vw[1], RWHEEL1);	// Command Wheel Speed to RW2
+			}
+			if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_3_speed_enable )
+			{
+				rHAL_RW_TC_Write(&RW_3, RW_Wheel_Speed[2]+(float)del_Vw[2], RWHEEL2); 	// Command Wheel Speed to RW3
+			}
+			if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_4_speed_enable )
+			{
+				rHAL_RW_TC_Write(&RW_4, RW_Wheel_Speed[3]+(float)del_Vw[3], RWHEEL3); 	// Command Wheel Speed to RW4
+			}
 		}
-		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_2_speed_enable)
-		{
-			rHAL_RW_TC_Write(RW_2, RW_TC, RW_Wheel_Speed[1]+(float)del_Vw[1], RWHEEL1);					// Command Wheel Speed to RW1
-		}
-		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_3_speed_enable )
-		{
-			rHAL_RW_TC_Write(RW_3, RW_TC, RW_Wheel_Speed[2]+(float)del_Vw[2], RWHEEL2); 					// Command Wheel Speed to RW1
-		}
-		if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_4_speed_enable )
-		{
-			rHAL_RW_TC_Write(RW_4, RW_TC, RW_Wheel_Speed[3]+(float)del_Vw[3], RWHEEL3); 					// Command Wheel Speed to RW1
-		}
+		Auto_manual_speed_sel = 0;
+		TM.Buffer.TM_auto_manual_speed_sel = Auto_manual_speed_sel;
 	}
 
   }
@@ -445,126 +444,94 @@ void rRW_Data_Request(void)
 {
 	if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_1_speed_enable )
 	{
-		rHAL_RW_TM_Write(RW_1, RW_TMC, RWHEEL0);							// Command to request for RW1 speed
+		rHAL_RW_TM_Write(&RW_1, RWHEEL0);							 // Command to request for RW1 speed
 	}
 	if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_2_speed_enable )
     {
-		rHAL_RW_TM_Write(RW_2, RW_TMC, RWHEEL1);							// Command to request for RW1 speed
+		rHAL_RW_TM_Write(&RW_2, RWHEEL1);							 // Command to request for RW2 speed
     }
 	if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_3_speed_enable )
 	{
-		rHAL_RW_TM_Write(RW_3, RW_TMC, RWHEEL2);							// Command to request for RW1 speed
+		rHAL_RW_TM_Write(&RW_3, RWHEEL2);							 // Command to request for RW3 speed
 	}
 	if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_4_speed_enable )
     {
-		rHAL_RW_TM_Write(RW_4, RW_TMC, RWHEEL3);							// Command to request for RW1 speed
+		rHAL_RW_TM_Write(&RW_4, RWHEEL3);							 // Command to request for RW4 speed
     }
+
 }
 
 void rRW_Data_Read()
 {
 	if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_1_speed_enable )
-	  	  	{
+	{
 
-				if (rHAL_RW_TM_Read(&RW_1, &RW_TM, RWHEEL0))
-				{
-					TM.Buffer.TM_RW_Speed[RWHEEL0] = (unsigned int)(RW_Wheel_Speed[RWHEEL0]/(c_TM_RW_Resol));
-					ST_normal.ST_NM_Buffer.TM_RW_Speed[RWHEEL0] = (unsigned int)(RW_Wheel_Speed[RWHEEL0]/(c_TM_RW_Resol));
-					//special_storgare_rw as to be changed to short and add to be added
-					 ST_special.ST_SP_Buffer.TM_RW_Speed[RWHEEL0] = (unsigned int)(RW_Wheel_Speed[RWHEEL0]/(c_TM_RW_Resol));
-					//----------------------------------------------
-				}
+		if (rHAL_RW_TM_Read(&RW_1, &RW_TM, RWHEEL0))
+		{
+			TM.Buffer.TM_RW_Speed[RWHEEL0]               = RW_Wheel_Speed[RWHEEL0];
+			ST_normal.ST_NM_Buffer.TM_RW_Speed[RWHEEL0]  = RW_Wheel_Speed[RWHEEL0];
+			ST_special.ST_SP_Buffer.TM_RW_Speed[RWHEEL0] = RW_Wheel_Speed[RWHEEL0];
 
-	  	  	}
+		}
+
+	}
 	if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_2_speed_enable )
-	        {
-				if (rHAL_RW_TM_Read(&RW_2, &RW_TM, RWHEEL1))
-				{
-					TM.Buffer.TM_RW_Speed[RWHEEL1] = (unsigned int)(RW_Wheel_Speed[RWHEEL1]/(c_TM_RW_Resol));
-					ST_normal.ST_NM_Buffer.TM_RW_Speed[RWHEEL1] = (unsigned int)(RW_Wheel_Speed[RWHEEL1]/(c_TM_RW_Resol));
-					//special_storgare_rw as to be changed to short and add to be added
-					 ST_special.ST_SP_Buffer.TM_RW_Speed[RWHEEL1] = (unsigned int)(RW_Wheel_Speed[RWHEEL1]/(c_TM_RW_Resol));
-					//----------------------------------------------
+	{
+		if (rHAL_RW_TM_Read(&RW_2, &RW_TM, RWHEEL1))
+		{
+			TM.Buffer.TM_RW_Speed[RWHEEL1]               = RW_Wheel_Speed[RWHEEL1];
+			ST_normal.ST_NM_Buffer.TM_RW_Speed[RWHEEL1]  = RW_Wheel_Speed[RWHEEL1];
+			ST_special.ST_SP_Buffer.TM_RW_Speed[RWHEEL1] = RW_Wheel_Speed[RWHEEL1];
 
-				}
-	        }
+		}
+	}
 	if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_3_speed_enable )
-	        {
-				if (rHAL_RW_TM_Read(&RW_3, &RW_TM, RWHEEL2))
-				{
-					TM.Buffer.TM_RW_Speed[RWHEEL2] = (unsigned int)(RW_Wheel_Speed[RWHEEL2]/(c_TM_RW_Resol));
-					ST_normal.ST_NM_Buffer.TM_RW_Speed[RWHEEL2] = (unsigned int)(RW_Wheel_Speed[RWHEEL2]/(c_TM_RW_Resol));
-					//special_storgare_rw as to be changed to short and add to be added
-					 ST_special.ST_SP_Buffer.TM_RW_Speed[RWHEEL2] = (unsigned int)(RW_Wheel_Speed[RWHEEL2]/(c_TM_RW_Resol));
-					//----------------------------------------------
+	{
+		if (rHAL_RW_TM_Read(&RW_3, &RW_TM, RWHEEL2))
+		{
+			TM.Buffer.TM_RW_Speed[RWHEEL2]               = RW_Wheel_Speed[RWHEEL2];
+			ST_normal.ST_NM_Buffer.TM_RW_Speed[RWHEEL2]  = RW_Wheel_Speed[RWHEEL2];
+			ST_special.ST_SP_Buffer.TM_RW_Speed[RWHEEL2] = RW_Wheel_Speed[RWHEEL2];
 
-				}
-	        }
+
+		}
+	}
 	if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_4_speed_enable )
-	        {
-				if (rHAL_RW_TM_Read(&RW_4, &RW_TM, RWHEEL3))
-				{
-					TM.Buffer.TM_RW_Speed[RWHEEL3] = (unsigned int)(RW_Wheel_Speed[RWHEEL3]/(c_TM_RW_Resol));
-					ST_normal.ST_NM_Buffer.TM_RW_Speed[RWHEEL3] = (unsigned int)(RW_Wheel_Speed[RWHEEL3]/(c_TM_RW_Resol));
-					//special_storgare_rw as to be changed to short and add to be added
-					 ST_special.ST_SP_Buffer.TM_RW_Speed[RWHEEL3] = (unsigned int)(RW_Wheel_Speed[RWHEEL3]/(c_TM_RW_Resol));
-					//----------------------------------------------
-				}
-	        }
+	{
+		if (rHAL_RW_TM_Read(&RW_4, &RW_TM, RWHEEL3))
+		{
+			TM.Buffer.TM_RW_Speed[RWHEEL3] 				 = RW_Wheel_Speed[RWHEEL3];
+			ST_normal.ST_NM_Buffer.TM_RW_Speed[RWHEEL3]  = RW_Wheel_Speed[RWHEEL3];
+			ST_special.ST_SP_Buffer.TM_RW_Speed[RWHEEL3] = RW_Wheel_Speed[RWHEEL3];
+
+		}
+	}
 
 }
-
-
-//void rRW_Ping(struct HAL_RW_Data_Structure* RW_No)
-//{
-//	//----------------Declaration of Local variables------------------------
-//	unsigned long int inter_RW_Status_Register;
-//	int i_rw;
-//	int NOB_Write_rw;
-//	//----------------------------------------------------------------------
-//
-//	inter_RW_Status_Register = (REG32(RW_No->RW_Status_Register) & 0x0000FFFF);
-//	NOB_Write_rw = 11; 	//Number of bytes to be transfered to RW for Ping
-//
-//	for(i_rw=0;i_rw<=5;i_rw++)
-//	{
-//		temp_ping_rw = byte_swap(RW_Ping_cmd[i_rw]);
-//		RW_Ping_cmd_internal[i_rw] = temp_ping_rw;
-//	}
-//
-//	if((inter_RW_Status_Register & 0x00000001) == 0x00000000)
-//	{
-//		rHAL_RW_ConfigBuffer_Write(RW_No,RW_Ping_cmd_internal,NOB_Write_rw);
-//	}
-//}
 
 
 void rRW_init_cmd(struct HAL_RW_Data_Structure RW_No, unsigned char RW_ID)
 {
 	//----------------Declaration of Local variables------------------------
-	int Byte_count;					//Counter in the loop
+	int Byte_count;															    //Counter in the loop
 	unsigned long int inter_RW_Status_Register;
-//	int i_rw;
-	//int NOB_Write_rw;
 	//----------------------------------------------------------------------
 
 	inter_RW_Status_Register = (REG32(RW_No.RW_Status_Register_1) & 0x0000FFFF);
-	//NOB_Write_rw = 11; 	//Number of bytes to be transfered to RW for Ping
 
-	/*********************** Added on 12/10/19 ***********************/
-	rw_init.Start_Byte = 0xC0; rw_init.Dest_Addr = NSP_addr_table[RW_ID];
-	rw_init.Source_Addr =0x11; rw_init.Poll_Bit = 0x1; rw_init.B = 0x0;
-	rw_init.ACK = 0x1; rw_init.Cmd_Code = 0x01; rw_init.Data_value = 0x00100000;
-	rw_init.Stop_Byte = 0xC0;
+	rw_init.Start_Byte       = 0xC0; rw_init.Dest_Addr = NSP_addr_table[RW_ID];
+	rw_init.Source_Addr      = 0x11; rw_init.Poll_Bit  = 0x1;  rw_init.B = 0x0;
+	rw_init.ACK = 0x1;               rw_init.Cmd_Code  = 0x01; rw_init.Data_value = 0x00100000;
+	rw_init.Stop_Byte        = 0xC0;
 
-	NOB_CRC_Init = (((unsigned char*)&rw_init.CRC) - (&rw_init.Dest_Addr)) / sizeof(char);
-	NOB_SFC_Init = (((unsigned char*)&rw_init.Stop_Byte) - (&rw_init.Dest_Addr)) / sizeof(char);
+	NOB_CRC_Init  = (((unsigned char*)&rw_init.CRC) - (&rw_init.Dest_Addr)) / sizeof(char);
+	NOB_SFC_Init  = (((unsigned char*)&rw_init.Stop_Byte) - (&rw_init.Dest_Addr)) / sizeof(char);
 
-	rw_init.CRC = HAL_RW_CRC_Check(&rw_init.Dest_Addr, NOB_CRC_Init);		// Computation of CRC
-	rw_init.CRC = byte_swap(rw_init.CRC);
+	rw_init.CRC   = HAL_RW_CRC_Check(&rw_init.Dest_Addr, NOB_CRC_Init);		   // Computation of CRC
+	rw_init.CRC   = byte_swap(rw_init.CRC);
 
-	Byte_count = 0;
-	Init_ptr = rw_init.Data;
+	Byte_count    = 0;
+	Init_ptr      = rw_init.Data;
 	Init_data_ptr = &RW_Data_SlipFrame_Init[0];
 
 	while(Byte_count < 11)
@@ -573,7 +540,7 @@ void rRW_init_cmd(struct HAL_RW_Data_Structure RW_No, unsigned char RW_ID)
 		Byte_count++;
 	}
 
-	rRW_SlipFrame_Check(&RW_No,&RW_Data_SlipFrame_Init[0],NOB_SFC_Init);		//Slip-frame check routine
+	rRW_SlipFrame_Check(&RW_No, &RW_Data_SlipFrame_Init[0], NOB_SFC_Init);		//Slip-frame check routine
 }
 
 

@@ -11,8 +11,6 @@
 void rHAL_EPS_shunt_switch()
 {
 	unsigned short tempdata;
-        //ADC data should be available in ADC_Buffer
-		//if((EPS_RAW_BUS_VOLTAGE >= 0x00000517))//16.4
 
 	    if ((EPS_RAW_BUS_VOLTAGE >= TC_data_command_Table.SA1_SHUNT_UTP))
 		{

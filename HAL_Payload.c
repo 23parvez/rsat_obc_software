@@ -150,7 +150,7 @@ void rHAL_tm_ds_en()
 	tm_ds_en_flag = 1;
 }
 
-void rHAL_X_Tx_ON()
+void rHAL_X_Tx_ON(void)
 {
 	uint16 tempdata;
 	Out_Latch_2.X_Tx_ON_OFF = 1;
@@ -170,7 +170,7 @@ void rHAL_X_Tx_OFF()
 }
 
 unsigned int pl_configure_data;
-void rHAL_pl_sts_check()
+void rHAL_pl_sts_check(void)
 {
 		REG32(PAYLOAD_CONFIG_REGISTER) = PL_STS_CMD_ID;
 		/* No of Configure Bytes (15:7) : 2 bytes
@@ -192,7 +192,7 @@ void rHAL_pl_sts_check()
  */
 uint16 pl_hlt_flag;
 
-void rHAL_pl_cmd_hlt()
+void rHAL_pl_cmd_hlt(void)
 {
 	if ((PL_1_on_off_flag || PL_2_on_off_flag) && pl_HLT_en)
 	{
@@ -251,7 +251,7 @@ void rHAL_pl_debug(void)
  */
 uint32 pl_x_tx_data_on_flag;
 uint32  data_nc;
-void rHAL_pl_x_tx_data_on()
+void rHAL_pl_x_tx_data_on(void)
 {
 
 	if (pl_data_command.pl_data_2byte[0] == (uint16)PL_TX_DATA_ON_HDR_CMD_ID)
@@ -292,9 +292,8 @@ void rHAL_pl_x_tx_data_on()
 uint32 pl_acq_flag;
 uint16 pl_mode;
 
-void rHAL_pl_cmd_acq()
+void rHAL_pl_cmd_acq(void)
 {
-
 	if (pl_data_command.pl_data_2byte[0] == PL_ACQ_HDR_CMD_ID)
 	{
 
@@ -335,7 +334,7 @@ void rHAL_pl_cmd_acq()
 uint32 pl_x_tx_data_off_flag;
 
 uint32 data_x_tx;
-void rHAL_pl_x_tx_data_off()
+void rHAL_pl_x_tx_data_off(void)
 {
 		REG32(PAYLOAD_CONFIG_REGISTER) = PL_TX_DATA_OFF_HDR_CMD_ID;
 		data_x_tx = PL_TX_DATA_OFF_HDR_CMD_ID;
@@ -465,6 +464,7 @@ void rpl_read()                                                    //Reading the
 	Payload_status_2_data = (REG32(PAYLOAD_STATUS2_ADDRESS) & EXTRACT_LSB_16BITS);
 	Payload_status_1_data = (REG32(PAYLOAD_STATUS1_ADDRESS) & EXTRACT_LSB_16BITS);
 	pl_Addr_count = 0;
+
 
 	if (Payload_status_1_data & Payload_DATA_READY)
 	{

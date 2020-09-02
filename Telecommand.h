@@ -39,9 +39,11 @@ unsigned long long int TC_exe;
 unsigned int TC_storing_buffer[256];
 unsigned int TC_buffer_count[300];
 unsigned int TC_flag;
-
+unsigned short TC_STS_data;
 
 unsigned long int BlkCurrent_Cmd;
+
+
 
 //int Nodeptrempty_flag = 0;
 //int ATTC_Master_en = 1;
@@ -293,8 +295,6 @@ union U_telecommand						//Union of Telecommands
 union TC_Hist *TC_hist_write_ptr;
 union TC_Hist *TC_hist_read_ptr;
 
-//Nodeptrtype Next_exe_TC;
-
 unsigned long long int block_test_array[50];
 
 
@@ -305,8 +305,7 @@ typedef struct Node
 }Nodetype;
 typedef Nodetype* Nodeptrtype ;
 
-//Nodeptrtype head = NULL;
-
+unsigned long long int Next_exe_TC;
 // Following are data structures required to emulate malloc()
 Nodetype Nodearray[MAX_TIMETAG_CMD_LIMIT];
 Nodeptrtype Nodeptr[MAX_TIMETAG_CMD_LIMIT];
@@ -533,7 +532,7 @@ void rTC_Suspended_ModePreprocessing();
 void sunlit();
 void eclipse();
 void Sunlit_eclipse_both();
-void rSafe_mode_PreProcessing();
+void rTC_Safe_mode_PreProcessing();
 void TC_MTR_Roll_No_cuurent();
 void TC_MTR_Pitch_No_cuurent();
 void TC_MTR_Yaw_No_cuurent();
@@ -583,7 +582,7 @@ void gain_sets();
 		float TC_TLE_data8;
 		float TC_TLE_data9;
 		double TC_TLE_data10;
-		int TC_TLE_data11;
+		unsigned int TC_TLE_data11;
 		char TC_TLE_data12;
 	}TLE_data;
 

@@ -6,9 +6,11 @@
 #include "Telemetry.h"
 #include "HAL_Address.h"
 #include "TC_List.h"
+
+#include "adcs_Constants.h"
+#include "adcs_GPS_OD.h"
 #include "adcs_VarDeclarations.h"
 
-unsigned int gps_count=0;
 void rGPS_Buffer_Init()
 {
 	//Initialization of GPS1 Status Buffer and read Buffer
@@ -52,75 +54,69 @@ void rGPS_Buffer_Init()
 
 }
 
-//TODO:Variables to Be removed only for Test : Issue with GPS Data Ready
-
 unsigned int gps_ready_bit = 0;
 unsigned int gps_test_counter;
 unsigned long int gpstestbuff[17];
 
-unsigned int rHAL_GPS_Read(struct HAL_GPS_registers GPS_No, unsigned long int* GPS_Addr,unsigned int No_of_Bytes)
+unsigned int rHAL_GPS_Read (struct HAL_GPS_registers GPS_No, unsigned int No_of_Bytes)
 {
+	unsigned int temp_data;
+	if(No_of_Bytes %2 == 0)          // Check for Even Or Odd
+	{
+		  GPS_Locations = No_of_Bytes / 2 ;
+		  GPS_Locations = GPS_Locations - 1;
+	}
+	else
+	{
+		 GPS_Locations = (No_of_Bytes + 1) / 2 ;
+		 GPS_Locations = GPS_Locations - 1;
+	}
 
-  if(No_of_Bytes %2 == 0)          // Check for Even Or Odd
-  {
-      GPS_Locations = No_of_Bytes / 2 ;
-      GPS_Locations = GPS_Locations - 1;
-  }
-  else
-  {
-	 GPS_Locations = (No_of_Bytes + 1) / 2 ;
-	 GPS_Locations = GPS_Locations - 1;
-  }
-  GPS_Buffer_Addr = (unsigned long int*)GPS_No.GPS_Buffer_addr;
-  GPS_Status_Data = REG32(GPS_No.GPS_Status_Register_1);
+	GPS_Buffer_Addr = (unsigned long int*)GPS_No.GPS_Buffer_addr;
+	GPS_Status_Data = REG32(GPS_No.GPS_Status_Register_1);
+	temp_data = GPS_Status_Data;
+	TM.Buffer.TM_GPS_Status  =  (unsigned short)temp_data;
 
-	  if(GPS_Status_Data & 0x00000008)//0b0000_0000_0000_1000 ------Check Data Ready Bit
-	  {
+	if (GPS_Status_Data & 0x00000008)//0b0000_0000_0000_1000 ------Check Data Ready Bit
+	{
 		  gps_test_counter++;
 		  gps_ready_bit = GPS_Status_Data;
 		  REG32(GPS_No.GPS_Status_Register_1) = (GPS_Status_Data | 0x00000400);//0b0000_0000_0010_0000 ---------Set Read Enable Bit
-		  for(GPS_Addr_Count=0;GPS_Addr_Count<=GPS_Locations;GPS_Addr_Count++)
+
+		  for(GPS_Addr_Count=0; GPS_Addr_Count<=GPS_Locations; GPS_Addr_Count++)
 		  {
 			  GPS_Data = REG32(GPS_Buffer_Addr);
 			  GPS_Data = GPS_Data & 0x0000FFFF;
-			  GPS_Buffer_Data[GPS_Addr_Count] = GPS_Data;
+			  GPS_RCVD_DATA[GPS_Addr_Count] = GPS_Data;
 			  GPS_Buffer_Addr++;
-		  }
 
+			  if ((GPS_RCVD_DATA[GPS_Addr_Count] == 0x0000AF01) && (GPS_RCVD_DATA[GPS_Addr_Count-1] == 0x00003F3F))
+			  {
+					GPS_count_TM = GPS_Addr_Count;
+					GPS_Data_Read_Status = TRUE;
+			  }
+			  else
+			 {
+			 	GPS_Data_Read_Status = FALSE;
+			 }
+		  }
 		  REG32(GPS_No.GPS_Status_Register_1) = (GPS_Status_Data & 0x0000FBFF);//0b1111_1111_1101_1111------------Reset Read Enable Bit
 
-		 // *GPS_Buffer_Addr = 0x20000800;//Reset GPS Buffer
 		  //------------------------------Data Formating--------------------------------------------
 
-		  for(GPS_Addr_Count=0;GPS_Addr_Count<=GPS_Locations;GPS_Addr_Count++)
-		  {
-			  GPS_Data =  GPS_Buffer_Data[GPS_Addr_Count++];
-			  GPS_Data = ((GPS_Data & 0x0000FFFF) << 16);
 
-			  GPS_Data = (GPS_Data |( GPS_Buffer_Data[GPS_Addr_Count] & 0x0000FFFF));
-			  REG32(GPS_Addr) = GPS_Data;
-			  GPS_Addr++;
-		  }
-		  gpstestbuff[gps_test_counter%16] = ((GPS_OBT_Read_1 << 16) | GPS_OBT_Read_2);
-
-		  //------------------------------Data Formating--------------------------------------------
-		  if((GPS_Buffer_Data[0] == 0x00003F3F) && (GPS_Buffer_Data[1] == 0x0000AF01)) //Check for Valid Message header(0x3F3F) and Identifier(0xAF01)
-		  {
-			  gps_count=3;
+		  /*if((GPS_RCVD_DATA[0] == 0x00003F3F) && (GPS_RCVD_DATA[1] == 0x0000AF01)) //Check for Valid Message header(0x3F3F) and Identifier(0xAF01)
 			  GPS_Data_Read_Status = TRUE;
-		  }
+
 		  else
-		  {
-			  gps_count=4;
 			  GPS_Data_Read_Status = FALSE;
-		  }
-		  GPSDataReady = 1;
-	  }
-	  else
-	  {
-		  GPS_Data_Read_Status = FALSE;
-	  }
-	  return 0;
+		  */
+	}
+	else
+	{
+			GPS_Data_Read_Status = FALSE;
+	}
+	return 0;
 }
 
 void GPS_1_DATA()
@@ -128,11 +124,11 @@ void GPS_1_DATA()
 
 	if(TC_boolean_u.TC_Boolean_Table.TC_GPS12_Select == GPS_1)
 	{
-		rHAL_GPS_Read(GPS1,GPS_RCVD_DATA, NO_BYTES);
+		rHAL_GPS_Read(GPS1, NO_BYTES);
 	}
 	else if(TC_boolean_u.TC_Boolean_Table.TC_GPS12_Select == GPS_2)
 	{
-		rHAL_GPS_Read(GPS2,GPS_RCVD_DATA, NO_BYTES);
+		rHAL_GPS_Read(GPS2, NO_BYTES);
 	}
 	else
 	{
@@ -571,8 +567,8 @@ void rGPS_TM_Extract(void)
 {
 	if(GPS_Data_Read_Status == TRUE) //Transfer to TM Buffer Only after checking the availability and validity of GPS data
 	{
-		GPS_TM_Buffer_Addr_USC = (unsigned char*)GPS_RCVD_DATA;
-		db_gps_start_address = (unsigned char*)GPS_RCVD_DATA;
+		GPS_TM_Buffer_Addr_USC = (unsigned char*)&GPS_RCVD_DATA[GPS_count_TM-1];
+		db_gps_start_address = (unsigned char*)&GPS_RCVD_DATA[GPS_count_TM-1];
 
 		TM.Buffer.TM_GPS.TM_No_Of_Sat 					= *(GPS_TM_Buffer_Addr_USC+4);
 		ST_normal.ST_NM_Buffer.TM_No_Of_Sat 			= *(GPS_TM_Buffer_Addr_USC+4);
@@ -615,15 +611,12 @@ void rGPS_TM_Extract(void)
 		TM.Buffer.TM_GPS.TM_CheckSum 					= *(GPS_TM_Buffer_Addr_USC+204);
 
 		//Computation of On board Checksum of GPS data
-		//checksum_u8(db_gps_start_address,204);
 		GPS_obc_checkum = chksum8(db_gps_start_address,204);
-		//GPS_obc_checkum =chk_sum_u8;
 
 		//Check for BIST Information and Checksum for the validation of Data
 		//Check the above mentioned info to raise "GPS_Data_Validity_flag" (which will be used for OBC_GPS processing)
 		if(GPS_obc_checkum == TM.Buffer.TM_GPS.TM_CheckSum)
 		{
-			aaaa = 1;
 			if (TC_boolean_u.TC_Boolean_Table.TC_BIST_override == 1)
 			{
 				f_GPS_Valid_Data = True;
@@ -642,7 +635,6 @@ void rGPS_TM_Extract(void)
 		}
 		else
 		{
-			aaaa = 2;
 			f_GPS_Valid_Data = False;
 		}
 	}

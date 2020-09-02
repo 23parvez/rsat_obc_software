@@ -14,9 +14,6 @@
 #define Pitch 2
 #define Yaw   3
 
-//unsigned long int MTR_Current_Data;
-//int wait_i;
-
 int Roll_Pol;
 int Pitch_Pol;
 int Yaw_Pol;

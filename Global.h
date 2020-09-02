@@ -90,8 +90,8 @@ void s_ram_scrub();
 //EEPROM used: 279KB(without compressing)
 
 #define	EEPROM_START_ADDR    0x00000000
-#define	EEPROM_END_ADDR      0x0001F400                //***0x000441D8 = 279KB***//                           //***0x0001F400 = 128KB***//
-#define	EEPROM_BLOCK_SIZE    64000                      //***883B = 34875***//
+#define	EEPROM_END_ADDR      131072                    //***0x000441D8 = 279KB***//                           //***0x0001F400 = 128KB***//
+#define	EEPROM_BLOCK_SIZE    16384
 void prom_chksum(void);
 
 /**************************************************/
@@ -171,16 +171,16 @@ extern unsigned int Normal_st_table_page1, Normal_st_table_page2, Normal_st_tabl
 extern unsigned int Special_st_table_page1, Special_st_table_page2, Special_st_table_page3;
 extern unsigned char* ST_Dest_Addr;
 //extern unsigned char TC_storing_buffer[256];
-extern unsigned int TCH_read_ptr;
-extern unsigned int TCH_read_full_ptr;
-extern unsigned int TCH_cpy_ptr;
+extern unsigned int* TCH_read_ptr;
+extern unsigned int* TCH_read_full_ptr;
+extern unsigned int* TCH_cpy_ptr;
 extern unsigned int TC_storing_buffer[256];
 extern unsigned int TC_buffer_count[300];
 extern unsigned short ST_frame_count;
 extern unsigned short ST_TCH_frame_count;
 
-extern unsigned short tempdata;
 extern unsigned short panel_deploy_sts;
+extern unsigned char Auto_manual_speed_sel;
 
 extern void rHAL_TM_HW_Status_Update(void);
 extern void rTM_Address_Table_Init(void);
@@ -302,8 +302,9 @@ extern void rInit_Block();
 
 //GPS
 extern unsigned long int GPS_Data_Read_Status;
-extern unsigned long int GPS_Buffer_Data[106];
-extern unsigned long int GPS_RCVD_DATA[106];
+
+extern unsigned short GPS_RCVD_DATA[256];
+
 extern void rGPS_TM_Extract(void);
 //extern void rHAL_GPS_POWER(unsigned long int GPS_No,unsigned long int GPS_Power);
 extern void rGPS_Buffer_Init();
@@ -345,14 +346,13 @@ extern unsigned long int SA2_Deploy_cmd_rcvd_time;
 extern unsigned long int SA1_PanelHeater_Timeout;
 extern unsigned long int SA2_PanelHeater_Timeout;
 
-extern void rHAL_SA_MAIN_Deploy_on();
-extern void rHAL_SA_RED_Deploy_on();
+extern void rHAL_SA_MAIN_Deploy_on(void);
+extern void rHAL_SA_RED_Deploy_on(void);
 extern SA1_status_t SA1_status;
 extern SA2_status_t SA2_status;
 extern SA1_status_t rHAL_SA1_Deploy_status_check();
 extern SA2_status_t rHAL_SA2_Deploy_status_check();
-extern void rHAL_SA_Deploy_Status();
-extern void rHAL_SA_Deploy_Status_new();
+extern void rHAL_SA_Deploy_Status_new(void);
 
 //Payload
 #define PAYLOAD_1	0
@@ -364,12 +364,12 @@ extern void rHAL_SA_Deploy_Status_new();
 //extern void payload_2_on();
 extern void PL_TM();
 //extern void payload_2_off();
-extern void rHAL_pl_sts_check();
-extern void rHAL_pl_cmd_acq();
-extern void rHAL_pl_cmd_hlt();
+extern void rHAL_pl_sts_check(void);
+extern void rHAL_pl_cmd_acq(void);
+extern void rHAL_pl_cmd_hlt(void);
 extern void rHAL_pl_diag(void);
-extern void rHAL_pl_x_tx_data_on();
-extern void rHAL_pl_x_tx_data_off();
+extern void rHAL_pl_x_tx_data_on(void);
+extern void rHAL_pl_x_tx_data_off(void);
 extern void rHAL_pl_debug(void);
 extern void TC_tm_ds_en();
 //extern void rTC_pl_tx_tm();
@@ -377,6 +377,8 @@ extern void rHAL_tm_ds_en();
 extern void pl_tx_tm();
 
 extern unsigned int pl_cmd_id;
+
+extern unsigned int ram_scrub_cnt;
 
 extern void rHAL_pl1_ON();
 extern void rHAL_pl2_ON();
@@ -399,7 +401,8 @@ extern void antennaCommand6(void);
 extern void antennaCommand7(void);
 extern void antennaCommand8(void);
 extern void antennaCommand9(void);
-extern void rHAL_Antenna_Read();
+extern void rHAL_Antenna_Read(void);
+extern void antenna_TM(void);
 
 extern void rpl_read();
 extern void pl_tx_tm_2();
@@ -420,6 +423,7 @@ extern void ST_output_update();
 extern void NMI_interrupt_test();
 extern void EEPROM_RES();
 extern void EEPROM_RST();
+extern void STS_reg_TM();
 
 //heater
 extern void Heater_control_auto_manual();
@@ -534,6 +538,8 @@ union testing_dt
 	unsigned int ar[10];
 	unsigned short ar_16[20];
 }dt_ar;
+
+extern int i;
 
 /***********************************************/
 #endif // GLOBAL

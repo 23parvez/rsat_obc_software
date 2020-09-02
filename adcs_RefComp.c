@@ -1,5 +1,13 @@
 #include <math.h>
 
+#include "adcs_ADandEst.h"
+#include "adcs_CommonRoutines.h"
+#include "adcs_Constants.h"
+#include "adcs_GPS_OD.h"
+#include "adcs_LinearController.h"
+#include "adcs_ModePreProcs.h"
+#include "adcs_RefComp.h"
+#include "adcs_SensorDataProcs.h"
 #include "adcs_VarDeclarations.h"
 
 #include "Telecommand.h"
@@ -19,9 +27,9 @@ void rGH_generation(void)
 		{
 			for(j_gh=1;j_gh<=15;j_gh++)
 			{
-				g[i_gh][j_gh]= c_gval[m_gh] + c_gsval[m_gh] * Delta_T;
+				g[i_gh][j_gh]= c_gval[m_gh] + (c_gsval[m_gh] * Delta_T);
 
-				if (j_gh  > i_gh +1)
+				if (j_gh  > (i_gh +1))
 				{
 					g[i_gh][j_gh] = 0.0;
 
@@ -37,9 +45,9 @@ void rGH_generation(void)
 		{
 			for(j_gh=1;j_gh<=15;j_gh++)
 			{
-				h[i_gh][j_gh]= c_hval[n_gh] + c_hsval[n_gh] * Delta_T;
+				h[i_gh][j_gh]= c_hval[n_gh] + (c_hsval[n_gh] * Delta_T);
 
-				if (j_gh > i_gh+1)
+				if (j_gh > (i_gh+1))
 				{
 					h[i_gh][j_gh] = 0.0;
 
@@ -56,16 +64,16 @@ void rGH_generation(void)
 
 void rMagFieldComp(void)
 {
-    if (CB_MagFieldComp == Enable && TC_boolean_u.TC_Boolean_Table.TC_Mag_Refeci_en_dis == 1)
+    if ((CB_MagFieldComp == Enable) && (TC_boolean_u.TC_Boolean_Table.TC_Mag_Refeci_en_dis == 1))
     {
         //Initialization of parameters
-        for(I_MFC=1; I_MFC < c_Nmax+1; I_MFC++)
+        for(I_MFC=1; I_MFC < (c_Nmax+1); I_MFC++)
         {
             cl_magad[I_MFC]= 0.0;
             sl_magad[I_MFC]= 0.0;
         }
 
-        for(I_MFC=1; I_MFC < c_Kmax+1; I_MFC++)
+        for(I_MFC=1; I_MFC < (c_Kmax+1); I_MFC++)
         {
             p_magad[I_MFC]= 0.0;
             q_magad[I_MFC]= 0.0;
@@ -86,26 +94,27 @@ void rMagFieldComp(void)
 		sl_magad[1]=sin(longitude);
 		///Alti = 514.5628;
 		B_Rho = c_radiusearthkm*(1.0-(1.0/298.257223563));
-		Rho = sqrt(c_radiusearthkm*c_radiusearthkm*st_magad*st_magad + B_Rho*B_Rho*ct_magad*ct_magad);
+		Rho = sqrt((c_radiusearthkm*c_radiusearthkm*st_magad*st_magad) + (B_Rho*B_Rho*ct_magad*ct_magad));
 
-		if(abs_f(Rho) <= c_dividebyzerovalue)
+		if(fabs(Rho) <= c_dividebyzerovalue)
 		{
 			Rho = c_dividebyzerovalue;
 		}
 
-		Alti_Mod = sqrt(Alti*Alti + 2.0*Alti*Rho + (pow(c_radiusearthkm,4.0) * st_magad*st_magad + pow(B_Rho,4.0) * ct_magad*ct_magad)/ (Rho*Rho));
+		Alti_Mod = sqrt((Alti*Alti) + (2.0*Alti*Rho) + (((pow(c_radiusearthkm,4.0)
+                * (st_magad*st_magad)) + (pow(B_Rho,4.0) * (ct_magad*ct_magad)))/ (Rho*Rho)));
 
-		if(abs_f(Alti_Mod) <= c_dividebyzerovalue)
+		if(fabs(Alti_Mod) <= c_dividebyzerovalue)
 		{
 			Alti_Mod = c_dividebyzerovalue;
 		}
 
 		cd_magad = (Alti + Rho)/Alti_Mod;
-		s_magad = (c_radiusearthkm*c_radiusearthkm - B_Rho*B_Rho) / Rho*st_magad*ct_magad/Alti_Mod;
+		s_magad = (((c_radiusearthkm*c_radiusearthkm) - (B_Rho*B_Rho)) / Rho)*st_magad*(ct_magad/Alti_Mod);
 
 		old_cos = ct_magad;
-		ct_magad = ct_magad*cd_magad - st_magad*s_magad;
-		st_magad = st_magad*cd_magad + old_cos*s_magad;
+		ct_magad = (ct_magad*cd_magad) - (st_magad*s_magad);
+		st_magad = (st_magad*cd_magad) + (old_cos*s_magad);
 
 		p_magad[3]=st_magad;
 		q_magad[3]=ct_magad;
@@ -127,7 +136,7 @@ void rMagFieldComp(void)
 
 			}
 
-			if(M_MAGAD==N_MAGAD&&K_MAGAD!=3)
+			if((M_MAGAD==N_MAGAD)&&(K_MAGAD!=3))
 			{
 				//Compute Gauss function p(k) and its partial derivative q(k)
 				if(M_MAGAD != 0)
@@ -137,9 +146,9 @@ void rMagFieldComp(void)
 
 				J_MAGAD=K_MAGAD-N_MAGAD-1;
 				p_magad[K_MAGAD]=one_magad*st_magad*p_magad[J_MAGAD];
-				q_magad[K_MAGAD]=one_magad*(st_magad*q_magad[J_MAGAD]+ct_magad*p_magad[J_MAGAD]);
-				cl_magad[M_MAGAD]=cl_magad[M_MAGAD-1]*cl_magad[1]-sl_magad[M_MAGAD-1]*sl_magad[1];
-				sl_magad[M_MAGAD]=sl_magad[M_MAGAD-1]*cl_magad[1]+cl_magad[M_MAGAD-1]*sl_magad[1];
+				q_magad[K_MAGAD]=one_magad*((st_magad*q_magad[J_MAGAD])+(ct_magad*p_magad[J_MAGAD]));
+				cl_magad[M_MAGAD]=(cl_magad[M_MAGAD-1]*cl_magad[1])-(sl_magad[M_MAGAD-1]*sl_magad[1]);
+				sl_magad[M_MAGAD]=(sl_magad[M_MAGAD-1]*cl_magad[1])+(cl_magad[M_MAGAD-1]*sl_magad[1]);
 			}
 
 			if(M_MAGAD!=N_MAGAD)
@@ -147,17 +156,17 @@ void rMagFieldComp(void)
 				gmm = M_MAGAD*M_MAGAD;
 				A1_magad=sqrt((fN_MAGAD *fN_MAGAD)-gmm);
 
-				if(abs_f(A1_magad) <= c_dividebyzerovalue)
+				if(fabs(A1_magad) <= c_dividebyzerovalue)
 				{
 					A1_magad = c_dividebyzerovalue;
 				}
 
 				A2_magad=sqrt((gN_MAGAD*gN_MAGAD)-gmm)/A1_magad;
-				A3_magad=(2.0 * (float)fN_MAGAD - 1.0)/A1_magad;
+				A3_magad=((2.0 * (float)fN_MAGAD) - 1.0)/A1_magad;
 				I_MAGAD=K_MAGAD-N_MAGAD;
 				J_MAGAD=I_MAGAD-N_MAGAD+1;
 				p_magad[K_MAGAD]=(A3_magad*ct_magad*p_magad[I_MAGAD] )-(A2_magad * p_magad[J_MAGAD]);
-				q_magad[K_MAGAD]=(A3_magad*(ct_magad*q_magad[I_MAGAD]-st_magad*p_magad[I_MAGAD]))-(A2_magad*q_magad[J_MAGAD]);
+				q_magad[K_MAGAD]=(A3_magad*((ct_magad*q_magad[I_MAGAD])-(st_magad*p_magad[I_MAGAD])))-(A2_magad*q_magad[J_MAGAD]);
 			}
 
 			//Compute temp & intermediate variables
@@ -169,24 +178,24 @@ void rMagFieldComp(void)
 			//Computation of BNorth, BDown
 			if(M_MAGAD!=0)
 			{
-				BNorth=BNorth + (one_magad * cl_magad[M_MAGAD] + two_magad * sl_magad[M_MAGAD]) * q_magad[K_MAGAD];
-				BDown=BDown - ((float)N_MAGAD+1.0) * (one_magad* cl_magad[M_MAGAD] + two_magad * sl_magad[M_MAGAD]) * p_magad[K_MAGAD];
+				BNorth=BNorth + (((one_magad * cl_magad[M_MAGAD]) + (two_magad * sl_magad[M_MAGAD])) * q_magad[K_MAGAD]);
+				BDown=BDown - ((((float)N_MAGAD+1.0) * ((one_magad* cl_magad[M_MAGAD]) + (two_magad * sl_magad[M_MAGAD]))) * p_magad[K_MAGAD]);
 			}
 			if(M_MAGAD==0)
 			{
-				BNorth=BNorth+one_magad*q_magad[K_MAGAD];
-				BDown=BDown-((float)N_MAGAD+1.0)*one_magad*p_magad[K_MAGAD];
+				BNorth=BNorth+(one_magad*q_magad[K_MAGAD]);
+				BDown=BDown-(((float)N_MAGAD+1.0)*one_magad*p_magad[K_MAGAD]);
 			}
 
 			//Computation of BEast
-			if(M_MAGAD!=0 && st_magad!=0.0)
+			if((M_MAGAD!=0) && (st_magad!=0.0))
 			{
-				BEast=BEast+(1.0/st_magad)*(one_magad*sl_magad[M_MAGAD]-two_magad*cl_magad[M_MAGAD]) * (float)M_MAGAD *p_magad[K_MAGAD]; //as if (st_magad != 0) we are calling this routine. No need of divide by zero check
+				BEast=BEast+((1.0/st_magad)*((one_magad*sl_magad[M_MAGAD])-(two_magad*cl_magad[M_MAGAD])) * ((float)M_MAGAD *p_magad[K_MAGAD])); //as if (st_magad != 0) we are calling this routine. No need of divide by zero check
 			}
 
-			if(M_MAGAD!=0 && st_magad==0.0)
+			if((M_MAGAD!=0) && (st_magad==0.0))
 			{
-				BEast=BEast+ct_magad*(one_magad*sl_magad[M_MAGAD]-two_magad* cl_magad[M_MAGAD])* q_magad[K_MAGAD];
+				BEast=BEast+(ct_magad*((one_magad*sl_magad[M_MAGAD])-(two_magad* cl_magad[M_MAGAD]))* q_magad[K_MAGAD]);
 			}
 			M_MAGAD++;
 		}
@@ -224,13 +233,13 @@ void rMagFieldComp(void)
 
 void rSun_Ephemeris(void)
 {
-    if (CB_Sun_model == Enable && TC_boolean_u.TC_Boolean_Table.TC_Sun_Ephemeris_en_dis == 1)
+    if ((CB_Sun_model == Enable) && (TC_boolean_u.TC_Boolean_Table.TC_Sun_Ephemeris_en_dis == 1))
     {
-        L_Msun = c_L_Msun1*c_D2R + c_L_Msun2*c_D2R * tut; //mean longitude of Sun
-        Msun = c_Msun1*c_D2R + c_Msun2*c_D2R * tut; //mean anomaly of Sun
-        L_Ecliptic = L_Msun + c_L_Ecliptic1*c_D2R * sin(Msun) + c_L_Ecliptic2*c_D2R * sin(2.0 * Msun); //ecliptic longitude of Sun
-        Sun_Dis = c_Sun_Dis1*c_D2R - c_Sun_Dis2*c_D2R * cos(Msun) - c_Sun_Dis3*c_D2R * cos(2.0 * Msun); //distance to Sun in AUs
-        Epsilon = c_Epsilon1*c_D2R - c_Epsilon2*c_D2R * tut; //obliquity of the eclipse
+        L_Msun = (c_L_Msun1*c_D2R) + (c_L_Msun2*c_D2R * tut); //mean longitude of Sun
+        Msun = (c_Msun1*c_D2R) + (c_Msun2*c_D2R * tut); //mean anomaly of Sun
+        L_Ecliptic = L_Msun + (c_L_Ecliptic1*c_D2R * sin(Msun)) + (c_L_Ecliptic2*c_D2R * sin(2.0 * Msun)); //ecliptic longitude of Sun
+        Sun_Dis = (c_Sun_Dis1*c_D2R) - (c_Sun_Dis2*c_D2R * cos(Msun)) - (c_Sun_Dis3*c_D2R * cos(2.0 * Msun)); //distance to Sun in AUs
+        Epsilon = (c_Epsilon1*c_D2R) - (c_Epsilon2*c_D2R * tut); //obliquity of the eclipse
 
         ///Sun vector in ECI frame in AUs
         S_ECI[0] = cos(L_Ecliptic);
@@ -241,8 +250,6 @@ void rSun_Ephemeris(void)
         S_ECIn[0] = Norm_out[0];
         S_ECIn[1] = Norm_out[1];
         S_ECIn[2] = Norm_out[2];
-
-        return;
     }
 }
 
@@ -332,19 +339,19 @@ void rReferenceQuatComputation(void)
 		Z_MDO2ECI[1] = Norm_out[1];
 		Z_MDO2ECI[2] = Norm_out[2];
 
-		for(i=0; i<3;i++)
+		for(i_rfc=0; i_rfc<3;i_rfc++)
 		{
-			R_MDO2ECI[0][i] = X_MDO2ECI[i];
-			R_MDO2ECI[1][i] = Y_MDO2ECI[i];
-			R_MDO2ECI[2][i] = Z_MDO2ECI[i];
+			R_MDO2ECI[0][i_rfc] = X_MDO2ECI[i_rfc];
+			R_MDO2ECI[1][i_rfc] = Y_MDO2ECI[i_rfc];
+			R_MDO2ECI[2][i_rfc] = Z_MDO2ECI[i_rfc];
 		}
 
 		rMatMul3x3(R_MDO_CB,R_MDO2ECI);
-		for(i=0; i<3; i++)
+		for(i_rfc=0; i_rfc<3; i_rfc++)
 		{
-			for(j=0; j<3; j++)
+			for(j_rfc=0; j_rfc<3; j_rfc++)
 			{
-				R_MDO2ECI[i][j] = Matout33[i][j];
+				R_MDO2ECI[i_rfc][j_rfc] = Matout33[i_rfc][j_rfc];
 			}
 		}
 
@@ -362,9 +369,9 @@ void rReferenceQuatComputation(void)
 
         ///---------------------------------------SPO to ECI Transformation--------------------------------------------------
 
-        STATION_ECEF[0] = c_radiusearthkm * (cos((double)ADCS_TC_data_command_Table.TC_ECEF_stationLongitude) * cos((double)ADCS_TC_data_command_Table.TC_ECEF_stationlatitude));
-        STATION_ECEF[1] = c_radiusearthkm * (sin((double)ADCS_TC_data_command_Table.TC_ECEF_stationLongitude) * cos((double)ADCS_TC_data_command_Table.TC_ECEF_stationlatitude));
-        STATION_ECEF[2] = c_radiusearthkm * sin((double)ADCS_TC_data_command_Table.TC_ECEF_stationlatitude);
+        STATION_ECEF[0] = c_radiusearthkm * (cos(ADCS_TC_data_command_Table.TC_ECEF_stationLongitude) * cos(ADCS_TC_data_command_Table.TC_ECEF_stationlatitude));
+        STATION_ECEF[1] = c_radiusearthkm * (sin(ADCS_TC_data_command_Table.TC_ECEF_stationLongitude) * cos(ADCS_TC_data_command_Table.TC_ECEF_stationlatitude));
+        STATION_ECEF[2] = c_radiusearthkm * sin(ADCS_TC_data_command_Table.TC_ECEF_stationlatitude);
 
         rMatMul3x1(ECEFtoECI,STATION_ECEF);
         STATION_ECI[0] = Matout31[0];
@@ -385,16 +392,16 @@ void rReferenceQuatComputation(void)
         STATION_vector[1] = Norm_out[1];
         STATION_vector[2] = Norm_out[2];
 
-        rdotrst = STATION_ECIn[0] * (-STATION_vector[0]) + STATION_ECIn[1] * (-STATION_vector[1]) + STATION_ECIn[2] * (-STATION_vector[2]);
+        rdotrst = (STATION_ECIn[0] * (-STATION_vector[0])) + (STATION_ECIn[1] * (-STATION_vector[1])) + (STATION_ECIn[2] * (-STATION_vector[2]));
         SAT_ANGLE_STAT = acos(rdotrst) *c_R2D;
 
         Z_SPO2ECI[0] = STATION_vector[0];
         Z_SPO2ECI[1] = STATION_vector[1];
         Z_SPO2ECI[2] = STATION_vector[2];
 
-        Y_SPO2ECI[0] = (c_au*S_ECI[0]-Pos_ECI[0]);
-		Y_SPO2ECI[1] = (c_au*S_ECI[1]-Pos_ECI[1]);
-		Y_SPO2ECI[2] = (c_au*S_ECI[2]-Pos_ECI[2]);
+        Y_SPO2ECI[0] = ((c_au*S_ECI[0])-Pos_ECI[0]);
+		Y_SPO2ECI[1] = ((c_au*S_ECI[1])-Pos_ECI[1]);
+		Y_SPO2ECI[2] = ((c_au*S_ECI[2])-Pos_ECI[2]);
 
 //        Y_SPO2ECI[0] = -S_ECIN[0];
 //        Y_SPO2ECI[1] = -S_ECIN[1];
@@ -701,8 +708,9 @@ void rRefVectorGeneration(void)
 
         f_station_tracking_enabled_pre = f_station_tracking_enabled;
 
-        if ((TC_boolean_u.TC_Boolean_Table.TC_Station_Tracking_Mode == 1) && (90.0-SAT_ANGLE_STAT > 5.0))
+        if ((TC_boolean_u.TC_Boolean_Table.TC_Station_Tracking_Mode == 1) && ((90.0-SAT_ANGLE_STAT) > 5.0))
         {
+        	Station_tracking_mode = 0x06;
             for(i_rfc=0;i_rfc<3;i_rfc++)
             {
                 for(j_rfc=0;j_rfc<3;j_rfc++)
@@ -722,9 +730,13 @@ void rRefVectorGeneration(void)
 			f_Momentum_Dumping = 0;
 
             if (f_Sunlit_Presence == 1)
+            {
             	OBC_Quest_update = 1;
+            }
             else
+            {
             	OBC_Quest_update = 0;
+            }
 
         }
         else
@@ -733,9 +745,10 @@ void rRefVectorGeneration(void)
             f_Momentum_Dumping = 1;
             OBC_Quest_update = 1;
             f_station_tracking_enabled = 0;
+            Station_tracking_mode = 0;
         }
-
-        if (f_station_tracking_enabled == 0 && f_station_tracking_enabled_pre == 1)
+        TM.Buffer.TM_station_tracking_mode = Station_tracking_mode;
+        if ((f_station_tracking_enabled == 0) && (f_station_tracking_enabled_pre == 1))
 		{
 			f_aft_statn_wait = 1;
 		}
@@ -844,18 +857,26 @@ void rRefRate_Computation(void)
 
 		//QRD_vect_norm = sqrt((Q_REF_diff[0] * Q_REF_diff[0]) + (Q_REF_diff[1] * Q_REF_diff[1]) + (Q_REF_diff[2] * Q_REF_diff[2]));
 
-		if (Q_REF_diff[3] < 0.05)
+		if (Q_REF_diff[3] > 0.05)
 		{
-			for (i=0; i<3;i++)
+			for (i_rfc=0; i_rfc<3;i_rfc++)
 			{
-				w_REF[i] = (2.0 * (Q_REF_diff[i] / c_MaC));
+				w_REF[i_rfc] = (2.0 * (Q_REF_diff[i_rfc] / c_MaC));
+			}
+			QRD_vect_norm = sqrt((w_REF[0]*w_REF[0]) + (w_REF[1]*w_REF[1]) + (w_REF[2]*w_REF[2]));
+			if (fabs(QRD_vect_norm) > 0.01)
+			{
+				for (i_rfc=0; i_rfc<3;i_rfc++)
+				{
+					w_REF[i_rfc] = w_REF_prev[i_rfc];
+				}
 			}
 		}
 		else
 		{
-			for (i=0; i<3;i++)
+			for (i_rfc=0;i_rfc<3;i_rfc++)
 			{
-				w_REF[i] = w_REF_prev[i];
+				w_REF[i_rfc] = w_REF_prev[i_rfc];
 			}
 		}
     }
@@ -865,27 +886,30 @@ void rSl_Ecl_OnBrd_detection(void)
 {
     if (CB_Sl_Ecl_OnBrd_detection == Enable)
     {
-    	rsun[0]= S_ECI[0]*c_au;
-		rsun[1]= S_ECI[1]*c_au;
-		rsun[2]= S_ECI[2]*c_au;
+    	if (CB_OrbitModel == Set)
+    	{
+			rsun[0]= S_ECI[0]*c_au;
+			rsun[1]= S_ECI[1]*c_au;
+			rsun[2]= S_ECI[2]*c_au;
 
-		magrsun = sqrt((rsun[0] * rsun[0]) + (rsun[1] * rsun[1]) + (rsun[2] * rsun[2]));
+			magrsun = sqrt((rsun[0] * rsun[0]) + (rsun[1] * rsun[1]) + (rsun[2] * rsun[2]));
 
-		theta1_se = acos((c_radiusearthkm) / radialdistance);
-		theta2_se = acos((c_radiusearthkm) / (magrsun));
+			theta1_se = acos((c_radiusearthkm) / radialdistance);
+			theta2_se = acos((c_radiusearthkm) / (magrsun));
 
-		///Angle between s/c position vector and Sun position vector (radians)
-		psi_sl_ecl = acos(((Pos_ECI[0] * rsun[0]) + (Pos_ECI[1] * rsun[1]) + (Pos_ECI[2] * rsun[2])) / (radialdistance * magrsun));
+			///Angle between s/c position vector and Sun position vector (radians)
+			psi_sl_ecl = acos(((Pos_ECI[0] * rsun[0]) + (Pos_ECI[1] * rsun[1]) + (Pos_ECI[2] * rsun[2])) / (radialdistance * magrsun));
 
-    	///If psi is >= thetal+theta2_se, the s/c is in eclipse, otherwise it's in sunlight
-		if(psi_sl_ecl <= (theta1_se + theta2_se))
-		{
-			f_Sunlit_Presence_orbit = True;
-		}
-		else
-		{
-			f_Sunlit_Presence_orbit = False;
-		}
+			///If psi is >= thetal+theta2_se, the s/c is in eclipse, otherwise it's in sunlight
+			if(psi_sl_ecl <= (theta1_se + theta2_se))
+			{
+				f_Sunlit_Presence_orbit = True;
+			}
+			else
+			{
+				f_Sunlit_Presence_orbit = False;
+			}
+    	}
 
 		if((SC1 > c_Sunlit_Thrsld) || (SC2 > c_Sunlit_Thrsld) || (SC3 > c_Sunlit_Thrsld) || (SC4 > c_Sunlit_Thrsld) || (SC5 > c_Sunlit_Thrsld) || (SC6 > c_Sunlit_Thrsld))
 		{
@@ -898,11 +922,11 @@ void rSl_Ecl_OnBrd_detection(void)
 			f_Sunlit_Presence_sensor = False;
 		}
 
-		elapsed_running_timer = elapsed_running_timer + c_MaC;
+		elapsed_running_timer = elapsed_running_timer + 1;
 
-		if (elapsed_running_timer > Orbit_Period)
+		if (elapsed_running_timer > (int)(Orbit_Period/c_MaC))
 		{
-			elapsed_running_timer = elapsed_running_timer - Orbit_Period;
+			elapsed_running_timer = elapsed_running_timer - (int)(Orbit_Period/c_MaC);
 		}
 
 		if (elapsed_running_timer < ADCS_TC_data_command_Table.TC_eclipse_entrytime)
@@ -934,7 +958,7 @@ void rSl_Ecl_OnBrd_detection(void)
 		}
 		else
 		{
-			return;
+			//
 		}
 
 		if (f_Sunlit_Presence == 1)
@@ -948,5 +972,4 @@ void rSl_Ecl_OnBrd_detection(void)
 			Sunlit_presence_timer = 0;
 		}
     }
-    return;
 }

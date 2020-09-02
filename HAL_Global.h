@@ -70,17 +70,17 @@ union ST_Out_Latch_2
 	{
 		unsigned filler		  :5; //4;
 		unsigned SPARE2_ON_OFF:1;
-	//	unsigned RF_Tx_ON_OFF:1;
-		unsigned X_Tx_ON_OFF:1;
-		unsigned MTR_ON_OFF	:1;
-		unsigned GPS2_RESET	:1;
-		unsigned GPS2_ON_OFF:1;
-		unsigned GPS1_RESET	:1;
-		unsigned GPS1_ON_OFF:1;
-		unsigned IMU2_RESET	:1;
-		unsigned IMU2_ON_OFF:1;
-		unsigned IMU1_RESET	:1;
-		unsigned IMU1_ON_OFF:1;
+	//	unsigned RF_Tx_ON_OFF :1;
+		unsigned X_Tx_ON_OFF  :1;
+		unsigned MTR_ON_OFF	  :1;
+		unsigned GPS2_RESET	  :1;
+		unsigned GPS2_ON_OFF  :1;
+		unsigned GPS1_RESET	  :1;
+		unsigned GPS1_ON_OFF  :1;
+		unsigned IMU2_RESET	  :1;
+		unsigned IMU2_ON_OFF  :1;
+		unsigned IMU1_RESET	  :1;
+		unsigned IMU1_ON_OFF  :1;
 	};
 }ST_Out_Latch_2;
 
@@ -197,8 +197,8 @@ union Out_latch_6
 	unsigned short data;
 	struct
 	{
-		unsigned filler 		:15;
-		unsigned RF_Tx_ON_OFF	:1;
+		unsigned filler 		       :15;
+		unsigned RF_Tx_ON_OFF	       :1;
 	};
 }Out_latch_6;
 
@@ -300,7 +300,20 @@ struct HAL_RW_Data_Structure
 	unsigned long int RW_Status_Register_2;
 	unsigned long int RW_Buffer_Register;
 };
-
+//Storage_TM_status data
+union STORAGE_TM_TC
+{
+	unsigned char st_data;
+	struct
+	{
+		unsigned Storage_en       :1;
+		unsigned Storage_type_sel :1;
+		unsigned Normal_sampling  :1;
+		unsigned Special_sampling :2;
+		unsigned Frame_addr_sel   :2;
+		unsigned filler           :1;
+	};
+}Storage_tm_status;
 
 //payload union
 union PL_DATA_STORAGE
@@ -331,6 +344,7 @@ unsigned int pl_tm_4bytes[64];
 unsigned char FDI_NMI_Count;
 unsigned char NMI_fail_count;
 unsigned int minor_cycle_counter_test;
+unsigned int ram_scrub_cnt;
 //unsigned short TC_count;
 
 unsigned long int IO_In_Latch_Register_4_Data;
@@ -372,6 +386,7 @@ void checksum_u8(unsigned char* db_start_address,unsigned short size_of_data);
 unsigned char chksum8(const unsigned char *buff, unsigned int len);
 void rOutput_Latch_Update();
 void ST_output_update();
+void STS_reg_TM();
 void NMI_interrupt_test();
 void EEPROM_RST();
 void GPIO();

@@ -62,7 +62,7 @@ unsigned int Remote_data_addr;
 			uint8 TC_EKF1_Enable;                                                 /* offset =   48  */
 			uint8 TC_EKF2_Enable;                                                 /* offset =   49  */
 			uint8 TC_Storage_TM_Enable_Disable;                                   /* offset =   50  */
-			uint8 TC_ST_mode;                                                     /* offset =   51  */
+			uint8 TC_RW_Speed_sel;                                                /* offset =   51  */
 			uint8 TC_NormalStorage_Sampling_Rate_Select;                          /* offset =   52  */
 			uint8 pl_tx_tm_flag;                                                  /* offset =   53  */
 			uint8 TC_Storage_TM_Dump_enable_disable;							  /* offset =   54  */
@@ -95,6 +95,7 @@ unsigned int Remote_data_addr;
 			uint8 TC_Sunlitdec_Orbit_based;                                       /* offset =   79  */
 			uint8 TC_Sunlitdec_timer_based;										  /* offset =   80  */
 			uint8 TC_BIST_override;												  /* offset =   81  */
+
 	    };
 
 #define TC_BOOLEAN_MAX_LIMIT 82
@@ -160,7 +161,7 @@ unsigned int Remote_data_addr;
 			uint8 TC_EKF1_Enable                                  :1;
 			uint8 TC_EKF2_Enable                                  :1;
 			uint8 TC_Storage_TM_Enable_Disable                    :1;
-			uint8 TC_ST_mode                                      :1;
+			uint8 TC_RW_Speed_sel                                 :1;
 			uint8 TC_NormalStorage_Sampling_Rate_Select           :1;
 			uint8 pl_tx_tm_flag                                   :1;
 			//uint8 Storage_TM_dumping                            :1;
@@ -197,14 +198,11 @@ unsigned int Remote_data_addr;
 			uint8 TC_Sunlitdec_Orbit_based						  :1;
 			uint8 TC_Sunlitdec_timer_based						  :1;
 			uint8 TC_BIST_override								  :1;
-
-
-
 	    };
 
 	union TMTC_boolean_U
 	    {
-		uint32 TMTC_Buffer[2]; //TBD
+		uint8 TMTC_Buffer[11]; //TBD
 		struct TMTC_Boolean Boolean_Table;
 	    }TMTC_boolean_u;
 //---------------------------------------------------------------------------
@@ -213,31 +211,31 @@ unsigned int Remote_data_addr;
 	struct TC_gain_select
 	    {
 	    	//Command names to be updated!!!
-	    	uint8 TC_detumbling_bdot_gain;								 //offset =    0//
-	    	uint8 TC_detumbling_rate_gain;								 //offset =    1//
-	    	uint8 TC_BDOT_Det_Thresh;									 //offset =    2//
-	    	uint8 TC_GYRO_Det_Min_Thres;						         //offset =    3//
-	    	uint8 TC_W1_Commanded_Nominal_Speed;						 //offset =    4//
-	    	uint8 TC_W2_Commanded_Nominal_Speed;						 //offset =    5//
-	    	uint8 TC_W3_Commanded_Nominal_Speed;						 //offset =    6//
+	    	uint8 TC_detumbling_bdot_gain_set;								 //offset =    0//
+	    	uint8 TC_detumbling_rate_gain_set;								 //offset =    1//
+	    	uint8 TC_BDOT_Det_Thresh_set;									 //offset =    2//
+	    	uint8 TC_GYRO_Det_Min_Thres_set;						         //offset =    3//
+	    	uint8 TC_W1_Commanded_Nominal_Speed;						     //offset =    4//
+	    	uint8 TC_W2_Commanded_Nominal_Speed;						    //offset =    5//
+	    	uint8 TC_W3_Commanded_Nominal_Speed;						     //offset =    6//
 	    	uint8 TC_W4_Commanded_Nominal_Speed;						 //offset =    7//
-	    	uint8 TC_momentum_dumping_gain;								 //offset =    8//
+	    	uint8 TC_momentum_dumping_gain_set;								 //offset =    8//
 	    	uint8 TC_PanelD_Status_Sel;									 //offset =    9//
 	    	uint8 TC_Gyro_LPF_Gain_IMU1;								 //offset =    10//
 	    	uint8 TC_Gyro_LPF_Gain_IMU2;								 //offset =    11//
 	    	uint8 TC_Mag_LPF_Gain_IMU1;									 //offset =    12//
 	    	uint8 TC_Mag_LPF_Gain_IMU2;									 //offset =    13//
 	    	uint8 TC_SS_Currents_LPF_Gain;								 //offset =    14//
-	    	uint8 TC_GPS_pulse_duration;								 //offset =    15//
-	    	uint8 TC_KP;										         //offset =    16//
-	    	uint8 TC_KR;											     //offset =    17//
+	    	uint8 TC_GPS_pulse_duration_set;								 //offset =    15//
+	    	uint8 TC_KP_set;										         //offset =    16//
+	    	uint8 TC_KR_set;											     //offset =    17//
 	    	/************ Added on 26 JULY 2019 *******************/
-	    	uint8 TC_GPS_Validity_Altitude_Threshold;					 //offset =    18//
-	    	uint8 TC_Wheel_Cutoff_Threshold;						     //offset =    19//
+	    	uint8 TC_GPS_Validity_Altitude_Threshold;					         //offset =    18//
+	    	uint8 TC_Wheel_Cutoff_Threshold;						        	//offset =    19//
 	    	uint8 TC_Wh_SpinUD_Thrsld;								     //offset =    20//
-	    	uint8 TC_comd_pitch_rate;						             //offset =    21//
+	    	uint8 TC_comd_pitch_rate_set;						             //offset =    21//
 	    	uint8 TC_AngDev_SafeModetransit_Thrsld;						 //offset =    22//
-	    	uint8 TC_AngMomDump_Thrsld;						             //offset =    23//
+	    	uint8 TC_AngMomDump_Thrsld_set;						             //offset =    23//
 	    	uint8 TC_SpeedDump_Thrsld;						             //offset =    24//
 	    	uint8 TC_SpeedDump_TimeSelect;							     //offset =    25//
 	    	uint8 TC_special_Sampling_rate_Select;                       //offset =    26//
@@ -257,32 +255,32 @@ unsigned int Remote_data_addr;
 	struct TMTC_gain_select
 	    {
 	    	//Command names to be updated!!!
-	    	uint8 TC_detumbling_bdot_gain           				:2;
-	    	uint8 TC_detumbling_rate_gain           				:2;
-	    	uint8 TC_BDOT_Det_Thresh								:2;
-	    	uint8 TC_GYRO_Det_Min_Thres						        :2;
+	    	uint8 TC_detumbling_bdot_gain_set           			:2;
+	    	uint8 TC_detumbling_rate_gain_set           			:2;
+	    	uint8 TC_BDOT_Det_Thresh_set							:2;
+	    	uint8 TC_GYRO_Det_Min_Thres_set						    :2;
 	    	uint8 TC_W1_Commanded_Nominal_Speed					    :2;
 	    	uint8 TC_W2_Commanded_Nominal_Speed					    :2;
 	    	uint8 TC_W3_Commanded_Nominal_Speed					    :2;
 	    	uint8 TC_W4_Commanded_Nominal_Speed					    :2;
-			uint8 TC_momentum_dumping_gain          				:2;
+			uint8 TC_momentum_dumping_gain_set          			:2;
 			uint8 TC_PanelD_Status_Sel              				:2;
 			uint8 TC_Gyro_LPF_Gain_IMU1             				:2;
 			uint8 TC_Gyro_LPF_Gain_IMU2             				:2;
 			uint8 TC_Mag_LPF_Gain_IMU1              				:2;
 			uint8 TC_Mag_LPF_Gain_IMU2              				:2;
 			uint8 TC_SS_Currents_LPF_Gain           				:2;
-			uint8 TC_GPS_pulse_duration             				:2;
-			uint8 TC_KP                  				            :2;
-			uint8 TC_KR                      				        :2;
+			uint8 TC_GPS_pulse_duration_set             			:2;
+			uint8 TC_KP_set                  				        :2;
+			uint8 TC_KR_set                      				    :2;
 
 			/************ Added on 26 JULY 2019 *******************/
 			uint8 TC_GPS_Validity_Altitude_Threshold 				:2;
 			uint8 TC_Wheel_Cutoff_Threshold							:2;
 			uint8 TC_Wh_SpinUD_Thrsld								:2;
-			uint8 TC_comd_pitch_rate								:2;
+			uint8 TC_comd_pitch_rate_set							:2;
 			uint8 TC_AngDev_SafeModetransit_Thrsld					:2;
-			uint8 TC_AngMomDump_Thrsld								:2;
+			uint8 TC_AngMomDump_Thrsld_set							:2;
 			uint8 TC_SpeedDump_Thrsld								:2;
 			uint8 TC_SpeedDump_TimeSelect							:2;
 			uint8 TC_special_Sampling_rate_Select                   :2;
@@ -292,7 +290,7 @@ unsigned int Remote_data_addr;
 
 	union TMTC_gain_select_U
 	    {
-		uint32 TMTC_Buffer[2]; //TBD
+		uint8 TMTC_Buffer[7]; //TBD
 		struct TMTC_gain_select gain_select_Table;
 	    }TMTC_gain_select_u;
 
@@ -357,7 +355,7 @@ unsigned int Remote_data_addr;
 			float TC_SS_Imax_ALPHA;														//offset = 21 //To be removed from here. Shifted to remote data commands // REMOVE
 			int TC_eclipse_entrytime;													/*offset = 22*/
 			int TC_eclipse_exittime;													/*offset = 23*/
-			int TC_elapsed_orbitTimer;												/*offset = 24*/
+			int TC_elapsed_orbitTimer;													/*offset = 24*/
 			float TC_Sunlit_detctn_timer;												/*offset = 25*/// REMOVE
 			int TC_Time_GPS2TLE;														/*offset = 26*/
 			float TC_GPS_OFFSET_UTC;													/*offset = 27*/// REMOVE
@@ -370,9 +368,9 @@ unsigned int Remote_data_addr;
 			float TC_JulianDate_at_OrbitalEpoch;										/*offset = 34*/// REMOVE
 			float TC_OBT_with_TLE_Update;												/*offset = 35*/// REMOVE
 			float TC_Wheel_Configuration_Index;											/*offset = 36*/// REMOVE
-			int TC_Det_Bprev_Count;													/*offset = 37*/
-			int TC_Det_BDOT_Compute_Count;											/*offset = 38*/
-			int TC_Det_GYRO_Compute_Count;											/*offset = 39*/
+			int TC_Det_Bprev_Count;														/*offset = 37*/
+			int TC_Det_BDOT_Compute_Count;												/*offset = 38*/
+			int TC_Det_GYRO_Compute_Count;												/*offset = 39*/
 			float TC_Rate_Chk_Safe2Det;													/*offset = 40*/// REMOVE
 			float TC_ECEF_stationlatitude;												/*offset = 41*/
 			float TC_ECEF_stationLongitude;												/*offset = 42*/
@@ -388,8 +386,8 @@ unsigned int Remote_data_addr;
 			float TC_wAD_BODYminThRoll;                                                 /*offset = 52*/
 			float TC_wAD_BODYminThPitch;                                                /*offset = 53*/
 			float TC_wAD_BODYminThYaw;                                                  /*offset = 54*/
-			int TC_wAD_updateTimeThresh;                                              /*offset = 55*/
-			int TC_wp_QDP;                                                            /*offset = 56*/
+			int TC_wAD_updateTimeThresh;                                              	/*offset = 55*/
+			int TC_wp_QDP;                                                            	/*offset = 56*/
 			// added on 5_8_2020
 			float TC_nut_dpsi;                                                          /*offset = 57*/
 			float TC_nut_deps;                                                          /*offset = 58*/
@@ -579,10 +577,10 @@ typedef struct TC_ADCS_gainset
 	double TC_SS_Currents_LPF_Gain_1_11;
 
 	// offset 11
-	double TC_GPS_pulse_duration_0_00;
-	double TC_GPS_pulse_duration_0_01;
-	double TC_GPS_pulse_duration_0_10;
-	double TC_GPS_pulse_duration_0_11;
+	int TC_GPS_pulse_duration_0_00;
+	int TC_GPS_pulse_duration_0_01;
+	int TC_GPS_pulse_duration_0_10;
+	int TC_GPS_pulse_duration_0_11;
 
 	// offset 12
 	double TC_KP_0_00;

@@ -19,16 +19,16 @@ void rPOR_Init(void)
 	rTC_Suspended_ModePreprocessing();
     TC_hist_write_ptr = &TC_hist_data[0];
 	//TC_hist_read_ptr = &TC_hist_data[0];
-    TCH_read_ptr = (unsigned int)&TC_hist_data[0];
-    TCH_read_full_ptr = (unsigned int)&TC_hist_data[0];
-    TCH_cpy_ptr = (unsigned int)&TC_hist_data[0];
+    TCH_read_ptr = (unsigned int*)&TC_hist_data[0];
+    TCH_read_full_ptr = (unsigned int*)&TC_hist_data[0];
+    TCH_cpy_ptr = (unsigned int*)&TC_hist_data[0];
 	//TCH_write_ptr = &TC_hist_data[0];
 	Remote_data_addr = RAM_SEG_START_ADDR;
 
 	// Remote program default address
 	Remote_Addr = RAM_SEG_START_ADDR;
 
-
+	TC_cmd_executed_count = 0;
 	//Telemetry
 	inter_TM_ST_TC_NS_Write_Source_Addr = (unsigned short*)TC_storing_buffer;
 	read_str_ptr = (unsigned short*)Storage;
@@ -135,6 +135,7 @@ void rPOR_Init(void)
 	Out_Latch_1.FP_CTRL_MTR3_N2 = 0;
 	Out_Latch_1.FP_CTRL_MTR3_P2 = 0;
 	Out_Latch_1.FP_CTRL_MTR3_N1 = 0;
+
 	//SA PANEL
 	TC_data_command_Table.SA_PanelHeater_Timeout = cPANEL_HEATER_TIMEOUT_CONST;
 
@@ -148,18 +149,6 @@ void rPOR_Init(void)
 	rInit_Block();
 	BlkCurrent_Cmd = 0;
 	BlkExe_Status = BLK_Disabled;
-
-	/** pre-defined block execution commands - Block #0 - Testing 08-03-2019
-	 *  Block #0 Execute Command: 0xC410000780000000 */
-	/*Block_array[0][0] = 0xC4D0000000000000;//IMU 1 On
-	Block_array[0][1] = 0xC4D0000010010000;//IMU 2 On
-	Block_Index[0]    = 2;
-
-	/** pre-defined block execution commands - Block #2 - Testing 08-03-2019
-	/* *  Block #2 Execute Command: 0xC4100007A0000000*/
-	//Block_array[2][0] = 0xC4D0000020000200;//IMU 1 Off
-	//Block_array[2][1] = 0xC4D0000030010200;//IMU 2 Off
-	//Block_Index[2]    = 2;
 
 	// Initialization of NODE for Time-tag TC
 	initNodetable();
@@ -325,13 +314,13 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.TC_SS_Currents_LPF_Gain_1_11 = 1.0;
 
 	//offset 15
-	GAIN_DATA_SET.TC_GPS_pulse_duration_0_00 = 614.4;
+	GAIN_DATA_SET.TC_GPS_pulse_duration_0_00 = 4800; // 10 minutes
 
-	GAIN_DATA_SET.TC_GPS_pulse_duration_0_01 = 307.2;
+	GAIN_DATA_SET.TC_GPS_pulse_duration_0_01 = 2400; // 4 minutes
 
-	GAIN_DATA_SET.TC_GPS_pulse_duration_0_10 = 61.44;
+	GAIN_DATA_SET.TC_GPS_pulse_duration_0_10 = 480; // 1 minutes
 
-	GAIN_DATA_SET.TC_GPS_pulse_duration_0_11 = 1.024;
+	GAIN_DATA_SET.TC_GPS_pulse_duration_0_11 = 8; // 1 second
 
 	//offset 16
 	GAIN_DATA_SET.TC_KP_0_00 = 0.0020755;
@@ -502,6 +491,13 @@ void rPOR_Init(void)
 		
 		f_RW_nominal = 0;
 	    f_RW_control = 0;
+	    RW_nominal_speed_cnt = 0;
+
+	    /***************Auto_manual_speed_sel****************/
+
+	    TC_boolean_u.TC_Boolean_Table.TC_RW_Speed_sel = 0;
+
+	    /****************************************************/
 
 
 	    /*************************testing************************/

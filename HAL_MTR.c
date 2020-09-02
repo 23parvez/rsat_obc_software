@@ -6,6 +6,8 @@
 #include "Telecommand.h"
 #include "TC_List.h"
 #include "TM_Global_Buffer.h"
+
+#include "adcs_LinearController.h"
 #include "adcs_VarDeclarations.h"
 
 
@@ -26,123 +28,6 @@ void rHAL_MTR_OFF(void)
 	IO_LATCH_REGISTER_2 = tempdata;
 }
 
-//void rHAL_MTR(unsigned long int MTR_Axis,int MTR_Polarity)
-//{
-//	if(MTR_Axis == Pitch)
-//	  {
-//		  if(MTR_Polarity == Positive)
-//		  {
-//			     if((MTR_Current_Data & 0x0000000F) == 0x00000009)
-//			     {
-//			    	 MTR_Current_Data = MTR_Current_Data & 0x0000FFF0;
-//			    	 MTR_LATCH_REGISTER = MTR_Current_Data;//Turn OFF Pitch
-//			    	 //delay
-//			    	 for(wait_i=0;wait_i<3000;wait_i++);//2.24ms delay
-//			     }
-//			     MTR_Current_Data = MTR_Current_Data  | 0x00000006;
-//			     MTR_LATCH_REGISTER = MTR_Current_Data;//Positive Direction
-//		  }
-//		  else if(MTR_Polarity == Negative)
-//		  {
-//			     if((MTR_Current_Data & 0x0000000F) == 0x00000006)
-//			  	 {
-//			    	 MTR_Current_Data = MTR_Current_Data  & 0x0000FFF0;
-//			    	 MTR_LATCH_REGISTER = MTR_Current_Data;//Turn OFF Pitch
-//			    	 //delay
-//			    	 for(wait_i=0;wait_i<3000;wait_i++);//2.24ms delay
-//			  	 }
-//			     MTR_Current_Data = MTR_Current_Data  | 0x00000009;
-//			     MTR_LATCH_REGISTER = MTR_Current_Data;//Negative Direction
-//		  }
-//		  else if(MTR_Polarity == No_Current)
-//		  {
-//			     MTR_Current_Data = MTR_Current_Data  & 0x0000FFF0;
-//			     MTR_LATCH_REGISTER = MTR_Current_Data;//Turn OFF Pitch
-//		  }
-//		  else
-//		  {
-//			  //Do Nothing & Exit
-//		  }
-//	  }
-//	  else if(MTR_Axis == Yaw)
-//	  {
-//		  if(MTR_Polarity == Positive)
-//		  {
-//		  		if((MTR_Current_Data & 0x000000F0) == 0x00000090)
-//		  		{
-//		  		    MTR_Current_Data = MTR_Current_Data  & 0x0000FF0F;
-//		 		    MTR_LATCH_REGISTER = MTR_Current_Data;//Turn OFF Yaw
-//		 		     //delay
-//		 		    for(wait_i=0;wait_i<3000;wait_i++);//2.24ms delay
-//		  		}
-//		 		MTR_Current_Data = MTR_Current_Data  | 0x00000060;
-//		 		MTR_LATCH_REGISTER = MTR_Current_Data;//Positive Direction
-//		  }
-//		  else if(MTR_Polarity == Negative)
-//		  {
-//		 		if((MTR_Current_Data & 0x000000F0) == 0x00000060)
-//		 		 {
-//		 		     MTR_Current_Data = MTR_Current_Data  & 0x0000FF0F;
-//		 		     MTR_LATCH_REGISTER = MTR_Current_Data;//Turn OFF Yaw
-//		 		     //delay
-//		 		     for(wait_i=0;wait_i<3000;wait_i++);//2.24ms delay
-//		 		 }
-//		 		 MTR_Current_Data = MTR_Current_Data  | 0x00000090;
-//		 		 MTR_LATCH_REGISTER = MTR_Current_Data;//Negative Direction
-//		  }
-//		  else if(MTR_Polarity == No_Current)
-//		  {
-//		 		 MTR_Current_Data = MTR_Current_Data  & 0x0000FF0F;
-//		 		 MTR_LATCH_REGISTER = MTR_Current_Data;//Turn OFF Yaw
-//		  }
-//		  else
-//		  {
-//		 		  //Do Nothing & Exit
-//		  }
-//	  }
-//	  else if(MTR_Axis == Roll)
-//	  {
-//		  if(MTR_Polarity == Positive)
-//		  {
-//			    if((MTR_Current_Data & 0x00000F00) == 0x00000900)
-//			    {
-//			    	 MTR_Current_Data = MTR_Current_Data  & 0x0000F0FF;
-//			    	 MTR_LATCH_REGISTER = MTR_Current_Data;//Turn OFF Roll
-//			    	 //delay
-//			    	 for(wait_i=0;wait_i<3000;wait_i++);//2.24ms delay
-//			    }
-//		 		MTR_Current_Data = MTR_Current_Data  | 0x00000600;
-//		 		MTR_LATCH_REGISTER = MTR_Current_Data;//Positive Direction
-//		 }
-//		 else if(MTR_Polarity == Negative)
-//		 {
-//		 	    if((MTR_Current_Data & 0x00000F00) == 0x00000600)
-//		 		{
-//		 		     MTR_Current_Data = MTR_Current_Data  & 0x0000F0FF;
-//		 		     MTR_LATCH_REGISTER = MTR_Current_Data;//Turn OFF Roll
-//		 		     //delay
-//		 		     for(wait_i=0;wait_i<3000;wait_i++);//2.24ms delay
-//		 		}
-//		 		MTR_Current_Data = MTR_Current_Data  | 0x00000900;
-//		 		MTR_LATCH_REGISTER = MTR_Current_Data;//Negative Direction
-//		 }
-//		 else if(MTR_Polarity == No_Current)
-//		 {
-//		 		MTR_Current_Data = MTR_Current_Data  & 0x0000F0FF;
-//		 		MTR_LATCH_REGISTER = MTR_Current_Data;//Turn OFF Roll
-//		 }
-//		 else
-//		 {
-//		 		  //Do Nothing & Exit
-//		 }
-//	  }
-//
-//	  else
-//	  {
-//		  //Do Nothing & Exit
-//	  }
-//
-//}
 #if 1
 
 //int CB_Torquer_Polarity_Check=1;

@@ -1,1 +1,7 @@
 /Debug
+.cproject
+rsat-obc.dis
+rsat-obc.elf
+rsat-obc.map
+rsat-obc.prom
+xdump.s

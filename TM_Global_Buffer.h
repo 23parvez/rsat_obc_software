@@ -17,7 +17,7 @@ struct TM_IMU_DATA{
 	unsigned short TM_IMU_Diag_STS;//Diagnostics STS Data of IMU
 }TM_IMU1,TM_IMU2;
 
-//----------------------SA STATUS---------------------
+//----------------------SA STATUS---------------------(to be removed)
 #pragma pack(1)
 struct SWHW_STATUS_ST{
   unsigned char SA_status_1;
@@ -27,8 +27,8 @@ struct SWHW_STATUS_ST{
 //----------------------GPS TM Data----------------------------
 #pragma pack(1)
 struct TM_GPS_STRUCTURE{
-unsigned char TM_No_Of_Sat;
-unsigned char TM_UTC_Day;
+unsigned char TM_No_Of_Sat;   // 1
+unsigned char TM_UTC_Day;     // 2
 unsigned char TM_UTC_Month;
 unsigned short TM_UTC_Year;
 unsigned char TM_UTC_hour;
@@ -42,10 +42,11 @@ unsigned int TM_GPS_XVel;
 unsigned int TM_GPS_YVel;
 unsigned int TM_GPS_ZVel;
 unsigned char TM_No_Of_Sat_InFix;
-unsigned char TM_Pos_Validity;
-unsigned char TM_BIST_Info;
-unsigned char TM_CheckSum;
+unsigned char TM_Pos_Validity;    // 47
+unsigned char TM_BIST_Info;       // 48
+unsigned char TM_CheckSum;        // 49
 };
+
 
 struct TM_SP_GPS_STRUCTURE{
 	unsigned char TM_UTC_Day;
@@ -97,7 +98,7 @@ struct TM_BUFFER_STUCTURE{
 	//unsigned char TC_history_TM:1;
 	unsigned char filler:1;
 	unsigned char Sub_Frame: 4;
-	unsigned int OBT; // On Board Timer
+	unsigned int OBT;                            // On Board Timer
 
 	// IMU
 	struct TM_IMU_DATA   TM_IMU1;
@@ -111,8 +112,10 @@ struct TM_BUFFER_STUCTURE{
 	unsigned short       TM_inter_HAL_IMU_Status_Data_2;
 	unsigned short       TM_inter_HAL_IMU_Status_Data;
 
-	unsigned char TM_TC_Buffer[63];
-
+	unsigned char TM_TC_Buffer[64];
+	unsigned char TM_mode_selection[6];
+	unsigned short TM_STS_data;
+	unsigned char storage_telemetry_sts;
 
 	// Remote Address and Data
 	unsigned int TM_Remote_Addr_SF0;
@@ -149,21 +152,26 @@ struct TM_BUFFER_STUCTURE{
 	unsigned short TM_SA_current;
 	unsigned short TM_AGC;
 	//unsigned char TM_AGC;
-	unsigned short SA1_Shunt_sw;
-	unsigned short SA2_Shunt_sw;
-	unsigned short SA3_Shunt_sw;
+	//unsigned short SA1_Shunt_sw;
+	unsigned char SA_Shunt_sw;
+	//unsigned short SA2_Shunt_sw;
+	//unsigned short SA3_Shunt_sw;
 
 	unsigned int Last_seen_TC[2];
-	unsigned long int TM_TC_cmd_executed_count;
+	unsigned int TM_TC_cmd_executed_count;
 	unsigned long long int TM_TC_exe;
 	unsigned int TM_ATTC_count;
 	unsigned long long int TM_Next_exe_TC;
+	unsigned short TM_TC_STS_data;
 
 	//remote_address
 	unsigned int TM_Remote_Addr;
+	unsigned int TM_ram_scrub_cnt;
 
 	unsigned short TM_Input_Latch[4];
-	unsigned short TM_Output_Latch[5];
+	//unsigned short TM_Output_Latch[5];
+	unsigned short TM_Output_Latch[6];
+	unsigned char TM_Output_Latch_5;
 
     // Payload
     unsigned short TM_PAYLOAD_ACK[4];
@@ -177,21 +185,30 @@ struct TM_BUFFER_STUCTURE{
 
     //payload acknowledgement count
     unsigned short TM_pl_ack_count;
+    unsigned short TM_pl_status;
 
     // GPS
-    struct TM_GPS_STRUCTURE TM_GPS;        // GPS TM Structure
-    unsigned short TM_GPS1_Status;
-    unsigned short TM_GPS2_Status;
+    struct TM_GPS_STRUCTURE TM_GPS;                        // GPS TM Structure
+    unsigned short TM_GPS_Status;
     unsigned short TM_GPS_OBT_Latch_enable;
     unsigned int TM_GPS_OBT_Read_1;
     unsigned short TM_GPS_OBT_Read_2;
 
+    //EEPROM checksum
+    unsigned int TM_PROM_CHK[8];
 
     // MTR
-    struct TM_MTR_STRUCTURE TM_MTR; //MTR TM Structure
+    struct TM_MTR_STRUCTURE TM_MTR;                          // MTR TM Structure
 
     unsigned int TM_Q_BODY[4];
-    unsigned int TM_RW_Speed[4];
+    //unsigned int TM_RW_Speed[4];
+    float TM_RW_Speed[4];
+    unsigned char TM_auto_manual_speed_sel;
+	unsigned short RW1_STS_data;
+	unsigned short RW2_STS_data;
+	unsigned short RW3_STS_data;
+	unsigned short RW4_STS_data;
+
     unsigned int TM_RW_DeltaSpeed[4];
 
     // EKF
@@ -247,7 +264,6 @@ struct TM_BUFFER_STUCTURE{
     unsigned short TM_SunSens_Yaw_Error;
     unsigned short TM_SunSens_Pitch_Error;
 
-    unsigned char xyz[246];	 // testing (to be removed)
     unsigned short TC_rcvd_cntr2;
     unsigned short TC_cmd_executed_cntr2;
     unsigned short TC_pending_cntr2;
@@ -262,13 +278,16 @@ struct TM_BUFFER_STUCTURE{
    //unsigned short Payload_TM[PL_TM_BUF_MAX];
 
    //battery temp
-
    short TM_battery_temp_1;
    short TM_battery_temp_2;
    unsigned char TM_FDI_NMI_Count;
 
    //ANTENNA_DATA
-   unsigned short TM_Antenna_ACK;
+   unsigned short TM_Antenna_temp_ACK;
+   unsigned short Antenna_deploy_sts_ACK;
+   unsigned short Antenna_deploy_act_count_ACK;
+   unsigned short Antenna_deploy_act_time_ACK;
+   unsigned short TM_Antenna_STS_data;
 
 //   EPS_card_MUX_switch_status
    unsigned short TM_MUX_1;
@@ -279,6 +298,11 @@ struct TM_BUFFER_STUCTURE{
    unsigned short TM_MUX_6;
    unsigned short TM_MUX_7;
    unsigned short TM_MUX_8;
+
+  unsigned short TM_ADC_STS_data;
+
+  /* station_tracking_mode*/
+  unsigned char TM_station_tracking_mode;
 
 // heaters_auto_manual_status
    unsigned short TM_heaters_auto_manual;                            // heaters_auto_manual_status
@@ -321,7 +345,6 @@ union ST_output_status
 	};
 }ST_output_latch;
 
-
 #pragma pack(1)
  struct ST_NORMAL
  {
@@ -341,7 +364,9 @@ union ST_output_status
 	unsigned short TM_IMU_2_Diag_STS;
 	unsigned int TM_Q_BODY[4];
 	unsigned int TM_w_BODY[3];
-	unsigned long int TM_RW_Speed[4];         //change it to short
+	//unsigned long int TM_RW_Speed[4];
+	float TM_RW_Speed[4];
+
 	struct ST_NRM_MTR_STRUCTURE TM_MTR;
 	unsigned int TM_Last_seen_TC[2];
 	unsigned int TM_Q_EKF[4];
@@ -396,13 +421,15 @@ union ST_output_status
  	unsigned int TM_w_BODY[3];
  	signed short  TM_B_BODY[3];
  	unsigned int TM_S_BODY_Main[3];
- 	unsigned int TM_Q_Sunmagad[3];
+ 	unsigned int TM_Q_Sunmagad[4];
  	unsigned int TM_Error_EKF[3];
  	unsigned int TM_Q_Ref[4];
  	unsigned int TM_Q_EKF[4];
  	unsigned int TM_B_EKF_Bias[3];
  	unsigned int TM_w_EKF_Drift[3];
- 	unsigned int TM_RW_Speed[4];
+ 	//unsigned int TM_RW_Speed[4];
+ 	float TM_RW_Speed[4];
+
 	unsigned short TM_IMU_1_Temp;
 	unsigned short TM_IMU_2_Temp;
 
@@ -421,9 +448,7 @@ union ST_output_status
     struct ST_NRM_MTR_STRUCTURE TM_MTR;
     int cntrl_torque[3];
     char TM_wheel_index_ARCsum;
-
-    unsigned char ST_TM_GPS_RCVD_DATA[424];
-
+    unsigned char ST_TM_GPS_RCVD_DATA[512];
 
   }ST_SP_Buffer;
 

@@ -1,5 +1,13 @@
 #include <math.h>
 
+#include "adcs_ADandEst.h"
+#include "adcs_CommonRoutines.h"
+#include "adcs_Constants.h"
+#include "adcs_GPS_OD.h"
+#include "adcs_LinearController.h"
+#include "adcs_ModePreProcs.h"
+#include "adcs_RefComp.h"
+#include "adcs_SensorDataProcs.h"
 #include "adcs_VarDeclarations.h"
 
 #include "Global.h"
@@ -11,7 +19,12 @@
 #include "Telecommand.h"
 #include "TC_List.h"
 
-double* rIMUDataCorrection(struct IMU_READ_DATA* IMU_DATA_ADDRS,struct IMU_Database* IMU_CORR)
+static void rSS_Read_Data(const unsigned long int *ADC_Data_Addr);
+static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Database *SS_2Exe_Addr);
+static void rIMUDataCorrection(struct IMU_READ_DATA* IMU_DATA_ADDRS,struct IMU_Database* IMU_CORR);
+static double rTheta_Limit(const double var_theta_lim);
+
+static void rIMUDataCorrection(struct IMU_READ_DATA* IMU_DATA_ADDRS,struct IMU_Database* IMU_CORR)
 {
 	DelThta_cat_x = (IMU_DATA_ADDRS->DelThta_MSB_x << 16) | (IMU_DATA_ADDRS->DelThta_LSB_x & c_FFFF);
 	DelThta_cat_y = (IMU_DATA_ADDRS->DelThta_MSB_y << 16) | (IMU_DATA_ADDRS->DelThta_LSB_y & c_FFFF);
@@ -21,6 +34,10 @@ double* rIMUDataCorrection(struct IMU_READ_DATA* IMU_DATA_ADDRS,struct IMU_Datab
 	B_rawdata[0] = (int)(IMU_DATA_ADDRS->Mag_x);
 	B_rawdata[1] = (int)(IMU_DATA_ADDRS->Mag_y);
 	B_rawdata[2] = (int)(IMU_DATA_ADDRS->Mag_z);
+
+	B_rawdata[0] = B_rawdata[0] & 0XFFFF;
+	B_rawdata[1] = B_rawdata[1] & 0XFFFF;
+	B_rawdata[2] = B_rawdata[2] & 0XFFFF;
 
 	B_IMU[0] = (double) ((B_rawdata[0] << 16) * c_Resol_B);
 	B_IMU[1] = (double) ((B_rawdata[1] << 16) * c_Resol_B);
@@ -141,36 +158,34 @@ double* rIMUDataCorrection(struct IMU_READ_DATA* IMU_DATA_ADDRS,struct IMU_Datab
     IMU_prcd_data[3] = B_LPF[0];
     IMU_prcd_data[4] = B_LPF[1];
     IMU_prcd_data[5] = B_LPF[2];
-
-    return (double*)IMU_prcd_data;
 }
 
 void rIMU_Angle_Reset(void)
 {
-	Thta_rawdata[0] = 0;
-	Thta_rawdata[1] = 0;
-	Thta_rawdata[2] = 0;
+	Thta_rawdata[0] = 0.0;
+	Thta_rawdata[1] = 0.0;
+	Thta_rawdata[2] = 0.0;
 
-	Thta_BODY_IMU1[0] = 0;
-	Thta_BODY_IMU1[1] = 0;
-	Thta_BODY_IMU1[2] = 0;
+	Thta_BODY_IMU1[0] = 0.0;
+	Thta_BODY_IMU1[1] = 0.0;
+	Thta_BODY_IMU1[2] = 0.0;
 
-	Thta_BODY_IMU2[0] = 0;
-	Thta_BODY_IMU2[1] = 0;
-	Thta_BODY_IMU2[2] = 0;
+	Thta_BODY_IMU2[0] = 0.0;
+	Thta_BODY_IMU2[1] = 0.0;
+	Thta_BODY_IMU2[2] = 0.0;
 }
 
 void rIMUDataProcessing(void)
 {
 	HAL_IMU_Read(IMU_1,(IMU1_DATA.IMU_DATA));
-	IMU_prcd_data_ptr = rIMUDataCorrection(&IMU1_DATA,&IMU1_Corr);
+	rIMUDataCorrection(&IMU1_DATA,&IMU1_Corr);
 
-	w_BODY_IMU1[0] = *IMU_prcd_data_ptr++;
-	w_BODY_IMU1[1] = *IMU_prcd_data_ptr++;
-	w_BODY_IMU1[2] = *IMU_prcd_data_ptr++;
-	B_BODY_IMU1[0] = *IMU_prcd_data_ptr++;
-	B_BODY_IMU1[1] = *IMU_prcd_data_ptr++;
-	B_BODY_IMU1[2] = *IMU_prcd_data_ptr;
+	w_BODY_IMU1[0] = IMU_prcd_data[0];
+	w_BODY_IMU1[1] = IMU_prcd_data[1];
+	w_BODY_IMU1[2] = IMU_prcd_data[2];
+	B_BODY_IMU1[0] = IMU_prcd_data[3];
+	B_BODY_IMU1[1] = IMU_prcd_data[4];
+	B_BODY_IMU1[2] = IMU_prcd_data[5];
 
 	Thta_BODY_IMU1[0] = Thta_BODY_IMU1[0] + (w_BODY_IMU1[0] * c_MiC);
 	Thta_BODY_IMU1[1] = Thta_BODY_IMU1[1] + (w_BODY_IMU1[1] * c_MiC);
@@ -198,14 +213,14 @@ void rIMUDataProcessing(void)
 	TM.Buffer.TM_w_IMU[2] = (int)(w_ABC[2] / c_TM_Resol_w);*/
 
 	HAL_IMU_Read(IMU_2,(IMU2_DATA.IMU_DATA));					//Data read of IMU2 from FPGA Buffer
-	IMU_prcd_data_ptr = rIMUDataCorrection(&IMU2_DATA,&IMU2_Corr);	//IMU1 Data processing
+	rIMUDataCorrection(&IMU2_DATA,&IMU2_Corr);	//IMU1 Data processing
 
-	w_BODY_IMU2[0] = *IMU_prcd_data_ptr++;
-	w_BODY_IMU2[1] = *IMU_prcd_data_ptr++;
-	w_BODY_IMU2[2] = *IMU_prcd_data_ptr++;
-	B_BODY_IMU2[0] = *IMU_prcd_data_ptr++;
-	B_BODY_IMU2[1] = *IMU_prcd_data_ptr++;
-	B_BODY_IMU2[2] = *IMU_prcd_data_ptr;
+	w_BODY_IMU2[0] = IMU_prcd_data[0];
+	w_BODY_IMU2[1] = IMU_prcd_data[1];
+	w_BODY_IMU2[2] = IMU_prcd_data[2];
+	B_BODY_IMU2[0] = IMU_prcd_data[3];
+	B_BODY_IMU2[1] = IMU_prcd_data[4];
+	B_BODY_IMU2[2] = IMU_prcd_data[5];
 
 	Thta_BODY_IMU2[0] = Thta_BODY_IMU2[0] + (w_BODY_IMU2[0] * c_MiC);
 	Thta_BODY_IMU2[1] = Thta_BODY_IMU2[1] + (w_BODY_IMU2[1] * c_MiC);
@@ -258,7 +273,7 @@ void rIMUDataProcessing(void)
 			w_BODY[2] = w_BODY[2] - (double)TC_drift_compensation_IMU1[2];
 		}
 
-		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable == Enable && TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == Enable)
+		if ((TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable == Enable) && (TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == Enable))
 		{
 			w_BODY[0] = w_BODY[0] - Xk[3];
 			w_BODY[1] = w_BODY[1] - Xk[4];
@@ -272,20 +287,20 @@ void rIMUDataProcessing(void)
 
 		if(TC_boolean_u.TC_Boolean_Table.TC_Mag_Torquer_Bias_Enable_or_Disable == Enable)
 		{
-			if (Roll_MTREnable == Enable || Pitch_MTREnable == Enable || Yaw_MTREnable == Enable)  // Software..hw enable/disable
+			if ((TC_boolean_u.TC_Boolean_Table.Roll_Torquer_Enable_or_Disable == Enable) || (TC_boolean_u.TC_Boolean_Table.Pitch_Torquer_Enable_or_Disable == Enable) || (TC_boolean_u.TC_Boolean_Table.Yaw_Torquer_Enable_or_Disable == Enable))  // Software..hw enable/disable
 			{
-				for(i = 0; i < 27; i++)
+				for(i_MatEq = 0; i_MatEq < 27; i_MatEq++)
 				{
-					if(DPM_Polarity[0] == c_DPM_Pol_LookUpTable[i][0] && DPM_Polarity[1] == c_DPM_Pol_LookUpTable[i][1] && DPM_Polarity[2] == c_DPM_Pol_LookUpTable[i][2])  // Actual polarity status from rHAL_MTR
+					if((DPM_Polarity[0] == c_DPM_Pol_LookUpTable[i][0]) && (DPM_Polarity[1] == c_DPM_Pol_LookUpTable[i_MatEq][1]) && (DPM_Polarity[2] == c_DPM_Pol_LookUpTable[i_MatEq][2]))  // Actual polarity status from rHAL_MTR
 					{
-						PolCheck_LUT = i;
+						PolCheck_LUT = i_MatEq;
 						break;
 					}
 				}
 
-				B_BODY[0] -= MagBias_act_LUT[PolCheck_LUT][0];
-				B_BODY[1] -= MagBias_act_LUT[PolCheck_LUT][1];
-				B_BODY[2] -= MagBias_act_LUT[PolCheck_LUT][2];
+				B_BODY[0] -= c_MagBias_act_LUT[PolCheck_LUT][0];
+				B_BODY[1] -= c_MagBias_act_LUT[PolCheck_LUT][1];
+				B_BODY[2] -= c_MagBias_act_LUT[PolCheck_LUT][2];
 
 			}
 		}
@@ -303,7 +318,7 @@ void rIMUDataProcessing(void)
 
 		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable == Enable)
 		{
-			if (TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == 0 && TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == Enable)
+			if ((TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == 0) && (TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == Enable))
 			{
 				B_BODY[0] = B_BODY[0] - (Xk[6] * 1.0e9);
 				B_BODY[1] = B_BODY[1] - (Xk[7] * 1.0e9);
@@ -313,17 +328,17 @@ void rIMUDataProcessing(void)
 				{
 					if (TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == Enable)
 					{
-						if (f_station_tracking_enabled == 0 && Sunlit_presence_timer > 4650)
+						if ((f_station_tracking_enabled == 0) && (Sunlit_presence_timer > 4650))
 						{
-							B_BODY[0] = B_BODY[0] - lpfb_k[0] * 1.0e9;
-							B_BODY[1] = B_BODY[1] - lpfb_k[1] * 1.0e9;
-							B_BODY[2] = B_BODY[2] - lpfb_k[2] * 1.0e9;
+							B_BODY[0] = B_BODY[0] - (lpfb_k[0] * 1.0e9);
+							B_BODY[1] = B_BODY[1] - (lpfb_k[1] * 1.0e9);
+							B_BODY[2] = B_BODY[2] - (lpfb_k[2] * 1.0e9);
 						}
 						else// if (f_station_tracking_enabled == 1 || Sunlit_presence_timer < 9375)
 						{
-							B_BODY[0] = B_BODY[0] - lpfb_k_prev[0] * 1.0e9;
-							B_BODY[1] = B_BODY[1] - lpfb_k_prev[1] * 1.0e9;
-							B_BODY[2] = B_BODY[2] - lpfb_k_prev[2] * 1.0e9;
+							B_BODY[0] = B_BODY[0] - (lpfb_k_prev[0] * 1.0e9);
+							B_BODY[1] = B_BODY[1] - (lpfb_k_prev[1] * 1.0e9);
+							B_BODY[2] = B_BODY[2] - (lpfb_k_prev[2] * 1.0e9);
 						}
 					}
 
@@ -334,9 +349,9 @@ void rIMUDataProcessing(void)
 		B_BODYtesla[1] = B_BODY[1] * 1.0E-9;
 		B_BODYtesla[2] = B_BODY[2] * 1.0E-9;
 
-		Bsq = (B_BODYtesla[0]*B_BODYtesla[0] + B_BODYtesla[1]*B_BODYtesla[1] + B_BODYtesla[2]*B_BODYtesla[2]);
+		Bsq = ((B_BODYtesla[0]*B_BODYtesla[0]) + (B_BODYtesla[1]*B_BODYtesla[1]) + (B_BODYtesla[2]*B_BODYtesla[2]));
 
-		w_BODYnorm = (w_BODYdeg[0]*w_BODYdeg[0] + w_BODYdeg[1]*w_BODYdeg[1] + w_BODYdeg[2]*w_BODYdeg[2]) * c_R2D;
+		w_BODYnorm = sqrt((w_BODYdeg[0]*w_BODYdeg[0]) + (w_BODYdeg[1]*w_BODYdeg[1]) + (w_BODYdeg[2]*w_BODYdeg[2])) * c_R2D;
 
 		rVectorNorm(B_BODY);
 		B_BODYn[0] = Norm_out[0];
@@ -415,20 +430,20 @@ void rIMUDataProcessing(void)
 
 		if(TC_boolean_u.TC_Boolean_Table.TC_Mag_Torquer_Bias_Enable_or_Disable == Enable)
 		{
-			if (Roll_MTREnable == Enable || Pitch_MTREnable == Enable || Yaw_MTREnable == Enable)  // Software..hw enable/disable
+			if ((TC_boolean_u.TC_Boolean_Table.Roll_Torquer_Enable_or_Disable == Enable) || (TC_boolean_u.TC_Boolean_Table.Pitch_Torquer_Enable_or_Disable == Enable) || (TC_boolean_u.TC_Boolean_Table.Yaw_Torquer_Enable_or_Disable == Enable))  // Software..hw enable/disable
 			{
-				for(i = 0; i < 27; i++)
+				for(i_MatEq = 0; i_MatEq < 27; i_MatEq++)
 				{
-					if(DPM_Polarity[0] == c_DPM_Pol_LookUpTable[i][0] && DPM_Polarity[1] == c_DPM_Pol_LookUpTable[i][1] && DPM_Polarity[2] == c_DPM_Pol_LookUpTable[i][2])  // Actual polarity status from rHAL_MTR
+					if((DPM_Polarity[0] == c_DPM_Pol_LookUpTable[i_MatEq][0]) && (DPM_Polarity[1] == c_DPM_Pol_LookUpTable[i_MatEq][1]) && (DPM_Polarity[2] == c_DPM_Pol_LookUpTable[i_MatEq][2]))  // Actual polarity status from rHAL_MTR
 					{
-						PolCheck_LUT = i;
+						PolCheck_LUT = i_MatEq;
 						break;
 					}
 				}
 
-				B_BODY[0] -= MagBias_act_LUT[PolCheck_LUT][0];
-				B_BODY[1] -= MagBias_act_LUT[PolCheck_LUT][1];
-				B_BODY[2] -= MagBias_act_LUT[PolCheck_LUT][2];
+				B_BODY[0] -= c_MagBias_act_LUT[PolCheck_LUT][0];
+				B_BODY[1] -= c_MagBias_act_LUT[PolCheck_LUT][1];
+				B_BODY[2] -= c_MagBias_act_LUT[PolCheck_LUT][2];
 
 			}
 		}
@@ -446,7 +461,7 @@ void rIMUDataProcessing(void)
 
 		if (TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable == Enable)
 		{
-			if (TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == 0 && TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == Enable)
+			if ((TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == 0) && (TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == Enable))
 			{
 				B_BODY[0] = B_BODY[0] - (Xk[6] * 1.0e9);
 				B_BODY[1] = B_BODY[1] - (Xk[7] * 1.0e9);
@@ -456,17 +471,17 @@ void rIMUDataProcessing(void)
 				{
 					if (TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == Enable)
 					{
-						if (f_station_tracking_enabled == 0 && Sunlit_presence_timer > 4650)
+						if ((f_station_tracking_enabled == 0) && (Sunlit_presence_timer > 4650))
 						{
-							B_BODY[0] = B_BODY[0] - lpfb_k[0] * 1.0e9;
-							B_BODY[1] = B_BODY[1] - lpfb_k[1] * 1.0e9;
-							B_BODY[2] = B_BODY[2] - lpfb_k[2] * 1.0e9;
+							B_BODY[0] = B_BODY[0] - (lpfb_k[0] * 1.0e9);
+							B_BODY[1] = B_BODY[1] - (lpfb_k[1] * 1.0e9);
+							B_BODY[2] = B_BODY[2] - (lpfb_k[2] * 1.0e9);
 						}
 						else// if (f_station_tracking_enabled == 1 || Sunlit_presence_timer < 9375)
 						{
-							B_BODY[0] = B_BODY[0] - lpfb_k_prev[0] * 1.0e9;
-							B_BODY[1] = B_BODY[1] - lpfb_k_prev[1] * 1.0e9;
-							B_BODY[2] = B_BODY[2] - lpfb_k_prev[2] * 1.0e9;
+							B_BODY[0] = B_BODY[0] - (lpfb_k_prev[0] * 1.0e9);
+							B_BODY[1] = B_BODY[1] - (lpfb_k_prev[1] * 1.0e9);
+							B_BODY[2] = B_BODY[2] - (lpfb_k_prev[2] * 1.0e9);
 						}
 					}
 
@@ -477,10 +492,9 @@ void rIMUDataProcessing(void)
 		B_BODYtesla[1] = B_BODY[1] * 1.0E-9;
 		B_BODYtesla[2] = B_BODY[2] * 1.0E-9;
 
-		Bsq = (B_BODYtesla[0]*B_BODYtesla[0] + B_BODYtesla[1]*B_BODYtesla[1] + B_BODYtesla[2]*B_BODYtesla[2]);
-		Bsq = Bsq * Bsq;
+		Bsq = ((B_BODYtesla[0]*B_BODYtesla[0]) + (B_BODYtesla[1]*B_BODYtesla[1]) + (B_BODYtesla[2]*B_BODYtesla[2]));
 
-		w_BODYnorm = (w_BODYdeg[0]*w_BODYdeg[0] + w_BODYdeg[1]*w_BODYdeg[1] + w_BODYdeg[2]*w_BODYdeg[2]) * c_R2D;
+		w_BODYnorm = sqrt((w_BODYdeg[0]*w_BODYdeg[0]) + (w_BODYdeg[1]*w_BODYdeg[1]) + (w_BODYdeg[2]*w_BODYdeg[2])) * c_R2D;
 
 		rVectorNorm(B_BODY);
 		B_BODYn[0] = Norm_out[0];
@@ -509,13 +523,17 @@ void rIMUDataProcessing(void)
 	}
 }
 
-double rTheta_Limit(double inter_theta)
+static double rTheta_Limit(const double var_theta_lim)
 {
-	if(inter_theta >= 9.424777961)					        // (9.424777961 rad = 540 deg)
-        inter_theta = inter_theta - 6.283185307;	        // (6.283185307 rad = 360 deg)
+	if(var_theta_lim >= 9.424777961)					        // (9.424777961 rad = 540 deg)
+	{
+        inter_theta = var_theta_lim - 6.283185307;	        // (6.283185307 rad = 360 deg)
+	}
 
-	else if(inter_theta <= -9.424777961)					// (9.424777961 rad = 540 deg)
-        inter_theta = inter_theta + 6.283185307;	        // (6.283185307 rad = 360 deg)
+	else if(var_theta_lim <= -9.424777961)					// (9.424777961 rad = 540 deg)
+	{
+        inter_theta = var_theta_lim + 6.283185307;	        // (6.283185307 rad = 360 deg)
+	}
 
 	else
 	{
@@ -535,13 +553,13 @@ void rBDOT_Computation(void)
             Bpresent[1] = B_BODY[1];
             Bpresent[2] = B_BODY[2];
 
-            BDOT_deltaT = (ADCS_TC_data_command_Table.TC_Det_BDOT_Compute_Count-ADCS_TC_data_command_Table.TC_Det_Bprev_Count)*c_MaC;
+            BDOT_deltaT = ((double)(ADCS_TC_data_command_Table.TC_Det_BDOT_Compute_Count-ADCS_TC_data_command_Table.TC_Det_Bprev_Count))*c_MaC;
 
             BDOT[0] = (Bpresent[0] - Bprev[0])/(BDOT_deltaT);
             BDOT[1] = (Bpresent[1] - Bprev[1])/(BDOT_deltaT);
             BDOT[2] = (Bpresent[2] - Bprev[2])/(BDOT_deltaT);
 
-            BDOTnorm = (BDOT[0]*BDOT[0] + BDOT[1]*BDOT[1] + BDOT[2]*BDOT[2]);
+            BDOTnorm = ((BDOT[0]*BDOT[0]) + (BDOT[1]*BDOT[1]) + (BDOT[2]*BDOT[2]));
 
             TM.Buffer.TM_B_DOT[0] = (int)(BDOT[0] / c_TM_Resol_B);
 			TM.Buffer.TM_B_DOT[1] = (int)(BDOT[1] / c_TM_Resol_B);
@@ -561,10 +579,9 @@ void rBDOT_Computation(void)
 
         else
         {
-            return;
+            //
         }
     }
-    return;
 }
 
 // Sun Sensor
@@ -573,16 +590,27 @@ void rSunSensorDataProcessing(void)
 {
 	if (f_Sunlit_Presence == 1)
 	{
-		rSS_Read_Data(SS_Data,ADC_Buffer);
-		SS_prcd_data_ptr = rSunSensorVectorComp(&SS_Data[0],&SS_Main_2Exe_DB);
-		SB_MAIN[0] = *SS_prcd_data_ptr++;
-		SB_MAIN[1] = *SS_prcd_data_ptr++;
-		SB_MAIN[2] = *SS_prcd_data_ptr;
+		rSS_Read_Data(ADC_Buffer);
 
-		SS_prcd_data_ptr = rSunSensorVectorComp(&SS_Data[8],&SS_Main_2Exe_DB);
-		SB_RED[0] = *SS_prcd_data_ptr++;
-		SB_RED[1] = *SS_prcd_data_ptr++;
-		SB_RED[2] = *SS_prcd_data_ptr;
+		for (i_MatEq = 0; i_MatEq < 8;i_MatEq++)
+		{
+			SSMAIN_ARRAY[i_MatEq] = SS_Data[i_MatEq];
+		}
+
+		for (i_MatEq = 8; i_MatEq < 15;i_MatEq++)
+		{
+			SSREDT_ARRAY[i_MatEq-8] = SS_Data[i_MatEq];
+		}
+
+		rSunSensorVectorComp(SSMAIN_ARRAY,&SS_Main_2Exe_DB);
+		SB_MAIN[0] = SS_prcd_data[0];
+		SB_MAIN[1] = SS_prcd_data[1];
+		SB_MAIN[2] = SS_prcd_data[2];
+
+		rSunSensorVectorComp(SSREDT_ARRAY,&SS_Main_2Exe_DB);
+		SB_RED[0] = SS_prcd_data[0];
+		SB_RED[1] = SS_prcd_data[1];
+		SB_RED[2] = SS_prcd_data[2];
 
 		TM.Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
 		TM.Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
@@ -624,7 +652,7 @@ void rSunSensorDataProcessing(void)
 
 		///Roll and Yaw angle errors' computation
 
-		if(abs_f(S_BODYn[1]) <= c_dividebyzerovalue)
+		if(fabs(S_BODYn[1]) <= c_dividebyzerovalue)
 		{
 			S_BODYn[1] = c_dividebyzerovalue;
 		}
@@ -644,7 +672,7 @@ void rSunSensorDataProcessing(void)
 		ST_normal.ST_NM_Buffer.TM_SunSens_Pitch_Error = (int)Ang_Deviation;
 
 
-		if(abs_f(Ang_Deviation) < c_AngDev_SAMtransit_thrsld)
+		if(fabs(Ang_Deviation) < c_AngDev_SAMtransit_thrsld)
 		{
 			SunNPP_SAMtransit_counter++;
 
@@ -668,40 +696,55 @@ void rSunSensorDataProcessing(void)
 	}
 	else
 	{
-		S_BODY[0] = S_BODYn[0] = 0.0;
-		S_BODY[1] = S_BODYn[1] = 0.0;
-		S_BODY[2] = S_BODYn[2] = 0.0;
+		S_BODY[0] = 0.0;
+		S_BODYn[0] = 0.0;
+		S_BODY[1] = 0.0;
+		S_BODYn[1] = 0.0;
+		S_BODY[2] = 0.0;
+		S_BODYn[2] = 0.0;
 	}
 }
 
-double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS_2Exe_Addr)
+static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Database *SS_2Exe_Addr)
 {
 
 
 
-	SS_M1 = *SS_Data_Addr++;			//SSCAT11//SSCAT51:://SS M1//SS M9
-	SS_M2 = *SS_Data_Addr++;			//SSCAT12//SSCAT52:://SS M2//SS M10
-	SS_M3 = *SS_Data_Addr++;			//SSCAT21//SSCAT61:://SS M3//SS M11
-	SS_M4 = *SS_Data_Addr++;			//SSCAT22//SSCAT62:://SS M4//SS M12
-	SS_M5 = *SS_Data_Addr++;			//SSCAT31//SSCAT71:://SS M5//SS M13
-	SS_M6 = *SS_Data_Addr++;			//SSCAT32//SSCAT72:://SS M6//SS M14
-	SS_M7 = *SS_Data_Addr++;			//SSCAT41//SSCAT81:://SS M7//SS M15
-	SS_M8 = *SS_Data_Addr;				//SSCAT42//SSCAT82:://SS M8//SS M16
+	SS_M1 = SS_ARRAY[0];			//SSCAT11//SSCAT51:://SS M1//SS M9
+	SS_M2 = SS_ARRAY[1];			//SSCAT12//SSCAT52:://SS M2//SS M10
+	SS_M3 = SS_ARRAY[2];			//SSCAT21//SSCAT61:://SS M3//SS M11
+	SS_M4 = SS_ARRAY[3];			//SSCAT22//SSCAT62:://SS M4//SS M12
+	SS_M5 = SS_ARRAY[4];			//SSCAT31//SSCAT71:://SS M5//SS M13
+	SS_M6 = SS_ARRAY[5];			//SSCAT32//SSCAT72:://SS M6//SS M14
+	SS_M7 = SS_ARRAY[6];			//SSCAT41//SSCAT81:://SS M7//SS M15
+	SS_M8 = SS_ARRAY[7];				//SSCAT42//SSCAT82:://SS M8//SS M16
 
 	if (SS_M1 > SS_M3)
-		SS_M3 = 0;
+	{
+		SS_M3 = 0.0;
+	}
 	else
-		SS_M1 = 0;
+	{
+		SS_M1 = 0.0;
+	}
 
 	if (SS_M2 > SS_M4)
-		SS_M4 = 0;
+	{
+		SS_M4 = 0.0;
+	}
 	else
-		SS_M2 = 0;
+	{
+		SS_M2 = 0.0;
+	}
 
 	if (SS_M5 > SS_M6)
-		SS_M6 = 0;
+	{
+		SS_M6 = 0.0;
+	}
 	else
-		SS_M5 = 0;
+	{
+		SS_M5 = 0.0;
+	}
 
 	/// Different deployment selections
 	 if(panel_deploy_sts == TC_Not_Deployed)///Both the panels are Not deployed
@@ -767,13 +810,13 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 	SC6ImaxF = SS_2Exe_Addr->DB_Imax_YN;
 
 	///Calculation of Azimuth and Elevation of Sun
-	if(SC1  > c_SSThrsld && SC2 > c_SSThrsld && SC5 > c_SSThrsld)
+	if((SC1  > c_SSThrsld) && (SC2 > c_SSThrsld) && (SC5 > c_SSThrsld))
 	{
 		///-------------------------------------------------------------------------
 
-		SC1 = SS_2Exe_Addr->DB_misaln_cor125[0][0]*SC1 + SS_2Exe_Addr->DB_misaln_cor125[0][1]*SC2 + SS_2Exe_Addr->DB_misaln_cor125[0][2]*SC5;
-		SC2 = SS_2Exe_Addr->DB_misaln_cor125[1][0]*SC1 + SS_2Exe_Addr->DB_misaln_cor125[1][1]*SC2 + SS_2Exe_Addr->DB_misaln_cor125[1][2]*SC5;
-		SC5 = SS_2Exe_Addr->DB_misaln_cor125[2][0]*SC1 + SS_2Exe_Addr->DB_misaln_cor125[2][1]*SC2 + SS_2Exe_Addr->DB_misaln_cor125[2][2]*SC5;
+		SC1 = (SS_2Exe_Addr->DB_misaln_cor125[0][0]*SC1) + (SS_2Exe_Addr->DB_misaln_cor125[0][1]*SC2) + (SS_2Exe_Addr->DB_misaln_cor125[0][2]*SC5);
+		SC2 = (SS_2Exe_Addr->DB_misaln_cor125[1][0]*SC1) + (SS_2Exe_Addr->DB_misaln_cor125[1][1]*SC2) + (SS_2Exe_Addr->DB_misaln_cor125[1][2]*SC5);
+		SC5 = (SS_2Exe_Addr->DB_misaln_cor125[2][0]*SC1) + (SS_2Exe_Addr->DB_misaln_cor125[2][1]*SC2) + (SS_2Exe_Addr->DB_misaln_cor125[2][2]*SC5);
 
 		///-------------------------------------------------------------------------
 
@@ -799,13 +842,13 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 
 	}
 
-	if(SC1  > c_SSThrsld && SC2 > c_SSThrsld && SC6 > c_SSThrsld)
+	if((SC1  > c_SSThrsld) && (SC2 > c_SSThrsld) && (SC6 > c_SSThrsld))
 	{
 		///-------------------------------------------------------------------------
 
-		SC1 = SS_2Exe_Addr->DB_misaln_cor126[0][0]*SC1 + SS_2Exe_Addr->DB_misaln_cor126[0][1]*SC2 + SS_2Exe_Addr->DB_misaln_cor126[0][2]*SC6;
-		SC2 = SS_2Exe_Addr->DB_misaln_cor126[1][0]*SC1 + SS_2Exe_Addr->DB_misaln_cor126[1][1]*SC2 + SS_2Exe_Addr->DB_misaln_cor126[1][2]*SC6;
-		SC6 = SS_2Exe_Addr->DB_misaln_cor126[2][0]*SC1 + SS_2Exe_Addr->DB_misaln_cor126[2][1]*SC2 + SS_2Exe_Addr->DB_misaln_cor126[2][2]*SC6;
+		SC1 = (SS_2Exe_Addr->DB_misaln_cor126[0][0]*SC1) + (SS_2Exe_Addr->DB_misaln_cor126[0][1]*SC2) + (SS_2Exe_Addr->DB_misaln_cor126[0][2]*SC6);
+		SC2 = (SS_2Exe_Addr->DB_misaln_cor126[1][0]*SC1) + (SS_2Exe_Addr->DB_misaln_cor126[1][1]*SC2) + (SS_2Exe_Addr->DB_misaln_cor126[1][2]*SC6);
+		SC6 = (SS_2Exe_Addr->DB_misaln_cor126[2][0]*SC1) + (SS_2Exe_Addr->DB_misaln_cor126[2][1]*SC2) + (SS_2Exe_Addr->DB_misaln_cor126[2][2]*SC6);
 
 		///-------------------------------------------------------------------------
 
@@ -830,13 +873,13 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 		sun_quadrant = 2;
 	}
 
-	if(SC3  > c_SSThrsld && SC2 > c_SSThrsld && SC5 > c_SSThrsld)
+	if((SC3  > c_SSThrsld) && (SC2 > c_SSThrsld) && (SC5 > c_SSThrsld))
 	{
 		///-------------------------------------------------------------------------
 
-		SC2 = SS_2Exe_Addr->DB_misaln_cor325[0][0]*SC2 + SS_2Exe_Addr->DB_misaln_cor325[0][1]*SC3 + SS_2Exe_Addr->DB_misaln_cor325[0][2]*SC5;
-		SC3 = SS_2Exe_Addr->DB_misaln_cor325[1][0]*SC2 + SS_2Exe_Addr->DB_misaln_cor325[1][1]*SC3 + SS_2Exe_Addr->DB_misaln_cor325[1][2]*SC5;
-		SC5 = SS_2Exe_Addr->DB_misaln_cor325[2][0]*SC2 + SS_2Exe_Addr->DB_misaln_cor325[2][1]*SC3 + SS_2Exe_Addr->DB_misaln_cor325[2][2]*SC5;
+		SC2 = (SS_2Exe_Addr->DB_misaln_cor325[0][0]*SC2) + (SS_2Exe_Addr->DB_misaln_cor325[0][1]*SC3) + (SS_2Exe_Addr->DB_misaln_cor325[0][2]*SC5);
+		SC3 = (SS_2Exe_Addr->DB_misaln_cor325[1][0]*SC2) + (SS_2Exe_Addr->DB_misaln_cor325[1][1]*SC3) + (SS_2Exe_Addr->DB_misaln_cor325[1][2]*SC5);
+		SC5 = (SS_2Exe_Addr->DB_misaln_cor325[2][0]*SC2) + (SS_2Exe_Addr->DB_misaln_cor325[2][1]*SC3) + (SS_2Exe_Addr->DB_misaln_cor325[2][2]*SC5);
 
 
 		///-------------------------------------------------------------------------
@@ -862,12 +905,12 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 		sun_quadrant = 3;
 	}
 
-	if(SC3  > c_SSThrsld && SC2 > c_SSThrsld && SC6 > c_SSThrsld)
+	if((SC3  > c_SSThrsld) && (SC2 > c_SSThrsld) && (SC6 > c_SSThrsld))
 	{
 		///-------------------------------------------------------------------------
-		SC2 = SS_2Exe_Addr->DB_misaln_cor326[0][0]*SC2 + SS_2Exe_Addr->DB_misaln_cor326[0][1]*SC3 + SS_2Exe_Addr->DB_misaln_cor326[0][2]*SC6;
-		SC3 = SS_2Exe_Addr->DB_misaln_cor326[1][0]*SC2 + SS_2Exe_Addr->DB_misaln_cor326[1][1]*SC3 + SS_2Exe_Addr->DB_misaln_cor326[1][2]*SC6;
-		SC6 = SS_2Exe_Addr->DB_misaln_cor326[2][0]*SC2 + SS_2Exe_Addr->DB_misaln_cor326[2][1]*SC3 + SS_2Exe_Addr->DB_misaln_cor326[2][2]*SC6;
+		SC2 = (SS_2Exe_Addr->DB_misaln_cor326[0][0]*SC2) + (SS_2Exe_Addr->DB_misaln_cor326[0][1]*SC3) + (SS_2Exe_Addr->DB_misaln_cor326[0][2]*SC6);
+		SC3 = (SS_2Exe_Addr->DB_misaln_cor326[1][0]*SC2) + (SS_2Exe_Addr->DB_misaln_cor326[1][1]*SC3) + (SS_2Exe_Addr->DB_misaln_cor326[1][2]*SC6);
+		SC6 = (SS_2Exe_Addr->DB_misaln_cor326[2][0]*SC2) + (SS_2Exe_Addr->DB_misaln_cor326[2][1]*SC3) + (SS_2Exe_Addr->DB_misaln_cor326[2][2]*SC6);
 
 		///-------------------------------------------------------------------------
 
@@ -892,12 +935,12 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 		sun_quadrant = 4;
 	}
 
-	if(SC3  > c_SSThrsld && SC4 > c_SSThrsld && SC5 > c_SSThrsld)
+	if((SC3  > c_SSThrsld) && (SC4 > c_SSThrsld) && (SC5 > c_SSThrsld))
 	{
 		///-------------------------------------------------------------------------
-		SC3 = SS_2Exe_Addr->DB_misaln_cor345[0][0]*SC3 + SS_2Exe_Addr->DB_misaln_cor345[0][1]*SC4 + SS_2Exe_Addr->DB_misaln_cor345[0][2]*SC5;
-		SC4 = SS_2Exe_Addr->DB_misaln_cor345[1][0]*SC3 + SS_2Exe_Addr->DB_misaln_cor345[1][1]*SC4 + SS_2Exe_Addr->DB_misaln_cor345[1][2]*SC5;
-		SC5 = SS_2Exe_Addr->DB_misaln_cor345[2][0]*SC3 + SS_2Exe_Addr->DB_misaln_cor345[2][1]*SC4 + SS_2Exe_Addr->DB_misaln_cor345[2][2]*SC5;
+		SC3 = (SS_2Exe_Addr->DB_misaln_cor345[0][0]*SC3) + (SS_2Exe_Addr->DB_misaln_cor345[0][1]*SC4) + (SS_2Exe_Addr->DB_misaln_cor345[0][2]*SC5);
+		SC4 = (SS_2Exe_Addr->DB_misaln_cor345[1][0]*SC3) + (SS_2Exe_Addr->DB_misaln_cor345[1][1]*SC4) + (SS_2Exe_Addr->DB_misaln_cor345[1][2]*SC5);
+		SC5 = (SS_2Exe_Addr->DB_misaln_cor345[2][0]*SC3) + (SS_2Exe_Addr->DB_misaln_cor345[2][1]*SC4) + (SS_2Exe_Addr->DB_misaln_cor345[2][2]*SC5);
 
 
 		///-------------------------------------------------------------------------
@@ -923,12 +966,12 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 		sun_quadrant = 5;
 	}
 
-	if(SC3  > c_SSThrsld && SC4 > c_SSThrsld && SC6 > c_SSThrsld)
+	if((SC3  > c_SSThrsld) && (SC4 > c_SSThrsld) && (SC6 > c_SSThrsld))
 	{
 		///-------------------------------------------------------------------------
-		SC3 = SS_2Exe_Addr->DB_misaln_cor345[0][0]*SC3 + SS_2Exe_Addr->DB_misaln_cor345[0][1]*SC4 + SS_2Exe_Addr->DB_misaln_cor345[0][2]*SC6;
-		SC4 = SS_2Exe_Addr->DB_misaln_cor345[1][0]*SC3 + SS_2Exe_Addr->DB_misaln_cor345[1][1]*SC4 + SS_2Exe_Addr->DB_misaln_cor345[1][2]*SC6;
-		SC6 = SS_2Exe_Addr->DB_misaln_cor345[2][0]*SC3 + SS_2Exe_Addr->DB_misaln_cor345[2][1]*SC4 + SS_2Exe_Addr->DB_misaln_cor345[2][2]*SC6;
+		SC3 = (SS_2Exe_Addr->DB_misaln_cor345[0][0]*SC3) + (SS_2Exe_Addr->DB_misaln_cor345[0][1]*SC4) + (SS_2Exe_Addr->DB_misaln_cor345[0][2]*SC6);
+		SC4 = (SS_2Exe_Addr->DB_misaln_cor345[1][0]*SC3) + (SS_2Exe_Addr->DB_misaln_cor345[1][1]*SC4) + (SS_2Exe_Addr->DB_misaln_cor345[1][2]*SC6);
+		SC6 = (SS_2Exe_Addr->DB_misaln_cor345[2][0]*SC3) + (SS_2Exe_Addr->DB_misaln_cor345[2][1]*SC4) + (SS_2Exe_Addr->DB_misaln_cor345[2][2]*SC6);
 
 
 		///-------------------------------------------------------------------------
@@ -954,12 +997,12 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 		sun_quadrant = 6;
 	}
 
-	if(SC1  > c_SSThrsld && SC4 > c_SSThrsld && SC5 > c_SSThrsld)
+	if((SC1  > c_SSThrsld) && (SC4 > c_SSThrsld) && (SC5 > c_SSThrsld))
 	{
 		///-------------------------------------------------------------------------
-		SC4 = SS_2Exe_Addr->DB_misaln_cor145[0][0]*SC4 + SS_2Exe_Addr->DB_misaln_cor145[0][1]*SC1 + SS_2Exe_Addr->DB_misaln_cor145[0][2]*SC5;
-		SC1 = SS_2Exe_Addr->DB_misaln_cor145[1][0]*SC4 + SS_2Exe_Addr->DB_misaln_cor145[1][1]*SC1 + SS_2Exe_Addr->DB_misaln_cor145[1][2]*SC5;
-		SC5 = SS_2Exe_Addr->DB_misaln_cor145[2][0]*SC4 + SS_2Exe_Addr->DB_misaln_cor145[2][1]*SC1 + SS_2Exe_Addr->DB_misaln_cor145[2][2]*SC5;
+		SC4 = (SS_2Exe_Addr->DB_misaln_cor145[0][0]*SC4) + (SS_2Exe_Addr->DB_misaln_cor145[0][1]*SC1) + (SS_2Exe_Addr->DB_misaln_cor145[0][2]*SC5);
+		SC1 = (SS_2Exe_Addr->DB_misaln_cor145[1][0]*SC4) + (SS_2Exe_Addr->DB_misaln_cor145[1][1]*SC1) + (SS_2Exe_Addr->DB_misaln_cor145[1][2]*SC5);
+		SC5 = (SS_2Exe_Addr->DB_misaln_cor145[2][0]*SC4) + (SS_2Exe_Addr->DB_misaln_cor145[2][1]*SC1) + (SS_2Exe_Addr->DB_misaln_cor145[2][2]*SC5);
 
 		///-------------------------------------------------------------------------
 
@@ -984,12 +1027,12 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 		sun_quadrant = 8;
 	}
 
-	if(SC1  > c_SSThrsld && SC4 > c_SSThrsld && SC6 > c_SSThrsld)
+	if((SC1  > c_SSThrsld) && (SC4 > c_SSThrsld) && (SC6 > c_SSThrsld))
 	{
 		///-------------------------------------------------------------------------
-		SC4 = SS_2Exe_Addr->DB_misaln_cor145[0][0]*SC4 + SS_2Exe_Addr->DB_misaln_cor145[0][1]*SC1 + SS_2Exe_Addr->DB_misaln_cor145[0][2]*SC6;
-		SC1 = SS_2Exe_Addr->DB_misaln_cor145[1][0]*SC4 + SS_2Exe_Addr->DB_misaln_cor145[1][1]*SC1 + SS_2Exe_Addr->DB_misaln_cor145[1][2]*SC6;
-		SC6 = SS_2Exe_Addr->DB_misaln_cor145[2][0]*SC4 + SS_2Exe_Addr->DB_misaln_cor145[2][1]*SC1 + SS_2Exe_Addr->DB_misaln_cor145[2][2]*SC6;
+		SC4 = (SS_2Exe_Addr->DB_misaln_cor145[0][0]*SC4) + (SS_2Exe_Addr->DB_misaln_cor145[0][1]*SC1) + (SS_2Exe_Addr->DB_misaln_cor145[0][2]*SC6);
+		SC1 = (SS_2Exe_Addr->DB_misaln_cor145[1][0]*SC4) + (SS_2Exe_Addr->DB_misaln_cor145[1][1]*SC1) + (SS_2Exe_Addr->DB_misaln_cor145[1][2]*SC6);
+		SC6 = (SS_2Exe_Addr->DB_misaln_cor145[2][0]*SC4) + (SS_2Exe_Addr->DB_misaln_cor145[2][1]*SC1) + (SS_2Exe_Addr->DB_misaln_cor145[2][2]*SC6);
 
 
 		///-------------------------------------------------------------------------
@@ -1026,10 +1069,9 @@ double* rSunSensorVectorComp(double* SS_Data_Addr, struct SunSensor_Database *SS
 	SS_prcd_data[1] = Matout31[1];
 	SS_prcd_data[2] = Matout31[2];
 
-    return (double*)SS_prcd_data;
 }
 
-void rSS_Read_Data(double *SS_Data_Addr,unsigned long int *ADC_Data_Addr)
+static void rSS_Read_Data(const unsigned long int *ADC_Data_Addr)
 {
 	for(inter_sunsensor_i =0;inter_sunsensor_i<=15;inter_sunsensor_i++){
 		SS_Data[inter_sunsensor_i] = (double)(ADC_Data_Addr[14 + inter_sunsensor_i] * 5.92145E-3);

@@ -144,11 +144,10 @@ unsigned char* RW_TM_ptr;
 float RWS[4]; //temp testing
 float RW_Measured[4];
 
-void rHAL_RW_TC_Write(struct HAL_RW_Data_Structure RW_No, union RW_TC_Command_u RW, float RW_Speed, unsigned char RW_ID);
-void rHAL_RW_TM_Write(struct HAL_RW_Data_Structure RW_No, union RW_TM_Command_u RW, unsigned char RW_ID);
+void rHAL_RW_TC_Write(struct HAL_RW_Data_Structure* RW_No, float  RW_Speed, uint8 RW_ID);
+void rHAL_RW_TM_Write (struct HAL_RW_Data_Structure* RW_No, uint8 RW_ID);
 int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_TM, int wheel_index);
 void rRW_SlipFrame_Check(struct HAL_RW_Data_Structure* RW_No_Addr, unsigned char* inter_slipframe_data_addr, int NOB_Slipframe_Check);
-//void rRW_Ping(struct HAL_RW_Data_Structure* RW_No);
 
 /******************Added on 12/10/19 *****************/
 void rRW_init_cmd(struct HAL_RW_Data_Structure RW_No, unsigned char RW_ID);
@@ -162,21 +161,17 @@ void rRW_Data_Read();
 
 unsigned char RW_Write_Data[20];
 unsigned char* RW_Write_ptr;
-unsigned short crc_test =0;
-
-
+unsigned short crc_test = 0;
+unsigned char Auto_manual_speed_sel;
 
 unsigned char RW_Data_SlipFrame_TC[20];
 int NOB_SFC_TC;					//Number of bytes for Slip-frame check
 int NOB_CRC_TC;					//Number of bytes for Cyclic redundancy check
-unsigned char* TC_ptr;			//Pointer to structure of data frame
-unsigned char* TC_data_ptr;		//Pointer to union (contains data which can be accessed as short or char)
 
 unsigned char RW_Data_SlipFrame_TMC[20];
 int NOB_SFC_TMC;				//Number of bytes for Slip-frame check
 int NOB_CRC_TMC;				//Number of bytes for Cyclic redundancy check
-unsigned char* TMC_ptr;			//Pointer to structure of data frame
-unsigned char* TMC_data_ptr;	//Pointer to union (contains data which can be accessed as short or char)
+
 
 /****************** Added on 12/10/19 ********************/
 unsigned char RW_Data_SlipFrame_Init[20];
@@ -214,12 +209,6 @@ union rw_init_cmd_u
 }rw_init;
 
 unsigned char NSP_addr_table[4] = {0x34, 0x35, 0x36, 0x41}; // Reaction wheel address table
-//unsigned char rw_id[4] = {0,1,2,3};
-
-/******************************************************************/
-//unsigned short RW_Ping_cmd[6] = {0xC041, 0x11A1, 0x0010, 0x0000, 0xD209, 0xC000};
-//unsigned short RW_Ping_cmd_internal[6];	// Ping Init command to RW
-//unsigned short temp_ping_rw;
 unsigned char* RW_TM_ptr_init; //transfer to h file
 
 float dak;

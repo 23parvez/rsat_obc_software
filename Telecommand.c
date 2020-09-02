@@ -5,14 +5,21 @@
 #include "HAL_Address.h"
 #include "TM_Global_Buffer.h"
 #include "Telemetry.h"
-#include "adcs_VarDeclarations.h"
 #include "Telecommand.h"
 #include "TC_List.h"
+
+#include "adcs_ADandEst.h"
+#include "adcs_CommonRoutines.h"
 #include "adcs_Constants.h"
+#include "adcs_GPS_OD.h"
+#include "adcs_LinearController.h"
+#include "adcs_ModePreProcs.h"
+#include "adcs_RefComp.h"
 #include "adcs_SensorDataProcs.h"
+#include "adcs_VarDeclarations.h"
 //#include "HAL_Heater.h"
 
-
+Nodeptrtype head = NULL;
 
 extern unsigned char NSP_addr_table[4];
 BlkExe_Stat BlkExe_Status = BLK_Disabled;
@@ -48,7 +55,6 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 
 
 		TC_ACC_Ang_RESET,												/* offset =    25 */
-		//TC_Panel1_Deploy,
 		TC_NMI_count_reset,                                             /* offset =    26 */
 		rMag_Refeci_update,												/* offset =    27 */ // Renamed from Panel2 deploy 18-08-2020
 		TC_GPS1_ON,														/* offset =    28 */
@@ -152,7 +158,7 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 		sunlit,                                                         /* offset =    126*/
 		eclipse,                                                        /* offset =    127*/
 		Sunlit_eclipse_both,                                            /*  offset =   128*/
-		rSafe_mode_PreProcessing,                                       /* offset =    129*/
+		rTC_Safe_mode_PreProcessing,                                       /* offset =    129*/
 		TC_MTR_Roll_No_cuurent,                                         /* offset =    130*/
 		TC_MTR_Pitch_No_cuurent,                                        /* offset =    131*/
 		TC_MTR_Yaw_No_cuurent,                                          /* offset =   132 */
@@ -212,69 +218,69 @@ float Resol_Table[TC_data_command_MAX_LIMIT] =
 // Initialization of Resolution Table-----------------------
 float Resol_Table_Adcs[ADCS_TC_data_command_MAX_LIMIT] =
 {
-		1.74532925e-6,              /*offset 1*/
-		1.74532925e-6,              /*offset 2*/
-		1.74532925e-6,              /*offset 3*/
-		1.74532925e-6, 			    /*offset 4*/
-		1.74532925e-6,              /*offset 5*/
-		1.74532925e-6,              /*offset 6*/
-		1,              /*offset 7*/
-		1, 			    /*offset 8*/
-		1,              /*offset 9*/
-		1,              /*offset 10*/
-		1,			    /*offset 11*/
-		1,              /*offset 12*/
-		1,              /*offset 13*/
-		1,              /*offset 14*/
-		1, 			    /*offset 15*/
-		1,              /*offset 16*/
-		1,              /*offset 17*/
-		1,              /*offset 18*/
-		1, 			    /*offset 19*/
-		1,              /*offset 20*/
-		1,              /*offset 21*/
-		1,              /*offset 22*/
-		1, 			    /*offset 23*/
-		1,              /*offset 24*/
-		1,              /*offset 25*/
-		1,              /*offset 26*/
-		1,              /*offset 27*/
-		1,              /*offset 28*/
-		0.01, 			    /*offset 29*/
-		1.74532925e-6,              /*offset 30*/
-		1.74532925e-6,              /*offset 31 */
-		1,              /*offset 32*/
-		1,              /*offset 33*/
-		1, 			    /*offset 34*/
-		1,              /*offset 35*/
-		1,             /*offset 36 */
-		1,             /*offset 37 */
-		1,             /*offset 38 */
-		1,             /*offset 39 */
-		1,             /*offset 40 */
-		1.74532925e-6,             /*offset 41 */
-		1.74532925e-6,             /*offset 42 */
-		1,             /*offset 43 */
-		1,             /*offset 44 */
-		0.001,             /*offset 45 */
-		0.001,             /*offset 46 */
-		0.001,             /*offset 47 */
-		0.1,             /*offset 48 */
-		0.1,             /*offset 49 */
-		1,             /*offset 50 */
-		1,             /*offset 51 */
-		0.001,             /*offset 52 */
-		0.001,             /*offset 53 */
-		0.001,             /*offset 54 */
-		1,             /*offset 55 */
-		1,             /*offset 56 */
-		1.74532925e-6,             /*offset 57 */
-		1.74532925e-6,             /*offset 58 */
-		0.1,             /*offset 59 */
-		0.0001,             /*offset 60 */
-		0.0001,             /*offset 61 */
-		0.0001,             /*offset 62 */
-		0.0001,             /*offset 63 */
+		1.74532925e-6,              					/*offset 1*/
+		1.74532925e-6,              					/*offset 2*/
+		1.74532925e-6,              					/*offset 3*/
+		1.74532925e-6, 			    					/*offset 4*/
+		1.74532925e-6,              					/*offset 5*/
+		1.74532925e-6,              					/*offset 6*/
+		1,              								/*offset 7*/
+		1, 			    								/*offset 8*/
+		1,              								/*offset 9*/
+		1,              								/*offset 10*/
+		1,			    								/*offset 11*/
+		1,              								/*offset 12*/
+		1,              								/*offset 13*/
+		1,              								/*offset 14*/
+		1, 			    								/*offset 15*/
+		1,              								/*offset 16*/
+		1,              								/*offset 17*/
+		1,              								/*offset 18*/
+		1, 			    								/*offset 19*/
+		1,              								/*offset 20*/
+		1,              								/*offset 21*/
+		1,              								/*offset 22*/
+		1, 			   									/*offset 23*/
+		1,              								/*offset 24*/
+		1,              								/*offset 25*/
+		1,              								/*offset 26*/
+		1,              								/*offset 27*/
+		1,              								/*offset 28*/
+		0.01, 			    							/*offset 29*/
+		1.74532925e-6,              					/*offset 30*/
+		1.74532925e-6,              					/*offset 31 */
+		1,              								/*offset 32*/
+		1,              								/*offset 33*/
+		1, 			    								/*offset 34*/
+		1,              								/*offset 35*/
+		1,             									/*offset 36 */
+		1,             									/*offset 37 */
+		1,             									/*offset 38 */
+		1,             									/*offset 39 */
+		1,             									/*offset 40 */
+		1.74532925e-6,             						/*offset 41 */
+		1.74532925e-6,             						/*offset 42 */
+		1,             									/*offset 43 */
+		1,             									/*offset 44 */
+		0.001,             								/*offset 45 */
+		0.001,             								/*offset 46 */
+		0.001,             								/*offset 47 */
+		0.1,             								/*offset 48 */
+		0.1,             								/*offset 49 */
+		1,             									/*offset 50 */
+		1,             									/*offset 51 */
+		0.001,            								/*offset 52 */
+		0.001,             								/*offset 53 */
+		0.001,             								/*offset 54 */
+		1,             									/*offset 55 */
+		1,             									/*offset 56 */
+		1.74532925e-6,             						/*offset 57 */
+		1.74532925e-6,             						/*offset 58 */
+		0.1,             								/*offset 59 */
+		0.0001,             							/*offset 60 */
+		0.0001,             							/*offset 61 */
+		0.0001,             							/*offset 62 */
+		0.0001,             							/*offset 63 */
 
    };
 unsigned int atp;
@@ -304,7 +310,7 @@ uint32 rHAL_TC_Read()
 	{
 		atp++;
 		// Enable FPGA DATA Ready Bit
-//		TC_STATUS_REGISTER = (TC_Status_Data | TC_WRITE_BIT_MASK); // Set WR Bit Before Reading TC SPC Buffer
+
 		TC_STATUS_REGISTER2 = TC_WRITE_BIT_MASK;             // TC_buffer read_enable
 		TC_authentic_pulse_rcvd = TRUE;
 		Telecommand_ptr = &(u_TC.rcvd[0]);
@@ -317,8 +323,6 @@ uint32 rHAL_TC_Read()
 		{
 			tc_ecv_test[i_tc_test++]= u_TC.cmd_rcvd;
 		}
-
-
 		//Copying to TM Buffer with appropriate index
 		TM.Buffer.TM_Last_seen_TC[0] = u_TC.data_rcvd[0];
 		TM.Buffer.TM_Last_seen_TC[1] = (u_TC.data_rcvd[1] & 0xFFFFFF00);
@@ -326,7 +330,6 @@ uint32 rHAL_TC_Read()
 		ST_normal.ST_NM_Buffer.TM_Last_seen_TC[0] = u_TC.data_rcvd[0];
 		ST_normal.ST_NM_Buffer.TM_Last_seen_TC[1] = (u_TC.data_rcvd[1] & 0xFFFFFF00);
 
-		//TC_STATUS_REGISTER2 = 0x00000000;                         //Clear data ready bit and authentic pulsezz
 		//Test : Create reset for FPGA FSM ( on 18_05_2019)
 	#ifdef QUALIFICATION_MODEL
 		GPIO_pins.PIO_9 = 0;
@@ -352,8 +355,6 @@ uint32 rHAL_TC_Read()
 
 		RcvdParity = (unsigned char)((TC_Status_Data & 0x00007F00) >> 7);
 		ComputedParity = TC_Rcvd.parity;
-		//TM.Buffer.ParityRcvd = RcvdParity;
-		//TM.Buffer.ComputedParity = ComputedParity;
 		if (RcvdParity == ComputedParity)
 		{
 			TC_authentic_pulse_rcvd = True;
@@ -363,7 +364,6 @@ uint32 rHAL_TC_Read()
 			tc_cnt_test++;
 			TC_authentic_pulse_rcvd = False;
 		}
-
 	}
 
 	return TC_authentic_pulse_rcvd;
@@ -392,6 +392,7 @@ void rTelecommand()
 	{
 		TC_count++;
 		TC_flag = 1;
+
 		switch (u_TC.Frame.command_type_A)
 		{
 			case 0x0: rReal_Time_TC();							    //Real-time telecommands
@@ -420,6 +421,26 @@ void rTelecommand()
 	TC_authentic_pulse_rcvd = False;
 	Absolutetime = Major_Cycle_Count>>4;
 	TM.Buffer.TM_ATTC_count = ATTC_count;
+	TM.Buffer.TM_TC_cmd_executed_count = TC_cmd_executed_count;
+
+	if(head != NULL)
+	{
+
+		unsigned long long int* Next_exe_TC_ptr;
+
+		Next_exe_TC_ptr = (unsigned long long int*)&head->command;
+		Next_exe_TC = *Next_exe_TC_ptr;
+		TM.Buffer.TM_Next_exe_TC = Next_exe_TC;
+	}
+
+
+	Storage_tm_status.Storage_en       = TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Enable_Disable;
+	Storage_tm_status.Storage_type_sel = TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Special_Normal_Mode_select;
+	Storage_tm_status.Normal_sampling  = TC_boolean_u.TC_Boolean_Table.TC_NormalStorage_Sampling_Rate_Select;
+	Storage_tm_status.Special_sampling = TC_gain_select_u.TC_gain_select_Table.TC_special_Sampling_rate_Select;
+	Storage_tm_status.Frame_addr_sel   = TC_gain_select_u.TC_gain_select_Table.TC_ST_Format_Selection;
+
+	TM.Buffer.storage_telemetry_sts = Storage_tm_status.st_data;
 
 	//Remote_address
 	TM.Buffer.TM_Remote_Addr = Remote_Addr;
@@ -757,7 +778,6 @@ void rADCS_Data_TC()
 		    default:
 			            break;
 		}
-
 }
 
 void rRemote_base_addr_TC()
@@ -769,7 +789,6 @@ void rRemote_base_addr_TC()
 	Remote_minotoring_addr 			= Remote_data_addr;
 	TM.Buffer.TM_Remote_Addr_SF0 	= Remote_minotoring_addr;
 }
-
 
 void rRemote_data_view()
 {
@@ -786,10 +805,7 @@ void rRemote_data_view()
 		  TM.Buffer.TM_Remote_Data_SF0[remote_monitor_index] 	= REG32(Remote_minotoring_addr);
 		  Remote_minotoring_addr +=4;
 		}
-
 	}
-
-
 }
 
  // Routine for Boolean_Telecommand processing
@@ -845,7 +861,7 @@ void rRemoteProgram_Data_TC()
 {
 	if(u_TC.Remote.command_type_B == 0x6)
 	{
-		//TC_cmd_executed++;
+		// TC_cmd_executed++;
 		Remote_data = u_TC.Remote.data_addr;
 		REG32(Remote_Addr) = Remote_data;
 		Remote_Addr += 4;
@@ -880,7 +896,6 @@ int32  ATTC_Master_en = 0;
 int32  ATTC_exe_en = 0;
 int32  tos;
 uint32 ATTC_count = 0;
-Nodeptrtype head = NULL;
 
 int32  DTTC_count = 0;
 uint32 Diff_start_srl_num = 0;
@@ -962,6 +977,7 @@ void rAbsoluteTTC_Update()
 		return;
 }
 unsigned int ab_test,ab_test1;
+
 // Execute the first ATTC
 void rAbsoluteTTC_Execute()
 {
@@ -990,12 +1006,8 @@ void rAbsoluteTTC_Execute()
 		}
 
 	}
-// Fetching the telecommand which gets executed next of the present one
-if(head != NULL)
-{
-	//Next_exe_TC = head -> command;
-	//TM.Buffer.TM_Next_exe_TC = Next_exe_TC;
-}
+	// Fetching the telecommand which gets executed next of the present one
+
 }
 
 
@@ -1040,64 +1052,6 @@ void rDifferential_TimeTag_Execute()
 	}
 }
 
-//Delete the node for the given position
-/*void rAbsoluteTTC_Delete()
-{
-	unsigned short traverse_count = 0;
-	Nodeptrtype temp = head;
-	Nodeptrtype prev = NULL;
-	while (temp->command.TC_time < u_TC.ATTC_Exe_cmd.TC_time)	  // Search for the ATT command to be deleted using the unique TC_time data
-	{
-		traverse_count++;
-		if(traverse_count == MAX_TIMETAG_CMD_LIMIT)
-		{
-			break;
-		}
-		prev = temp;
-		temp = temp->next;
-	}
-	if(traverse_count < MAX_TIMETAG_CMD_LIMIT)
-	{
-		prev->next = temp->next;
-		temp->next = NULL;
-		temp->command.TC_time = 0;
-		freeNode(temp);
-		ATTC_count--;
-	}
-
-}*/
-
-
-
-// Test variables
-/*
-unsigned int delete_count1,delete_count2;
-void rAbsoluteTTC_Delete()
-{
-	delete_count1 = 0;
-	delete_count2 =0;
-	Nodeptrtype temp = head;
-	Nodeptrtype prev = NULL;
-
-	while ((temp != NULL) && (temp->command.TC_time < u_TC.ATTC_Exe_cmd.TC_time))	  // Search for the ATT command to be deleted using the unique TC_time data
-	{
-		delete_count1++;
-		prev = temp;
-		temp = temp->next;
-	}
-	if(temp == NULL) return;
-
-	prev->next = temp->next;
-	temp->next = NULL;
-	temp->command.TC_time = 0;
-	freeNode(temp);
-	ATTC_count--;
-	delete_count2++;
-
-}
-*/
-
-
 void rAbsoluteTTC_Delete()
 {
 	Nodeptrtype temp = head;
@@ -1138,8 +1092,6 @@ void rAbsoluteTTC_Delete()
 	}
 
 }
-
-
 
 // Clear the Telecommand data
 void rAbsoluteTTC_Clear()		                               // Routine to clear the Linked list data
@@ -1197,9 +1149,6 @@ void Block_update(void)
 	BLK_number = u_TC.BLK_Update_cmd.Blk_No;
 	BLK_opn = u_TC.BLK_Update_cmd.Blk_opn;
 
-	//block_test_array[block_test] = u_TC.cmd_rcvd;
-	//block_test++;
-
 	if((u_TC.BLK_Update_cmd.Cmd_Srl == 0)|| (u_TC.BLK_Update_cmd.Cmd_Srl == Block_Index[BLK_number]))
 		{
 			if(BLK_opn == 0x0)          // BLK_update
@@ -1211,56 +1160,22 @@ void Block_update(void)
 		}
 	if((u_TC.BLK_Update_cmd.Cmd_Srl == 0)|| (u_TC.BLK_Update_cmd.Cmd_Srl <= Block_Index[BLK_number]))
 	{
-			if(BLK_opn == 0x1)     // BLK_modify
-			{
-
-				Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = u_TC.cmd_rcvd;
-				block_test2++;
-			}
-			else if(BLK_opn == 0x2)      // BLK_delete
-			{
-				block_test3++;
-				Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = 0x00;
-			}
-			else
-			{
-				//
-			}
+		if(BLK_opn == 0x1)     // BLK_modify
+		{
+			Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = u_TC.cmd_rcvd;
+			block_test2++;
 		}
-
-}
-/*void Block_update(void)
-{
-
-	tempdata2 = u_TC.BLK_Update_cmd.Blk_No;
-	tempdata1 = u_TC.BLK_Update_cmd.Blk_No;
-	BLK_number = (tempdata2 & 0x3f);
-	BLK_num = (tempdata1>>6);
-	if((BLK_number < MAX_BLKS) && (u_TC.BLK_Update_cmd.Cmd_Srl < MAX_BLK_CMD_SIZE))
-	{
-		if((u_TC.BLK_Update_cmd.Cmd_Srl == 0)|| (u_TC.BLK_Update_cmd.Cmd_Srl <= Block_Index[BLK_number]))
-			{
-				if(BLK_num == 00)          // BLK_update
-				{
-					Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = u_TC.cmd_rcvd;
-					Block_Index[BLK_number]++;
-				}
-				else if(BLK_num == 01)     // BLK_modify
-				{
-
-					Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = u_TC.cmd_rcvd;
-				}
-				else if(BLK_num == 10)      // BLK_delete
-				{
-					Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = 0x00;
-				}
-				else
-				{
-					//
-				}
-			}
+		else if(BLK_opn == 0x2)      // BLK_delete
+		{
+			block_test3++;
+			Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = 0x00;
+		}
+		else
+		{
+			//
+		}
 	}
-}*/
+}
 
 unsigned long long int test_3;
 /** Block command execute */
@@ -1289,7 +1204,8 @@ void rBlockTC_Execute(void)
 //TMTC Buffer assignments
 void TMTC_Assignment()
 {
-	//Boolean Command TMTC Assignment
+	// Boolean Command TMTC Assignment
+
 	TMTC_boolean_u.Boolean_Table.Pitch_Torquer_Polarity_Reversal               = TC_boolean_u.TC_Boolean_Table.Pitch_Torquer_Polarity_Reversal;
 	TMTC_boolean_u.Boolean_Table.Yaw_Torquer_Polarity_Reversal                 = TC_boolean_u.TC_Boolean_Table.Yaw_Torquer_Polarity_Reversal;
 	TMTC_boolean_u.Boolean_Table.Roll_Torquer_Polarity_Reversal                = TC_boolean_u.TC_Boolean_Table.Roll_Torquer_Polarity_Reversal;
@@ -1341,7 +1257,7 @@ void TMTC_Assignment()
 	TMTC_boolean_u.Boolean_Table.TC_EKF1_Enable                                = TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable;
 	TMTC_boolean_u.Boolean_Table.TC_EKF2_Enable                                = TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable;
 	TMTC_boolean_u.Boolean_Table.TC_Storage_TM_Enable_Disable                  = TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Enable_Disable;
-	TMTC_boolean_u.Boolean_Table.TC_ST_mode                                    = TC_boolean_u.TC_Boolean_Table.TC_ST_mode;
+	TMTC_boolean_u.Boolean_Table.TC_RW_Speed_sel                               = TC_boolean_u.TC_Boolean_Table.TC_RW_Speed_sel;
 	TMTC_boolean_u.Boolean_Table.TC_NormalStorage_Sampling_Rate_Select         = TC_boolean_u.TC_Boolean_Table.TC_NormalStorage_Sampling_Rate_Select;
 	TMTC_boolean_u.Boolean_Table.pl_tx_tm_flag                                 = TC_boolean_u.TC_Boolean_Table.pl_tx_tm_flag;
 	TMTC_boolean_u.Boolean_Table.TC_Storage_TM_Dump_enable_disable             = TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Dump_enable_disable;
@@ -1353,6 +1269,7 @@ void TMTC_Assignment()
 	TMTC_boolean_u.Boolean_Table.NMI_test_enable                               = TC_boolean_u.TC_Boolean_Table.NMI_test_enable;
 	TMTC_boolean_u.Boolean_Table.ST_dump_abort                                 = TC_boolean_u.TC_Boolean_Table.ST_dump_abort;
 	TMTC_boolean_u.Boolean_Table.TC_TCH_Full_Segment_Dump_mode                 = TC_boolean_u.TC_Boolean_Table.TC_TCH_Full_Segment_Dump_mode;
+
 	//added on 05-08-2020
 	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW1_enable			   = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW1_enable;
 	TMTC_boolean_u.Boolean_Table.TC_wheel_index_ground_RW1_disable			   = TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW1_disable; //Remove
@@ -1374,58 +1291,59 @@ void TMTC_Assignment()
 	TMTC_boolean_u.Boolean_Table.TC_Sunlitdec_timer_based                      = TC_boolean_u.TC_Boolean_Table.TC_Sunlitdec_timer_based;
 	TMTC_boolean_u.Boolean_Table.TC_BIST_override							   = TC_boolean_u.TC_Boolean_Table.TC_BIST_override;
 
-
-
-
-
 	//Gain Select command TMTC Assignment
-	TMTC_gain_select_u.gain_select_Table.TC_detumbling_bdot_gain               = TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain;
-	TMTC_gain_select_u.gain_select_Table.TC_detumbling_rate_gain               = TC_gain_select_u.TC_gain_select_Table.TC_detumbling_rate_gain;
-	TMTC_gain_select_u.gain_select_Table.TC_BDOT_Det_Thresh                    = TC_gain_select_u.TC_gain_select_Table.TC_BDOT_Det_Thresh;
-	TMTC_gain_select_u.gain_select_Table.TC_GYRO_Det_Min_Thres                 = TC_gain_select_u.TC_gain_select_Table.TC_GYRO_Det_Min_Thres;
+	TMTC_gain_select_u.gain_select_Table.TC_detumbling_bdot_gain_set               = TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain_set;
+	TMTC_gain_select_u.gain_select_Table.TC_detumbling_rate_gain_set               = TC_gain_select_u.TC_gain_select_Table.TC_detumbling_rate_gain_set;
+	TMTC_gain_select_u.gain_select_Table.TC_BDOT_Det_Thresh_set                    = TC_gain_select_u.TC_gain_select_Table.TC_BDOT_Det_Thresh_set;
+	TMTC_gain_select_u.gain_select_Table.TC_GYRO_Det_Min_Thres_set                 = TC_gain_select_u.TC_gain_select_Table.TC_GYRO_Det_Min_Thres_set;
 	TMTC_gain_select_u.gain_select_Table.TC_W1_Commanded_Nominal_Speed         = TC_gain_select_u.TC_gain_select_Table.TC_W1_Commanded_Nominal_Speed;
 	TMTC_gain_select_u.gain_select_Table.TC_W2_Commanded_Nominal_Speed         = TC_gain_select_u.TC_gain_select_Table.TC_W2_Commanded_Nominal_Speed;
 	TMTC_gain_select_u.gain_select_Table.TC_W3_Commanded_Nominal_Speed         = TC_gain_select_u.TC_gain_select_Table.TC_W3_Commanded_Nominal_Speed;
 	TMTC_gain_select_u.gain_select_Table.TC_W4_Commanded_Nominal_Speed         = TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed;
-	TMTC_gain_select_u.gain_select_Table.TC_momentum_dumping_gain              = TC_gain_select_u.TC_gain_select_Table.TC_momentum_dumping_gain;
+	TMTC_gain_select_u.gain_select_Table.TC_momentum_dumping_gain_set              = TC_gain_select_u.TC_gain_select_Table.TC_momentum_dumping_gain_set;
 	TMTC_gain_select_u.gain_select_Table.TC_PanelD_Status_Sel                  = TC_gain_select_u.TC_gain_select_Table.TC_PanelD_Status_Sel;
 	TMTC_gain_select_u.gain_select_Table.TC_Gyro_LPF_Gain_IMU1                 = TC_gain_select_u.TC_gain_select_Table.TC_Gyro_LPF_Gain_IMU1;
 	TMTC_gain_select_u.gain_select_Table.TC_Gyro_LPF_Gain_IMU2                 = TC_gain_select_u.TC_gain_select_Table.TC_Gyro_LPF_Gain_IMU2;
 	TMTC_gain_select_u.gain_select_Table.TC_Mag_LPF_Gain_IMU1                  = TC_gain_select_u.TC_gain_select_Table.TC_Mag_LPF_Gain_IMU1;
 	TMTC_gain_select_u.gain_select_Table.TC_Mag_LPF_Gain_IMU2                  = TC_gain_select_u.TC_gain_select_Table.TC_Mag_LPF_Gain_IMU2;
 	TMTC_gain_select_u.gain_select_Table.TC_SS_Currents_LPF_Gain               = TC_gain_select_u.TC_gain_select_Table.TC_SS_Currents_LPF_Gain; //Remove
-	TMTC_gain_select_u.gain_select_Table.TC_GPS_pulse_duration                 = TC_gain_select_u.TC_gain_select_Table.TC_GPS_pulse_duration;
-	TMTC_gain_select_u.gain_select_Table.TC_KP                                 = TC_gain_select_u.TC_gain_select_Table.TC_KP;
-	TMTC_gain_select_u.gain_select_Table.TC_KR                          	   = TC_gain_select_u.TC_gain_select_Table.TC_KR;
+	TMTC_gain_select_u.gain_select_Table.TC_GPS_pulse_duration_set                 = TC_gain_select_u.TC_gain_select_Table.TC_GPS_pulse_duration_set;
+	TMTC_gain_select_u.gain_select_Table.TC_KP_set                                 = TC_gain_select_u.TC_gain_select_Table.TC_KP_set;
+	TMTC_gain_select_u.gain_select_Table.TC_KR_set                          	   = TC_gain_select_u.TC_gain_select_Table.TC_KR_set;
 	/************************************************* Added on 26 JULY 2019 *****************************************************************/
 	TMTC_gain_select_u.gain_select_Table.TC_GPS_Validity_Altitude_Threshold    = TC_gain_select_u.TC_gain_select_Table.TC_GPS_Validity_Altitude_Threshold; //Remove
 	TMTC_gain_select_u.gain_select_Table.TC_Wheel_Cutoff_Threshold			   = TC_gain_select_u.TC_gain_select_Table.TC_Wheel_Cutoff_Threshold;
 	TMTC_gain_select_u.gain_select_Table.TC_Wh_SpinUD_Thrsld				   = TC_gain_select_u.TC_gain_select_Table.TC_Wh_SpinUD_Thrsld; //Remove
-	TMTC_gain_select_u.gain_select_Table.TC_comd_pitch_rate					   = TC_gain_select_u.TC_gain_select_Table.TC_comd_pitch_rate;
+	TMTC_gain_select_u.gain_select_Table.TC_comd_pitch_rate_set					   = TC_gain_select_u.TC_gain_select_Table.TC_comd_pitch_rate_set;
 	TMTC_gain_select_u.gain_select_Table.TC_AngDev_SafeModetransit_Thrsld	   = TC_gain_select_u.TC_gain_select_Table.TC_AngDev_SafeModetransit_Thrsld; //Remove
-	TMTC_gain_select_u.gain_select_Table.TC_AngMomDump_Thrsld				   = TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld; //Remove
+	TMTC_gain_select_u.gain_select_Table.TC_AngMomDump_Thrsld_set				   = TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld_set;
 	TMTC_gain_select_u.gain_select_Table.TC_SpeedDump_Thrsld				   = TC_gain_select_u.TC_gain_select_Table.TC_SpeedDump_Thrsld;
 	TMTC_gain_select_u.gain_select_Table.TC_SpeedDump_TimeSelect			   = TC_gain_select_u.TC_gain_select_Table.TC_SpeedDump_TimeSelect;
 	TMTC_gain_select_u.gain_select_Table.TC_special_Sampling_rate_Select       = TC_gain_select_u.TC_gain_select_Table.TC_special_Sampling_rate_Select;
 	TMTC_gain_select_u.gain_select_Table.TC_ST_Format_Selection                = TC_gain_select_u.TC_gain_select_Table.TC_ST_Format_Selection;
 
-
 	//Assigning Boolean Telecommands to TMTC Buffer
-
-	TM.Buffer.TM_TC_Buffer[0] = TMTC_boolean_u.TMTC_Buffer[0];
-	TM.Buffer.TM_TC_Buffer[1] = TMTC_boolean_u.TMTC_Buffer[1];
+	TM.Buffer.TM_TC_Buffer[0]  = TMTC_boolean_u.TMTC_Buffer[0];
+	TM.Buffer.TM_TC_Buffer[1]  = TMTC_boolean_u.TMTC_Buffer[1];
+	TM.Buffer.TM_TC_Buffer[2]  = TMTC_boolean_u.TMTC_Buffer[2];
+	TM.Buffer.TM_TC_Buffer[3]  = TMTC_boolean_u.TMTC_Buffer[3];
+	TM.Buffer.TM_TC_Buffer[4]  = TMTC_boolean_u.TMTC_Buffer[4];
+	TM.Buffer.TM_TC_Buffer[5]  = TMTC_boolean_u.TMTC_Buffer[5];
+	TM.Buffer.TM_TC_Buffer[6]  = TMTC_boolean_u.TMTC_Buffer[6];
+	TM.Buffer.TM_TC_Buffer[7]  = TMTC_boolean_u.TMTC_Buffer[7];
+	TM.Buffer.TM_TC_Buffer[8]  = TMTC_boolean_u.TMTC_Buffer[8];
+	TM.Buffer.TM_TC_Buffer[9]  = TMTC_boolean_u.TMTC_Buffer[9];
+	TM.Buffer.TM_TC_Buffer[10] = TMTC_boolean_u.TMTC_Buffer[10];
+	TM.Buffer.TM_TC_Buffer[11] = TMTC_boolean_u.TMTC_Buffer[11];
 
 	//Assigning Gain Select Telecommands to TMTC Buffer
-
-	TM.Buffer.TM_TC_Buffer[2] = TMTC_gain_select_u.TMTC_Buffer[0];
-	TM.Buffer.TM_TC_Buffer[3] = TMTC_gain_select_u.TMTC_Buffer[1];
-
-	//Absolute TTC Count
-	TM.Buffer.TM_TC_Buffer[4] = ATTC_count;
-
-	//Diferential TTC Count
-	TM.Buffer.TM_TC_Buffer[5] = DTTC_count;
-	TM.Buffer.TM_TC_Buffer[6] = *((unsigned long int*)(&SWHW_STATUS));
+	TM.Buffer.TM_TC_Buffer[12] = TMTC_gain_select_u.TMTC_Buffer[0];
+	TM.Buffer.TM_TC_Buffer[13] = TMTC_gain_select_u.TMTC_Buffer[1];
+	TM.Buffer.TM_TC_Buffer[14] = TMTC_gain_select_u.TMTC_Buffer[2];
+	TM.Buffer.TM_TC_Buffer[15] = TMTC_gain_select_u.TMTC_Buffer[3];
+	TM.Buffer.TM_TC_Buffer[16] = TMTC_gain_select_u.TMTC_Buffer[4];
+	TM.Buffer.TM_TC_Buffer[17] = TMTC_gain_select_u.TMTC_Buffer[5];
+	TM.Buffer.TM_TC_Buffer[18] = TMTC_gain_select_u.TMTC_Buffer[6];
 }
 void invertReverse(unsigned char * startAddr)
 {
@@ -1702,7 +1620,6 @@ void TC_GPS1_ON()
 	Out_Latch_2.GPS1_ON_OFF = 1;
 	Out_Latch_2.GPS1_RESET = 1;
 	IO_LATCH_REGISTER_2 = Out_Latch_2.data;
-	//rHAL_GPS_POWER(GPS_1,ON);
 	return;
 }
 void TC_GPS1_OFF()
@@ -1710,7 +1627,6 @@ void TC_GPS1_OFF()
 	Out_Latch_2.GPS1_ON_OFF = 0;
 	Out_Latch_2.GPS1_RESET = 1;
 	IO_LATCH_REGISTER_2 = Out_Latch_2.data;
-	//rHAL_GPS_POWER(GPS_1,OFF);
 	return;
 }
 void TC_GPS1_NMEA_VTG_enable()
@@ -1758,7 +1674,6 @@ void TC_GPS2_on()
 	Out_Latch_2.GPS2_ON_OFF = 1;
 	Out_Latch_2.GPS2_RESET = 1;
 	IO_LATCH_REGISTER_2 = Out_Latch_2.data;
-	//rHAL_GPS_POWER(GPS_2,ON);
 	return;
 }
 void TC_GPS2_off()
@@ -1766,7 +1681,6 @@ void TC_GPS2_off()
 	Out_Latch_2.GPS2_ON_OFF = 0;
 	Out_Latch_2.GPS2_RESET = 1;
 	IO_LATCH_REGISTER_2 = Out_Latch_2.data;
-	//rHAL_GPS_POWER(GPS_2,OFF);
 	return;
 }
 void TC_GPS2_NMEA_VTG_enable()
@@ -1900,8 +1814,10 @@ void rTC_SunAcquisition_ModePreprocessing()
 {
 	Spacecraft_Mode = SunAcquisition_ModePreprocessing;
 }
+unsigned char sus_data;
 void rTC_ThreeAxis_ModePreprocessing()
 {
+	sus_data = 4;
 	Spacecraft_Mode = ThreeAxis_ModePreprocessing;
 }
 
@@ -1923,87 +1839,51 @@ void payload_1_off()
 }
 void rHeater1_on()
 {
-	//rHAL_Heater_Power(HEATER_1,ON);
-	return;
-	/*rHAL_Heater_Power(ON);
-	return;*/
+	//
 }
 void rHeater1_off()
 {
-    //rHAL_Heater_Power(HEATER_1,OFF);
-	return;
-			/*	rHAL_Heater_Power(OFF);
-	return;;*/
+	//
 }
 void rHeater2_on()
 {
-	//rHAL_Heater_Power(HEATER_2,ON);
-	return;
-	/*rHAL_Heater_Power(ON);
-	return;*/
+	//
 }
 void rHeater2_off()
 {
-	//rHAL_Heater_Power(HEATER_2,OFF);
-	return;
-	/*rHAL_Heater_Power(OFF);
-	return;*/
+	//
 }
 void rHeater3_on()
 {
-	//rHAL_Heater_Power(HEATER_3,ON);
-	return;
-	/*rHAL_Heater_Power(ON);
-	return;*/
+	//
 }
 void rHeater3_off()
 {
-	//rHAL_Heater_Power(HEATER_3,OFF);
-	return;
-	/*rHAL_Heater_Power(OFF);
-	return;*/
+	//
 }
 void rHeater4_on()
 {
-	//rHAL_Heater_Power(HEATER_4,ON);
-	return;
-	/*rHAL_Heater_Power(ON);
-	return;*/
+	//
 }
 void rHeater4_off()
 {
-	//rHAL_Heater_Power(HEATER_4,OFF);
-	return;
-	/*rHAL_Heater_Power(OFF);
-	return;*/
+	//
 }
 void rHeater5_on()
 {
-	//rHAL_Heater_Power(HEATER_5,ON);
-	return;
-	/*rHAL_Heater_Power(ON);
-	return;*/
+	//
 }
 void rHeater5_off()
 {
-	//rHAL_Heater_Power(HEATER_5,OFF);
-	return;
-	/*rHAL_Heater_Power(OFF);
-	return*/;
+	//
 }
 void rHeater6_on()
 {
-	//rHAL_Heater_Power(HEATER_6,ON);
-	return;
-	/*rHAL_Heater_Power(ON);
-	return;*/
+	//
 }
 void rHeater6_off()
 {
-	//rHAL_Heater_Power(HEATER_6,OFF);
-	return;
-	/*rHAL_Heater_Power(OFF);
-	return*/;
+	//
 }
 void RX_TX_deployed()
 {
@@ -2035,7 +1915,6 @@ void PL_K_DIAG()
 
 void PL_K_CMD_OFF()
 {
-
 	rHAL_pl_x_tx_data_off();
 }
 void PL_K_CMD_ON()
@@ -2105,7 +1984,7 @@ void rTLE_Update()
 	argpo_TLE_tc = (double)TLE_data.TC_TLE_data8;
 	mo_TLE_tc = (double)TLE_data.TC_TLE_data9;
 	no_TLE_tc = TLE_data.TC_TLE_data10;
-	OBT_at_TLE_epoch = TLE_data.TC_TLE_data11;
+	OBT_at_TLE_epoch = (long)TLE_data.TC_TLE_data11;
 	chksum_tle = TLE_data.TC_TLE_data12;
 
 	TLE_chksum = chksum8(TLE_ptr,56);
@@ -2290,7 +2169,7 @@ void Sunlit_eclipse_both()
 	CB_Sl_Ecl_OnBrd_detection = Enable;
 }
 
-void rSafe_mode_PreProcessing()
+void rTC_Safe_mode_PreProcessing()
 {
 	Spacecraft_Mode = Safe_ModePreprocessing;
 }
@@ -2502,27 +2381,27 @@ void adcsgains()
 
 void TC_detumbling_rate_gain_1()
 {
-	if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_rate_gain == 01)
+	if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_rate_gain_set == 01)
 	{
 		TC_detumbling_rate_gain[0]=GAIN_DATA_SET.TC_detumbling_rate_gain_0_01;
 		TC_detumbling_rate_gain[1]=GAIN_DATA_SET.TC_detumbling_rate_gain_1_01;
 		TC_detumbling_rate_gain[2]=GAIN_DATA_SET.TC_detumbling_rate_gain_2_01;
 	}
 
-	else if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_rate_gain == 02)
+	else if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_rate_gain_set == 02)
 	{
 		TC_detumbling_rate_gain[0]=GAIN_DATA_SET.TC_detumbling_rate_gain_0_10;
 		TC_detumbling_rate_gain[1]=GAIN_DATA_SET.TC_detumbling_rate_gain_1_10;
 		TC_detumbling_rate_gain[2]=GAIN_DATA_SET.TC_detumbling_rate_gain_2_10;
 	}
 
-	else if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_rate_gain==03)
+	else if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_rate_gain_set==03)
 	{
 		TC_detumbling_rate_gain[0]=GAIN_DATA_SET.TC_detumbling_rate_gain_0_11;
 		TC_detumbling_rate_gain[1]=GAIN_DATA_SET.TC_detumbling_rate_gain_1_11;
 		TC_detumbling_rate_gain[2]=GAIN_DATA_SET.TC_detumbling_rate_gain_2_11;
 	}
-	else if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_rate_gain==00)
+	else if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_rate_gain_set==00)
 	{
 		TC_detumbling_rate_gain[0]=GAIN_DATA_SET.TC_detumbling_rate_gain_0_00;
 		TC_detumbling_rate_gain[1]=GAIN_DATA_SET.TC_detumbling_rate_gain_1_00;
@@ -2536,28 +2415,28 @@ void TC_detumbling_rate_gain_1()
 	//
 void TC_detumbling_bdot_gain_1()
 {
-	if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain==01)
+	if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain_set==01)
 	{
 		TC_detumbling_bdot_gain[0]=GAIN_DATA_SET.TC_detumbling_bdot_gain_0_01;
 		TC_detumbling_bdot_gain[1]=GAIN_DATA_SET.TC_detumbling_bdot_gain_1_01;
 		TC_detumbling_bdot_gain[2]=GAIN_DATA_SET.TC_detumbling_bdot_gain_2_01;
 	}
 
-	else if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain==02)
+	else if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain_set==02)
 	{
 		TC_detumbling_bdot_gain[0]=GAIN_DATA_SET.TC_detumbling_bdot_gain_0_10;
 		TC_detumbling_bdot_gain[1]=GAIN_DATA_SET.TC_detumbling_bdot_gain_1_10;
 		TC_detumbling_bdot_gain[2]=GAIN_DATA_SET.TC_detumbling_bdot_gain_2_10;
 	}
 
-	else if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain==03)
+	else if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain_set==03)
 	{
 		TC_detumbling_bdot_gain[0]=GAIN_DATA_SET.TC_detumbling_bdot_gain_0_11;
 		TC_detumbling_bdot_gain[1]=GAIN_DATA_SET.TC_detumbling_bdot_gain_1_11;
 		TC_detumbling_bdot_gain[2]=GAIN_DATA_SET.TC_detumbling_bdot_gain_2_11;
 	}
 
-	else if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain==00)
+	else if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain_set==00)
 	{
 		TC_detumbling_bdot_gain[0]=GAIN_DATA_SET.TC_detumbling_bdot_gain_0_00;
 		TC_detumbling_bdot_gain[1]=GAIN_DATA_SET.TC_detumbling_bdot_gain_1_00;
@@ -2571,23 +2450,23 @@ void TC_detumbling_bdot_gain_1()
 //
 void TC_BDOT_Det_Thresh_1()
 {
-	if(TC_gain_select_u.TC_gain_select_Table.TC_BDOT_Det_Thresh==01)
+	if(TC_gain_select_u.TC_gain_select_Table.TC_BDOT_Det_Thresh_set==01)
 
 	{
 	  TC_BDOT_Det_Thresh = GAIN_DATA_SET.TC_BDOT_Det_Thresh_0_01;
 	}
 
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_BDOT_Det_Thresh==02)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_BDOT_Det_Thresh_set==02)
 	{
 	  TC_BDOT_Det_Thresh=GAIN_DATA_SET.TC_BDOT_Det_Thresh_0_10;
 	}
 
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_BDOT_Det_Thresh==03)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_BDOT_Det_Thresh_set==03)
 	{
 	 TC_BDOT_Det_Thresh=GAIN_DATA_SET.TC_BDOT_Det_Thresh_0_11;
 	}
 
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_BDOT_Det_Thresh==00)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_BDOT_Det_Thresh_set==00)
 	{
 	 TC_BDOT_Det_Thresh=GAIN_DATA_SET.TC_BDOT_Det_Thresh_0_00;
 	}
@@ -2600,22 +2479,22 @@ void TC_BDOT_Det_Thresh_1()
 	//
 void TC_GYRO_Det_Min_Thres_1()
 {
-	if(TC_gain_select_u.TC_gain_select_Table.TC_GYRO_Det_Min_Thres==01)
+	if(TC_gain_select_u.TC_gain_select_Table.TC_GYRO_Det_Min_Thres_set==01)
 	{
 	  TC_GYRO_Det_Min_Thresh=GAIN_DATA_SET.TC_GYRO_Det_Min_Thres_0_01;
 	}
 
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_GYRO_Det_Min_Thres==02)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_GYRO_Det_Min_Thres_set==02)
 	{
 	  TC_GYRO_Det_Min_Thresh=GAIN_DATA_SET.TC_GYRO_Det_Min_Thres_0_10;
 	}
 
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_GYRO_Det_Min_Thres==03)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_GYRO_Det_Min_Thres_set==03)
 	{
 	  TC_GYRO_Det_Min_Thresh=GAIN_DATA_SET.TC_GYRO_Det_Min_Thres_0_11;
 	}
 
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_GYRO_Det_Min_Thres==00)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_GYRO_Det_Min_Thres_set==00)
 	{
 	  TC_GYRO_Det_Min_Thresh=GAIN_DATA_SET.TC_GYRO_Det_Min_Thres_0_00;
 	}
@@ -2729,20 +2608,20 @@ void rTc_nominal_speed_RW4()
 
 void TC_AngMomDump_Thrsld_1()
 {
-	if(TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld==01)
+	if(TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld_set==01)
 	{
 		TC_AngMomDump_Thrsld=GAIN_DATA_SET.TC_AngMomDump_Thrsld_0_01;
 	}
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld==02)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld_set==02)
 	{
 		TC_AngMomDump_Thrsld=GAIN_DATA_SET.TC_AngMomDump_Thrsld_0_10;
 	}
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld==03)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld_set==03)
 	{
 		TC_AngMomDump_Thrsld=GAIN_DATA_SET.TC_AngMomDump_Thrsld_0_11;
 	}
 
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld==00)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld_set==00)
 	{
 		TC_AngMomDump_Thrsld=GAIN_DATA_SET.TC_AngMomDump_Thrsld_0_00;
 	}
@@ -2802,20 +2681,20 @@ void TC_SpeedDump_TimeSelect_1()
 //
 void TC_comd_pitch_rate_1()
 {
-	if(TC_gain_select_u.TC_gain_select_Table.TC_comd_pitch_rate==01)
+	if(TC_gain_select_u.TC_gain_select_Table.TC_comd_pitch_rate_set==01)
 	{
 		TC_comd_pitch_rate=GAIN_DATA_SET.TC_comd_pitch_rate_0_01;
 	}
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_comd_pitch_rate==02)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_comd_pitch_rate_set==02)
 	{
 		TC_comd_pitch_rate=GAIN_DATA_SET.TC_comd_pitch_rate_0_10;
 	}
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_comd_pitch_rate==03)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_comd_pitch_rate_set==03)
 	{
 		TC_comd_pitch_rate=GAIN_DATA_SET.TC_comd_pitch_rate_0_11;
 	}
 
-	else if(TC_gain_select_u.TC_gain_select_Table.TC_comd_pitch_rate==00)
+	else if(TC_gain_select_u.TC_gain_select_Table.TC_comd_pitch_rate_set==00)
 	{
 		TC_comd_pitch_rate=GAIN_DATA_SET.TC_comd_pitch_rate_0_00;
 	}
