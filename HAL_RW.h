@@ -146,7 +146,7 @@ float RW_Measured[4];
 
 void rHAL_RW_TC_Write(struct HAL_RW_Data_Structure* RW_No, float  RW_Speed, uint8 RW_ID);
 void rHAL_RW_TM_Write (struct HAL_RW_Data_Structure* RW_No, uint8 RW_ID);
-int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_TM, int wheel_index);
+int rHAL_RW_TM_Read(struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_TM, int RW_index);
 void rRW_SlipFrame_Check(struct HAL_RW_Data_Structure* RW_No_Addr, unsigned char* inter_slipframe_data_addr, int NOB_Slipframe_Check);
 
 /******************Added on 12/10/19 *****************/
@@ -155,9 +155,9 @@ void rRW_init_cmd(struct HAL_RW_Data_Structure RW_No, unsigned char RW_ID);
 /*****************************************************/
 
 void rHAL_RW_ConfigBuffer_Write(struct HAL_RW_Data_Structure* RW_No_Addr, unsigned short* inter_Buffer_cpy_addr,int inter_NOB_Write);
-void rRW_Data_Write();
-void rRW_Data_Request();
-void rRW_Data_Read();
+void rRW_Data_Write(void);
+void rRW_Data_Request(void);
+void rRW_Data_Read(void);
 
 unsigned char RW_Write_Data[20];
 unsigned char* RW_Write_ptr;

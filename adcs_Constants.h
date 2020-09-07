@@ -1,7 +1,7 @@
 #ifndef ADCS_CONSTANTS_H_INCLUDED
 #define ADCS_CONSTANTS_H_INCLUDED
 
-///Orbit Model
+//Orbit Model
 extern const  double c_twomu;
 extern const  double c_tsince_min;
 extern const  double c_OMEGAE;
@@ -40,7 +40,7 @@ extern const  double fc[5][5];
 extern const  double nut[106][10];
 
 
-///IGRF
+//IGRF
 extern const  int c_Nmax;
 extern const  int c_Kmax;
 extern const  double c_Pibytwo;
@@ -55,7 +55,7 @@ extern const  double c_gsval[104];
 extern const  double c_hval[104];
 extern const  double c_hsval[104];
 
-///Sun Model
+//Sun Model
 extern const  double c_L_Msun1;
 extern const  double c_L_Msun2;
 extern const  double c_Msun1;
@@ -73,13 +73,13 @@ extern const  double c_KDset3;
 
 extern const  int c_DPM_Pol_LookUpTable[27][3];
 
-///Kalman Filter
+//Kalman Filter
 extern const  double c_I_three_cross_three[3][3];
 extern const  double c_I_nine_cross_nine[9][9];
 extern const  double c_rk[9][9];
 extern const  double c_rk_T[9][9];
 
-///16 Imax constants of for all sensors (Main and Redundant cells) ( NOTE: constant = Overall_Imax / Individual_Imax)
+//16 Imax constants of for all sensors (Main and Redundant cells) ( NOTE: constant = Overall_Imax / Individual_Imax)
 extern const  double c_Imax_RPD_Red;
 extern const  double c_Imax_RND_Red;
 extern const  double c_Imax_RPND_Red;
@@ -98,13 +98,13 @@ extern const  double c_Imax_PN_Main;
 extern const  double c_Imax_YP_Main;
 extern const  double c_Imax_YN_Main;
 
-///---------------------------------------------------------------------------------------------------------------------------
-extern const  double c_SSThrsld; ///Sunsensor threshold value
-extern const  double c_Sunlit_Thrsld; ///Threshold for sunlit detection
-extern const  double c_AngDev_SMtransit_thrsld; /// (30 degrees) Threshold for sun presence in negative pitch side
-extern const  double c_AngDev_SAMtransit_thrsld; /// (30 degrees) Threshold for sun presence in negative pitch side
+//---------------------------------------------------------------------------------------------------------------------------
+extern const  double c_SSThrsld; //Sunsensor threshold value
+extern const  double c_Sunlit_Thrsld; //Threshold for sunlit detection
+extern const  double c_AngDev_SMtransit_thrsld; // (30 degrees) Threshold for sun presence in negative pitch side
+extern const  double c_AngDev_SAMtransit_thrsld; // (30 degrees) Threshold for sun presence in negative pitch side
 
-///SunSensor's Misalignment Correction Matrices
+//SunSensor's Misalignment Correction Matrices
 extern const  double c_misaln_cor125[3][3];
 extern const  double c_misaln_cor126[3][3];
 extern const  double c_misaln_cor325[3][3];
@@ -114,19 +114,19 @@ extern const  double c_misaln_cor346[3][3];
 extern const  double c_misaln_cor145[3][3];
 extern const  double c_misaln_cor146[3][3];
 
-///Sun Sensor to Body frame conversion for all the 8 quadrants
+//Sun Sensor to Body frame conversion for all the 8 quadrants
 extern const  double c_ss2b1256[3][3];
 extern const  double c_ss2b2356[3][3];
 extern const  double c_ss2b3456[3][3];
 extern const  double c_ss2b4156[3][3];
 
-///Quest
+//Quest
 extern const  double c_wks_mag;
 extern const  double c_wkm_mag;
 extern const  double c_wks_sunmag;
 extern const  double c_wkm_sunmag;
 
-/// Linear Controller
+// Linear Controller
 extern const  double c_MOI_wh;
 extern const  double c_DPMMAX;
 extern const  double c_RPM2RADpS;
@@ -157,7 +157,7 @@ extern const  double c_B2wh_mat_1034[4][3];
 extern const  double c_B2wh_mat_0234[4][3];
 
 
-///ADandEstimation
+//ADandEstimation
 extern const  int c_I_four_cross_four[4][4];
 extern const  unsigned int c_FFFF;
 extern const  double c_Resol_DelThta;

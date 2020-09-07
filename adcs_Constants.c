@@ -17,7 +17,7 @@
     const double c_MaC = 0.128;
     const double c_MiC = 0.032;
 
-///Orbit Model
+//Orbit Model
     const double c_twomu = 797200.87500;
     const double c_tsince_min = 0.002133333;
     const double c_OMEGAE = 0.000072921159;
@@ -196,7 +196,7 @@ const double c_rk_T[9][9] = { {-1.0,	0.0,	0.0,	0.0,	0.0,	0.0,	0.0,	0.0,	0.0},
         {0,	1,	0,	1,	0,	27.3,	1,	0,	0,	0,}
         };*/
 
-    ///IGRF
+    //IGRF
     const int c_Nmax = 13;
     const int c_Kmax = 105;
     const double c_Pibytwo = 1.570796326794897;
@@ -633,7 +633,7 @@ const double c_hsval[104] = {
 
 		};
 
-///Sun Model
+//Sun Model
 const double c_L_Msun1 = 280.4606184;
 const double c_L_Msun2 = 36000.77005361;
 const double c_Msun1 = 357.5277233;
@@ -650,7 +650,7 @@ const double c_KDset2 = 2E-3;
 const double c_KDset3 = 2E-2;
 
 
-///16 Imax constants of for all sensors (Main and Redundant cells) ( NOTE: constant = Overall_Imax / Individual_Imax)
+//16 Imax constants of for all sensors (Main and Redundant cells) ( NOTE: constant = Overall_Imax / Individual_Imax)
 const double c_Imax_RPD_Red = 1.096912051131744;
 const double c_Imax_RND_Red = 1.132238986590674;
 const double c_Imax_RPND_Red = 1.125363752764521;
@@ -669,13 +669,13 @@ const double c_Imax_PN_Main = 1.127119300147093;
 const double c_Imax_YP_Main = 1.060224293620740;
 const double c_Imax_YN_Main = 1.075774928880186;
 
-///---------------------------------------------------------------------------------------------------------------------------
-const double c_SSThrsld = 0.5; ///Sunsensor threshold value
-const double c_Sunlit_Thrsld = 0.5; ///Threshold for sunlit detection
-const double c_AngDev_SMtransit_thrsld = 0.52359877559; /// (30 degrees) Threshold for sun presence in negative pitch side
-const double c_AngDev_SAMtransit_thrsld = 0.52359877559; /// (30 degrees) Threshold for sun presence in negative pitch side
+//---------------------------------------------------------------------------------------------------------------------------
+const double c_SSThrsld = 0.5; //Sunsensor threshold value
+const double c_Sunlit_Thrsld = 0.5; //Threshold for sunlit detection
+const double c_AngDev_SMtransit_thrsld = 0.52359877559; // (30 degrees) Threshold for sun presence in negative pitch side
+const double c_AngDev_SAMtransit_thrsld = 0.52359877559; // (30 degrees) Threshold for sun presence in negative pitch side
 
-///SunSensor's Misalignment Correction Matrices
+//SunSensor's Misalignment Correction Matrices
 const double c_misaln_cor125[3][3] = {{1, -0.005235963831420, 0.005235963831420},{0.005235963831420, 1, -0.005235963831420},{-0.005235963831420, 0.005235963831420, 1}};
 const double c_misaln_cor126[3][3] = {{1, -0.005235963831420, 0.005235963831420},{0.005235963831420, 1, -0.005235963831420},{-0.005235963831420, 0.005235963831420, 1}};
 const double c_misaln_cor325[3][3] = {{1, -0.005235963831420, 0.005235963831420},{0.005235963831420, 1, -0.005235963831420},{-0.005235963831420, 0.005235963831420, 1}};
@@ -685,20 +685,20 @@ const double c_misaln_cor346[3][3] = {{1, -0.005235963831420, 0.005235963831420}
 const double c_misaln_cor145[3][3] = {{1, -0.005235963831420, 0.005235963831420},{0.005235963831420, 1, -0.005235963831420},{-0.005235963831420, 0.005235963831420, 1}};
 const double c_misaln_cor146[3][3] = {{1, -0.005235963831420, 0.005235963831420},{0.005235963831420, 1, -0.005235963831420},{-0.005235963831420, 0.005235963831420, 1}};
 
-///Sun Sensor to Body frame conversion for all the 8 quadrants
-const double c_ss2b1256[3][3] = {{0.707106781186547,-0.683012701892219,-0.183012701892219},{0.707106781186547,0.683012701892219,0.183012701892219},{0.0,-0.258819045102521,0.965925826289068}}; ///sun sensor to body frame
+//Sun Sensor to Body frame conversion for all the 8 quadrants
+const double c_ss2b1256[3][3] = {{0.707106781186547,-0.683012701892219,-0.183012701892219},{0.707106781186547,0.683012701892219,0.183012701892219},{0.0,-0.258819045102521,0.965925826289068}}; //sun sensor to body frame
 const double c_ss2b2356[3][3] = {{-0.683012701892219,-0.707106781186548,-0.183012701892219},{0.683012701892219,-0.707106781186548,0.183012701892219},{-0.258819045102521,0.0,0.965925826289068}};
 const double c_ss2b3456[3][3] = {{-0.707106781186547,0.683012701892219,-0.183012701892219},{-0.707106781186547,-0.683012701892219,0.183012701892219},{0.0,0.258819045102521,0.965925826289068}};
 const double c_ss2b4156[3][3] = {{0.683012701892219,0.707106781186548,-0.183012701892219},{-0.683012701892219,0.707106781186548,0.183012701892219},{0.258819045102521,0.0,0.965925826289068}};
 
-    ///---------------------------------------------------------------------------------------------------------------------------
-/// Quest
+    //---------------------------------------------------------------------------------------------------------------------------
+// Quest
 const double c_wks_mag = 0.0;
 const double c_wkm_mag = 0.041666666666667;
 const double c_wks_sunmag = 0.0625;
 const double c_wkm_sunmag = 0.0625;
 
-/// Linear Controller
+// Linear Controller
 const double c_DPMMAX = 1.5;
 const double c_RPM2RADpS = 0.10471975511965;
 const double c_RADps2RPM = 9.54929658551372;
@@ -818,7 +818,7 @@ const double c_MagBias_act_LUT[27][3] = {
 	{   -4600.0,	6700.0,	-8300.0 },
 	{   6700.0,	20000.0,	-12700.0}};
 
-///Kalman Filter
+//Kalman Filter
 const double c_I_three_cross_three[3][3] = {{1,0,0},
 		{0,1,0},
 		{0,0,1},

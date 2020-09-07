@@ -197,15 +197,15 @@ void rDutyCycleGeneration(void)
         {
             TorquerDutyCycle[0] = (unsigned int)(fabs(DPM[0])/c_DPMMAX);
             Ton[0] = floor(TorquerDutyCycle[0] * MTR_ActuationCycle);
-            ///Toff[0] = MTR_ActuationCycle – (Ton[0]);
+            //Toff[0] = MTR_ActuationCycle – (Ton[0]);
 
             TorquerDutyCycle[1] = (unsigned int)(fabs(DPM[1])/c_DPMMAX);
             Ton[1] = floor(TorquerDutyCycle[1] * MTR_ActuationCycle);
-            ///Toff[1] = MTR_ActuationCycle – (Ton[1]);
+            //Toff[1] = MTR_ActuationCycle – (Ton[1]);
 
             TorquerDutyCycle[2] = (unsigned int)(fabs(DPM[2])/c_DPMMAX);
             Ton[2] = floor(TorquerDutyCycle[2] * MTR_ActuationCycle);
-            ///Toff[2] = MTR_ActuationCycle – (Ton[2]);
+            //Toff[2] = MTR_ActuationCycle – (Ton[2]);
             DutyCycleGenEnable = 0;
         }
     }

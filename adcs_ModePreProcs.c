@@ -57,6 +57,16 @@ void rScModeSelection(void)
 					rSuspended_ModePreprocessing();
 			break;
 	}
+
+	if(f_station_tracking_enabled)
+	{
+		TM.Buffer.TM_mode_selection = 0x06;
+	}
+	else
+	{
+		TM.Buffer.TM_mode_selection = Spacecraft_Mode;
+	}
+
 }
 
 /*
@@ -110,13 +120,6 @@ static void rSuspended_ModePreprocessing(void)
 	// Remote patch entry hook function
 	rSus_mode_remote_entry_hook();
 
-	TM.Buffer.TM_mode_selection[0] 	= (char)Spacecraft_Mode;
-	TM.Buffer.TM_mode_selection[1] 	= 0x0;
-	TM.Buffer.TM_mode_selection[2]	= 0x0;
-	TM.Buffer.TM_mode_selection[3]	= 0x0;
-	TM.Buffer.TM_mode_selection[4]	= 0x0;
-	TM.Buffer.TM_mode_selection[5]  = 0x0;
-
     if (Susp_cnt >= c_oneminute)
     {
     	if (TC_boolean_u.TC_Boolean_Table.TC_Sus2det_transit_en_dis == 1)
@@ -141,13 +144,6 @@ static void rDetumbling_ModePreprocessing_BDOT_Logic(void)
 
 	// Remote patch entry hook function
 	rDBDOT_mode_remote_entry_hook();
-
-	TM.Buffer.TM_mode_selection[0] 	= 0x0;
-	TM.Buffer.TM_mode_selection[1]   = (char)Spacecraft_Mode;
-	TM.Buffer.TM_mode_selection[2]	= 0x0;
-	TM.Buffer.TM_mode_selection[3]	= 0x0;
-	TM.Buffer.TM_mode_selection[4]	= 0x0;
-	TM.Buffer.TM_mode_selection[5]   = 0x0;
 
     CB_Detumbling_Mode = 1;
     CB_OrbitModel = 0;
@@ -202,12 +198,21 @@ static void rDetumbling_ModePreprocessing_BDOT_Logic(void)
             if(TC_boolean_u.TC_Boolean_Table.TC_AutoTransit_Det2SunAquisition == Enable)
             {
                 entrytime2eclipse = ADCS_TC_data_command_Table.TC_eclipse_entrytime - elapsed_running_timer;
-                //entrytime2eclipse = 1000; /// test
-                if (entrytime2eclipse < 7032) // 15 mins
-                {
-                	Spacecraft_Mode = SunAcquisition_ModePreprocessing;
-                	return;
-                }
+                //entrytime2eclipse = 1000; // test
+                if (entrytime2eclipse > 7032)
+				{
+					f_RW_nominal = 1;
+					//Turn on TW
+					//Ping command
+					//Enable all RW
+
+					if (f_RW_control == 1)
+					{
+						f_RW_nominal = 0;
+						Spacecraft_Mode = SunAcquisition_ModePreprocessing;
+						return;
+					}
+				}
             }
         }
 
@@ -247,14 +252,7 @@ static void rDetumbling_ModePreprocessing_GYRO_Logic(void)
 	// Remote patch entry hook function
 	rDGYRO_mode_remote_entry_hook();
 
-    ///rRateReductionCheck();
-
-	TM.Buffer.TM_mode_selection[0] 	= 0x0;
-	TM.Buffer.TM_mode_selection[1]	= 0x0;
-	TM.Buffer.TM_mode_selection[2]  = (char)Spacecraft_Mode;
-	TM.Buffer.TM_mode_selection[3]	= 0x0;
-	TM.Buffer.TM_mode_selection[4]	= 0x0;
-	TM.Buffer.TM_mode_selection[5]  = 0x0;
+    //rRateReductionCheck();
 
     CB_Detumbling_Mode = 1;
     CB_OrbitModel = 0;
@@ -291,12 +289,21 @@ static void rDetumbling_ModePreprocessing_GYRO_Logic(void)
             if(TC_boolean_u.TC_Boolean_Table.TC_AutoTransit_Det2SunAquisition == Enable)
             {
                 entrytime2eclipse = ADCS_TC_data_command_Table.TC_eclipse_entrytime - elapsed_running_timer;
-                //entrytime2eclipse = 1000; /// test
-                if (entrytime2eclipse < 7032) //15mins
-                {
-                	Spacecraft_Mode = SunAcquisition_ModePreprocessing;
-                	return;
-                }
+                //entrytime2eclipse = 1000; // test
+                if (entrytime2eclipse > 7032)
+				{
+					f_RW_nominal = 1;
+					//Turn on TW
+					//Ping command
+					//Enable all RW
+
+					if (f_RW_control == 1)
+					{
+						f_RW_nominal = 0;
+						Spacecraft_Mode = SunAcquisition_ModePreprocessing;
+						return;
+					}
+				}
             }
         }
         else
@@ -353,12 +360,6 @@ static void rSunAcquisition_ModePreprocessing(void)
 	rSACQ_mode_remote_entry_hook();
 
     //f_Sunlit_Presence = True;    //for testing
-	TM.Buffer.TM_mode_selection[0] 	 = 0x0;
-	TM.Buffer.TM_mode_selection[1]	 = 0x0;
-	TM.Buffer.TM_mode_selection[2]	 = 0x0;
-	TM.Buffer.TM_mode_selection[3]   = (char)Spacecraft_Mode;
-	TM.Buffer.TM_mode_selection[4]	 = 0x0;
-	TM.Buffer.TM_mode_selection[5]   = 0x0;
 
     CB_Detumbling_Mode = 0;
     CB_OrbitModel = 1;
@@ -446,6 +447,14 @@ static void rSunAcquisition_ModePreprocessing(void)
     {
         SunAcq3ThreeAx_trsit_cnt = 0;
         SunAcq2DetMode_counter = 0;
+
+        Qerror[0] = 0.0;
+		Qerror[1] = 0.0;
+		Qerror[2] = 0.0;
+
+		w_REF[0] = 0.0;
+		w_REF[1] = -1.0 * TC_comd_pitch_rate * c_D2R;
+		w_REF[2] = 0.0;
     }
 
     // Remote patch exit hook function
@@ -457,14 +466,6 @@ static void rThreeAxis_ModePreprocessing(void)
 {
 	// Remote patch entry hook function
 	r3AXIS_mode_remote_entry_hook();
-
-	TM.Buffer.TM_mode_selection[0] 	= 0x0;
-	TM.Buffer.TM_mode_selection[1]	= 0x0;
-	TM.Buffer.TM_mode_selection[2]	= 0x0;
-	TM.Buffer.TM_mode_selection[3]	= 0x0;
-	TM.Buffer.TM_mode_selection[4]  = (char)Spacecraft_Mode;
-	TM.Buffer.TM_mode_selection[5]  = 0x0;
-
 
     CB_Detumbling_Mode = 0;
     CB_OrbitModel = 1;
@@ -478,7 +479,7 @@ static void rThreeAxis_ModePreprocessing(void)
     CB_DutyCycleGeneration = 1;
     CB_AngularMomentumDumping = 1;
     CB_SpeedBasedMomentumDumping = 1;
-    CB_Wheel_Spin_updown = 1;
+    CB_Wheel_Spin_updown = 0;
     CB_Wheel_Auto_Reconfiguration = 1;
     CB_Torquer_Polarity_Check = 1;
     CB_MagFieldComp = 1;
@@ -547,13 +548,6 @@ static void rSafeMode_Preprocessing(void)
 	// Remote patch entry hook function
 	rSAFE_mode_remote_entry_hook();
 
-	TM.Buffer.TM_mode_selection[0] 	= 0x0;
-	TM.Buffer.TM_mode_selection[1]	= 0x0;
-	TM.Buffer.TM_mode_selection[2]	= 0x0;
-	TM.Buffer.TM_mode_selection[3]	= 0x0;
-	TM.Buffer.TM_mode_selection[4]  = 0x0;
-	TM.Buffer.TM_mode_selection[5]  = (char)Spacecraft_Mode;
-
 	if (f_battery_safemode == True) // Enable the flag when battery is less than the threshold
 	{
 		// Turn off loads
@@ -564,7 +558,7 @@ static void rSafeMode_Preprocessing(void)
 		else
 		{
 			entrytime2eclipse = ADCS_TC_data_command_Table.TC_eclipse_entrytime - elapsed_running_timer;
-			//entrytime2eclipse = 1000; /// test
+			//entrytime2eclipse = 1000; // test
 			if (entrytime2eclipse < 7032) //15mins
 			{
 				Spacecraft_Mode = SunAcquisition_ModePreprocessing;

@@ -105,7 +105,7 @@ void rMatMul3x3(double mat331[3][3], double mat332[3][3])
     }
 }
 
-///---------------------Function to conver Rotational Matrix to Quaternion------------------
+//---------------------Function to conver Rotational Matrix to Quaternion------------------
 void rRM_to_Quat(double DCM2Q_in[3][3])
 {
 
@@ -186,11 +186,11 @@ void rRM_to_Quat(double DCM2Q_in[3][3])
 
     }
 
-	//DCM2Q_out[3] = (0.5 * sqrt(DCM2Q_in[0][0] + DCM2Q_in[1][1] + DCM2Q_in[2][2] + 1.0)); ///q3 computation.
+	//DCM2Q_out[3] = (0.5 * sqrt(DCM2Q_in[0][0] + DCM2Q_in[1][1] + DCM2Q_in[2][2] + 1.0)); //q3 computation.
 
-	//DCM2Q_out[0] = ((DCM2Q_in[1][2] - DCM2Q_in[2][1]) / (4.0 * DCM2Q_out[3])); ///q0 computation.
-	//DCM2Q_out[1] = ((DCM2Q_in[2][0] - DCM2Q_in[0][2]) / (4.0 * DCM2Q_out[3])); ///q1 computation.
-	//DCM2Q_out[2] = ((DCM2Q_in[0][1] - DCM2Q_in[1][0]) / (4.0 * DCM2Q_out[3])); ///q2 computation.
+	//DCM2Q_out[0] = ((DCM2Q_in[1][2] - DCM2Q_in[2][1]) / (4.0 * DCM2Q_out[3])); //q0 computation.
+	//DCM2Q_out[1] = ((DCM2Q_in[2][0] - DCM2Q_in[0][2]) / (4.0 * DCM2Q_out[3])); //q1 computation.
+	//DCM2Q_out[2] = ((DCM2Q_in[0][1] - DCM2Q_in[1][0]) / (4.0 * DCM2Q_out[3])); //q2 computation.
 }
 
 void rQs_Normalization(double const in_Quat_norm[4])
@@ -224,7 +224,7 @@ void rQs_Normalization(double const in_Quat_norm[4])
     out_Quat_norm[3] = in_Quat_norm_in[3] / in_Quat_norm_Mag;
 }
 
-///---------------------------Function to Multiply two Quaternions-----------------------------------------------
+//---------------------------Function to Multiply two Quaternions-----------------------------------------------
 void rQs_Multiplication(double const in_Quat1[4],double const in_Quat2[4])
 {
 	out_Quat_mult[0] = (in_Quat1[3]*in_Quat2[0]) + (in_Quat2[3]*in_Quat1[0]) + (in_Quat1[1]*in_Quat2[2])-(in_Quat1[2]*in_Quat2[1]);
@@ -248,20 +248,20 @@ void rVectorNorm(double const vecnorm_in[3])
     Norm_out[2] = vecnorm_in[2]/vecnorm_mag;
 }
 
-///---------------------------Function to find the adjoint of a matrix[3][3]------------------------------
+//---------------------------Function to find the adjoint of a matrix[3][3]------------------------------
 void rMat_adjoint3(double in_mat_adj[3][3])
 {
-	///First Row
+	//First Row
 	mat_adj[0][0] = ((in_mat_adj[1][1]) * (in_mat_adj[2][2])) - ((in_mat_adj[2][1]) * (in_mat_adj[1][2]));
 	mat_adj[0][1] = ((in_mat_adj[2][0]) * (in_mat_adj[1][2])) - ((in_mat_adj[1][0]) * (in_mat_adj[2][2]));
 	mat_adj[0][2] = ((in_mat_adj[1][0]) * (in_mat_adj[2][1])) - ((in_mat_adj[2][0]) * (in_mat_adj[1][1]));
 
-	///Second Row
+	//Second Row
 	mat_adj[1][0] = ((in_mat_adj[2][1]) * (in_mat_adj[0][2])) - ((in_mat_adj[0][1]) * (in_mat_adj[2][2]));
 	mat_adj[1][1] = ((in_mat_adj[0][0]) * (in_mat_adj[2][2])) - ((in_mat_adj[2][0]) * (in_mat_adj[0][2]));
 	mat_adj[1][2] = ((in_mat_adj[2][0]) * (in_mat_adj[0][1])) - ((in_mat_adj[0][0]) * (in_mat_adj[2][1]));
 
-	///Third Row
+	//Third Row
 	mat_adj[2][0] = ((in_mat_adj[0][1]) * (in_mat_adj[1][2])) - ((in_mat_adj[1][1]) * (in_mat_adj[0][2]));
 	mat_adj[2][1] = ((in_mat_adj[1][0]) * (in_mat_adj[0][2])) - ((in_mat_adj[0][0]) * (in_mat_adj[1][2]));
 	mat_adj[2][2] = ((in_mat_adj[0][0]) * (in_mat_adj[1][1])) - ((in_mat_adj[1][0]) * (in_mat_adj[0][1]));

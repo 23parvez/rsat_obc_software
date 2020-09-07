@@ -15,11 +15,8 @@ void rHAL_ADC_Read(uint32* ADC_Addr)
 	}
 }
 
-unsigned short agc_test;
-unsigned char agc_test1;
-unsigned int test_agc;
 unsigned short ss_data[15];
-unsigned short test_thermistor_1;
+
 void rHAL_ADC_TM_Copy(uint32* ADC_Addr)
 {
 	unsigned char AGC_DATA;
@@ -108,7 +105,7 @@ void rHAL_ADC_TM_Copy(uint32* ADC_Addr)
 }
 
 unsigned char ss_data_2[16];
-void sun_Sensor_data()
+void sun_Sensor_data (void)
 {
 	unsigned char tempdata;
 	unsigned int tempdata1;
@@ -137,7 +134,7 @@ void sun_Sensor_data()
 
 }
 
-void rHAL_ADC_StatusREG_Enable()
+void rHAL_ADC_StatusREG_Enable(void)
 {
 	uint16 tempdata;
 	uint32 ADC_STS_data;

@@ -60,8 +60,8 @@
 #define PL_TM_DATA            		0x10
 #define PL_MODE_ALL           		0x1F
 
-void HILS_mode_enable();
-void HILS_mode_disable();
+void HILS_mode_enable(void);
+void HILS_mode_disable(void);
 
 uint32 PL_1_on_off_flag;
 uint32 PL_2_on_off_flag;
@@ -98,7 +98,7 @@ unsigned short pl_ack_count;
 
 
 void rHAL_X_Tx_ON(void);
-void rHAL_X_Tx_OFF();
+void rHAL_X_Tx_OFF(void);
 void rHAL_pl_sts_check(void);
 void rHAL_pl_cmd_acq(void);
 void rHAL_pl_cmd_hlt(void);
@@ -106,47 +106,16 @@ void rHAL_pl_diag(void);
 void rHAL_pl_x_tx_data_on(void);
 void rHAL_pl_x_tx_data_off(void);
 void rHAL_pl_debug(void);
-void rpl_tm_write();
-void rpl_read ();
-void pl_tx_tm_2();
-void pl_tx_tm();
-//void rTC_pl_tx_tm();
-void rHAL_tm_ds_en();
+void rpl_tm_write(void);
+void rpl_read (void);
+void pl_tx_tm_2(void);
+void pl_tx_tm(void);
+//void rTC_pl_tx_tm(void);
+void rHAL_tm_ds_en(void);
 
-void rHAL_pl1_ON();
-void rHAL_pl2_ON();
-void rHAL_pl1_OFF();
-void rHAL_pl2_OFF();
-
-#endif // HAL_PAYLOAD
-
-
-#ifndef HAL_PAYLOAD
-#define HAL_PAYLOAD
-
-#define TRUE 1
-#define FALSE 0
-
-unsigned long int* pl_config_addr_ptr;
-unsigned short     PL_ACK;
-unsigned long int* inter_PL_TM_Dest_Addr;
-unsigned short*    inter_PL_TM_Source_Addr;
-unsigned short     PL_Debug_Data[4] ={0xA406,0x0003,0x0605,0x0807};
-int                PL_Exe_Flag;
-unsigned long int  TC_command;
-int                Enable_PL_TM_flag;
-int                PL_TM_write_Flag;
-int                pl_i;
-
-void rHAL_PL_STS_Check();
-void rHAL_PL_CMD_ACQ();
-void rHAL_PL_CMD_HLT();
-void rHAL_PL_DIAG();
-void rHAL_PL_CMD_OFF();
-void rHAL_PL_CMD_ON();
-void rHAL_PL_DIAG_SDCARD(void);
-void rHAL_PL_DIAG_FRAM(void);
-void rHAL_PL_DEBUG(void);
-void rHAL_PL_TEST(void);
+void rHAL_pl1_ON(void);
+void rHAL_pl2_ON(void);
+void rHAL_pl1_OFF(void);
+void rHAL_pl2_OFF(void);
 
 #endif // HAL_PAYLOAD

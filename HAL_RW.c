@@ -150,7 +150,7 @@ void rHAL_RW_TM_Write (struct HAL_RW_Data_Structure* RW_No, uint8 RW_ID)
 }
 
 unsigned short rw_test_array[256];
-int rHAL_RW_TM_Read (struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_TM_data, int wheel_index)
+int rHAL_RW_TM_Read (struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW_TM_data, int RW_index)
 {
 
 	// returns TRUE on the successful availability of wheel_speed data
@@ -242,7 +242,7 @@ int rHAL_RW_TM_Read (struct HAL_RW_Data_Structure* RW_No, union RW_TM_Rcvd_u* RW
 				RW_TM_data->Data_Value = USIF_u.float_num;
 
 				wheel_speed_data_available  = TRUE;
-				RW_Wheel_Speed[wheel_index] = RW_TM_data->Data_Value;
+				RW_Wheel_Speed[RW_index] = RW_TM_data->Data_Value;
 			}
 			else
 			{
@@ -325,12 +325,12 @@ void rHAL_RW_ConfigBuffer_Write (struct HAL_RW_Data_Structure* RW_No_Addr,
 		                        uint16* inter_Buffer_cpy_addr,
 		                        int inter_NOB_Write)
 {
-	int i;
+	int i_cfg_wrt;
 	uint32 Config_Buffer_Addr, tempdata;
 
 	Config_Buffer_Addr            = RW_No_Addr->RW_Configure_Register;
 
-	for (i = 0; i < ((inter_NOB_Write+1) << 1); i++)
+	for (i_cfg_wrt = 0; i_cfg_wrt < ((inter_NOB_Write+1) << 1); i_cfg_wrt++)
 	{
 		tempdata                  = *inter_Buffer_cpy_addr++;
 		REG32(Config_Buffer_Addr) = tempdata;
@@ -461,7 +461,7 @@ void rRW_Data_Request(void)
 
 }
 
-void rRW_Data_Read()
+void rRW_Data_Read(void)
 {
 	if(TC_boolean_u.TC_Boolean_Table.Reaction_wheel_1_speed_enable )
 	{

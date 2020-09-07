@@ -238,7 +238,7 @@ void rHAL_MTR(void)
 }
 
 
-void MTR_Monitoring()
+void MTR_Monitoring(void)
 {
 	input_latch_1.data = IO_IN_LATCH_REGISTER_1;
 }

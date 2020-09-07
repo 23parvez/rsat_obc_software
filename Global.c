@@ -63,20 +63,14 @@ void rPOR_Init(void)
 	TC_gain_select_u.TC_gain_select_Table.TC_ST_Format_Selection = 0;
 
 	write_str_ptr = Storage;
-	//TC_write_str_ptr = ST_TC_history_final_Buffer;
 	Dest_end_addr = write_str_ptr + ( sizeof(Storage)-1 );
-	//Dest_TC_final_end_addr = TC_write_str_ptr + ( sizeof(ST_TC_history_final_Buffer)-1 );
-
 
 	TC_data_command_Table.BATTERY_HEATER1_UTP	= 0x00000155;     // 0.919v(temp_25 deg)
 	TC_data_command_Table.BATTERY_HEATER1_LTP   = 0x0000017d;     // 1.08v(temp_20 deg)
 
 	TC_data_command_Table.TC_over_Heat = 0x00000538 ;    // 160 degree centigrade (Vpm = 3.28v)
 
-
 	Thermister_select();
-	//S_band_on(14-10-19)
-	//GPIO_pins.PIO_5 = 1;
 	IODAT = GPIO_pins.data;
 
 	inter_TM_Main_Buffer_Empty = TRUE;
@@ -116,6 +110,8 @@ void rPOR_Init(void)
 
 	//GPS
 	rGPS_Buffer_Init();
+
+	GPS_count_TM = FALSE; // GPS TM Buffer write count initialization
 
 	//SunSensor
 
@@ -450,8 +446,8 @@ void rPOR_Init(void)
 	 }
 
 	 // Battery safe mode default voltage Value
-	 	TC_data_command_Table.TC_power_safe_LTP= 0x03CE;		// 14v LTP
-	 	TC_data_command_Table.TC_power_safe_UTP= 0x03E7;		// 14.5 UTP (calculate the corresponding hex )
+	 	TC_data_command_Table.TC_power_safe_LTP = 0x03CE;		// 14v LTP
+	 	TC_data_command_Table.TC_power_safe_UTP = 0x03E7;		// 14.5 UTP (calculate the corresponding hex )
 	 //---
 
 	 	TC_boolean_u.TC_Boolean_Table.TC_sram_scrub_enable_disable = False;
@@ -481,12 +477,6 @@ void rPOR_Init(void)
 	 	IO_LATCH_REGISTER_5 = Out_latch_5.data;
 	 	//*****************************/
 
-
-	 	for(i=0;i<50;i++)
-	 	{
-	 		 block_test_array[i] = 0x00000000;
-	 	}
-
 	 	TM.Buffer.TM_Remote_Addr_SF0 = Remote_data_addr;
 		
 		f_RW_nominal = 0;
@@ -504,6 +494,12 @@ void rPOR_Init(void)
 
 	   // TC_GPS1_ON();
 	   // TC_boolean_u.TC_Boolean_Table.TC_GPS12_Select = GPS_1;
+	    TC_IMU2_On();
+	    TC_boolean_u.TC_Boolean_Table.TC_GPS_TLE_Select = True;
+	    rTC_ThreeAxis_ModePreprocessing();
+	    TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable = Enable;
+	    TC_boolean_u.TC_Boolean_Table.TC_EKFControl_Enable = Enable;
+
 
 	    /********************************************************/
 

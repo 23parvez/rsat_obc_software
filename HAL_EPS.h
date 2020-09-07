@@ -10,8 +10,8 @@ unsigned long int inter_HAL_EPS_Hardware_Status_SEL[8] = {0x00000000,0x00000004,
 														  0x00000001,0x00000005,
 														  0x00000003,0x00000007};
 
-void rHAL_EPS_shunt_switch();
-void rHAL_EPS_Hardware_Status();
+void rHAL_EPS_shunt_switch(void);
+void rHAL_EPS_Hardware_Status(void);
 void rHAL_Battery_load_shedding(void);
 
 #endif // HAL_EPS

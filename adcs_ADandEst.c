@@ -30,12 +30,12 @@ static void rQ_Propagation(const double q_prop[4], const double w_prop[3])
     //CB_Q_propagation = Enable;
 	if(CB_Q_propagation == Enable)
 	{
-		///Computation Del_Y_theta, Del_R_theta, Del_P_theta
+		//Computation Del_Y_theta, Del_R_theta, Del_P_theta
 		Del_R_theta = (c_MiC * w_prop[0]);
 		Del_P_theta = (c_MiC * w_prop[1]);
 		Del_Y_theta = (c_MiC * w_prop[2]);
 
-		///Computation Del_Q
+		//Computation Del_Q
 		Del_Q[0] = Del_R_theta / 2.0;
 		Del_Q[1] = Del_P_theta / 2.0;
 		Del_Q[2] = Del_Y_theta / 2.0;
@@ -46,7 +46,7 @@ static void rQ_Propagation(const double q_prop[4], const double w_prop[3])
 		Qprop_prev[2] = q_prop[2];
 		Qprop_prev[3] = q_prop[3];
 
-		///Propagated Q_Prop computation
+		//Propagated Q_Prop computation
 		rQs_Multiplication(Qprop_prev,Del_Q);
 		q_prop_out[0] = out_Quat_mult[0];
 		q_prop_out[1] = out_Quat_mult[1];
@@ -70,7 +70,7 @@ void rQuestDataProcessing(void)
 {
     if (CB_QuestDataProcessing == Enable)
     {
-        ///Quest Data Processing for MAGAD
+        //Quest Data Processing for MAGAD
         sc_qst++;
         if(sc_qst >= 8)
         {
@@ -88,7 +88,7 @@ void rQuestDataProcessing(void)
             }
             else
             {
-                ///Shift and Assign
+                //Shift and Assign
                 mat_mag_DataCounter++;
                 for(i_QDP = 0; i_QDP <= 22; i_QDP++)
                 {
@@ -122,14 +122,13 @@ void rQuestDataProcessing(void)
             }
         }
 
-        ///Quest Data Processing for SUNMAGAD
+        //Quest Data Processing for SUNMAGAD
         if(f_Sunlit_Presence == True)
         {
             //f_Momentum_Dumping = 1;
             TC_SunMagAD = Enable;
-            w_q_update_satisfy = 1;
 
-            ///Shift and Assign
+            //Shift and Assign
             mat_sm_DataCounter++;
             for(i_QDP = 0; i_QDP <= 6; i_QDP++)
             {
@@ -187,7 +186,7 @@ void rQuestDataProcessing(void)
 
 void rDAD_quest(void)
 {
-    if(CB_DAD_quest == Enable) ///Control Byte
+    if(CB_DAD_quest == Enable) //Control Byte
     {
     	if ((TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == 1) && (TC_boolean_u.TC_Boolean_Table.TC_EKFControl_Enable == 1))
 		{
@@ -215,7 +214,7 @@ void rDAD_quest(void)
         if((magRoll_angle >= ADCS_TC_data_command_Table.TC_magMin_angle) &&
         		(magPitch_angle >= ADCS_TC_data_command_Table.TC_magMin_angle) && (magYaw_angle >= ADCS_TC_data_command_Table.TC_magMin_angle) &&
         		(magRoll_angle <= ADCS_TC_data_command_Table.TC_magMax_angle) && (magPitch_angle <= ADCS_TC_data_command_Table.TC_magMax_angle) &&
-        		(magYaw_angle <= ADCS_TC_data_command_Table.TC_magMax_angle)) ///TC_magMin_angle=45deg
+        		(magYaw_angle <= ADCS_TC_data_command_Table.TC_magMax_angle)) //TC_magMin_angle=45deg
         {
 			if(wAD_updatecount >= ADCS_TC_data_command_Table.TC_wAD_updateTimeThresh)
 			{
@@ -227,12 +226,12 @@ void rDAD_quest(void)
 			}
         }
 
-        ///TC_SunMagAD = Disable;
+        //TC_SunMagAD = Disable;
         if(TC_SunMagAD == Disable)
         {
             if(f_DataSort_MAG == True)
             {
-                ///Computation of transpose of NRB_mag
+                //Computation of transpose of NRB_mag
                 for(I_DAD = 0; I_DAD < 3; I_DAD++)
                 {
                     for(J_DAD = 0; J_DAD < 24; J_DAD++)
@@ -241,7 +240,7 @@ void rDAD_quest(void)
                     }
                 }
 
-                ///Computation of NMB_mag * NRB_mag'
+                //Computation of NMB_mag * NRB_mag'
                 for(I_DAD = 0; I_DAD < 3; I_DAD++)
                 {
                     for(J_DAD = 0; J_DAD < 3; J_DAD++)
@@ -254,7 +253,7 @@ void rDAD_quest(void)
                     }
                 }
 
-                ///values of wkm and wks for mag
+                //values of wkm and wks for mag
                 wkm = c_wkm_mag;
                 wks = c_wks_mag;
 
@@ -264,9 +263,10 @@ void rDAD_quest(void)
         }
         else
         {
+        	w_q_update_satisfy = 1;
             if(f_DataSort_SUNMAG == True)
             {
-                ///Computation of transpose of NRB_sunmag
+                //Computation of transpose of NRB_sunmag
                 for(I_DAD = 0; I_DAD < 3; I_DAD++)
                 {
                     for(J_DAD = 0; J_DAD < 8; J_DAD++)
@@ -275,7 +275,7 @@ void rDAD_quest(void)
                     }
                 }
 
-                ///Computation of NMB_sunmag * NRB_sunmag'
+                //Computation of NMB_sunmag * NRB_sunmag'
                 for(I_DAD = 0; I_DAD < 3; I_DAD++)
                 {
                     for(J_DAD = 0; J_DAD < 3; J_DAD++)
@@ -288,7 +288,7 @@ void rDAD_quest(void)
                     }
                 }
 
-                ///Computation of transpose of NRS
+                //Computation of transpose of NRS
                 for(I_DAD = 0; I_DAD < 3; I_DAD++)
                 {
                     for(J_DAD = 0; J_DAD < 8; J_DAD++)
@@ -297,7 +297,7 @@ void rDAD_quest(void)
                     }
                 }
 
-                ///Computation of NMS * NRS'
+                //Computation of NMS * NRS'
                 for(I_DAD = 0; I_DAD < 3; I_DAD++)
                 {
                     for(J_DAD = 0; J_DAD < 3; J_DAD++)
@@ -310,13 +310,13 @@ void rDAD_quest(void)
                     }
                 }
 
-                ///values of wkm and wks for sunmag
+                //values of wkm and wks for sunmag
                 wkm = c_wkm_sunmag;
                 wks = c_wks_sunmag;
             }
         }
 
-        ///B = (wkm * NMB * NRB') + (wks * NMS * NRS') computation
+        //B = (wkm * NMB * NRB') + (wks * NMS * NRS') computation
         for(I_DAD = 0; I_DAD < 3; I_DAD++)
         {
             for(J_DAD = 0; J_DAD < 3; J_DAD++)
@@ -325,7 +325,7 @@ void rDAD_quest(void)
             }
         }
 
-        ///Computation of transpose of B (B')
+        //Computation of transpose of B (B')
         for(I_DAD = 0; I_DAD < 3; I_DAD++)
         {
             for(J_DAD = 0; J_DAD < 3; J_DAD++)
@@ -335,7 +335,7 @@ void rDAD_quest(void)
         }
 
 
-        ///Computation of S = B + B'
+        //Computation of S = B + B'
         for(I_DAD = 0; I_DAD < 3; I_DAD++)
         {
             for(J_DAD = 0; J_DAD < 3; J_DAD++)
@@ -344,19 +344,19 @@ void rDAD_quest(void)
             }
         }
 
-        ///Computation of Z
+        //Computation of Z
         Z_DAD[0] = Bcap_DAD[1][2] - Bcap_DAD[2][1];
         Z_DAD[1] = Bcap_DAD[2][0] - Bcap_DAD[0][2];
         Z_DAD[2] = Bcap_DAD[0][1] - Bcap_DAD[1][0];
 
-        ///Computation of sigma = 0.5 * trace(S)
+        //Computation of sigma = 0.5 * trace(S)
         trace_S_DAD = S_DAD[0][0] + S_DAD[1][1] + S_DAD[2][2];
         sigma_DAD = (0.5 * trace_S_DAD);
 
-        ///Computation of k_kf = trace(adj(S))
+        //Computation of k_kf = trace(adj(S))
         rMat_adjoint3(S_DAD);
 
-        ///Assigning global variable value to adj(S)
+        //Assigning global variable value to adj(S)
         for(I_DAD = 0; I_DAD < 3; I_DAD++)
         {
             for(J_DAD = 0; J_DAD < 3; J_DAD++)
@@ -367,23 +367,23 @@ void rDAD_quest(void)
 
         k_DAD = adj_S_DAD[0][0] + adj_S_DAD[1][1] + adj_S_DAD[2][2];
 
-        ///Computation of Delta = det(S)
+        //Computation of Delta = det(S)
         delta_DAD = ((S_DAD[0][0] * ((S_DAD[1][1] * S_DAD[2][2]) - (S_DAD[2][1] * S_DAD[1][2])))
                     -(S_DAD[0][1] * ((S_DAD[1][0] * S_DAD[2][2]) - (S_DAD[2][0] * S_DAD[1][2])))
                     +(S_DAD[0][2] * ((S_DAD[1][0] * S_DAD[2][1]) - (S_DAD[2][0] * S_DAD[1][1]))));
 
-        ///Computation of Z'Z
+        //Computation of Z'Z
         Zt_Z_DAD = ((Z_DAD[0] * Z_DAD[0]) + (Z_DAD[1] * Z_DAD[1]) + (Z_DAD[2] * Z_DAD[2]));
 
-        ///Computation of Z'S Z, Nu1, Nv1, Nu2, Nv2
+        //Computation of Z'S Z, Nu1, Nv1, Nu2, Nv2
         Zt_S_Z_DAD = (Z_DAD[0]*((S_DAD[0][0] * Z_DAD[0]) + (S_DAD[0][1] * Z_DAD[1]) + (S_DAD[0][2] * Z_DAD[2])))
                     +(Z_DAD[1]*((S_DAD[1][0] * Z_DAD[0]) + (S_DAD[1][1] * Z_DAD[1]) + (S_DAD[1][2] * Z_DAD[2])))
                     +(Z_DAD[2]*((S_DAD[2][0] * Z_DAD[0]) + (S_DAD[2][1] * Z_DAD[1]) + (S_DAD[2][2] * Z_DAD[2])));
 
-        ///Computation of S^2
+        //Computation of S^2
         rMatMul3x3(S_DAD, S_DAD);
 
-            ///Assigning global variable value to S^2
+            //Assigning global variable value to S^2
         for(I_DAD = 0; I_DAD < 3; I_DAD++)
         {
             for(J_DAD = 0; J_DAD < 3; J_DAD++)
@@ -392,12 +392,12 @@ void rDAD_quest(void)
             }
         }
 
-        ///Computation of Z'S S Z
+        //Computation of Z'S S Z
         Zt_Ssqr_Z_DAD = (Z_DAD[0]*((S_sqr_DAD[0][0] * Z_DAD[0]) + (S_sqr_DAD[0][1] * Z_DAD[1]) + (S_sqr_DAD[0][2] * Z_DAD[2])))
                         +(Z_DAD[1]*((S_sqr_DAD[1][0] * Z_DAD[0]) + (S_sqr_DAD[1][1] * Z_DAD[1]) + (S_sqr_DAD[1][2] * Z_DAD[2])))
                         +(Z_DAD[2]*((S_sqr_DAD[2][0] * Z_DAD[0]) + (S_sqr_DAD[2][1] * Z_DAD[1]) + (S_sqr_DAD[2][2] * Z_DAD[2])));
 
-        ///Computation of a,b,c,d
+        //Computation of a,b,c,d
         /**
         a = sigma^2 - k_kf
         b = sigma^2 + Z'Z
@@ -410,7 +410,7 @@ void rDAD_quest(void)
         c_DAD = delta_DAD + Zt_S_Z_DAD;
         d_DAD = Zt_Ssqr_Z_DAD;
 
-        ///Newton Ralphson Method to find the root
+        //Newton Ralphson Method to find the root
         root_DAD = 1.0;
         func_prev_DAD = 10.0;
         for(I_DAD = 0; I_DAD < 100; I_DAD++)
@@ -420,18 +420,18 @@ void rDAD_quest(void)
 
             if((func_DAD < func_prev_DAD) && (func_DAD > 0.0))
             {
-                ///-------------Divide by zero check--------------
+                //-------------Divide by zero check--------------
                 if(fabs(Dfunc_DAD) <= c_dividebyzerovalue)
                 {
                     Dfunc_DAD = c_dividebyzerovalue;
                 }
-                ///------------------------------------------------
+                //------------------------------------------------
                 root_DAD = root_DAD - (func_DAD / Dfunc_DAD);
             }
             func_prev_DAD = func_DAD;
         }
 
-        ///Computation of alpha, beta and gamma
+        //Computation of alpha, beta and gamma
         /**
         alpha = root^2 - sigma^2 + k_kf
         beta = root - sigma
@@ -442,7 +442,7 @@ void rDAD_quest(void)
         beta_DAD = (root_DAD - sigma_DAD);
         gamma_DAD = (((root_DAD + sigma_DAD) * alpha_DAD) - delta_DAD);
 
-        ///Computation of alpha * I
+        //Computation of alpha * I
         for(I_DAD = 0; I_DAD < 3; I_DAD++)
         {
             for(J_DAD = 0; J_DAD < 3; J_DAD++)
@@ -458,7 +458,7 @@ void rDAD_quest(void)
             }
         }
 
-        ///Computation of beta*S
+        //Computation of beta*S
         for(I_DAD = 0; I_DAD < 3; I_DAD++)
         {
             for(J_DAD = 0; J_DAD < 3; J_DAD++)
@@ -467,7 +467,7 @@ void rDAD_quest(void)
             }
         }
 
-        ///Computation of sumX_DAD = (alpha*I + beta*S + S^2)
+        //Computation of sumX_DAD = (alpha*I + beta*S + S^2)
         for(I_DAD = 0; I_DAD < 3; I_DAD++)
         {
             for(J_DAD = 0; J_DAD < 3; J_DAD++)
@@ -476,12 +476,12 @@ void rDAD_quest(void)
             }
         }
 
-        ///Computation of X = (alpha*I + beta*S + S^2) Z_DAD
+        //Computation of X = (alpha*I + beta*S + S^2) Z_DAD
         X_DAD[0] = ((sumX_DAD[0][0] * Z_DAD[0]) + (sumX_DAD[0][1] * Z_DAD[1]) + (sumX_DAD[0][2] * Z_DAD[2]));
         X_DAD[1] = ((sumX_DAD[1][0] * Z_DAD[0]) + (sumX_DAD[1][1] * Z_DAD[1]) + (sumX_DAD[1][2] * Z_DAD[2]));
         X_DAD[2] = ((sumX_DAD[2][0] * Z_DAD[0]) + (sumX_DAD[2][1] * Z_DAD[1]) + (sumX_DAD[2][2] * Z_DAD[2]));
 
-        ///Computation of Q_opt
+        //Computation of Q_opt
         Q_quest_DAD_den = sqrt((gamma_DAD * gamma_DAD) + (X_DAD[0] * X_DAD[0]) + (X_DAD[1] * X_DAD[1]) + (X_DAD[2] * X_DAD[2]));
 
         if(fabs(Q_quest_DAD_den) <= c_dividebyzerovalue)
@@ -497,19 +497,20 @@ void rDAD_quest(void)
         TM.Buffer.TM_Q_Sunmagad[0] = (1.0 / Q_quest_DAD_den) * X_DAD[0];
         TM.Buffer.TM_Q_Sunmagad[1] = (1.0 / Q_quest_DAD_den) * X_DAD[1];
         TM.Buffer.TM_Q_Sunmagad[2] = (1.0 / Q_quest_DAD_den) * X_DAD[2];
-        TM.Buffer.TM_Q_Sunmagad[3] = (1.0 / Q_quest_DAD_den) * X_DAD[3];
+        //TM.Buffer.TM_Q_Sunmagad[3] = (1.0 / Q_quest_DAD_den) * X_DAD[3];
+        TM.Buffer.TM_Q_Sunmagad[3] = FALSE;     // filler byte is added since X_DAD size is of 3 but 4 location was also accesssed.
 
         ST_normal.ST_NM_Buffer.TM_Q_Sunmagad[0] = (1.0 / Q_quest_DAD_den) * X_DAD[0];
         ST_normal.ST_NM_Buffer.TM_Q_Sunmagad[1] = (1.0 / Q_quest_DAD_den) * X_DAD[1];
         ST_normal.ST_NM_Buffer.TM_Q_Sunmagad[2] = (1.0 / Q_quest_DAD_den) * X_DAD[2];
-        ST_normal.ST_NM_Buffer.TM_Q_Sunmagad[3] = (1.0 / Q_quest_DAD_den) * X_DAD[3];
+        ST_normal.ST_NM_Buffer.TM_Q_Sunmagad[3] = FALSE;     // filler byte is added since X_DAD size is of 3 but 4 location was also accesssed.
 
         ST_special.ST_SP_Buffer.TM_Q_Sunmagad[0] = (1.0 / Q_quest_DAD_den) * X_DAD[0];
         ST_special.ST_SP_Buffer.TM_Q_Sunmagad[1] = (1.0 / Q_quest_DAD_den) * X_DAD[1];
         ST_special.ST_SP_Buffer.TM_Q_Sunmagad[2] = (1.0 / Q_quest_DAD_den) * X_DAD[2];
-        ST_special.ST_SP_Buffer.TM_Q_Sunmagad[3] = (1.0 / Q_quest_DAD_den) * X_DAD[3];
+        ST_special.ST_SP_Buffer.TM_Q_Sunmagad[3]  = FALSE;     // filler byte is added since X_DAD size is of 3 but 4 location was also accesssed.
 
-        ///Normalization of Q_opt (Q_quest)
+        //Normalization of Q_opt (Q_quest)
         rQs_Normalization(Q_quest_DAD);
         Q_quest_DAD[0] = out_Quat_norm[0];
         Q_quest_DAD[1] = out_Quat_norm[1];
@@ -533,17 +534,17 @@ void rDAD_quest(void)
 		TM.Buffer.TM_Q_Magad[2] = (int)(Q_quest_DAD[2]/4.65661287E-7);
 		TM.Buffer.TM_Q_Magad[3] = (int)(Q_quest_DAD[3]/4.65661287E-7);
 
-        ///w_q_update_satisfy = 1;
+        //w_q_update_satisfy = 1;
         if ((Quest_update_available == 1) && (OBC_Quest_update == 1) && (TC_boolean_u.TC_Boolean_Table.TC_QuestUpdate_Enable == Enable) && (w_q_update_satisfy == 1) && (TC_boolean_u.TC_Boolean_Table.TC_EKFControl_Enable == Disable))
         {
             Qbody[0] = Qquest_update[0];
             Qbody[1] = Qquest_update[1];
             Qbody[2] = Qquest_update[2];
             Qbody[3] = Qquest_update[3];
-            //Quest_update_available = 0;
-            w_q_update_satisfy = 0;
+            Quest_update_available = 0;
+            //w_q_update_satisfy = 0;
 
-            OBC_Quest_update = 0;
+            //OBC_Quest_update = 0;
         }
     }
 }
@@ -831,9 +832,18 @@ void rExtendedKalmanFilter1_p1(void)
                 }
             }
 
-			for (i_kf = 0; i_kf < 3; i_kf++)
+            if (TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable == 1)
 			{
-				Yk_minus_hk[i_kf] = Yk[i_kf] - s_hk[i_kf];
+				for (i_kf = 0; i_kf < 3; i_kf++)
+				{
+					Yk_minus_hk[i_kf] = Yk[i_kf] - s_hk[i_kf];
+				}
+			}
+			else
+			{
+				Yk_minus_hk[0] = Yk[0] - (s_hk[0]+Xk_plus[6]);
+				Yk_minus_hk[1] = Yk[1] - (s_hk[1]+Xk_plus[7]);
+				Yk_minus_hk[2] = Yk[2] - (s_hk[2]+Xk_plus[8]);
 			}
 
             for (i_kf = 0; i_kf < 9; i_kf++)
@@ -1608,9 +1618,18 @@ void rExtendedKalmanFilter2_p1(void)
 
 
 
-					for (i_kf = 0; i_kf < 3; i_kf++)
+					if (TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable == 1)
 					{
-						Yk_minus_hk[i_kf] = Yk[i_kf] - s_hk[i_kf];
+						for (i_kf = 0; i_kf < 3; i_kf++)
+						{
+							Yk_minus_hk[i_kf] = Yk[i_kf] - s_hk[i_kf];
+						}
+					}
+					else
+					{
+						Yk_minus_hk[0] = Yk[0] - (s_hk[0]+Xk_plus[6]);
+						Yk_minus_hk[1] = Yk[1] - (s_hk[1]+Xk_plus[7]);
+						Yk_minus_hk[2] = Yk[2] - (s_hk[2]+Xk_plus[8]);
 					}
 
 					for (i_kf = 0; i_kf < 9; i_kf++)
@@ -1722,7 +1741,7 @@ void rExtendedKalmanFilter2_p1(void)
 				{
 					if ((Quest_update_available == 1) && (w_q_update_satisfy == 1) && (OBC_Quest_update == 1))
 					{
-
+						Quest_update_available = 0;
 						Rk[0][0] = 0.000097*0.000097;
 						Rk[1][1] = 0.000097*0.000097;
 						Rk[2][2] = 0.000097*0.000097;
@@ -1935,10 +1954,6 @@ void rExtendedKalmanFilter2_p1(void)
 			ST_special.ST_SP_Buffer.TM_Error_EKF[0] = (int)(Xk[0]/4.19095159E-7);
 			ST_special.ST_SP_Buffer.TM_Error_EKF[1] = (int)(Xk[1]/4.19095159E-7);
 			ST_special.ST_SP_Buffer.TM_Error_EKF[2] = (int)(Xk[2]/4.19095159E-7);
-		}
-		else
-		{
-			Quest_update_available = 0;
 		}
 	}
 }
@@ -2429,7 +2444,7 @@ static void rEKF_dy_int(const double kfq_dy[4], const double kfw_dy[3], const do
     kfT_RW_NET[1] = -Matout341[1];
     kfT_RW_NET[2] = -Matout341[2];
 
-    ///rMatMul44x1(MOI_wh,(double)RWSpeed_RAD);
+    //rMatMul44x1(MOI_wh,(double)RWSpeed_RAD);
     kfH_wh_ind[0] = c_MOI_wh * kfv_dy[0];
     kfH_wh_ind[1] = c_MOI_wh * kfv_dy[1];
     kfH_wh_ind[2] = c_MOI_wh * kfv_dy[2];

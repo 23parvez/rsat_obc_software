@@ -1,26 +1,26 @@
 #ifndef ADCS_ADANDEST_H_INCLUDED
 #define ADCS_ADANDEST_H_INCLUDED
 
-///----------AD and Estimation---------------
+//----------AD and Estimation---------------
 
-/// Quest Data Processing
-extern int sc_qst; ///sample count for magAD data processing(MC)
-extern int dc_qst; ///data count for magAD data processing (sec) NOTE: NOT MC
-extern int wc_qst; ///wait period count for magAD data processing (sec) NOTE: NOT MC
-extern int mat_mag_DataCounter, mat_sm_DataCounter; ///data counter for magAD and sunmagAD to track the filling matrices
-extern int TC_wp_QDP; ///Telecommand for Wait period selection in QDP
-extern double NMB_mag[3][24]; ///Measurement Matrix (Magnetic field) for magAD
-extern double NRB_mag[3][24]; ///Reference Matrix (Magnetic field) for magAD
-extern double NMB_sunmag[3][8]; ///Measurement Matrix (Magnetic field) for sunmagAD
-extern double NRB_sunmag[3][8]; ///Reference Matrix (Magnetic field) for sunmagAD
-extern double NMS[3][8]; ///Measurement Matrix (sun sensor) for sunmagAD
-extern double NRS[3][8];  ///Reference Matrix (sun model) for sunmagAD
-extern int f_DataSort_MAG,f_DataSort_SUNMAG; ///Flags that are raised to tell data matrices are ready for Quaternion computation in QUEST
+// Quest Data Processing
+extern int sc_qst; //sample count for magAD data processing(MC)
+extern int dc_qst; //data count for magAD data processing (sec) NOTE: NOT MC
+extern int wc_qst; //wait period count for magAD data processing (sec) NOTE: NOT MC
+extern int mat_mag_DataCounter, mat_sm_DataCounter; //data counter for magAD and sunmagAD to track the filling matrices
+extern int TC_wp_QDP; //Telecommand for Wait period selection in QDP
+extern double NMB_mag[3][24]; //Measurement Matrix (Magnetic field) for magAD
+extern double NRB_mag[3][24]; //Reference Matrix (Magnetic field) for magAD
+extern double NMB_sunmag[3][8]; //Measurement Matrix (Magnetic field) for sunmagAD
+extern double NRB_sunmag[3][8]; //Reference Matrix (Magnetic field) for sunmagAD
+extern double NMS[3][8]; //Measurement Matrix (sun sensor) for sunmagAD
+extern double NRS[3][8];  //Reference Matrix (sun model) for sunmagAD
+extern int f_DataSort_MAG,f_DataSort_SUNMAG; //Flags that are raised to tell data matrices are ready for Quaternion computation in QUEST
 extern int i_QDP;
 extern int OBC_Quest_update, Quest_update_available, w_q_update_satisfy;
 extern int TC_SunMagAD;
 
-///DAD Quest
+//DAD Quest
 extern double Bcap_DAD[3][3], Bt_DAD[3][3];
 extern double NRBt_mag[24][3], NRSt[8][3];
 extern double NRBt_sunmag[8][3];
@@ -57,14 +57,14 @@ extern double cos_and_sin[4][4];
 extern double trace_S_DAD, adj_S_DAD[3][3];
 
 
-/// Qgyro
+// Qgyro
 
-extern double Del_Y_theta, Del_R_theta, Del_P_theta; ///Small angle obtained by integrating Gyro data over a periof of time (mc/MC)
-extern double Del_Q[4]; ///Delta Qs
+extern double Del_Y_theta, Del_R_theta, Del_P_theta; //Small angle obtained by integrating Gyro data over a periof of time (mc/MC)
+extern double Del_Q[4]; //Delta Qs
 extern double q_prop_out[4],Qprop_prev[4];
 extern double Qbody[4];
 
-///Kalman Filter
+//Kalman Filter
 extern int i_kf, j_kf, k_kf;
 extern double sigma_v;
 extern double sigma_u;
@@ -148,7 +148,7 @@ extern double kfk4[4], kfg4[3], kfv4[4];
 extern double kfom[4][4], kfq_dot[4], kfv_dot[4], kfT_RW_NET_temp[4], kfT_RW_NET[3], kfH_wh_ind[4], kfH_wh2body[3], kfI_MAT_w0[3], kfI_MAT_w0_HW2B[3], kfT_NET[3], kfw0crossI_MAT_w0_HW2B[3], kfw_dot_temp[3], kfw_dot[3];
 extern int f_EKF2_prop_en,f_EKF2_mag_bias_dis;
 
-///Function Declarations
+//Function Declarations
 
 extern void rDAD_quest(void);
 extern void rErrorComputation(void);

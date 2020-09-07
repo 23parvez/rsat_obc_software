@@ -47,13 +47,10 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 		TC_Mag_Misalignment_Update_IMU2,								/* offset =    18 */
 		TC_Mag_Scale_Factor_Update_IMU1,								/* offset =    19 */
 		TC_Mag_Scale_Factor_Update_IMU2,								/* offset =    20 */
-
 		rSSmain_ImaxF_update,											/* offset =    21 */ //Renamed from mag LPF 18-08-2020
 		rSSredt_ImaxF_update,											/* offset =    22 */ //Renamed from mag LPF 18-08-2020
 		TC_Gyro_LPF_Gain_Update_IMU1,									/* offset =    23 */ //Remove
 		TC_Gyro_LPF_Gain_Update_IMU2,									/* offset =    24 */ //Remove
-
-
 		TC_ACC_Ang_RESET,												/* offset =    25 */
 		TC_NMI_count_reset,                                             /* offset =    26 */
 		rMag_Refeci_update,												/* offset =    27 */ // Renamed from Panel2 deploy 18-08-2020
@@ -158,27 +155,26 @@ void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
 		sunlit,                                                         /* offset =    126*/
 		eclipse,                                                        /* offset =    127*/
 		Sunlit_eclipse_both,                                            /*  offset =   128*/
-		rTC_Safe_mode_PreProcessing,                                       /* offset =    129*/
+		rTC_Safe_mode_PreProcessing,                                    /* offset =    129*/
 		TC_MTR_Roll_No_cuurent,                                         /* offset =    130*/
 		TC_MTR_Pitch_No_cuurent,                                        /* offset =    131*/
 		TC_MTR_Yaw_No_cuurent,                                          /* offset =   132 */
 		TC_pl_debug,                                                    /* offset =   133 */
 		TC_pl_tm,                                                       /* offset =  134  */
-		TC_TM_DS_EN,                                                     /* offset =  135  */
-		Antenna_RESET_command,                                           /* offset =  136  */
-		Antenna_deploy_with_override,                                    /* offset =  137  */
-		Antenna_system_temp,                                             /* offset =  138  */
-		Antenna_deploy_status_report,                                    /* offset =  139  */
-		Antenna_deploy_activation_count,                                 /* offset =  140  */
-		Antenna_deploy_activation_time,                                  /* offset =  141  */
-		eeprom_en,                                                       /* offset =  142  */
-		eeprom_dis,                                                      /* offset =  143  */
-		TC_GPS1_NMEA_NMEA_GSV_Enable,                                    /* offset = 144   */
-		TC_GPS1_NMEA_NMEA_GSV_disable,                                   /* offset = 145   */
-		TC_GPS2_NMEA_NMEA_GSV_Enable,                                    /* offset = 146  */
-		TC_GPS2_NMEA_NMEA_GSV_disable,                                   /* offset = 147 */
-		TC_ATTC_CMD_clear,                                               /* offset = 148 */
-		// Added on 05-08-2020
+		TC_TM_DS_EN,                                                    /* offset =  135  */
+		Antenna_RESET_command,                                          /* offset =  136  */
+		Antenna_deploy_with_override,                                   /* offset =  137  */
+		Antenna_system_temp,                                            /* offset =  138  */
+		Antenna_deploy_status_report,                                   /* offset =  139  */
+		Antenna_deploy_activation_count,                                /* offset =  140  */
+		Antenna_deploy_activation_time,                                 /* offset =  141  */
+		eeprom_en,                                                      /* offset =  142  */
+		eeprom_dis,                                                     /* offset =  143  */
+		TC_GPS1_NMEA_NMEA_GSV_Enable,                                   /* offset = 144   */
+		TC_GPS1_NMEA_NMEA_GSV_disable,                                  /* offset = 145   */
+		TC_GPS2_NMEA_NMEA_GSV_Enable,                                   /* offset = 146  */
+		TC_GPS2_NMEA_NMEA_GSV_disable,                                  /* offset = 147 */
+		TC_ATTC_CMD_clear,                                              /* offset = 148 */
 		rTC_ref_snv_bias_q_update,										/* offset = 149 */
 		rTC_ref_stn_bias_q_update,										/* offset = 150 */
 		rTC_ref_q_gnd_update,											/* offset = 151 */
@@ -207,13 +203,17 @@ float Resol_Table[TC_data_command_MAX_LIMIT] =
 			1,              /*offset 13*/
 			1,              /*offset 14*/
 			8,              /*offset 15*/
-/************** Added on 27 July 2019 **************/
-			1.74532925e-6,				/*offset 16*/
-			1.74532925e-6,         		/*offset 17*/
+			1.74532925e-6,	/*offset 16*/
+			1.74532925e-6,  /*offset 17*/
 			1,              /*offset 18*/
 			1,              /*offset 19*/
 			1, 			    /*offset 20*/
 			1,              /*offset 21*/
+			1,              /*offset 22*/
+			1,              /*offset 23*/
+			1, 			    /*offset 24*/
+			1,              /*offset 25*/
+			1, 			    /*offset 26*/
        };
 // Initialization of Resolution Table-----------------------
 float Resol_Table_Adcs[ADCS_TC_data_command_MAX_LIMIT] =
@@ -281,6 +281,7 @@ float Resol_Table_Adcs[ADCS_TC_data_command_MAX_LIMIT] =
 		0.0001,             							/*offset 61 */
 		0.0001,             							/*offset 62 */
 		0.0001,             							/*offset 63 */
+		1												/*offset 64 */
 
    };
 unsigned int atp;
@@ -294,7 +295,7 @@ unsigned long long int tc_ecv_test[50];
 unsigned int i_tc_test;
 
 
-uint32 rHAL_TC_Read()
+uint32 rHAL_TC_Read(void)
 {
 	int i_TC;
 
@@ -369,7 +370,7 @@ uint32 rHAL_TC_Read()
 	return TC_authentic_pulse_rcvd;
 }
 
-void rTC_write_tC_history()
+void rTC_write_tC_history(void)
 {
 
 	if(TC_flag == 1)
@@ -386,7 +387,7 @@ void rTC_write_tC_history()
 	}
 }
 
-void rTelecommand()
+void rTelecommand(void)
 {
 	if (TC_authentic_pulse_rcvd)								    //Checks whether if Authentic pulse is received
 	{
@@ -425,14 +426,9 @@ void rTelecommand()
 
 	if(head != NULL)
 	{
-
-		unsigned long long int* Next_exe_TC_ptr;
-
-		Next_exe_TC_ptr = (unsigned long long int*)&head->command;
-		Next_exe_TC = *Next_exe_TC_ptr;
-		TM.Buffer.TM_Next_exe_TC = Next_exe_TC;
+		TC_pend_data.command = head->command;
+		TM.Buffer.TM_Next_exe_TC  = TC_pend_data.tc_pending_DT;
 	}
-
 
 	Storage_tm_status.Storage_en       = TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Enable_Disable;
 	Storage_tm_status.Storage_type_sel = TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Special_Normal_Mode_select;
@@ -446,13 +442,13 @@ void rTelecommand()
 	TM.Buffer.TM_Remote_Addr = Remote_Addr;
 }
 
-void TC_status_reset()
+void TC_status_reset(void)
 {
 	TC_STATUS_REGISTER2 = 0x00000000;                         //Clear data ready bit and authentic pulsezz
 }
 
 unsigned short TC_cmd_executed;
-void rReal_Time_TC()
+void rReal_Time_TC(void)
 {
 	switch (u_TC.Frame.command_type_B)
 	{
@@ -493,19 +489,18 @@ void rReal_Time_TC()
 	}
 }
 
-void rContingency_TC()
+void rContingency_TC(void)
 {
 	return;														// Decoded in hardware
 }
 
+// Declared to post assign NSP address (tRY TO Rename)
 unsigned short temp_data_rw;
 unsigned short rw_data;
-
+//---------------------------------------------------
  // Routine for Data_Commands Processing
-void rData_TC()
+void rData_TC(void)
 {
-	//TC_cmd_executed++;
-
 	int   RW_number;
 	int   iw_speed;    /* value sign extended to 32 bit integer */
 	float fw_speed;    /* converted value in float              */
@@ -516,99 +511,97 @@ void rData_TC()
 	switch(u_TC.DataCommand.offset_addr)
 	{
 
-	/* Following are for setting the Reaction Wheel Speeds by TC */
+		/* Following are for setting the Reaction Wheel Speeds by TC */
 
-	case 0:   TC_data_command_Table.RW1_Speed = fw_speed;
-			  break;
-	case 1:	  TC_data_command_Table.RW2_Speed = fw_speed;
-	          break;
-	case 2:   TC_data_command_Table.RW3_Speed = fw_speed;
-	          break;
-	case 3:   TC_data_command_Table.RW4_Speed = fw_speed;
-			  break;
+		case 0:   TC_data_command_Table.RW1_Speed = fw_speed;
+				  break;
+		case 1:	  TC_data_command_Table.RW2_Speed = fw_speed;
+				  break;
+		case 2:   TC_data_command_Table.RW3_Speed = fw_speed;
+				  break;
+		case 3:   TC_data_command_Table.RW4_Speed = fw_speed;
+				  break;
 
-	/* following is for setting the delta time tag serial number */
+		/* following is for setting the delta time tag serial number */
 
-	case 4:  TC_data_command_Table.Differential_srl_num 						= u_TC.DataCommand.Data;
-	           break;
+		case 4:  TC_data_command_Table.Differential_srl_num 						= u_TC.DataCommand.Data;
+				   break;
 
-	/**************** Below telecommands are not implemented *****************/
-	case 5:  TC_data_command_Table.SA1_SHUNT_LTP 								= u_TC.DataCommand.Data;
-		       break;
-	case 6:  TC_data_command_Table.SA1_SHUNT_UTP 								= u_TC.DataCommand.Data;
-			   break;
-	case 7:  TC_data_command_Table.SA2_SHUNT_LTP 								= u_TC.DataCommand.Data;
-			   break;
-	case 8:  TC_data_command_Table.SA2_SHUNT_UTP 								= u_TC.DataCommand.Data;
-			   break;
-	case 9:  TC_data_command_Table.SA3_SHUNT_LTP 								= u_TC.DataCommand.Data;
-			   break;
-	case 10: TC_data_command_Table.SA3_SHUNT_UTP 								= u_TC.DataCommand.Data;
-			   break;
-	case 11: TC_data_command_Table.BATTERY_HEATER1_UTP						    = u_TC.DataCommand.Data;
-	          break;
-	case 12: TC_data_command_Table.BATTERY_HEATER1_LTP 							= u_TC.DataCommand.Data;
-	           break;
-	case 13: TC_data_command_Table.SA_PanelHeater_Timeout 						=
-			 (unsigned long int)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
-			  break;
-	/************************** Added on 27 July 2019 **************************/
-	case 14: 	//TC_data_command_Table.TC_RW_NO = u_TC.DataCommand.Data;
-				temp_data_rw = u_TC.DataCommand.Data;
-				rw_data = temp_data_rw;
-				RW_number = ((temp_data_rw & 0x0300) >> 8);
-				NSP_addr_table[RW_number] = (temp_data_rw & 0x00FF);
-				break;
-
-
-	case 15: TC_data_command_Table.TC_heaters_auto_manual						= u_TC.DataCommand.Data;
-				break;
-	case 16: TC_data_command_Table.TC_heaters_manual						    = u_TC.DataCommand.Data;
-				break;
-	case 17: TC_data_command_Table.pl_data_command_1						    = u_TC.DataCommand.Data;
-				pl_data_command.Data_command_1                                  = TC_data_command_Table.pl_data_command_1;
-				break;
-
-	case 18:TC_data_command_Table.pl_data_command_2						        = u_TC.DataCommand.Data;
-			pl_data_command.Data_command_2                                      = TC_data_command_Table.pl_data_command_2;
+		case 5:  TC_data_command_Table.SA1_SHUNT_LTP 								= u_TC.DataCommand.Data;
+				   break;
+		case 6:  TC_data_command_Table.SA1_SHUNT_UTP 								= u_TC.DataCommand.Data;
+				   break;
+		case 7:  TC_data_command_Table.SA2_SHUNT_LTP 								= u_TC.DataCommand.Data;
+				   break;
+		case 8:  TC_data_command_Table.SA2_SHUNT_UTP 								= u_TC.DataCommand.Data;
+				   break;
+		case 9:  TC_data_command_Table.SA3_SHUNT_LTP 								= u_TC.DataCommand.Data;
+				   break;
+		case 10: TC_data_command_Table.SA3_SHUNT_UTP 								= u_TC.DataCommand.Data;
+				   break;
+		case 11: TC_data_command_Table.BATTERY_HEATER1_UTP						    = u_TC.DataCommand.Data;
+				  break;
+		case 12: TC_data_command_Table.BATTERY_HEATER1_LTP 							= u_TC.DataCommand.Data;
+				   break;
+		case 13: TC_data_command_Table.SA_PanelHeater_Timeout 						=
+				 (unsigned long int)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
+				  break;
+		/************************** Added on 27 July 2019 **************************/
+		case 14: 	temp_data_rw = u_TC.DataCommand.Data;
+					rw_data = temp_data_rw;
+					RW_number = ((temp_data_rw & 0x0300) >> 8);
+					NSP_addr_table[RW_number] = (temp_data_rw & 0x00FF);
 					break;
 
-	case 19: TC_data_command_Table.pl_data_command_3						    = u_TC.DataCommand.Data;
-			pl_data_command.Data_command_3                                      = TC_data_command_Table.pl_data_command_3;
+
+		case 15: TC_data_command_Table.TC_heaters_auto_manual						= u_TC.DataCommand.Data;
+					break;
+		case 16: TC_data_command_Table.TC_heaters_manual						    = u_TC.DataCommand.Data;
+					break;
+		case 17: TC_data_command_Table.pl_data_command_1						    = u_TC.DataCommand.Data;
+					pl_data_command.Data_command_1                                  = TC_data_command_Table.pl_data_command_1;
 					break;
 
-	case 20: TC_data_command_Table.pl_data_command_4						    = u_TC.DataCommand.Data;
-			pl_data_command.Data_command_4                                      = TC_data_command_Table.pl_data_command_4;
-					break;
+		case 18:TC_data_command_Table.pl_data_command_2						        = u_TC.DataCommand.Data;
+				pl_data_command.Data_command_2                                      = TC_data_command_Table.pl_data_command_2;
+						break;
 
-	case 21: TC_data_command_Table.pl_data_command_5						    = u_TC.DataCommand.Data;
-			pl_data_command.Data_command_5                                    	= TC_data_command_Table.pl_data_command_5;
-					break;
+		case 19: TC_data_command_Table.pl_data_command_3						    = u_TC.DataCommand.Data;
+				pl_data_command.Data_command_3                                      = TC_data_command_Table.pl_data_command_3;
+						break;
 
-	case 22: TC_data_command_Table.pl_data_command_6						    = u_TC.DataCommand.Data;
-			pl_data_command.Data_command_6                                      = TC_data_command_Table.pl_data_command_6;
-					break;
+		case 20: TC_data_command_Table.pl_data_command_4						    = u_TC.DataCommand.Data;
+				pl_data_command.Data_command_4                                      = TC_data_command_Table.pl_data_command_4;
+						break;
 
-	case 23: TC_data_command_Table.BLK_Number_selection                         = u_TC.DataCommand.Data;
-				tempdata  = u_TC.DataCommand.Data;
-				BlkExe_Status = tempdata;
-					break;
+		case 21: TC_data_command_Table.pl_data_command_5						    = u_TC.DataCommand.Data;
+				pl_data_command.Data_command_5                                    	= TC_data_command_Table.pl_data_command_5;
+						break;
 
-	case 24: TC_data_command_Table.TC_power_safe_LTP                            = u_TC.DataCommand.Data;
-	         break;
+		case 22: TC_data_command_Table.pl_data_command_6						    = u_TC.DataCommand.Data;
+				pl_data_command.Data_command_6                                      = TC_data_command_Table.pl_data_command_6;
+						break;
 
-	case 25: TC_data_command_Table.TC_power_safe_UTP                            = u_TC.DataCommand.Data;
-		     break;
+		case 23: TC_data_command_Table.BLK_Number_selection                         = u_TC.DataCommand.Data;
+					tempdata  = u_TC.DataCommand.Data;
+					BlkExe_Status = tempdata;
+						break;
 
-	case 26: TC_data_command_Table.TC_over_Heat                                 = u_TC.DataCommand.Data;
-		     break;
+		case 24: TC_data_command_Table.TC_power_safe_LTP                            = u_TC.DataCommand.Data;
+				 break;
 
-	default:
-		      break;
+		case 25: TC_data_command_Table.TC_power_safe_UTP                            = u_TC.DataCommand.Data;
+				 break;
+
+		case 26: TC_data_command_Table.TC_over_Heat                                 = u_TC.DataCommand.Data;
+				 break;
+
+		default:
+				  break;
 	}
 }
 
-void rADCS_Data_TC()
+void rADCS_Data_TC(void)
 {
 	switch(u_TC.DataCommand.offset_addr)
 		{
@@ -775,12 +768,10 @@ void rADCS_Data_TC()
 			case 63: ADCS_TC_data_command_Table.TC_q_command_3						        =
 					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-		    default:
-			            break;
 		}
 }
 
-void rRemote_base_addr_TC()
+void rRemote_base_addr_TC(void)
 {
 	if(u_TC.Remote.command_type_B == 0x8)
 	{
@@ -790,7 +781,7 @@ void rRemote_base_addr_TC()
 	TM.Buffer.TM_Remote_Addr_SF0 	= Remote_minotoring_addr;
 }
 
-void rRemote_data_view()
+void rRemote_data_view(void)
 {
 	unsigned int remote_monitor_index = 0;
 	unsigned int remote_blk_select;
@@ -809,10 +800,8 @@ void rRemote_data_view()
 }
 
  // Routine for Boolean_Telecommand processing
-void rBoolean_TC()
+void rBoolean_TC(void)
 {
-	//TC_cmd_executed++;
-
 	if (u_TC.Bool.offset_addr <= sizeof(TC_boolean_u.TC_Boolean_Table)/sizeof(uint8))
 	{
 		TC_boolean_u.Pos[u_TC.Bool.offset_addr] = (char)u_TC.Bool.decision_bit;
@@ -824,10 +813,8 @@ void rBoolean_TC()
 }
 
  // Routine for Gain_select_telecommand Processing
-void rGainSelect_TC()
+void rGainSelect_TC(void)
 {
-	//TC_cmd_executed++;
-
 	if(u_TC.GainSelect.offset_addr <= sizeof(TC_gain_select_u.TC_gain_select_Table)/sizeof(uint8))
 	{
 		TC_gain_select_u.Pos[u_TC.GainSelect.offset_addr] = (char)u_TC.GainSelect.gain_set;
@@ -836,10 +823,8 @@ void rGainSelect_TC()
 }
 
  // Routine for Function_execution_Telecommand Processing
-void rFuncExecute_TC()
+void rFuncExecute_TC(void)
 {
-	//TC_cmd_executed++;
-
 	if(u_TC.FuncExecute.offset_addr < TC_func_exe_MAX_LIMIT)
 	{
 		FuncExecute_Table[u_TC.FuncExecute.offset_addr]();
@@ -847,9 +832,8 @@ void rFuncExecute_TC()
 }
 
  // Routine for Remote_addr_Telecommand processing
-void rRemoteProgram_Addr_TC()
+void rRemoteProgram_Addr_TC(void)
 {
-	//TC_cmd_executed++;
 	if(u_TC.Remote.command_type_B == 0x5)
 	{
 		Remote_Addr = u_TC.Remote.data_addr;
@@ -857,35 +841,31 @@ void rRemoteProgram_Addr_TC()
 }
 
  // Routine for Remote_data_Telecommand processing
-void rRemoteProgram_Data_TC()
+void rRemoteProgram_Data_TC(void)
 {
 	if(u_TC.Remote.command_type_B == 0x6)
 	{
-		// TC_cmd_executed++;
 		Remote_data = u_TC.Remote.data_addr;
 		REG32(Remote_Addr) = Remote_data;
 		Remote_Addr += 4;
 	}
 }
 
-unsigned int test_attc;
- // Routine for Absolute_TimeTag_Telecommand Processing
-void rAbsolute_TimeTag_TC()
+// Routine for Absolute_TimeTag_Telecommand Processing
+void rAbsolute_TimeTag_TC(void)
 {
-
 	rAbsoluteTTC_Update();
-
 }
 
  // Routine for Differential_Timetag_Telecommand Processing
-void rDifferential_TimeTag_TC()
+void rDifferential_TimeTag_TC(void)
 {
 	rDifferential_TimeTag_Update();
 	//rDifferential_TimeTag();
 }
 
  // Routine for Block_Telecommand Processing
-void rBlock_TC()
+void rBlock_TC(void)
 {
 	Block_update();
 }
@@ -904,7 +884,7 @@ uint32 DTTCtime_reference;
 //int DTTC_exe_flag = 1;
 //----------------------To be transferred to h files (END)--------------------------
 
-void initNodetable()
+void initNodetable(void)
 {
    int32 attc_node_index;
    for (attc_node_index = 0; attc_node_index < MAX_TIMETAG_CMD_LIMIT; attc_node_index++)
@@ -915,7 +895,7 @@ void initNodetable()
    tos = 0;
 }
 
-Nodeptrtype getNode()
+Nodeptrtype getNode(void)
 {
     if (tos < MAX_TIMETAG_CMD_LIMIT)
 	{
@@ -939,7 +919,7 @@ void freeNode(Nodeptrtype ptr)
 }
 
 // Routine for insertion of new node to the list
-void rAbsoluteTTC_Update()
+void rAbsoluteTTC_Update(void)
 {
 
     if (tos < MAX_TIMETAG_CMD_LIMIT)					// Check whether memory exists in the pointer table for the node insertion
@@ -979,7 +959,7 @@ void rAbsoluteTTC_Update()
 unsigned int ab_test,ab_test1;
 
 // Execute the first ATTC
-void rAbsoluteTTC_Execute()
+void rAbsoluteTTC_Execute(void)
 {
 	if (TC_boolean_u.TC_Boolean_Table.ATTC_Master_enable_flag)		// Check if the Manual execution flag is enabled
 	{
@@ -1012,7 +992,7 @@ void rAbsoluteTTC_Execute()
 
 
 // Routine for insertion of new node to the array
-void rDifferential_TimeTag_Update()
+void rDifferential_TimeTag_Update(void)
 {
 	if (DTTC_count >= MAX_TIMETAG_CMD_LIMIT)
 		return;
@@ -1052,7 +1032,7 @@ void rDifferential_TimeTag_Execute()
 	}
 }
 
-void rAbsoluteTTC_Delete()
+void rAbsoluteTTC_Delete(void)
 {
 	Nodeptrtype temp = head;
 	Nodeptrtype prev = NULL;
@@ -1094,7 +1074,7 @@ void rAbsoluteTTC_Delete()
 }
 
 // Clear the Telecommand data
-void rAbsoluteTTC_Clear()		                               // Routine to clear the Linked list data
+void rAbsoluteTTC_Clear(void)		                               // Routine to clear the Linked list data
 {
 
 	Nodeptrtype temp = head;
@@ -1131,7 +1111,6 @@ void rInit_Block(void)
 
 unsigned char BLK_opn;
 unsigned char BLK_number;
-unsigned char tempdata1,tempdata2,block_test3,block_test1,block_test2, block_test;
 /** Block command update
  *  - This function will allow Block TC to be added in incremental order
  *  - This function will allow Block TC to be updated within the index   */
@@ -1145,7 +1124,6 @@ Block operation (BLK_opn): 2Bits
 
 void Block_update(void)
 {
-	//tempdata1 = (unsigned char)u_TC.BLK_Update_cmd.Cmd_Srl;
 	BLK_number = u_TC.BLK_Update_cmd.Blk_No;
 	BLK_opn = u_TC.BLK_Update_cmd.Blk_opn;
 
@@ -1155,19 +1133,16 @@ void Block_update(void)
 			{
 				Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = u_TC.cmd_rcvd;
 				Block_Index[BLK_number]++;
-				block_test1++;
 			}
 		}
 	if((u_TC.BLK_Update_cmd.Cmd_Srl == 0)|| (u_TC.BLK_Update_cmd.Cmd_Srl <= Block_Index[BLK_number]))
 	{
-		if(BLK_opn == 0x1)     // BLK_modify
+		if(BLK_opn == 0x1)    		   // BLK_modify
 		{
 			Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = u_TC.cmd_rcvd;
-			block_test2++;
 		}
-		else if(BLK_opn == 0x2)      // BLK_delete
+		else if(BLK_opn == 0x2)        // BLK_delete
 		{
-			block_test3++;
 			Block_array[BLK_number][u_TC.BLK_Update_cmd.Cmd_Srl] = 0x00;
 		}
 		else
@@ -1177,7 +1152,6 @@ void Block_update(void)
 	}
 }
 
-unsigned long long int test_3;
 /** Block command execute */
 void rBlockTC_Execute(void)
 {
@@ -1188,7 +1162,6 @@ void rBlockTC_Execute(void)
 		if(BlkCurrent_Cmd < Block_Index[tempdata12])
 		{
 			u_TC.cmd_rcvd = Block_array[tempdata12][BlkCurrent_Cmd];
-			test_3 =  Block_array[tempdata12][BlkCurrent_Cmd];
 			rReal_Time_TC();
 			BlkCurrent_Cmd++;
 		}
@@ -1202,7 +1175,7 @@ void rBlockTC_Execute(void)
 
 
 //TMTC Buffer assignments
-void TMTC_Assignment()
+void TMTC_Assignment(void)
 {
 	// Boolean Command TMTC Assignment
 
@@ -1348,19 +1321,12 @@ void TMTC_Assignment()
 void invertReverse(unsigned char * startAddr)
 {
 	int invert_index;
-	//unsigned char temp;
+
 	for (invert_index = 0; invert_index <=6; invert_index++)
     {
 	   startAddr[invert_index] = startAddr[invert_index] ^ 0x01;
 	}
-/*	FPGA is reversing the parity & storing in Status register
-	for (j=0; j <=2; j++)
-    {
-	   temp = startAddr[6-j] ;
-	   startAddr[6-j] = startAddr[j];
-	   startAddr[j] = temp;
-	}
-*/
+
 }
 
 /** BCHEncoder: Computes the parity & stores at TC_Rcvd.parity */
@@ -1415,69 +1381,67 @@ void BCHEncoder(unsigned long long int * TCAddr)
 
 
 //Function Execute commands (Functions' definition)
-void TC_IMU1_On()
+void TC_IMU1_On(void)
 {
 	Out_Latch_2.IMU1_ON_OFF = 1;
 	Out_Latch_2.IMU1_RESET = 1;
 	IO_LATCH_REGISTER_2 = Out_Latch_2.data;
 	REG32(IMU_1_STATUS_REGISTER_1) = IMU_ON;
 }
-void TC_IMU2_On()
+void TC_IMU2_On(void)
 {
 	Out_Latch_2.IMU2_ON_OFF = 1;
 	Out_Latch_2.IMU2_RESET = 1;
 	IO_LATCH_REGISTER_2 =  Out_Latch_2.data;
 	REG32(IMU_2_STATUS_REGISTER_1) = IMU_ON;
 }
-void TC_IMU1_Off()
+void TC_IMU1_Off(void)
 {
 	Out_Latch_2.IMU1_ON_OFF = 0;
 	Out_Latch_2.IMU1_RESET = 1;
 	IO_LATCH_REGISTER_2 =  Out_Latch_2.data;
 	REG32(IMU_2_STATUS_REGISTER_1) = IMU_OFF;
 }
-void TC_IMU2_Off()
+void TC_IMU2_Off(void)
 {
 	Out_Latch_2.IMU2_ON_OFF = 0;
 	Out_Latch_2.IMU2_RESET = 1;
 	IO_LATCH_REGISTER_2 = Out_Latch_2.data;
 	REG32(IMU_2_STATUS_REGISTER_1) = IMU_OFF;
 }
-void imu1_db_execute()
+void imu1_db_execute(void)
 {
-	//rIMU1_DB_Execute();
+	//
 }
-void imu2_db_execute()
+void imu2_db_execute(void)
 {
-	//rIMU2_DB_Execute();
+	//
 }
-void imu1_db_checksum()
+void imu1_db_checksum(void)
 {
-//	imu1_db_checksum_obc = checksum_u32((unsigned long int *)&IMU_1_DB,80);
-	//Add here for telemetry:	imu1_db_checksum_obc;
+	//
 }
-void imu2_db_checksum()
+void imu2_db_checksum(void)
 {
-//	imu2_db_checksum_obc = checksum_u32((unsigned long int *)&IMU_2_DB,80);
-	//Add here for telemetry:	imu2_db_checksum_obc;
+	//
 }
-void imu_test_sys_sel()
+void imu_test_sys_sel(void)
 {
 	return;
 }
-void TC_Drift_Uplink_Compenstation_Update_IMU1()
+void TC_Drift_Uplink_Compenstation_Update_IMU1(void)
 {
 	TC_drift_compensation_IMU1[0] = ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[0];
 	TC_drift_compensation_IMU1[1] = ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[1];
 	TC_drift_compensation_IMU1[2] = ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU1[2];
 }
-void TC_Drift_Uplink_Compenstation_Update_IMU2()
+void TC_Drift_Uplink_Compenstation_Update_IMU2(void)
 {
 	TC_drift_compensation_IMU2[0] = ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[0];
 	TC_drift_compensation_IMU2[1] = ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[1];
 	TC_drift_compensation_IMU2[2] = ADCS_TC_data_command_Table.TC_Drift_Uplink_Compensation_IMU2[2];
 }
-void TC_Gyro_Misalignment_Update_IMU1()
+void TC_Gyro_Misalignment_Update_IMU1(void)
 {
 	IMU1_Corr.DB_w_MisCor[0][0] = 1.0;
 	IMU1_Corr.DB_w_MisCor[0][1] = (double)TC_w_miscor_IMU1[0];
@@ -1489,7 +1453,7 @@ void TC_Gyro_Misalignment_Update_IMU1()
 	IMU1_Corr.DB_w_MisCor[2][1] = (double)TC_w_miscor_IMU1[5];
 	IMU1_Corr.DB_w_MisCor[2][2] = 1.0;
 }
-void TC_Gyro_Misalignment_Update_IMU2()
+void TC_Gyro_Misalignment_Update_IMU2(void)
 {
 	IMU2_Corr.DB_w_MisCor[0][0] = 1.0;
 	IMU2_Corr.DB_w_MisCor[0][1] = (double)TC_w_miscor_IMU2[0];
@@ -1501,7 +1465,7 @@ void TC_Gyro_Misalignment_Update_IMU2()
 	IMU2_Corr.DB_w_MisCor[2][1] = (double)TC_w_miscor_IMU2[5];
 	IMU2_Corr.DB_w_MisCor[2][2] = 1.0;
 }
-void TC_Gyro_Scale_Factor_Update_IMU1()
+void TC_Gyro_Scale_Factor_Update_IMU1(void)
 {
 	IMU1_Corr.DB_wSFC_Neg[0] = (double)TC_w_sf_IMU1[0];
 	IMU1_Corr.DB_wSFC_Neg[1] = (double)TC_w_sf_IMU1[1];
@@ -1511,7 +1475,7 @@ void TC_Gyro_Scale_Factor_Update_IMU1()
 	IMU1_Corr.DB_wSFC_Pos[1] = (double)TC_w_sf_IMU1[1];
 	IMU1_Corr.DB_wSFC_Pos[2] = (double)TC_w_sf_IMU1[2];
 }
-void TC_Gyro_Scale_Factor_Update_IMU2()
+void TC_Gyro_Scale_Factor_Update_IMU2(void)
 {
 	IMU2_Corr.DB_wSFC_Neg[0] = (double)TC_w_sf_IMU2[0];
 	IMU2_Corr.DB_wSFC_Neg[1] = (double)TC_w_sf_IMU2[1];
@@ -1521,37 +1485,37 @@ void TC_Gyro_Scale_Factor_Update_IMU2()
 	IMU2_Corr.DB_wSFC_Pos[1] = (double)TC_w_sf_IMU2[1];
 	IMU2_Corr.DB_wSFC_Pos[2] = (double)TC_w_sf_IMU2[2];
 }
-void TC_MagBias_Uplink_Compenstation_Update_IMU1()
+void TC_MagBias_Uplink_Compenstation_Update_IMU1(void)
 {
 	TC_magbias_compensation_IMU1[0] = ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[0];
 	TC_magbias_compensation_IMU1[1] = ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[1];
 	TC_magbias_compensation_IMU1[2] = ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU1[2];
 }
-void TC_MagBias_Uplink_Compenstation_Update_IMU2()
+void TC_MagBias_Uplink_Compenstation_Update_IMU2(void)
 {
 	TC_magbias_compensation_IMU2[0] = ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[0];
 	TC_magbias_compensation_IMU2[1] = ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[1];
 	TC_magbias_compensation_IMU2[2] = ADCS_TC_data_command_Table.TC_MagBias_Uplink_Compensation_IMU2[2];
 }
-void TC_Mag_Misalignment_Update_IMU1()
+void TC_Mag_Misalignment_Update_IMU1(void)
 {
 	//to be done
 }
-void TC_Mag_Misalignment_Update_IMU2()
+void TC_Mag_Misalignment_Update_IMU2(void)
 {
 	//to be done
 }
-void TC_Mag_Scale_Factor_Update_IMU1()
+void TC_Mag_Scale_Factor_Update_IMU1(void)
 {
 	//to be done
 }
-void TC_Mag_Scale_Factor_Update_IMU2()
+void TC_Mag_Scale_Factor_Update_IMU2(void)
 {
 	//to be done
 }
 
 
-void rSSmain_ImaxF_update()
+void rSSmain_ImaxF_update(void)
 {
 	SS_Main_2Exe_DB.DB_Imax_RPD = (double)TC_SSmain_ImaxF[0];
 	SS_Main_2Exe_DB.DB_Imax_RND = (double)TC_SSmain_ImaxF[1];
@@ -1562,7 +1526,7 @@ void rSSmain_ImaxF_update()
 	SS_Main_2Exe_DB.DB_Imax_YP = (double)TC_SSmain_ImaxF[6];
 	SS_Main_2Exe_DB.DB_Imax_YN = (double)TC_SSmain_ImaxF[7];
 }
-void rSSredt_ImaxF_update()
+void rSSredt_ImaxF_update(void)
 {
 	SS_Redundant_2Exe_DB.DB_Imax_RPD = (double)TC_SSredt_ImaxF[0];
 	SS_Redundant_2Exe_DB.DB_Imax_RND = (double)TC_SSredt_ImaxF[0];
@@ -1573,34 +1537,28 @@ void rSSredt_ImaxF_update()
 	SS_Redundant_2Exe_DB.DB_Imax_YP = (double)TC_SSredt_ImaxF[6];
 	SS_Redundant_2Exe_DB.DB_Imax_YN = (double)TC_SSredt_ImaxF[7];
 }
-void TC_Gyro_LPF_Gain_Update_IMU1()
+void TC_Gyro_LPF_Gain_Update_IMU1(void)
 {
 
 }
-void TC_Gyro_LPF_Gain_Update_IMU2()
+void TC_Gyro_LPF_Gain_Update_IMU2(void)
 {
 
 }
 
 
-void TC_ACC_Ang_RESET()
+void TC_ACC_Ang_RESET(void)
 {
 	rIMU_Angle_Reset();
 }
-/*the TC_Panel1_Deploy() and TC_Panel2_Deploy() is now
-SA_DEPLOYMENT_MECHANISM_MAIN_ON and SA_DEPLOYMENT_MECHANISM_RED_ON*/
-/*void TC_Panel1_Deploy()
-{
-	//rHAL_SA_MAIN_Deploy_on(Deploy);
-}*/
 
 // clear NMI counters
-void TC_NMI_count_reset()
+void TC_NMI_count_reset(void)
 {
 	NMI_fail_count = 0;
 	FDI_NMI_Count = 0;
 }
-void rMag_Refeci_update()
+void rMag_Refeci_update(void)
 {
 	B_ECI[0] = (double)TC_B_ECI[0];
 	B_ECI[1] = (double)TC_B_ECI[1];
@@ -1615,289 +1573,289 @@ void rMag_Refeci_update()
 	B_ECIn[1] = Norm_out[1];
 	B_ECIn[2] = Norm_out[2];
 }
-void TC_GPS1_ON()
+void TC_GPS1_ON(void)
 {
 	Out_Latch_2.GPS1_ON_OFF = 1;
 	Out_Latch_2.GPS1_RESET = 1;
 	IO_LATCH_REGISTER_2 = Out_Latch_2.data;
 	return;
 }
-void TC_GPS1_OFF()
+void TC_GPS1_OFF(void)
 {
 	Out_Latch_2.GPS1_ON_OFF = 0;
 	Out_Latch_2.GPS1_RESET = 1;
 	IO_LATCH_REGISTER_2 = Out_Latch_2.data;
 	return;
 }
-void TC_GPS1_NMEA_VTG_enable()
+void TC_GPS1_NMEA_VTG_enable(void)
 {
 	rHAL_GPS_Config(GPS1,NMEA_VTG_Enable);
 	return;
 }
-void TC_GPS1_NMEA_VTG_disable()
+void TC_GPS1_NMEA_VTG_disable(void)
 {
 	rHAL_GPS_Config(GPS1,NMEA_VTG_Disable);
 	return;
 }
-void TC_GPS1_NMEA_GGA_enable()
+void TC_GPS1_NMEA_GGA_enable(void)
 {
 	rHAL_GPS_Config(GPS1,NMEA_GGA_Enable);
 	return;
 }
-void TC_GPS1_NMEA_GGA_disable()
+void TC_GPS1_NMEA_GGA_disable(void)
 {
 	rHAL_GPS_Config(GPS1,NMEA_GGA_Disable);
 	return;
 }
-void TC_GPS1_NMEA_GSA_enable()
+void TC_GPS1_NMEA_GSA_enable(void)
 {
 	rHAL_GPS_Config(GPS1,NMEA_GSA_Enable);
 	return;
 }
-void TC_GPS1_NMEA_GSA_disable()
+void TC_GPS1_NMEA_GSA_disable(void)
 {
 	rHAL_GPS_Config(GPS1,NMEA_GSA_Disable);
 	return;
 }
-void TC_GPS1_cold_start()
+void TC_GPS1_cold_start(void)
 {
 	rHAL_GPS_Config(GPS1,COLD_START);
 	return;
 }
-void TC_GPS1_factory_reset()
+void TC_GPS1_factory_reset(void)
 {
 	rHAL_GPS_Config(GPS1,FACTORY_RESET);
 	return;
 }
-void TC_GPS2_on()
+void TC_GPS2_on(void)
 {
 	Out_Latch_2.GPS2_ON_OFF = 1;
 	Out_Latch_2.GPS2_RESET = 1;
 	IO_LATCH_REGISTER_2 = Out_Latch_2.data;
 	return;
 }
-void TC_GPS2_off()
+void TC_GPS2_off(void)
 {
 	Out_Latch_2.GPS2_ON_OFF = 0;
 	Out_Latch_2.GPS2_RESET = 1;
 	IO_LATCH_REGISTER_2 = Out_Latch_2.data;
 	return;
 }
-void TC_GPS2_NMEA_VTG_enable()
+void TC_GPS2_NMEA_VTG_enable(void)
 {
 	rHAL_GPS_Config(GPS2,NMEA_VTG_Enable);
 	return;
 }
-void TC_GPS2_NMEA_VTG_disable()
+void TC_GPS2_NMEA_VTG_disable(void)
 {
 	rHAL_GPS_Config(GPS2,NMEA_VTG_Disable);
 	return;
 }
-void TC_GPS2_NMEA_GGA_enable()
+void TC_GPS2_NMEA_GGA_enable(void)
 {
 	rHAL_GPS_Config(GPS2,NMEA_GGA_Enable);
 	return;
 }
-void TC_GPS2_NMEA_GGA_disable()
+void TC_GPS2_NMEA_GGA_disable(void)
 {
 	rHAL_GPS_Config(GPS2,NMEA_GGA_Disable);
 	return;
 }
-void TC_GPS2_NMEA_GSA_enable()
+void TC_GPS2_NMEA_GSA_enable(void)
 {
 	rHAL_GPS_Config(GPS2,NMEA_GSA_Enable);
 	return;
 }
-void TC_GPS2_NMEA_GSA_disable()
+void TC_GPS2_NMEA_GSA_disable(void)
 {
 	rHAL_GPS_Config(GPS2,NMEA_GSA_Disable);
 	return;
 }
-void TC_GPS2_cold_start()
+void TC_GPS2_cold_start(void)
 {
 	rHAL_GPS_Config(GPS2,COLD_START);
 	return;
 }
-void TC_GPS2_factory_reset()
+void TC_GPS2_factory_reset(void)
 {
 	rHAL_GPS_Config(GPS2,FACTORY_RESET);
 	return;
 }
-void TC_W1_ON()
+void TC_W1_ON(void)
 {
 	Out_Latch_3.RW1_ON_OFF = 1;
 	IO_LATCH_REGISTER_3 = Out_Latch_3.data;
 
 }
-void TC_W2_ON()
+void TC_W2_ON(void)
 {
 	Out_Latch_3.RW2_ON_OFF = 1;
 	IO_LATCH_REGISTER_3 = Out_Latch_3.data;
 
 }
-void TC_W3_ON()
+void TC_W3_ON(void)
 {
 	Out_Latch_3.RW3_ON_OFF = 1;
 	IO_LATCH_REGISTER_3 = Out_Latch_3.data;
 
 }
-void TC_W4_ON()
+void TC_W4_ON(void)
 {
 	Out_Latch_3.RW4_ON_OFF = 1;
 	IO_LATCH_REGISTER_3 = Out_Latch_3.data;
 
 }
-void TC_W1_OFF()
+void TC_W1_OFF(void)
 {
 	Out_Latch_3.RW1_ON_OFF = 0;
 	IO_LATCH_REGISTER_3 = Out_Latch_3.data;
 
 }
-void TC_W2_OFF()
+void TC_W2_OFF(void)
 {
 	Out_Latch_3.RW2_ON_OFF = 0;
 	IO_LATCH_REGISTER_3 = Out_Latch_3.data;
 
 }
-void TC_W3_OFF()
+void TC_W3_OFF(void)
 {
 	Out_Latch_3.RW3_ON_OFF = 0;
 	IO_LATCH_REGISTER_3 = Out_Latch_3.data;
 
 }
-void TC_W4_OFF()
+void TC_W4_OFF(void)
 {
 	Out_Latch_3.RW4_ON_OFF = 0;
 	IO_LATCH_REGISTER_3 = Out_Latch_3.data;
 
 }
-void TC_Nominal_wheel_speed_execute()
+void TC_Nominal_wheel_speed_execute(void)
 {
 	//to be done
 }
-void TC_MTR_ON()
+void TC_MTR_ON(void)
 {
 	rHAL_MTR_ON();
 	return;
 }
-void Pitch_Torquer_ON()
+void Pitch_Torquer_ON(void)
 {
 	//
 }
-void Yaw_Torquer_ON()
+void Yaw_Torquer_ON(void)
 {
 	//
 }
-void TC_MTR_OFF()
+void TC_MTR_OFF(void)
 {
 	rHAL_MTR_OFF();
 	return;
 }
-void Pitch_Torquer_OFF()
+void Pitch_Torquer_OFF(void)
 {
 	//
 }
-void Yaw_Torquer_OFF()
+void Yaw_Torquer_OFF(void)
 {
 	//
 }
 
-void rTC_Detumbling_ModePreprocessing_BDOT()
+void rTC_Detumbling_ModePreprocessing_BDOT(void)
 {
 	Spacecraft_Mode = Detumbling_ModePreprocessing_BDOT;
 }
-void rTC_Detumbling_ModePreprocessing_GYRO()
+void rTC_Detumbling_ModePreprocessing_GYRO(void)
 {
 	Spacecraft_Mode = Detumbling_ModePreprocessing_GYRO;
 }
-void rTC_SunAcquisition_ModePreprocessing()
+void rTC_SunAcquisition_ModePreprocessing(void)
 {
 	Spacecraft_Mode = SunAcquisition_ModePreprocessing;
 }
 unsigned char sus_data;
-void rTC_ThreeAxis_ModePreprocessing()
+void rTC_ThreeAxis_ModePreprocessing(void)
 {
 	sus_data = 4;
 	Spacecraft_Mode = ThreeAxis_ModePreprocessing;
 }
 
-void rTC_Suspended_ModePreprocessing()
+void rTC_Suspended_ModePreprocessing(void)
 {
 	Spacecraft_Mode = Suspended_ModePreprocessing;
 }
 
-void payload_1_on()
+void payload_1_on(void)
 {
 	if (!load_shedding_flag)
 		rHAL_pl1_ON();
 	return;
 }
-void payload_1_off()
+void payload_1_off(void)
 {
 	rHAL_pl1_OFF();
 	return;
 }
-void rHeater1_on()
+void rHeater1_on(void)
 {
 	//
 }
-void rHeater1_off()
+void rHeater1_off(void)
 {
 	//
 }
-void rHeater2_on()
+void rHeater2_on(void)
 {
 	//
 }
-void rHeater2_off()
+void rHeater2_off(void)
 {
 	//
 }
-void rHeater3_on()
+void rHeater3_on(void)
 {
 	//
 }
-void rHeater3_off()
+void rHeater3_off(void)
 {
 	//
 }
-void rHeater4_on()
+void rHeater4_on(void)
 {
 	//
 }
-void rHeater4_off()
+void rHeater4_off(void)
 {
 	//
 }
-void rHeater5_on()
+void rHeater5_on(void)
 {
 	//
 }
-void rHeater5_off()
+void rHeater5_off(void)
 {
 	//
 }
-void rHeater6_on()
+void rHeater6_on(void)
 {
 	//
 }
-void rHeater6_off()
+void rHeater6_off(void)
 {
 	//
 }
-void RX_TX_deployed()
+void RX_TX_deployed(void)
 {
 	return;
 }
-void PL_K_CMD_STS()
+void PL_K_CMD_STS(void)
 {
 	rHAL_pl_sts_check();
 }
-void PL_K_CMD_ACQ()
+void PL_K_CMD_ACQ(void)
 {
 	rHAL_pl_cmd_acq();
 }
-void PL_K_CMD_HLT()
+void PL_K_CMD_HLT(void)
 {
 	REG32(PAYLOAD_CONFIG_REGISTER) = 0x00004855;
 	/*****************************************************/
@@ -1908,32 +1866,32 @@ void PL_K_CMD_HLT()
 	REG32(PAYLOAD_STATUS2_ADDRESS) = 0x0000011F;  	// 0000_0001_0001_1111
 	pl_cmd_id = 3;
 }
-void PL_K_DIAG()
+void PL_K_DIAG(void)
 {
 	rHAL_pl_diag();
 }
 
-void PL_K_CMD_OFF()
+void PL_K_CMD_OFF(void)
 {
 	rHAL_pl_x_tx_data_off();
 }
-void PL_K_CMD_ON()
+void PL_K_CMD_ON(void)
 {
 	rHAL_pl_x_tx_data_on();
 }
-void rTC_HILS_MODE_IDLE()
+void rTC_HILS_MODE_IDLE(void)
 {
 	hils_mode_select = 1;
 }
-void rTC_HILS_MODE_START()
+void rTC_HILS_MODE_START(void)
 {
 	hils_mode_select = 2;
 }
-void rTC_HILS_MODE_STOP()
+void rTC_HILS_MODE_STOP(void)
 {
 	hils_mode_select = 3;
 }
-void rSun_Ephemeris_update()
+void rSun_Ephemeris_update(void)
 {
 	S_ECI[0] = (double)TC_S_ECI[0];
 	S_ECI[1] = (double)TC_S_ECI[1];
@@ -1945,7 +1903,7 @@ void rSun_Ephemeris_update()
 	S_ECIn[2] = Norm_out[2];
 }
 
-/*void rTLE_Update()
+/*void rTLE_Update(void)
 {
 	long long int TLE_E_DAY_temp1;
 	long long int  no_TLE_temp1;
@@ -1969,7 +1927,7 @@ void rSun_Ephemeris_update()
 }*/
 
 unsigned char TLE_chksum;
-void rTLE_Update()
+void rTLE_Update(void)
 {
 	unsigned char* TLE_ptr;
 	TLE_ptr = (unsigned char*)&TLE_data;
@@ -2000,115 +1958,115 @@ void rTLE_Update()
 }
 
 
-void TC_init_RW1()
+void TC_init_RW1(void)
 {
 	RW_Init();
 	rRW_init_cmd(RW_1, 0);
 
 }
 
-void TC_init_RW2()
+void TC_init_RW2(void)
 {
 	RW_Init();
 	rRW_init_cmd(RW_2, 1);
 }
 
-void TC_init_RW3()
+void TC_init_RW3(void)
 {
 	RW_Init();
 	rRW_init_cmd(RW_3, 2);
 }
 
-void TC_init_RW4()
+void TC_init_RW4(void)
 {
 	RW_Init();
 	rRW_init_cmd(RW_4, 3);
 }
-void TC_MTR_Yaw_Positive()
+void TC_MTR_Yaw_Positive(void)
 {
 	rHAL_MTR_TC(Yaw, Positive);
 }
-void TC_MTR_Yaw_Negative()
+void TC_MTR_Yaw_Negative(void)
 {
 	rHAL_MTR_TC(Yaw, Negative);
 }
-void TC_MTR_Pitch_Positive()
+void TC_MTR_Pitch_Positive(void)
 {
 	rHAL_MTR_TC(Pitch, Positive);
 
 }
-void TC_MTR_Pitch_Negative()
+void TC_MTR_Pitch_Negative(void)
 {
 	rHAL_MTR_TC(Pitch, Negative);
 
 }
-void TC_MTR_Roll_Positive()
+void TC_MTR_Roll_Positive(void)
 {
 
 	rHAL_MTR_TC(Roll, Positive);
 }
-void TC_MTR_Roll_Negative()
+void TC_MTR_Roll_Negative(void)
 {
 	rHAL_MTR_TC(Roll, Negative);
 
 }
-void rDifferentialTTC_Execute()
+void rDifferentialTTC_Execute(void)
 {
 	rDifferential_TimeTag_Execute();
 }
-void OBC_ON()
+void OBC_ON(void)
 {
 	//
 }
-void OBC_OFF()
+void OBC_OFF(void)
 {
 	//
 }
-void Antenna_mechanism_ON()
+void Antenna_mechanism_ON(void)
 {
 	Out_latch_5.ANTENNA_DEPLOY = 1;
 	IO_LATCH_REGISTER_5 = Out_latch_5.data;
 }
-void Antenna_mechanism_OFF()
+void Antenna_mechanism_OFF(void)
 {
 	Out_latch_5.ANTENNA_DEPLOY = 0;
 	IO_LATCH_REGISTER_5 = Out_latch_5.data;
 }
-void payload_2_on()
+void payload_2_on(void)
 {
 	if (!load_shedding_flag)
 		rHAL_pl2_ON();
 	return;
 }
-void payload_2_off()
+void payload_2_off(void)
 {
 	rHAL_pl2_OFF();
 	return;
 }
-void S_band_tx_on()
+void S_band_tx_on(void)
 {
 	Out_latch_6.RF_Tx_ON_OFF = 1;
 	IO_LATCH_REGISTER_6 = Out_latch_6.data;
 }
-void S_band_tx_off()
+void S_band_tx_off(void)
 {
 	Out_latch_6.RF_Tx_ON_OFF = 0;
 	IO_LATCH_REGISTER_6 = Out_latch_6.data;
 }
- void X_band_tx_on()
+ void X_band_tx_on(void)
 {
 	 if (!load_shedding_flag)
 		 rHAL_X_Tx_ON();
 }
- void X_band_tx_off()
+ void X_band_tx_off(void)
 {
 	 rHAL_X_Tx_OFF();
 }
-void SA_DEPLOYMENT_MECHANISM_MAIN_ON()
+void SA_DEPLOYMENT_MECHANISM_MAIN_ON(void)
 {
 	rHAL_SA_MAIN_Deploy_on();
 }
-void SA_DEPLOYMENT_MECHANISM_MAIN_OFF()
+void SA_DEPLOYMENT_MECHANISM_MAIN_OFF(void)
 {
 	uint32 tempdata;
 	Out_latch_5.SA1_DEPLOY = 0;
@@ -2116,11 +2074,11 @@ void SA_DEPLOYMENT_MECHANISM_MAIN_OFF()
 	IO_LATCH_REGISTER_5;
 	IO_LATCH_REGISTER_5 = tempdata;
 }
-void SA_DEPLOYMENT_MECHANISM_RED_ON()
+void SA_DEPLOYMENT_MECHANISM_RED_ON(void)
 {
  	 rHAL_SA_RED_Deploy_on();
 }
-void SA_DEPLOYMENT_MECHANISM_RED_OFF()
+void SA_DEPLOYMENT_MECHANISM_RED_OFF(void)
 {
 	uint32 tempdata;
 	Out_latch_5.SPARE1_ON_OFF = 0;
@@ -2128,35 +2086,35 @@ void SA_DEPLOYMENT_MECHANISM_RED_OFF()
 	IO_LATCH_REGISTER_5;
 	IO_LATCH_REGISTER_5 = tempdata;
 }
-void SA1_DEPLOYMENT_AND_SA2_DEPLOYMENT_REDUNDANT_SPARE_BUS_ON()
+void SA1_DEPLOYMENT_AND_SA2_DEPLOYMENT_REDUNDANT_SPARE_BUS_ON(void)
 {
 	  //
 }
-void SA1_DEPLOYMENT_AND_SA2_DEPLOYMENT_REDUNDANT_SPARE_BUS_OFF()
+void SA1_DEPLOYMENT_AND_SA2_DEPLOYMENT_REDUNDANT_SPARE_BUS_OFF(void)
 {
   	  //
 }
-void Test_ON()
+void Test_ON(void)
 {
 	//
 }
-void Test_OFF()
+void Test_OFF(void)
 {
    //
 }
-void Antenna_mechanism_arm()
+void Antenna_mechanism_arm(void)
 {
 	antennaCommand1();
 }
-void Antenna_deploy()
+void Antenna_deploy(void)
 {
 	antennaCommand2();
 }
-void Antenna_mechanism_disarm()
+void Antenna_mechanism_disarm(void)
 {
 	antennaCommand3();
 }
-void sunlit()
+void sunlit(void)
 {
 	f_Sunlit_Presence = 1;
 }
@@ -2164,71 +2122,71 @@ void eclipse()
 {
 	f_Sunlit_Presence = 0;
 }
-void Sunlit_eclipse_both()
+void Sunlit_eclipse_both(void)
 {
 	CB_Sl_Ecl_OnBrd_detection = Enable;
 }
 
-void rTC_Safe_mode_PreProcessing()
+void rTC_Safe_mode_PreProcessing(void)
 {
 	Spacecraft_Mode = Safe_ModePreprocessing;
 }
 
-void TC_MTR_Roll_No_cuurent()                 // TC for No_current as input to MTR(roll)
+void TC_MTR_Roll_No_cuurent(void)                 // TC for No_current as input to MTR(roll)
 {
 	rHAL_MTR_TC(Roll, No_Current);
 }
-void TC_MTR_Pitch_No_cuurent()                // TC for No_current as input to MTR(pitch)
+void TC_MTR_Pitch_No_cuurent(void)                // TC for No_current as input to MTR(pitch)
 {
 	rHAL_MTR_TC(Pitch, No_Current);
 }
-void TC_MTR_Yaw_No_cuurent() 				 // TC for No_current as input to MTR(yaw)
+void TC_MTR_Yaw_No_cuurent(void) 				 // TC for No_current as input to MTR(yaw)
 {
 	rHAL_MTR_TC(Yaw, No_Current);
 }
-void TC_pl_debug()
+void TC_pl_debug(void)
 {
 	rHAL_pl_debug();
 }
-void TC_pl_tm()
+void TC_pl_tm(void)
 {
 	//rTC_pl_tx_tm();
 }
-void TC_TM_DS_EN()
+void TC_TM_DS_EN(void)
 {
 	rHAL_tm_ds_en();
 }
-void Antenna_RESET_command()
+void Antenna_RESET_command(void)
 {
 	antennaCommand4();
 }
 
-void Antenna_deploy_with_override()
+void Antenna_deploy_with_override(void)
 {
 	antennaCommand5();
 }
 
-void Antenna_system_temp()
+void Antenna_system_temp(void)
 {
 	antennaCommand6();
 }
 
-void Antenna_deploy_status_report()
+void Antenna_deploy_status_report(void)
 {
 	antennaCommand7();
 }
 
-void Antenna_deploy_activation_count()
+void Antenna_deploy_activation_count(void)
 {
 	antennaCommand8();
 }
 
-void Antenna_deploy_activation_time()
+void Antenna_deploy_activation_time(void)
 {
 	antennaCommand9();
 }
 //function execute TC for eeprom enable
-void eeprom_en()
+void eeprom_en(void)
 {
 	// Manuplate the I/O pin based on the requirement
 	eeprom_flag = 1;
@@ -2236,39 +2194,39 @@ void eeprom_en()
 }
 
 //function execute TC for eeprom disable
-void eeprom_dis()
+void eeprom_dis(void)
 {
 	// Manuplate the I/O pin based on the requirement
 	eeprom_flag = 0;
 }
 
-void TC_GPS1_NMEA_NMEA_GSV_Enable()
+void TC_GPS1_NMEA_NMEA_GSV_Enable(void)
 {
 	rHAL_GPS_Config(GPS1,NMEA_GSV_Enable);
 	return;
 }
-void TC_GPS1_NMEA_NMEA_GSV_disable()
+void TC_GPS1_NMEA_NMEA_GSV_disable(void)
 {
 	rHAL_GPS_Config(GPS1,NMEA_GSV_Disable);
 	return;
 }
-void TC_GPS2_NMEA_NMEA_GSV_Enable()
+void TC_GPS2_NMEA_NMEA_GSV_Enable(void)
 {
 	rHAL_GPS_Config(GPS2,NMEA_GSV_Enable);
 	return;
 }
-void TC_GPS2_NMEA_NMEA_GSV_disable()
+void TC_GPS2_NMEA_NMEA_GSV_disable(void)
 {
 	rHAL_GPS_Config(GPS2,NMEA_GSV_Disable);
 	return;
 }
 
-void TC_ATTC_CMD_clear()
+void TC_ATTC_CMD_clear(void)
 {
 	rAbsoluteTTC_Clear();
 }
 
-void rTC_ref_snv_bias_q_update()
+void rTC_ref_snv_bias_q_update(void)
 {
 	Q_svn_off[0] = sin(ADCS_TC_data_command_Table.TC_ref_svn_bias_off_deg*c_D2R*0.5);
 	Q_svn_off[1] = 0.0;
@@ -2282,7 +2240,7 @@ void rTC_ref_snv_bias_q_update()
 	Q_svn_off[3] = out_Quat_norm[3];
 }
 
-void rTC_ref_stn_bias_q_update()
+void rTC_ref_stn_bias_q_update(void)
 {
 	Q_stn_off[0] = ADCS_TC_data_command_Table.TC_q_command_0;
 	Q_stn_off[1] = ADCS_TC_data_command_Table.TC_q_command_1;
@@ -2296,7 +2254,7 @@ void rTC_ref_stn_bias_q_update()
 	Q_stn_off[3] = out_Quat_norm[3];
 }
 
-void rTC_ref_q_gnd_update()
+void rTC_ref_q_gnd_update(void)
 {
 	Q_REF_GND[0] = ADCS_TC_data_command_Table.TC_q_command_0;
 	Q_REF_GND[1] = ADCS_TC_data_command_Table.TC_q_command_1;
@@ -2310,7 +2268,7 @@ void rTC_ref_q_gnd_update()
 	Q_REF_GND[3] = out_Quat_norm[3];
 }
 
-void TC_q_body_init()
+void TC_q_body_init(void)
 {
 	Qbody[0] = ADCS_TC_data_command_Table.TC_q_command_0;
 	Qbody[1] = ADCS_TC_data_command_Table.TC_q_command_1;
@@ -2324,21 +2282,21 @@ void TC_q_body_init()
 	Qbody[3] = out_Quat_norm[3];
 }
 	
-void rElapsedTimerAssign()
+void rElapsedTimerAssign(void)
 {
 	elapsed_running_timer = ADCS_TC_data_command_Table.TC_elapsed_orbitTimer;
 }
 
-void rTC_HILS_ENABLE()
+void rTC_HILS_ENABLE(void)
 {
 	HILS_mode_enable();
 }
-void rTC_HILS_DISABLE()
+void rTC_HILS_DISABLE(void)
 {
 	HILS_mode_disable();
 }
 
-void adcsgains()
+void adcsgains(void)
 {
 	switch(u_TC.GainSelect.offset_addr)
 		{
@@ -2379,7 +2337,7 @@ void adcsgains()
 		}
 }
 
-void TC_detumbling_rate_gain_1()
+void TC_detumbling_rate_gain_1(void)
 {
 	if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_rate_gain_set == 01)
 	{
@@ -2413,7 +2371,7 @@ void TC_detumbling_rate_gain_1()
 	}
 }
 	//
-void TC_detumbling_bdot_gain_1()
+void TC_detumbling_bdot_gain_1(void)
 {
 	if( TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain_set==01)
 	{
@@ -2448,7 +2406,7 @@ void TC_detumbling_bdot_gain_1()
 	}
 }
 //
-void TC_BDOT_Det_Thresh_1()
+void TC_BDOT_Det_Thresh_1(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_BDOT_Det_Thresh_set==01)
 
@@ -2477,7 +2435,7 @@ void TC_BDOT_Det_Thresh_1()
 	}
 }
 	//
-void TC_GYRO_Det_Min_Thres_1()
+void TC_GYRO_Det_Min_Thres_1(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_GYRO_Det_Min_Thres_set==01)
 	{
@@ -2504,7 +2462,7 @@ void TC_GYRO_Det_Min_Thres_1()
 	}
 }	 //
 
-void rTc_nominal_speed_RW1()
+void rTc_nominal_speed_RW1(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_W1_Commanded_Nominal_Speed == 01)
 	{
@@ -2529,7 +2487,7 @@ void rTc_nominal_speed_RW1()
 	}
 }
 
-void rTc_nominal_speed_RW2()
+void rTc_nominal_speed_RW2(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_W2_Commanded_Nominal_Speed == 1)
 	{
@@ -2554,7 +2512,7 @@ void rTc_nominal_speed_RW2()
 	}
 }
 
-void rTc_nominal_speed_RW3()
+void rTc_nominal_speed_RW3(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_W3_Commanded_Nominal_Speed == 1)
 	{
@@ -2579,7 +2537,7 @@ void rTc_nominal_speed_RW3()
 	}
 }
 
-void rTc_nominal_speed_RW4()
+void rTc_nominal_speed_RW4(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed == 1)
 	{
@@ -2606,7 +2564,7 @@ void rTc_nominal_speed_RW4()
 
 
 
-void TC_AngMomDump_Thrsld_1()
+void TC_AngMomDump_Thrsld_1(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld_set==01)
 	{
@@ -2630,7 +2588,7 @@ void TC_AngMomDump_Thrsld_1()
 		//
 	}
 }	//
-void TC_SpeedDump_Thrsld_1()
+void TC_SpeedDump_Thrsld_1(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_SpeedDump_Thrsld==01)
 	{
@@ -2654,7 +2612,7 @@ void TC_SpeedDump_Thrsld_1()
 		//
 	}
 }	//
-void TC_SpeedDump_TimeSelect_1()
+void TC_SpeedDump_TimeSelect_1(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_SpeedDump_TimeSelect==01)
 	{
@@ -2679,7 +2637,7 @@ void TC_SpeedDump_TimeSelect_1()
 	}
 }
 //
-void TC_comd_pitch_rate_1()
+void TC_comd_pitch_rate_1(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_comd_pitch_rate_set==01)
 	{
@@ -2705,7 +2663,7 @@ void TC_comd_pitch_rate_1()
 	}
 }
 //
-void TC_Gyro_LPF_Gain_IMU1_1()
+void TC_Gyro_LPF_Gain_IMU1_1(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_Gyro_LPF_Gain_IMU1==01)
 	{
@@ -2734,7 +2692,7 @@ void TC_Gyro_LPF_Gain_IMU1_1()
 	}
 }
 	//
-void TC_Gyro_LPF_Gain_IMU2_1()
+void TC_Gyro_LPF_Gain_IMU2_1(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_Gyro_LPF_Gain_IMU2==01)
 	{
@@ -2763,7 +2721,7 @@ void TC_Gyro_LPF_Gain_IMU2_1()
 	}
 }
 	//
-void TC_Mag_LPF_Gain_IMU1_1()
+void TC_Mag_LPF_Gain_IMU1_1(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_Mag_LPF_Gain_IMU1==01)
 	{
@@ -2792,7 +2750,7 @@ void TC_Mag_LPF_Gain_IMU1_1()
 	}
 }
 //
-void TC_Mag_LPF_Gain_IMU2_1()
+void TC_Mag_LPF_Gain_IMU2_1(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_Mag_LPF_Gain_IMU2==01)
 	{
@@ -2821,7 +2779,7 @@ void TC_Mag_LPF_Gain_IMU2_1()
 	}
 }
 	//
-void TC_Wheel_Cutoff_Threshold_1()
+void TC_Wheel_Cutoff_Threshold_1(void)
 {
 	if(TC_gain_select_u.TC_gain_select_Table.TC_Wheel_Cutoff_Threshold==01)
 	{

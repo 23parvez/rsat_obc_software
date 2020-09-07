@@ -8,7 +8,7 @@
 #include "TM_Global_Buffer.h"
 
 
-void rHAL_EPS_shunt_switch()
+void rHAL_EPS_shunt_switch(void)
 {
 	unsigned short tempdata;
 
@@ -81,7 +81,7 @@ void rHAL_EPS_shunt_switch()
 			TM.Buffer.TM_heaters_manual_control = ((load_shedding_flag << 6) |  heaters_manual.data);
 }
 
-void rHAL_EPS_Hardware_Status()
+void rHAL_EPS_Hardware_Status(void)
 {
 	unsigned short tempdata;
      for(inter_HAL_EPS_Hardware_Status_count = 0;inter_HAL_EPS_Hardware_Status_count<=7;inter_HAL_EPS_Hardware_Status_count++)
@@ -93,7 +93,7 @@ void rHAL_EPS_Hardware_Status()
      }
 }
 
-void rHAL_Battery_load_shedding()
+void rHAL_Battery_load_shedding(void)
 {
 	// Turn off loads
 

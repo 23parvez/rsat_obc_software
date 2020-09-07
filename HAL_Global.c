@@ -37,7 +37,7 @@ unsigned char chksum8(const unsigned char *buff, unsigned int len)
     return (unsigned char)xor_8;
 }
 
-void rOutput_Latch_Update()
+void rOutput_Latch_Update(void)
 {
 	unsigned short temp_data;
 	unsigned char temp_data1;
@@ -70,7 +70,7 @@ void rOutput_Latch_Update()
 
 unsigned short RW1s,RW2s,RW3s,RW4s;
 //this function need to be called in main
-void STS_reg_TM()
+void STS_reg_TM(void)
 {
 	TM.Buffer.RW1_STS_data = (unsigned short)REG32(RW1_STATUS_REGISTER_2);
 	TM.Buffer.RW2_STS_data = (unsigned short)REG32(RW2_STATUS_REGISTER_2);
@@ -83,7 +83,7 @@ void STS_reg_TM()
 	TM.Buffer.TM_STS_data = (unsigned short)(TM_STATUS_REGISTER & 0x0000FFFF);
 }
 
-void ST_output_update()
+void ST_output_update(void)
 {
 	ST_Out_Latch_2.data = IO_LATCH_REGISTER_2;
 	ST_Out_Latch_3.data = IO_LATCH_REGISTER_3;
@@ -118,10 +118,9 @@ void ST_output_update()
 }
 unsigned int flag_mni;
 
-void NMI_interrupt_test()
+void NMI_interrupt_test(void)
 {
 	// Routine updated on 24 June 2020
-	//volatile unsigned int down_counter = 0x000FFFFF; // 460ms counter
 	if(TC_boolean_u.TC_Boolean_Table.NMI_test_enable)
 	{
 		volatile unsigned int down_counter = 0x00116417; // 500ms counter
@@ -137,15 +136,12 @@ void NMI_interrupt_test()
 		IODAT = GPIO_pins.data;
 
 		NMI_fail_count++;
-
 	}
 	TM.Buffer.TM_NMI_fail_count = NMI_fail_count;
 }
 
-
-
 unsigned short MUX_data1,MUX_data2,MUX_data3,MUX_data4,test_data_3;
-void MUX_Output()
+void MUX_Output(void)
 {
 	unsigned short tempdata1,tempdata2,tempdata3,tempdata4,tempdata5,tempdata6,tempdata7,tempdata8;
 	unsigned short MUX_index;
@@ -155,139 +151,139 @@ void MUX_Output()
 
 		switch(MUX_index)
 		{
-		case 0: Out_latch_5.SEL_2 = 0;
-				Out_latch_5.SEL_1 = 0;
-				Out_latch_5.SEL_0 = 0;
-				IO_LATCH_REGISTER_5 = Out_latch_5.data;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				input_latch_2.data = IO_IN_LATCH_REGISTER_4 ;
-				tempdata1 = input_latch_2.data;
-				TM.Buffer.TM_MUX_1 = tempdata1 & 0x3c00;
+			case 0: Out_latch_5.SEL_2 = 0;
+					Out_latch_5.SEL_1 = 0;
+					Out_latch_5.SEL_0 = 0;
+					IO_LATCH_REGISTER_5 = Out_latch_5.data;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					input_latch_2.data = IO_IN_LATCH_REGISTER_4 ;
+					tempdata1 = input_latch_2.data;
+					TM.Buffer.TM_MUX_1 = tempdata1 & 0x3c00;
 
-				break;
+					break;
 
-		case 1: Out_latch_5.SEL_2 = 1;
-				Out_latch_5.SEL_1 = 0;
-				Out_latch_5.SEL_0 = 0;
-				IO_LATCH_REGISTER_5 = Out_latch_5.data;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				input_latch_2.data = IO_IN_LATCH_REGISTER_4 ;
-				tempdata2 = input_latch_2.data;
-				TM.Buffer.TM_MUX_2 = tempdata2 & 0x3c00;
+			case 1: Out_latch_5.SEL_2 = 1;
+					Out_latch_5.SEL_1 = 0;
+					Out_latch_5.SEL_0 = 0;
+					IO_LATCH_REGISTER_5 = Out_latch_5.data;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					input_latch_2.data = IO_IN_LATCH_REGISTER_4 ;
+					tempdata2 = input_latch_2.data;
+					TM.Buffer.TM_MUX_2 = tempdata2 & 0x3c00;
 
-				break;
+					break;
 
-		case 2: Out_latch_5.SEL_2 = 0;
-				Out_latch_5.SEL_1 = 1;
-				Out_latch_5.SEL_0 = 0;
-				IO_LATCH_REGISTER_5 = Out_latch_5.data;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				input_latch_2.data = IO_IN_LATCH_REGISTER_4 ;
-				tempdata3 = input_latch_2.data;
-				TM.Buffer.TM_MUX_3 = tempdata3 & 0x3c00;
+			case 2: Out_latch_5.SEL_2 = 0;
+					Out_latch_5.SEL_1 = 1;
+					Out_latch_5.SEL_0 = 0;
+					IO_LATCH_REGISTER_5 = Out_latch_5.data;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					input_latch_2.data = IO_IN_LATCH_REGISTER_4 ;
+					tempdata3 = input_latch_2.data;
+					TM.Buffer.TM_MUX_3 = tempdata3 & 0x3c00;
 
-				break;
+					break;
 
-		case 3: Out_latch_5.SEL_2 = 1;
-				Out_latch_5.SEL_1 = 1;
-				Out_latch_5.SEL_0 = 0;
-				IO_LATCH_REGISTER_5 = Out_latch_5.data;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				input_latch_2.data = IO_IN_LATCH_REGISTER_4 ;
-				tempdata4 = input_latch_2.data;
-				TM.Buffer.TM_MUX_4 = tempdata4 & 0x3c00;
+			case 3: Out_latch_5.SEL_2 = 1;
+					Out_latch_5.SEL_1 = 1;
+					Out_latch_5.SEL_0 = 0;
+					IO_LATCH_REGISTER_5 = Out_latch_5.data;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					input_latch_2.data = IO_IN_LATCH_REGISTER_4 ;
+					tempdata4 = input_latch_2.data;
+					TM.Buffer.TM_MUX_4 = tempdata4 & 0x3c00;
 
-				break;
+					break;
 
-		case 4: Out_latch_5.SEL_2 = 0;
-				Out_latch_5.SEL_1 = 0;
-				Out_latch_5.SEL_0 = 1;
-				IO_LATCH_REGISTER_5 = Out_latch_5.data;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				input_latch_2.data = IO_IN_LATCH_REGISTER_4 ;
-				tempdata5 = input_latch_2.data;
-				TM.Buffer.TM_MUX_5 = tempdata5 & 0x3c00;
+			case 4: Out_latch_5.SEL_2 = 0;
+					Out_latch_5.SEL_1 = 0;
+					Out_latch_5.SEL_0 = 1;
+					IO_LATCH_REGISTER_5 = Out_latch_5.data;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					input_latch_2.data = IO_IN_LATCH_REGISTER_4 ;
+					tempdata5 = input_latch_2.data;
+					TM.Buffer.TM_MUX_5 = tempdata5 & 0x3c00;
 
-				break;
+					break;
 
-		case 5: Out_latch_5.SEL_2 = 1;
-				Out_latch_5.SEL_1 = 0;
-				Out_latch_5.SEL_0 = 1;
-				IO_LATCH_REGISTER_5 = Out_latch_5.data;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				input_latch_2.data = IO_IN_LATCH_REGISTER_4 ;
-				tempdata6 = input_latch_2.data;
-				TM.Buffer.TM_MUX_6 = tempdata6 & 0x3c00;
+			case 5: Out_latch_5.SEL_2 = 1;
+					Out_latch_5.SEL_1 = 0;
+					Out_latch_5.SEL_0 = 1;
+					IO_LATCH_REGISTER_5 = Out_latch_5.data;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					input_latch_2.data = IO_IN_LATCH_REGISTER_4 ;
+					tempdata6 = input_latch_2.data;
+					TM.Buffer.TM_MUX_6 = tempdata6 & 0x3c00;
 
-				break;
+					break;
 
-		case 6: Out_latch_5.SEL_2 = 0;
-				Out_latch_5.SEL_1 = 1;
-				Out_latch_5.SEL_0 = 1;
-				IO_LATCH_REGISTER_5 = Out_latch_5.data;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				input_latch_2.data = IO_IN_LATCH_REGISTER_4 ;
-				tempdata7 = input_latch_2.data;
-				TM.Buffer.TM_MUX_7 = tempdata7 & 0x3c00;
+			case 6: Out_latch_5.SEL_2 = 0;
+					Out_latch_5.SEL_1 = 1;
+					Out_latch_5.SEL_0 = 1;
+					IO_LATCH_REGISTER_5 = Out_latch_5.data;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					input_latch_2.data = IO_IN_LATCH_REGISTER_4 ;
+					tempdata7 = input_latch_2.data;
+					TM.Buffer.TM_MUX_7 = tempdata7 & 0x3c00;
 
-				break;
+					break;
 
 
-		case 7: Out_latch_5.SEL_2 = 1;
-				Out_latch_5.SEL_1 = 1;
-				Out_latch_5.SEL_0 = 1;
-				IO_LATCH_REGISTER_5 = Out_latch_5.data;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				IO_LATCH_REGISTER_5;
-				input_latch_2.data = IO_IN_LATCH_REGISTER_4;
-				tempdata8 = input_latch_2.data;
-				TM.Buffer.TM_MUX_8 = tempdata8 & 0x3c00;
-				break;
+			case 7: Out_latch_5.SEL_2 = 1;
+					Out_latch_5.SEL_1 = 1;
+					Out_latch_5.SEL_0 = 1;
+					IO_LATCH_REGISTER_5 = Out_latch_5.data;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					IO_LATCH_REGISTER_5;
+					input_latch_2.data = IO_IN_LATCH_REGISTER_4;
+					tempdata8 = input_latch_2.data;
+					TM.Buffer.TM_MUX_8 = tempdata8 & 0x3c00;
+					break;
 
 		}
 	}
 }
 
-void EEPROM_RST()
+void EEPROM_RST(void)
 {
 	unsigned short tempdata;
 	Out_latch_4.EEPROM_RESET = 0;
@@ -296,7 +292,7 @@ void EEPROM_RST()
 	IO_LATCH_REGISTER_4 = tempdata;
 }
 
-void EEPROM_RES()
+void EEPROM_RES(void)
 {
 	unsigned short tempdata;
 	Out_latch_5.SA2_DEPLOY	 = 0;
@@ -325,7 +321,8 @@ void s_ram_scrub(void)
 
 		if(ram_scrub_addr < RAM_SEG_END_ADDR)
 		{
-			while(ram_scrub_addr != blk_end_addr)
+			//while(ram_scrub_addr != blk_end_addr)
+			while(ram_scrub_addr < blk_end_addr)
 			{
 
 				temp_data 		= REG32(ram_scrub_addr);
@@ -349,32 +346,24 @@ void s_ram_scrub(void)
 /*
 EEPROM
 	0x00000000	+--------------------+
-				|    Block 1 64KB    |
+				|    Block 1 16KB    |
 				+--------------------+
-				|    Block 2 64KB    |
+				|    Block 2 16KB    |
 				+--------------------+
-				|    Block 3 64KB    |
+				|    Block 3 16KB    |
 				+--------------------+
-				|    Block 4 64KB    |
+				|    Block 4 16KB    |
 				+--------------------+
-				|    Block 5 64KB    |
+				|    Block 5 16KB    |
 				+--------------------+
-				|    Block 6 64KB    |
+				|    Block 6 16KB    |
 				+--------------------+
-				|    Block 7 64KB    |
+				|    Block 7 16KB    |
 				+--------------------+
-				|    Block 8 64KB    |
-	0x0007D000	+--------------------+(512KB)
+				|    Block 8 16KB    |
+				+--------------------+
 
 */
-
-
-/****************************************/
-/** Add this initialization in por_init **/
-/*eeprom_cur_addr = EEPROM_START_ADDR;
-eeprom_blk_end_addr  = eeprom_cur_addr + EEPROM_BLOCK_SIZE; */
-/****************************************/
-
 
 /****************************************************************
  *@function name  prom_chksum
@@ -427,7 +416,7 @@ void prom_chksum(void)
 /*unsigned int eeprom_array[10];
 unsigned int *ptr_eeprom;
 unsigned int eeprom_count;
-void EEprom_read()
+void EEprom_read(void)
 {
 	Out_latch_5.SA2_DEPLOY	 = 0;
 	IO_LATCH_REGISTER_5 = Out_latch_5.data;

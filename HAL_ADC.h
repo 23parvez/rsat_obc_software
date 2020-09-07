@@ -68,8 +68,8 @@ union SA_SW_STS
 //Function Declarations
 void rHAL_ADC_Read(unsigned long int* ADC_Addr);
 void rHAL_ADC_TM_Copy(unsigned long int* ADC_Addr);
-void sun_Sensor_data();
-void rHAL_ADC_StatusREG_Enable();
+void sun_Sensor_data(void);
+void rHAL_ADC_StatusREG_Enable(void);
 
 
 #endif // HAL_ADC

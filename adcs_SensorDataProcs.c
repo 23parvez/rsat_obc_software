@@ -249,7 +249,7 @@ void rIMUDataProcessing(void)
 	TM.Buffer.TM_IMU1 = TM_IMU1;
 	TM.Buffer.TM_IMU2 = TM_IMU2;
 
-	if (TC_boolean_u.TC_Boolean_Table.TC_IMU_Select == IMU1)  ///IMU1
+	if (TC_boolean_u.TC_Boolean_Table.TC_IMU_Select == IMU1)  //IMU1
 	{
 		w_BODY[0] = w_BODY_IMU1[0];
 		w_BODY[1] = w_BODY_IMU1[1];
@@ -537,7 +537,7 @@ static double rTheta_Limit(const double var_theta_lim)
 
 	else
 	{
-		///
+		//
 	}
 	return inter_theta;
 }
@@ -650,7 +650,7 @@ void rSunSensorDataProcessing(void)
 		S_BODYn[1] = Norm_out[1];
 		S_BODYn[2] = Norm_out[2];
 
-		///Roll and Yaw angle errors' computation
+		//Roll and Yaw angle errors' computation
 
 		if(fabs(S_BODYn[1]) <= c_dividebyzerovalue)
 		{
@@ -666,7 +666,7 @@ void rSunSensorDataProcessing(void)
 		TM.Buffer.TM_SunSens_Yaw_Error = (int)(Yaw_ang_err/0.01);
 		ST_normal.ST_NM_Buffer.TM_SunSens_Yaw_Error = (int)(Yaw_ang_err/0.01);
 
-		///Angle Deviation Computation
+		//Angle Deviation Computation
 		Ang_Deviation = acos((-1.0) * (S_BODYn[1]));
 		TM.Buffer.TM_SunSens_Pitch_Error = (int)Ang_Deviation;
 		ST_normal.ST_NM_Buffer.TM_SunSens_Pitch_Error = (int)Ang_Deviation;
@@ -746,8 +746,8 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 		SS_M5 = 0.0;
 	}
 
-	/// Different deployment selections
-	 if(panel_deploy_sts == TC_Not_Deployed)///Both the panels are Not deployed
+	// Different deployment selections
+	 if(panel_deploy_sts == TC_Not_Deployed)//Both the panels are Not deployed
 	{
 		SC1 = (SS_M7);
 		SC3 = (SS_M8);
@@ -774,7 +774,7 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 		SC3ImaxF = SS_2Exe_Addr->DB_Imax_RNND;
 	}
 
-	else /// elseif(TC_panel_Deployment == TC_NegR_Deployed) Negative Roll panel deployed
+	else // elseif(TC_panel_Deployment == TC_NegR_Deployed) Negative Roll panel deployed
 	{
 		SC1 = (SS_M7);
 		SC3 = (SS_M3);
@@ -783,7 +783,7 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 		SC3ImaxF = SS_2Exe_Addr->DB_Imax_RND;
 	}
 
-	///Assignment of variables for different sensors (Yaw and Pitch)
+	//Assignment of variables for different sensors (Yaw and Pitch)
 
 	SC2 = SS_M2;
 
@@ -809,16 +809,16 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 	SC5ImaxF = SS_2Exe_Addr->DB_Imax_YP;
 	SC6ImaxF = SS_2Exe_Addr->DB_Imax_YN;
 
-	///Calculation of Azimuth and Elevation of Sun
+	//Calculation of Azimuth and Elevation of Sun
 	if((SC1  > c_SSThrsld) && (SC2 > c_SSThrsld) && (SC5 > c_SSThrsld))
 	{
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 
 		SC1 = (SS_2Exe_Addr->DB_misaln_cor125[0][0]*SC1) + (SS_2Exe_Addr->DB_misaln_cor125[0][1]*SC2) + (SS_2Exe_Addr->DB_misaln_cor125[0][2]*SC5);
 		SC2 = (SS_2Exe_Addr->DB_misaln_cor125[1][0]*SC1) + (SS_2Exe_Addr->DB_misaln_cor125[1][1]*SC2) + (SS_2Exe_Addr->DB_misaln_cor125[1][2]*SC5);
 		SC5 = (SS_2Exe_Addr->DB_misaln_cor125[2][0]*SC1) + (SS_2Exe_Addr->DB_misaln_cor125[2][1]*SC2) + (SS_2Exe_Addr->DB_misaln_cor125[2][2]*SC5);
 
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 
 		comb1 = (((SC2 * SC2ImaxF)- (SC1 * SC1ImaxF))/((SC2 * SC2ImaxF)+ (SC1 * SC1ImaxF)));
 		temp11 = atan(comb1);
@@ -830,7 +830,7 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 		ele2 = atan(cos(az1)*tan(ele1));
 
-		///Assigning Sensor to Body Transformation Matrix
+		//Assigning Sensor to Body Transformation Matrix
 		for(i_MatEq = 0; i_MatEq < 3; i_MatEq++)
 		{
 			for(j_MatEq = 0; j_MatEq < 3; j_MatEq++)
@@ -844,13 +844,13 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 	if((SC1  > c_SSThrsld) && (SC2 > c_SSThrsld) && (SC6 > c_SSThrsld))
 	{
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 
 		SC1 = (SS_2Exe_Addr->DB_misaln_cor126[0][0]*SC1) + (SS_2Exe_Addr->DB_misaln_cor126[0][1]*SC2) + (SS_2Exe_Addr->DB_misaln_cor126[0][2]*SC6);
 		SC2 = (SS_2Exe_Addr->DB_misaln_cor126[1][0]*SC1) + (SS_2Exe_Addr->DB_misaln_cor126[1][1]*SC2) + (SS_2Exe_Addr->DB_misaln_cor126[1][2]*SC6);
 		SC6 = (SS_2Exe_Addr->DB_misaln_cor126[2][0]*SC1) + (SS_2Exe_Addr->DB_misaln_cor126[2][1]*SC2) + (SS_2Exe_Addr->DB_misaln_cor126[2][2]*SC6);
 
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 
 		comb1 = (((SC2 * SC2ImaxF)- (SC1 * SC1ImaxF))/((SC2 * SC2ImaxF)+ (SC1 * SC1ImaxF)));
 		temp11 = atan(comb1);
@@ -862,7 +862,7 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 		ele2 = ((-1.0) * atan(cos(az1)*tan(ele1)));
 
-		///Assigning Sensor to Body Transformation Matrix
+		//Assigning Sensor to Body Transformation Matrix
 		for(i_MatEq = 0; i_MatEq < 3; i_MatEq++)
 		{
 			for(j_MatEq = 0; j_MatEq < 3; j_MatEq++)
@@ -875,14 +875,14 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 	if((SC3  > c_SSThrsld) && (SC2 > c_SSThrsld) && (SC5 > c_SSThrsld))
 	{
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 
 		SC2 = (SS_2Exe_Addr->DB_misaln_cor325[0][0]*SC2) + (SS_2Exe_Addr->DB_misaln_cor325[0][1]*SC3) + (SS_2Exe_Addr->DB_misaln_cor325[0][2]*SC5);
 		SC3 = (SS_2Exe_Addr->DB_misaln_cor325[1][0]*SC2) + (SS_2Exe_Addr->DB_misaln_cor325[1][1]*SC3) + (SS_2Exe_Addr->DB_misaln_cor325[1][2]*SC5);
 		SC5 = (SS_2Exe_Addr->DB_misaln_cor325[2][0]*SC2) + (SS_2Exe_Addr->DB_misaln_cor325[2][1]*SC3) + (SS_2Exe_Addr->DB_misaln_cor325[2][2]*SC5);
 
 
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 
 		comb1 = (((SC3 * SC3ImaxF)- (SC2 * SC2ImaxF))/((SC3 * SC3ImaxF)+ (SC2 * SC2ImaxF)));
 		temp11 = atan(comb1);
@@ -894,7 +894,7 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 		ele2 = atan(cos(az1)*tan(ele1));
 
-		///Assigning Sensor to Body Transformation Matrix
+		//Assigning Sensor to Body Transformation Matrix
 		for(i_MatEq = 0; i_MatEq < 3; i_MatEq++)
 		{
 			for(j_MatEq = 0; j_MatEq < 3; j_MatEq++)
@@ -907,12 +907,12 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 	if((SC3  > c_SSThrsld) && (SC2 > c_SSThrsld) && (SC6 > c_SSThrsld))
 	{
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		SC2 = (SS_2Exe_Addr->DB_misaln_cor326[0][0]*SC2) + (SS_2Exe_Addr->DB_misaln_cor326[0][1]*SC3) + (SS_2Exe_Addr->DB_misaln_cor326[0][2]*SC6);
 		SC3 = (SS_2Exe_Addr->DB_misaln_cor326[1][0]*SC2) + (SS_2Exe_Addr->DB_misaln_cor326[1][1]*SC3) + (SS_2Exe_Addr->DB_misaln_cor326[1][2]*SC6);
 		SC6 = (SS_2Exe_Addr->DB_misaln_cor326[2][0]*SC2) + (SS_2Exe_Addr->DB_misaln_cor326[2][1]*SC3) + (SS_2Exe_Addr->DB_misaln_cor326[2][2]*SC6);
 
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 
 		comb1 = (((SC3 * SC3ImaxF)- (SC2 * SC2ImaxF))/((SC3 * SC3ImaxF)+ (SC2 * SC2ImaxF)));
 		temp11 = atan(comb1);
@@ -924,7 +924,7 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 		ele2 = ((-1.0) * atan(cos(az1)*tan(ele1)));
 
-		///Assigning Sensor to Body Transformation Matrix
+		//Assigning Sensor to Body Transformation Matrix
 		for(i_MatEq = 0; i_MatEq < 3; i_MatEq++)
 		{
 			for(j_MatEq = 0; j_MatEq < 3; j_MatEq++)
@@ -937,13 +937,13 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 	if((SC3  > c_SSThrsld) && (SC4 > c_SSThrsld) && (SC5 > c_SSThrsld))
 	{
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		SC3 = (SS_2Exe_Addr->DB_misaln_cor345[0][0]*SC3) + (SS_2Exe_Addr->DB_misaln_cor345[0][1]*SC4) + (SS_2Exe_Addr->DB_misaln_cor345[0][2]*SC5);
 		SC4 = (SS_2Exe_Addr->DB_misaln_cor345[1][0]*SC3) + (SS_2Exe_Addr->DB_misaln_cor345[1][1]*SC4) + (SS_2Exe_Addr->DB_misaln_cor345[1][2]*SC5);
 		SC5 = (SS_2Exe_Addr->DB_misaln_cor345[2][0]*SC3) + (SS_2Exe_Addr->DB_misaln_cor345[2][1]*SC4) + (SS_2Exe_Addr->DB_misaln_cor345[2][2]*SC5);
 
 
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 
 		comb1 = (((SC4 * SC4ImaxF)- (SC3 * SC3ImaxF))/((SC4 * SC4ImaxF)+ (SC3 * SC3ImaxF)));
 		temp11 = atan(comb1);
@@ -955,7 +955,7 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 		ele2 = atan(cos(az1)*tan(ele1));
 
-		///Assigning Sensor to Body Transformation Matrix
+		//Assigning Sensor to Body Transformation Matrix
 		for(i_MatEq = 0; i_MatEq < 3; i_MatEq++)
 		{
 			for(j_MatEq = 0; j_MatEq < 3; j_MatEq++)
@@ -968,13 +968,13 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 	if((SC3  > c_SSThrsld) && (SC4 > c_SSThrsld) && (SC6 > c_SSThrsld))
 	{
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		SC3 = (SS_2Exe_Addr->DB_misaln_cor345[0][0]*SC3) + (SS_2Exe_Addr->DB_misaln_cor345[0][1]*SC4) + (SS_2Exe_Addr->DB_misaln_cor345[0][2]*SC6);
 		SC4 = (SS_2Exe_Addr->DB_misaln_cor345[1][0]*SC3) + (SS_2Exe_Addr->DB_misaln_cor345[1][1]*SC4) + (SS_2Exe_Addr->DB_misaln_cor345[1][2]*SC6);
 		SC6 = (SS_2Exe_Addr->DB_misaln_cor345[2][0]*SC3) + (SS_2Exe_Addr->DB_misaln_cor345[2][1]*SC4) + (SS_2Exe_Addr->DB_misaln_cor345[2][2]*SC6);
 
 
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 
 		comb1 = (((SC4 * SC4ImaxF)- (SC3 * SC3ImaxF))/((SC4 * SC4ImaxF)+ (SC3 * SC3ImaxF)));
 		temp11 = atan(comb1);
@@ -986,7 +986,7 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 		ele2 = ((-1.0) * atan(cos(az1)*tan(ele1)));
 
-		///Assigning Sensor to Body Transformation Matrix
+		//Assigning Sensor to Body Transformation Matrix
 		for(i_MatEq = 0; i_MatEq < 3; i_MatEq++)
 		{
 			for(j_MatEq = 0; j_MatEq < 3; j_MatEq++)
@@ -999,12 +999,12 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 	if((SC1  > c_SSThrsld) && (SC4 > c_SSThrsld) && (SC5 > c_SSThrsld))
 	{
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		SC4 = (SS_2Exe_Addr->DB_misaln_cor145[0][0]*SC4) + (SS_2Exe_Addr->DB_misaln_cor145[0][1]*SC1) + (SS_2Exe_Addr->DB_misaln_cor145[0][2]*SC5);
 		SC1 = (SS_2Exe_Addr->DB_misaln_cor145[1][0]*SC4) + (SS_2Exe_Addr->DB_misaln_cor145[1][1]*SC1) + (SS_2Exe_Addr->DB_misaln_cor145[1][2]*SC5);
 		SC5 = (SS_2Exe_Addr->DB_misaln_cor145[2][0]*SC4) + (SS_2Exe_Addr->DB_misaln_cor145[2][1]*SC1) + (SS_2Exe_Addr->DB_misaln_cor145[2][2]*SC5);
 
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 
 		comb1 = (((SC1 * SC1ImaxF)- (SC4 * SC4ImaxF))/((SC1 * SC1ImaxF)+ (SC4 * SC4ImaxF)));
 		temp11 = atan(comb1);
@@ -1016,7 +1016,7 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 		ele2 = atan(cos(az1)*tan(ele1));
 
-		///Assigning Sensor to Body Transformation Matrix
+		//Assigning Sensor to Body Transformation Matrix
 		for(i_MatEq = 0; i_MatEq < 3; i_MatEq++)
 		{
 			for(j_MatEq = 0; j_MatEq < 3; j_MatEq++)
@@ -1029,13 +1029,13 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 	if((SC1  > c_SSThrsld) && (SC4 > c_SSThrsld) && (SC6 > c_SSThrsld))
 	{
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		SC4 = (SS_2Exe_Addr->DB_misaln_cor145[0][0]*SC4) + (SS_2Exe_Addr->DB_misaln_cor145[0][1]*SC1) + (SS_2Exe_Addr->DB_misaln_cor145[0][2]*SC6);
 		SC1 = (SS_2Exe_Addr->DB_misaln_cor145[1][0]*SC4) + (SS_2Exe_Addr->DB_misaln_cor145[1][1]*SC1) + (SS_2Exe_Addr->DB_misaln_cor145[1][2]*SC6);
 		SC6 = (SS_2Exe_Addr->DB_misaln_cor145[2][0]*SC4) + (SS_2Exe_Addr->DB_misaln_cor145[2][1]*SC1) + (SS_2Exe_Addr->DB_misaln_cor145[2][2]*SC6);
 
 
-		///-------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 
 		comb1 = (((SC1 * SC1ImaxF)- (SC4 * SC4ImaxF))/((SC1 * SC1ImaxF)+ (SC4 * SC4ImaxF)));
 		temp11 = atan(comb1);
@@ -1047,7 +1047,7 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 
 		ele2 = ((-1.0) * atan(cos(az1)*tan(ele1)));
 
-		///Assigning Sensor to Body Transformation Matrix
+		//Assigning Sensor to Body Transformation Matrix
 		for(i_MatEq = 0; i_MatEq < 3; i_MatEq++)
 		{
 			for(j_MatEq = 0; j_MatEq < 3; j_MatEq++)
@@ -1058,13 +1058,13 @@ static void rSunSensorVectorComp(const double SS_ARRAY[8], struct SunSensor_Data
 		sun_quadrant = 8;
 	}
 
-	///sunsensor data in Sensor frame
+	//sunsensor data in Sensor frame
 	sun_sf[0] = (cos(az1)*cos(ele2));
 	sun_sf[1] = (sin(az1)*cos(ele2));
 	sun_sf[2] = sin(ele2);
 
 	rMatMul3x1(ss2b, sun_sf);
-	///Conversion from sensor frame to body frame (ss2b ---> (sun sensor to body frame))
+	//Conversion from sensor frame to body frame (ss2b ---> (sun sensor to body frame))
 	SS_prcd_data[0] = Matout31[0];
 	SS_prcd_data[1] = Matout31[1];
 	SS_prcd_data[2] = Matout31[2];

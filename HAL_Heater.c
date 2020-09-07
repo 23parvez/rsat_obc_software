@@ -7,9 +7,7 @@
 #include "TC_List.h"
 #include "TM_Global_Buffer.h"
 
-unsigned int Manual_flag;
-
-void Thermister_select()
+void Thermister_select(void)
 {
 	int tempdata,Thermistor_Count;
 
@@ -20,7 +18,7 @@ void Thermister_select()
 	}
 }
 
-void UTP_selection()
+void UTP_selection(void)
 {
 	unsigned short tempdata1;
 	unsigned int tempdata_utp;
@@ -35,7 +33,7 @@ void UTP_selection()
 }
 
 unsigned int ltp12;
-void LTP_selection()
+void LTP_selection(void)
 {
 	unsigned short tempdata2,index_ltp,index_ltp1;
 	unsigned int tempdata_ltp;
@@ -49,7 +47,7 @@ void LTP_selection()
 	LTP[index_ltp1] = tempdata2;
 }
 
-void Heater_control_auto_manual()
+void Heater_control_auto_manual(void)
 {
 	 unsigned int tempdata;
 
@@ -206,7 +204,7 @@ void Heater_control_auto_manual()
     TM.Buffer.TM_heaters_manual_control = heaters_manual.data;
 
 }
-void Heater_1_auto_control()
+void Heater_1_auto_control(void)
 {
 	unsigned short tempdata;
 
@@ -230,7 +228,7 @@ void Heater_1_auto_control()
 	}
 }
 
-void Heater_2_auto_control()
+void Heater_2_auto_control(void)
 {
 	unsigned short tempdata;
 
@@ -254,7 +252,7 @@ void Heater_2_auto_control()
 	}
 }
 
-void Heater_3_auto_control()
+void Heater_3_auto_control(void)
 {
 	unsigned short tempdata;
 
@@ -278,7 +276,7 @@ void Heater_3_auto_control()
 	}
 }
 
-void Heater_4_auto_control()
+void Heater_4_auto_control(void)
 {
 	unsigned short tempdata;
 
@@ -302,7 +300,7 @@ void Heater_4_auto_control()
 	}
 }
 
-void Heater_5_auto_control()
+void Heater_5_auto_control(void)
 {
 	unsigned short tempdata;
 
@@ -326,7 +324,7 @@ void Heater_5_auto_control()
 	}
 }
 
-void Heater_6_auto_control()
+void Heater_6_auto_control(void)
 {
 	unsigned short tempdata;
 
@@ -350,7 +348,7 @@ void Heater_6_auto_control()
 	}
 }
 
-void Heater_7_auto_control()
+void Heater_7_auto_control(void)
 {
 	unsigned short tempdata;
 
@@ -368,7 +366,7 @@ void Heater_7_auto_control()
 	}
 }
 
-void Heater_8_auto_control()
+void Heater_8_auto_control(void)
 {
 	unsigned short tempdata;
 
@@ -386,7 +384,7 @@ void Heater_8_auto_control()
 	}
 }
 
-void Heater_9_auto_control()
+void Heater_9_auto_control(void)
 {
 	unsigned short tempdata;
 
@@ -404,7 +402,7 @@ void Heater_9_auto_control()
 	}
 }
 
-void Heater_10_auto_control()
+void Heater_10_auto_control(void)
 {
 	unsigned short tempdata;
 
@@ -422,7 +420,7 @@ void Heater_10_auto_control()
 	}
 }
 
-void Heater_11_auto_control()
+void Heater_11_auto_control(void)
 {
 	unsigned short tempdata;
 
@@ -441,7 +439,7 @@ void Heater_11_auto_control()
 }
 
 
-void Heater_12_auto_control()
+void Heater_12_auto_control(void)
 {
 	unsigned short tempdata;
 
@@ -459,7 +457,7 @@ void Heater_12_auto_control()
 	}
 }
 
-void Heater_13_auto_control()
+void Heater_13_auto_control(void)
 {
 	unsigned short tempdata;
 
@@ -477,7 +475,7 @@ void Heater_13_auto_control()
 	}
 }
 
-void Heater_14_auto_control()
+void Heater_14_auto_control(void)
 {
 	unsigned short tempdata;
 
@@ -495,7 +493,7 @@ void Heater_14_auto_control()
 	}
 }
 
-void  Heater_1_manual_control()
+void  Heater_1_manual_control(void)
 {
 
 	unsigned short tempdata;
@@ -517,7 +515,7 @@ void  Heater_1_manual_control()
 }
 
 
-void Heater_2_manual_control()
+void Heater_2_manual_control(void)
 {
 	unsigned short tempdata;
 
@@ -537,7 +535,7 @@ void Heater_2_manual_control()
 	}
 }
 
-void Heater_3_manual_control()
+void Heater_3_manual_control(void)
 {
 	unsigned short tempdata;
 
@@ -557,7 +555,7 @@ void Heater_3_manual_control()
 	}
 }
 
-void Heater_4_manual_control()
+void Heater_4_manual_control(void)
 {
 
 	unsigned short tempdata;
@@ -579,7 +577,7 @@ void Heater_4_manual_control()
 }
 
 
-void Heater_5_manual_control()
+void Heater_5_manual_control(void)
 {
 	unsigned short tempdata;
 
@@ -599,7 +597,7 @@ void Heater_5_manual_control()
 	}
 }
 
-void Heater_6_manual_control()
+void Heater_6_manual_control(void)
 {
 	unsigned short tempdata;
 
@@ -619,7 +617,7 @@ void Heater_6_manual_control()
 	}
 }
 
-void Heater_7_manual_control()
+void Heater_7_manual_control(void)
 {
 	unsigned short tempdata;
 
@@ -633,7 +631,7 @@ void Heater_7_manual_control()
 	}
 }
 
-void Heater_8_manual_control()
+void Heater_8_manual_control(void)
 {
 	unsigned short tempdata;
 
@@ -647,7 +645,7 @@ void Heater_8_manual_control()
 	}
 }
 
-void Heater_9_manual_control()
+void Heater_9_manual_control(void)
 {
 	unsigned short tempdata;
 
@@ -661,7 +659,7 @@ void Heater_9_manual_control()
 	}
 }
 
-void Heater_10_manual_control()
+void Heater_10_manual_control(void)
 {
 	unsigned short tempdata;
 
@@ -675,7 +673,7 @@ void Heater_10_manual_control()
 	}
 }
 
-void Heater_11_manual_control()
+void Heater_11_manual_control(void)
 {
 	unsigned short tempdata;
 
@@ -689,7 +687,7 @@ void Heater_11_manual_control()
 	}
 }
 
-void Heater_12_manual_control()
+void Heater_12_manual_control(void)
 {
 	unsigned short tempdata;
 
@@ -703,7 +701,7 @@ void Heater_12_manual_control()
 	}
 }
 
-void Heater_13_manual_control()
+void Heater_13_manual_control(void)
 {
 	unsigned short tempdata;
 
@@ -717,7 +715,7 @@ void Heater_13_manual_control()
 	}
 }
 
-void Heater_14_manual_control()
+void Heater_14_manual_control(void)
 {
 	unsigned short tempdata;
 

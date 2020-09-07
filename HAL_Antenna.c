@@ -22,7 +22,7 @@ void antennaCommand1(void)
 }
 void antennaCommand2(void)
 {
-	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;               /* Antenna_Deploy_command */
+	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;       /* Antenna_Deploy_command */
 	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000004 ) = 0x000000A1;
 	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000008 ) = 0x000000C3;
 	REG32(ANTENNA_SLAVE_ADDRESS)                         = 0x00000063;
@@ -30,7 +30,7 @@ void antennaCommand2(void)
     return;
 }
 void antennaCommand3(void){
-	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;              /* Antenna_DISARM_command */
+	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;       /* Antenna_DISARM_command */
 	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000004 ) = 0x000000AC;
     REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000008 ) = 0x000000C3;
     REG32(ANTENNA_SLAVE_ADDRESS)                         = 0x00000063;
@@ -39,7 +39,7 @@ void antennaCommand3(void){
 }
 
 void antennaCommand4(void){
-	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;             /* Antenna_RESET_command */
+	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;       /* Antenna_RESET_command */
 	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000004 ) = 0x000000AA;
     REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000008 ) = 0x000000C3;
     REG32(ANTENNA_SLAVE_ADDRESS)                         = 0x00000063;
@@ -48,7 +48,7 @@ void antennaCommand4(void){
 }
 
 void antennaCommand5(void){
-	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;             /* Antenna_deploy_with_override */
+	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;       /* Antenna_deploy_with_override */
 	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000004 ) = 0x000000BA;
     REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000008 ) = 0x000000C3;
     REG32(ANTENNA_SLAVE_ADDRESS)                         = 0x00000063;
@@ -58,42 +58,42 @@ void antennaCommand5(void){
 
 void antennaCommand6(void){
 	Antenna_ACKf = 1;
-	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;             /* Antenna_system_temp */
+	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;       /* Antenna_system_temp */
 	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000004 ) = 0x000000C0;
     REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000008 ) = 0x000000C3;
     REG32(ANTENNA_SLAVE_ADDRESS)                         = 0x00000063;
-    REG32(ANTENNA_STATUS_REGISTER_2)                     = 0x00006803;              /* ACK */
+    REG32(ANTENNA_STATUS_REGISTER_2)                     = 0x00006803;       /* ACK */
 
 	return;
 }
 
 void antennaCommand7(void){
 	Antenna_ACKf = 2;
-	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;             /* Antenna_deploy_status_report */
+	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;       /* Antenna_deploy_status_report */
 	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000004 ) = 0x000000C3;
     REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000008 ) = 0x000000C3;
     REG32(ANTENNA_SLAVE_ADDRESS)                         = 0x00000063;
-    REG32(ANTENNA_STATUS_REGISTER_2)                     = 0x00006c03;              /* ACK */
+    REG32(ANTENNA_STATUS_REGISTER_2)                     = 0x00006c03;       /* ACK */
 	return;
 }
 
 void antennaCommand8(void){
 	Antenna_ACKf = 3;
-	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;             /* Antenna_deploy_activation_count */
+	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;       /* Antenna_deploy_activation_count */
 	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000004 ) = 0x000000B0;
     REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000008 ) = 0x000000C3;
     REG32(ANTENNA_SLAVE_ADDRESS)                         = 0x00000063;
-    REG32(ANTENNA_STATUS_REGISTER_2)                     = 0x00006803;                /* ACK */
+    REG32(ANTENNA_STATUS_REGISTER_2)                     = 0x00006803;       /* ACK */
 	return;
 }
 
 void antennaCommand9(void){
 	Antenna_ACKf = 4;
-	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;             /* Antenna_deploy_activation_time */
+	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE)               = 0x00000062;        /* Antenna_deploy_activation_time */
 	REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000004 ) = 0x000000B4;
     REG32(ANTENNA_WRITE_DATA_ADDRESS_BASE + 0x00000008 ) = 0x000000C3;
     REG32(ANTENNA_SLAVE_ADDRESS)                         = 0x00000063;
-    REG32(ANTENNA_STATUS_REGISTER_2)                     = 0x00006803;             /* ACK */
+    REG32(ANTENNA_STATUS_REGISTER_2)                     = 0x00006803;        /* ACK */
 	return;
 }
 
@@ -144,12 +144,10 @@ void antenna_TM(void)
 	}
 }
 
-unsigned int sa_test;
 unsigned short sa_data;
 void rHAL_SA_MAIN_Deploy_on(void)                  /* -ve roll */
 {
 	uint32 tempdata;
-	sa_test = 1;
 
 	Out_latch_5.SA1_DEPLOY = 1;
 	tempdata = Out_latch_5.data;
@@ -180,8 +178,8 @@ void rHAL_SA_RED_Deploy_on(void)                      /* +ve roll */
 	SA_Command_Type = SA_RED;
 
 }
-unsigned int panel_test ;
-SA1_status_t rHAL_SA1_Deploy_status_check()
+
+SA1_status_t rHAL_SA1_Deploy_status_check(void)
 {
 	SWHW_STATUS.SA_status_1 = (unsigned char)SA1_status;
 	if(SA1_status == SA1_DEPLOY_CMD_RCVD)
@@ -207,7 +205,7 @@ SA1_status_t rHAL_SA1_Deploy_status_check()
 	return SA1_status;
 }
 
-SA2_status_t rHAL_SA2_Deploy_status_check()
+SA2_status_t rHAL_SA2_Deploy_status_check(void)
 {
 	SWHW_STATUS.SA_status_2 = (unsigned char)SA2_status;
 	if(SA2_status == SA2_DEPLOY_CMD_RCVD)
@@ -256,7 +254,6 @@ void rHAL_SA_Deploy_Status_new(void)
 			(SA2_status == SA2_OVER_HEAT))
 		{
 			/* Abort the deployment */
-			panel_test = 1;
 			Out_latch_5.SA1_DEPLOY = 0;
 			tempdata = Out_latch_5.data;
 			IO_LATCH_REGISTER_5;
@@ -266,7 +263,6 @@ void rHAL_SA_Deploy_Status_new(void)
 
 		else
 		{
-			panel_test = 2;
 			/* continue with deployment */
 		}
 	}

@@ -202,7 +202,7 @@ unsigned int Remote_data_addr;
 
 	union TMTC_boolean_U
 	    {
-		uint8 TMTC_Buffer[11]; //TBD
+		uint8 TMTC_Buffer[12]; //TBD
 		struct TMTC_Boolean Boolean_Table;
 	    }TMTC_boolean_u;
 //---------------------------------------------------------------------------

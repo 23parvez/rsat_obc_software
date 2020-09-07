@@ -19,13 +19,13 @@ unsigned int hils_datas[63];
 void rHILS_payload(union HILS_test* HILS_packets)
 {
 
-	int i;
+	int i_hils;
 	int temp_1;
 	short temp_2;
-	Hils_ptr = &(HILS_packets->HILS_data_16bit[0]);
+	Hils_ptr = (short*)&(HILS_packets->HILS_data_16bit[0]);
 	//hils_ptr_sh = &Hils_ptr;
 	pl_config_addr_ptr =(unsigned long int*)PAYLOAD_BUFFER_ADDRESS;
-	for(i = 0 ; i<= 31 ; i++)
+	for(i_hils = 0 ; i_hils<= 31 ; i_hils++)
 	{
 
 		//hils_datas[i] = *Hils_ptr++;
@@ -41,7 +41,7 @@ void rHILS_payload(union HILS_test* HILS_packets)
 
 }
 
-void HILS_mode_enable()           //HILS_mode enabling by using a GPIO pin no_6
+void HILS_mode_enable(void)           //HILS_mode enabling by using a GPIO pin no_6
 {
 	unsigned short tempdata;
 
@@ -50,7 +50,7 @@ void HILS_mode_enable()           //HILS_mode enabling by using a GPIO pin no_6
 	IODAT = tempdata;
 }
 
-void HILS_mode_disable()         //HILS_mode disabling by using a GPIO pin no_6
+void HILS_mode_disable(void)         //HILS_mode disabling by using a GPIO pin no_6
 {
 
 	unsigned short tempdata;
@@ -62,7 +62,7 @@ void HILS_mode_disable()         //HILS_mode disabling by using a GPIO pin no_6
 }
 
 
-void rHAL_pl1_ON()
+void rHAL_pl1_ON(void)
 {
 	unsigned short tempdata;
 	unsigned char pl_tm_index;
@@ -83,7 +83,7 @@ void rHAL_pl1_ON()
 
 }
 
-void rHAL_pl1_OFF()
+void rHAL_pl1_OFF(void)
 {
 	unsigned short tempdata;
 	Out_Latch_3.PL1_ON_OFF = 0;
@@ -103,7 +103,7 @@ void rHAL_pl1_OFF()
 
 
 
-void rHAL_pl2_ON()
+void rHAL_pl2_ON(void)
 {
 	unsigned short tempdata;
 	unsigned char pl_tm_index;
@@ -121,7 +121,7 @@ void rHAL_pl2_ON()
 	}
 }
 
-void rHAL_pl2_OFF()
+void rHAL_pl2_OFF(void)
 {
 	unsigned short tempdata;
 	Out_Latch_3.PL2_ON_OFF = 0;
@@ -139,7 +139,7 @@ void rHAL_pl2_OFF()
 	pl_ack_count = False;
 }
 
-void rHAL_tm_ds_en()
+void rHAL_tm_ds_en(void)
 {
 	unsigned short tempdata;
 
@@ -160,7 +160,7 @@ void rHAL_X_Tx_ON(void)
 }
 
 
-void rHAL_X_Tx_OFF()
+void rHAL_X_Tx_OFF(void)
 {
 	unsigned short tempdata;
 	Out_Latch_2.X_Tx_ON_OFF = 0;
@@ -377,7 +377,7 @@ unsigned int pl_test10;
 uint16 *pl_tm_ptr;
 uint16 temp_data_1_pl, temp_data_2_pl;
 unsigned short PL_TX_TM_2_EN;
-void pl_tx_tm()
+void pl_tx_tm(void)
 {
 	uint16 tempdata_pl_1,tempdata_pl_2;
 	uint32 pl_st_write_index = 0;
@@ -424,7 +424,7 @@ void pl_tx_tm()
 }
 
 uint32 pl_test12;
-void pl_tx_tm_2()
+void pl_tx_tm_2(void)
 {
 //	uint16 tempdata3,tempdata2;
 	pl_config_addr_ptr =(uint32*)PAYLOAD_CONFIG_REGISTER;
@@ -453,7 +453,7 @@ void pl_tx_tm_2()
 	}
 }
 int32 length;
-void rpl_read()                                                    //Reading the payload_data
+void rpl_read(void)                                                    //Reading the payload_data
 {
 	uint16  temp_short1, temp_short2;
 	uint32 tempdata;
@@ -491,7 +491,7 @@ void rpl_read()                                                    //Reading the
 }
 
 unsigned int data;
-void rpl_tm_write()
+void rpl_tm_write(void)
 {
 		uint16* pl_data_addr;
 		int  pl_Addr_count;

@@ -46,7 +46,7 @@ void rADCS_Pon_vars(void)
 	CB_Sl_Ecl_OnBrd_detection = 0;
 	CB_BDOT_Computation = 0;
 
-	/// IMU ///////////////////////////////////////////////////////////
+	// IMU //
 
 	for (i_pini=0; i_pini<3; i_pini++)
 	{
@@ -235,9 +235,27 @@ void rADCS_Pon_vars(void)
 	IMU2_Corr.DB_MagLPF[0] = 0.0;
 	IMU2_Corr.DB_MagLPF[1] = 1.0;*/
 
-	/// Sun Sensors ///////////////////////////////////////////////////////////
+	// Sun Sensors //
 
-	SS_Main_2Exe_DB.DB_Imax_RPD = 7.4536;//1.073296595956431;
+	SS_Main_2Exe_DB.DB_Imax_RPD = 1.0;//1.073296595956431;
+	SS_Main_2Exe_DB.DB_Imax_RND = 1.0;
+	SS_Main_2Exe_DB.DB_Imax_RPND = 1.0;
+	SS_Main_2Exe_DB.DB_Imax_RNND = 1.0;
+	SS_Main_2Exe_DB.DB_Imax_PP = 1.0;
+	SS_Main_2Exe_DB.DB_Imax_PN = 1.0;
+	SS_Main_2Exe_DB.DB_Imax_YP = 1.0;
+	SS_Main_2Exe_DB.DB_Imax_YN = 1.0;
+
+	SS_Redundant_2Exe_DB.DB_Imax_RPD = 1.0;//1.073296595956431;
+	SS_Redundant_2Exe_DB.DB_Imax_RND = 1.0;
+	SS_Redundant_2Exe_DB.DB_Imax_RPND = 1.0;
+	SS_Redundant_2Exe_DB.DB_Imax_RNND = 1.0;
+	SS_Redundant_2Exe_DB.DB_Imax_PP = 1.0;
+	SS_Redundant_2Exe_DB.DB_Imax_PN = 1.0;
+	SS_Redundant_2Exe_DB.DB_Imax_YP = 1.0;
+	SS_Redundant_2Exe_DB.DB_Imax_YN = 1.0;
+
+	/*SS_Main_2Exe_DB.DB_Imax_RPD = 7.4536;//1.073296595956431;
 	SS_Main_2Exe_DB.DB_Imax_RND = 6.8237;//1.172387413685503;
 	SS_Main_2Exe_DB.DB_Imax_RPND = 6.9977;//1.143227326266195;
 	SS_Main_2Exe_DB.DB_Imax_RNND = 7.1851;//1.113413888039156;
@@ -253,7 +271,7 @@ void rADCS_Pon_vars(void)
 	SS_Redundant_2Exe_DB.DB_Imax_PP	= 8.0;//1.0;
 	SS_Redundant_2Exe_DB.DB_Imax_PN = 7.4311;//1.076554757530204;
 	SS_Redundant_2Exe_DB.DB_Imax_YP = 7.8809;//1.015119697606048;
-	SS_Redundant_2Exe_DB.DB_Imax_YN = 6.9909;//1.144345150026632;
+	SS_Redundant_2Exe_DB.DB_Imax_YN = 6.9909;//1.144345150026632;*/
 
 
 	/*SS_Main_2Exe_DB.DB_misaln_cor125[0][0] = 1.0;
@@ -393,7 +411,7 @@ void rADCS_Pon_vars(void)
 	SunNPP_SAMtransit_count_limit = 0;
 	SunNPP_SAMtransit = 0;
 
-	///BDOT Computation   ///Det gyro
+	//BDOT Computation   //Det gyro
 
 	BDOT_Counter = 0;
 
@@ -480,10 +498,10 @@ void rADCS_Pon_vars(void)
 
 	// Extended Kalman Filter
 
-	///Kalman Filter
+	//Kalman Filter
 
-	sigma_v = 7.56407e-5;///
-	sigma_u = 4.1209e-10;///2.9688e-6;///7.56407e-10;///
+	sigma_v = 7.56407e-5;//
+	sigma_u = 4.1209e-10;//2.9688e-6;//7.56407e-10;//
 	sigma_m = 1500.0e-13;
 	sun_noise = 0.2*3.141592653589793/180.0;
 	mag_noise = 100.0;
@@ -690,7 +708,7 @@ void rADCS_Pon_vars(void)
 
 	// GPS DataProcessing
 
-	///rOrbitalElements_generation_GPS
+	//rOrbitalElements_generation_GPS
 
 	GPS_Select = 1;
 	f_GPS_Valid_Data = 0;
@@ -774,7 +792,7 @@ void rADCS_Pon_vars(void)
 	dayofyr = 0;
 	inttemp = 0;
 
-	///Orbit Initialization and Propagation
+	//Orbit Initialization and Propagation
 	Tsince_GPS = 0.0;
 	epochdays_sel = 0.0;
 	inclination_sel = 0.0;
@@ -811,7 +829,7 @@ void rADCS_Pon_vars(void)
 	Tsince_TLE = 0.0;
 	Tsince_TLE_tc = 0.0;
 	Day_Of_Year_DeltaT = 0.0;
-	Delta_T = 0.0;//////////////////////////////////////
+	Delta_T = 0.0;//
 	Orbit_Period_Comp = 0.0;
 	wo = 0.0;
 	inclo = 0.0;
@@ -994,7 +1012,7 @@ void rADCS_Pon_vars(void)
 	}
 
 
-	///Orbital elements computation
+	//Orbital elements computation
 	semimajoraxis = 0.0;
 	ecc = 0.0;
 	Alti = 0.0;
@@ -1012,7 +1030,7 @@ void rADCS_Pon_vars(void)
 	longitude_tan_den = 0.0;
 
 
-	///Ecef to ECI to ecef
+	//Ecef to ECI to ecef
 	UT1 = 0.0;
 	UTC_EE = 0.0;
 	TAI = 0.0;
@@ -1054,7 +1072,7 @@ void rADCS_Pon_vars(void)
 			ECEFtoECI[i_pini][j_pini] = 0.0;
 			ECItoECEF[i_pini][j_pini] = 0.0;
 
-			///NED to ECEF
+			//NED to ECEF
 			NEDtoECEF[i_pini][j_pini] = 0.0;
 
 		}
@@ -1065,13 +1083,13 @@ void rADCS_Pon_vars(void)
 	OBT_at_TLE_epoch = 0;
 	Delta_TLE = 0.0;
 
-	///Julian Day
+	//Julian Day
 	jd_time = 0.0;
 	tut = 0.0;
 	pps_deltaT = 0.0;
 	Julian_day = 0.0;
 
-	///ast_args
+	//ast_args
 
 	for (i_pini=0; i_pini<4; i_pini++)
 	{
@@ -1083,12 +1101,12 @@ void rADCS_Pon_vars(void)
 		f[i_pini] = 0.0;
 	}
 
-	///main
+	//main
 	i_pini = 0;
 	ktr = 0;
 	TLE_Select = 0;
 
-	/// IGRF model
+	// IGRF model
 
 	temp_magad = 0.0;
 	BNorth = 0.0;
@@ -1170,7 +1188,7 @@ void rADCS_Pon_vars(void)
 	DeltaT_MFC = 0;
 	DeltaT_Updated = 0;
 
-	///Sun Model
+	//Sun Model
 
 	for (i_pini=0; i_pini<3; i_pini++)
 	{
@@ -1184,7 +1202,7 @@ void rADCS_Pon_vars(void)
 	Sun_Dis = 0.0;
 	Epsilon = 0.0;
 
-	/// Ref quaternions
+	// Ref quaternions
 	SUN_ECI_mag = 0.0;
 	X_SVO2ECI_mag  = 0.0;
 	Z_SVO2ECI_mag  = 0.0;
@@ -1240,7 +1258,7 @@ void rADCS_Pon_vars(void)
 	Q_EPO2ECI[3] = 1.0;
 	Q_SFAO2ECI[3] = 1.0;
 	Q_SFDO2ECI[3] = 1.0;
-	///Ref Vector Generation
+	//Ref Vector Generation
 	Q_REF[3]  = 1.0;
 	Q_StP2ECI[3]  = 1.0;
 
@@ -1258,7 +1276,7 @@ void rADCS_Pon_vars(void)
 		}
 	}
 
-	/// Ref Gyro
+	// Ref Gyro
 
 	for (i_pini = 0; i_pini < 3; i_pini++)
 	{
@@ -1277,7 +1295,7 @@ void rADCS_Pon_vars(void)
 	QRD_vect_norm = 0.0;
 	Q_angle  = 0.0;
 
-	/// Onboard Eclipse Algorithm
+	// Onboard Eclipse Algorithm
 
 	for (i_pini=0; i_pini<3; i_pini++)
 	{
@@ -1297,7 +1315,7 @@ void rADCS_Pon_vars(void)
 	//distsqrd  = 0.0;
 	//tmin = 0.0;
 
-	/// Quest Data Processing
+	// Quest Data Processing
 
 	sc_qst = 0;
 	dc_qst = 0;
@@ -1331,7 +1349,7 @@ void rADCS_Pon_vars(void)
 	f_DataSort_SUNMAG = 0;
 	i_QDP = 0;
 
-	///DAD Quest
+	//DAD Quest
 
 	for (i_pini = 0; i_pini < 24; i_pini++)
 	{
@@ -1438,7 +1456,7 @@ void rADCS_Pon_vars(void)
 
 	trace_S_DAD  = 0.0;
 
-	///Dutycycle Generation
+	//Dutycycle Generation
 
 	for (i_pini=0; i_pini<3; i_pini++)
 	{
@@ -1457,7 +1475,7 @@ void rADCS_Pon_vars(void)
 	Yaw_MTR_Pol_Reversal = 0;
 
 
-	///Angular Momentum Dumping
+	//Angular Momentum Dumping
 
 	f_Momentum_Dumping = 0;
 	dumping_on = 0;
@@ -1468,7 +1486,7 @@ void rADCS_Pon_vars(void)
 		DPM[i_pini] = 0.0;
 	}
 
-	///Speed based Momentum Dumping
+	//Speed based Momentum Dumping
 
 	for (i_pini=0; i_pini<4; i_pini++)
 	{
@@ -1492,7 +1510,7 @@ void rADCS_Pon_vars(void)
 	tau_ms = 0.0;
 	min_TW = 0.0;
 
-	///Linear Controller
+	//Linear Controller
 
 	for (i_pini=0; i_pini<4; i_pini++)
 	{
@@ -1519,7 +1537,7 @@ void rADCS_Pon_vars(void)
 		}
 	}
 
-	///wheel dynamic friction
+	//wheel dynamic friction
 
 	for (i_pini=0; i_pini<4; i_pini++)
 	{
@@ -1549,7 +1567,7 @@ void rADCS_Pon_vars(void)
 	DFCcountLow = 0;
 
 
-	///wheel spin updown
+	//wheel spin updown
 	wheel_spin_logic = 0;
 	spin_up_avg_count = 0;
 	spin_up_avg_count_2 = 0;
@@ -1562,7 +1580,7 @@ void rADCS_Pon_vars(void)
 
 	del_v0a = 0.0;
 
-	///wheel auto reconfiguration
+	//wheel auto reconfiguration
 
 	for (i_pini = 0; i_pini < 4; i_pini++)
 	{
@@ -1590,14 +1608,14 @@ void rADCS_Pon_vars(void)
 	TC_GYRO_Det_Min_Thresh = 0.2;
 	GYRO_Threshold_Count = 0;
 
-	///Detumbling_ModePreprocessing
+	//Detumbling_ModePreprocessing
 
 	GYRO_max_threshold_count = 0;
 
 	BDOT_Threshold_Count = 0;
 	TorquerPolaritySetFlag = 0;
 
-	///rDetumbling_ModePreprocessing_GYRO_Logic
+	//rDetumbling_ModePreprocessing_GYRO_Logic
 
 	for (i_pini=0; i_pini<3; i_pini++)
 	{
@@ -1610,21 +1628,19 @@ void rADCS_Pon_vars(void)
 
 	GYRO_Threshold_Count = 0;
 
-	///////////////BDOT Computation
+	//BDOT Computation
 
-	///GYRO ext Computation
+	//GYRO ext Computation
 
 	GYRO_Counter = 0;
 
-	///Rate reduction routine
+	//Rate reduction routine
 	BDOTnorm = 0.0;
 
-	///SunAcquisition_ModePreprocessing
+	//SunAcquisition_ModePreprocessing
 
 	SunAcquisition2ThreeAxis_autotransit = 0;
-	SunAcq_Ang_Thres = 0.01;
 	SunAcq3ThreeAx_trsit_cnt = 0;
-	SunAcq2ThreeAx_trsit_cnt_thres = 28125;//14063;//2344;
 
 	SunAcq2DetMode_counter = 0;
 
@@ -1632,7 +1648,7 @@ void rADCS_Pon_vars(void)
 	f_threeaxis2safe = 0;
 	f_battery_safemode = 0;
 
-	/// Timer based sunlit/eclipse
+	// Timer based sunlit/eclipse
 
 	MTR_ActuationCycle = 8;
 	//entrytime2eclipse = 0;
@@ -1654,6 +1670,9 @@ void rADCS_Pon_vars(void)
 
 	pbk = 0.000999000999;
 	qqbk = 0.999000999;
+
+	SunAcq_Ang_Thres = 0.1;
+	SunAcq2ThreeAx_trsit_cnt_thres = 28125;//14063;//2344;
 
 	// Telecommands INIT
 
@@ -1827,7 +1846,7 @@ void rADCS_Pon_vars(void)
 
 
 
-	//////////////////////////////////////////////////////////////   TEST
+	//   TEST
 
 	hils_mode_select = 1;
 

@@ -113,7 +113,8 @@ struct TM_BUFFER_STUCTURE{
 	unsigned short       TM_inter_HAL_IMU_Status_Data;
 
 	unsigned char TM_TC_Buffer[64];
-	unsigned char TM_mode_selection[6];
+	//unsigned char TM_mode_selection[6];
+	unsigned char TM_mode_selection;
 	unsigned short TM_STS_data;
 	unsigned char storage_telemetry_sts;
 
@@ -302,7 +303,7 @@ struct TM_BUFFER_STUCTURE{
   unsigned short TM_ADC_STS_data;
 
   /* station_tracking_mode*/
-  unsigned char TM_station_tracking_mode;
+ // unsigned char TM_station_tracking_mode;
 
 // heaters_auto_manual_status
    unsigned short TM_heaters_auto_manual;                            // heaters_auto_manual_status

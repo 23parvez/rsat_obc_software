@@ -95,8 +95,8 @@ typedef struct S_DTTC_Execute		//Differential Time Tagged TC execute Structure
 }DTTCformatExe;
 
 DTTCformat DTTCarray[MAX_TIMETAG_CMD_LIMIT];
-void rDifferentialTTC_Update();
-void rDifferentialTTC_Execute();
+void rDifferentialTTC_Update(void);
+void rDifferentialTTC_Execute(void);
 void rInit_Block(void);
 void rBlockTC_Execute(void);
 unsigned long long int *commandptr;
@@ -203,21 +203,6 @@ uint32 Block_Index[MAX_BLKS];
 	    uint32 TC_appended_bit:1;
 	} ;
 
-/*#pragma pack(1)
-    struct S_telecommand_remote_data		//Remote Data
-	{
-	    uint32 start_bit:2;
-	    uint32 spacecraft_id:4;
-	    uint32 link_id:2;
-	    uint32 command_type_A:2;
-	    uint32 command_type_B:4;
-	    uint32 filler1:2;
-	    float data_addr;
-	    uint32 filler2:8;
-	    uint32 TC_parity:7;
-	    uint32 TC_appended_bit:1;
-	} ;*/
-
 #pragma pack(1)
 typedef struct S_ATTC     //Data TC Structure
 {
@@ -295,9 +280,6 @@ union U_telecommand						//Union of Telecommands
 union TC_Hist *TC_hist_write_ptr;
 union TC_Hist *TC_hist_read_ptr;
 
-unsigned long long int block_test_array[50];
-
-
 typedef struct Node
 {
 	ATTCformat command;
@@ -310,12 +292,15 @@ unsigned long long int Next_exe_TC;
 Nodetype Nodearray[MAX_TIMETAG_CMD_LIMIT];
 Nodeptrtype Nodeptr[MAX_TIMETAG_CMD_LIMIT];
 
-//-----------testing--------------
-//ATTCformat new_data;
-//Nodeptrtype new_node;			//Create new node to be used for storing the TC data to the list
-//Nodeptrtype temp;
-//Nodeptrtype prev;
 int Top_index;
+/***************************/
+union pending_TC_data
+{
+	unsigned long long int tc_pending_DT;
+	ATTCformat command;
+}TC_pend_data;
+
+/****************************/
 //-----------------------------------
 //----------------BCHEncoder-------------
 void invertReverse(unsigned char * startAddr);
@@ -341,232 +326,229 @@ union parity_tag
 }TC_Rcvd;
 
 //Function Declarations
-void rTelecommand();				//Telecommand Routine
-void TC_status_reset();
-void rReal_Time_TC();				//Real time command processing
-void rAbsolute_TimeTag_TC();		//Absolute timetag commmand processing
-void rDifferential_TimeTag_TC();	//Differential timetag command processing
-void rBlock_TC();					//Bulk telecommand processing
-void rADCS_Data_TC();
+void rTelecommand(void);				//Telecommand Routine
+void TC_status_reset(void);
+void rReal_Time_TC(void);				//Real time command processing
+void rAbsolute_TimeTag_TC(void);		//Absolute timetag commmand processing
+void rDifferential_TimeTag_TC(void);	//Differential timetag command processing
+void rBlock_TC(void);					//Bulk telecommand processing
+void rADCS_Data_TC(void);
 
-void rContingency_TC();				//Contingency TC processing
-void rData_TC();					//Data command processing
-void rBoolean_TC();					//Boolean command processing
-void rGainSelect_TC();				//Gain select command processing
-void rFuncExecute_TC();             //Function execute command processing
-void rRemoteProgram_Addr_TC();      //Remote program address processing
-void rRemoteProgram_Data_TC();      //Remote program data processing
-void TMTC_Assignment();             //Assigning of TC to TM
-void rRemote_base_addr_TC();
-void rRemote_data_view();
+void rContingency_TC(void);				//Contingency TC processing
+void rData_TC(void);					//Data command processing
+void rBoolean_TC(void);					//Boolean command processing
+void rGainSelect_TC(void);				//Gain select command processing
+void rFuncExecute_TC(void);             //Function execute command processing
+void rRemoteProgram_Addr_TC(void);      //Remote program address processing
+void rRemoteProgram_Data_TC(void);      //Remote program data processing
+void TMTC_Assignment(void);             //Assigning of TC to TM
+void rRemote_base_addr_TC(void);
+void rRemote_data_view(void);
 
 
-void adcsgains();                   //Gain_set_function
-void TC_detumbling_bdot_gain_1();
-void TC_detumbling_rate_gain_1();
-void TC_BDOT_Det_Thresh_1();
-void TC_GYRO_Det_Min_Thres_1();
-void rTc_nominal_speed_RW1();
-void rTc_nominal_speed_RW2();
-void rTc_nominal_speed_RW3();
-void rTc_nominal_speed_RW4();
-void TC_AngMomDump_Thrsld_1();
-void TC_SpeedDump_Thrsld_1();
-void TC_SpeedDump_TimeSelect_1();
-void TC_comd_pitch_rate_1();
-void TC_Gyro_LPF_Gain_IMU1_1();
-void TC_Gyro_LPF_Gain_IMU2_1();
-void TC_Mag_LPF_Gain_IMU1_1();
-void TC_Mag_LPF_Gain_IMU2_1();
-void TC_Wheel_Cutoff_Threshold_1();
+void adcsgains(void);                   //Gain_set_function
+void TC_detumbling_bdot_gain_1(void);
+void TC_detumbling_rate_gain_1(void);
+void TC_BDOT_Det_Thresh_1(void);
+void TC_GYRO_Det_Min_Thres_1(void);
+void rTc_nominal_speed_RW1(void);
+void rTc_nominal_speed_RW2(void);
+void rTc_nominal_speed_RW3(void);
+void rTc_nominal_speed_RW4(void);
+void TC_AngMomDump_Thrsld_1(void);
+void TC_SpeedDump_Thrsld_1(void);
+void TC_SpeedDump_TimeSelect_1(void);
+void TC_comd_pitch_rate_1(void);
+void TC_Gyro_LPF_Gain_IMU1_1(void);
+void TC_Gyro_LPF_Gain_IMU2_1(void);
+void TC_Mag_LPF_Gain_IMU1_1(void);
+void TC_Mag_LPF_Gain_IMU2_1(void);
+void TC_Wheel_Cutoff_Threshold_1(void);
 
 
 
 //Time tagged functions
-void initNodetable();
-Nodeptrtype getNode();
+void initNodetable(void);
+Nodeptrtype getNode(void);
 void freeNode(Nodeptrtype ptr);
-void rAbsoluteTTC_Update();
-void rAbsoluteTTC_Execute();
-void rAbsoluteTTC_Delete();
-void rAbsoluteTTC_Clear();
-void rDifferential_TimeTag_Update();
-void rDifferential_TimeTag_Execute();
-void rPrintList();
+void rAbsoluteTTC_Update(void);
+void rAbsoluteTTC_Execute(void);
+void rAbsoluteTTC_Delete(void);
+void rAbsoluteTTC_Clear(void);
+void rDifferential_TimeTag_Update(void);
+void rDifferential_TimeTag_Execute(void);
+void rPrintList(void);
 
 //Function execute commands
-void TC_IMU1_On();
-void TC_IMU2_On();
-void TC_IMU1_Off();
-void TC_IMU2_Off();
-void imu1_db_execute();
-void imu2_db_execute();
-void imu1_db_checksum();
-void imu2_db_checksum();
-void imu_test_sys_sel();
-void TC_Drift_Uplink_Compenstation_Update_IMU1();
-void TC_Drift_Uplink_Compenstation_Update_IMU2();
-void TC_Gyro_Misalignment_Update_IMU1();
-void TC_Gyro_Misalignment_Update_IMU2();
-void TC_Gyro_Scale_Factor_Update_IMU1();
-void TC_Gyro_Scale_Factor_Update_IMU2();
-void TC_MagBias_Uplink_Compenstation_Update_IMU1();
-void TC_MagBias_Uplink_Compenstation_Update_IMU2();
-void TC_Mag_Misalignment_Update_IMU1();
-void TC_Mag_Misalignment_Update_IMU2();
-void TC_Mag_Scale_Factor_Update_IMU1();
-void TC_Mag_Scale_Factor_Update_IMU2();
+void TC_IMU1_On(void);
+void TC_IMU2_On(void);
+void TC_IMU1_Off(void);
+void TC_IMU2_Off(void);
+void imu1_db_execute(void);
+void imu2_db_execute(void);
+void imu1_db_checksum(void);
+void imu2_db_checksum(void);
+void imu_test_sys_sel(void);
+void TC_Drift_Uplink_Compenstation_Update_IMU1(void);
+void TC_Drift_Uplink_Compenstation_Update_IMU2(void);
+void TC_Gyro_Misalignment_Update_IMU1(void);
+void TC_Gyro_Misalignment_Update_IMU2(void);
+void TC_Gyro_Scale_Factor_Update_IMU1(void);
+void TC_Gyro_Scale_Factor_Update_IMU2(void);
+void TC_MagBias_Uplink_Compenstation_Update_IMU1(void);
+void TC_MagBias_Uplink_Compenstation_Update_IMU2(void);
+void TC_Mag_Misalignment_Update_IMU1(void);
+void TC_Mag_Misalignment_Update_IMU2(void);
+void TC_Mag_Scale_Factor_Update_IMU1(void);
+void TC_Mag_Scale_Factor_Update_IMU2(void);
 
-void rSSmain_ImaxF_update();
-void rSSredt_ImaxF_update();
-void TC_Gyro_LPF_Gain_Update_IMU1();
-void TC_Gyro_LPF_Gain_Update_IMU2();
+void rSSmain_ImaxF_update(void);
+void rSSredt_ImaxF_update(void);
+void TC_Gyro_LPF_Gain_Update_IMU1(void);
+void TC_Gyro_LPF_Gain_Update_IMU2(void);
 
-void TC_ACC_Ang_RESET();
-//void TC_Panel1_Deploy();
-void TC_NMI_count_reset();
-void rMag_Refeci_update();
-void TC_GPS1_ON();
-void TC_GPS1_OFF();
-void TC_GPS1_NMEA_VTG_enable();
-void TC_GPS1_NMEA_VTG_disable();
-void TC_GPS1_NMEA_GGA_enable();
-void TC_GPS1_NMEA_GGA_disable();
-void TC_GPS1_NMEA_GSA_enable();
-void TC_GPS1_NMEA_GSA_disable();
-void TC_GPS1_cold_start();
-void TC_GPS1_factory_reset();
-void TC_GPS2_on();
-void TC_GPS2_off();
-void TC_GPS2_NMEA_VTG_enable();
-void TC_GPS2_NMEA_VTG_disable();
-void TC_GPS2_NMEA_GGA_enable();
-void TC_GPS2_NMEA_GGA_disable();
-void TC_GPS2_NMEA_GSA_enable();
-void TC_GPS2_NMEA_GSA_disable();
-void TC_GPS2_cold_start();
-void TC_GPS2_factory_reset();
-void TC_W1_ON();
-void TC_W2_ON();
-void TC_W3_ON();
-void TC_W4_ON();
-void TC_W1_OFF();
-void TC_W2_OFF();
-void TC_W3_OFF();
-void TC_W4_OFF();
-void TC_Nominal_wheel_speed_execute();
-void TC_MTR_ON();
-void Pitch_Torquer_ON();
-void Yaw_Torquer_ON();
-void TC_MTR_OFF();
-void Pitch_Torquer_OFF();
-void Yaw_Torquer_OFF();
-void rTC_HILS_ENABLE();									/* offset =    61 */// replaced pitch torquer off (not used)
-void rTC_HILS_DISABLE();
-void TC_Detumbling_Mode_Select();
-void TC_Safe_Mode_Select();
-void TC_Threeaxis_Mode_Select();
-void payload_1_on();
-void payload_1_off();
-void rHeater1_on();
-void rHeater1_off();
-void rHeater2_on();
-void rHeater2_off();
-void rHeater3_on();
-void rHeater3_off();
-void rHeater4_on();
-void rHeater4_off();
-void rHeater5_on();
-void rHeater5_off();
-void rHeater6_on();
-void rHeater6_off();
-void RX_TX_deployed();
-void PL_K_CMD_STS();
-void PL_K_CMD_ACQ();
-void PL_K_CMD_HLT();
-void PL_K_DIAG();
-void PL_K_CMD_OFF();
-void PL_K_CMD_ON();
-void rTC_HILS_MODE_IDLE();
-void rTC_HILS_MODE_START();
-void rTC_HILS_MODE_STOP();
-void rSun_Ephemeris_update();
-void rTLE_Update();
-void TC_init_RW1();
-void TC_init_RW2();
-void TC_init_RW3();
-void TC_init_RW4();
-void TC_MTR_Yaw_Positive();
-void TC_MTR_Yaw_Negative();
-void TC_MTR_Pitch_Positive();
-void TC_MTR_Pitch_Negative();
-void TC_MTR_Roll_Positive();
-void TC_MTR_Roll_Negative();
-void rDifferentialTTC_Execute();
-void OBC_ON();
-void OBC_OFF();
-void Antenna_mechanism_ON();
-void Antenna_mechanism_OFF();
-void payload_2_on();
-void payload_2_off();
-void S_band_tx_on();
-void S_band_tx_off();
-void X_band_tx_on();
-void X_band_tx_off();
-void SA_DEPLOYMENT_MECHANISM_MAIN_ON();
-void SA_DEPLOYMENT_MECHANISM_MAIN_OFF();
-void SA_DEPLOYMENT_MECHANISM_RED_ON();
-void SA_DEPLOYMENT_MECHANISM_RED_OFF();
-void SA1_DEPLOYMENT_AND_SA2_DEPLOYMENT_REDUNDANT_SPARE_BUS_ON();
-void SA1_DEPLOYMENT_AND_SA2_DEPLOYMENT_REDUNDANT_SPARE_BUS_OFF();
-void Test_ON();
-void Test_OFF();
-void Antenna_mechanism_arm();
-void Antenna_deploy();
-void Antenna_mechanism_disarm();
-void rTC_Detumbling_ModePreprocessing_BDOT();
-void rTC_Detumbling_ModePreprocessing_GYRO();
-void rTC_SunAcquisition_ModePreprocessing();
-void rTC_ThreeAxis_ModePreprocessing();
-void rTC_Suspended_ModePreprocessing();
-void sunlit();
-void eclipse();
-void Sunlit_eclipse_both();
-void rTC_Safe_mode_PreProcessing();
-void TC_MTR_Roll_No_cuurent();
-void TC_MTR_Pitch_No_cuurent();
-void TC_MTR_Yaw_No_cuurent();
-void TC_pl_debug();
-void TC_pl_tm();
-void TC_TM_DS_EN();
-void Antenna_RESET_command();
-void Antenna_deploy_with_override();
-void Antenna_system_temp();
-void Antenna_deploy_status_report();
-void Antenna_deploy_activation_count();
-void Antenna_deploy_activation_time();
-void eeprom_en();
-void eeprom_dis();
-void TC_GPS1_NMEA_NMEA_GSV_Enable();
-void TC_GPS1_NMEA_NMEA_GSV_disable();
-void TC_GPS2_NMEA_NMEA_GSV_Enable();
-void TC_GPS2_NMEA_NMEA_GSV_disable();
-void TC_ATTC_CMD_clear();
-void rTC_ref_snv_bias_q_update();
-void rTC_ref_stn_bias_q_update();
-void rTC_ref_q_gnd_update();
-void TC_q_body_init();
-void rElapsedTimerAssign();
-
-//void ATTC_exe_en_flag();
-//void Diff_Funtion_exe();
+void TC_ACC_Ang_RESET(void);
+//void TC_Panel1_Deploy(void);
+void TC_NMI_count_reset(void);
+void rMag_Refeci_update(void);
+void TC_GPS1_ON(void);
+void TC_GPS1_OFF(void);
+void TC_GPS1_NMEA_VTG_enable(void);
+void TC_GPS1_NMEA_VTG_disable(void);
+void TC_GPS1_NMEA_GGA_enable(void);
+void TC_GPS1_NMEA_GGA_disable(void);
+void TC_GPS1_NMEA_GSA_enable(void);
+void TC_GPS1_NMEA_GSA_disable(void);
+void TC_GPS1_cold_start(void);
+void TC_GPS1_factory_reset(void);
+void TC_GPS2_on(void);
+void TC_GPS2_off(void);
+void TC_GPS2_NMEA_VTG_enable(void);
+void TC_GPS2_NMEA_VTG_disable(void);
+void TC_GPS2_NMEA_GGA_enable(void);
+void TC_GPS2_NMEA_GGA_disable(void);
+void TC_GPS2_NMEA_GSA_enable(void);
+void TC_GPS2_NMEA_GSA_disable(void);
+void TC_GPS2_cold_start(void);
+void TC_GPS2_factory_reset(void);
+void TC_W1_ON(void);
+void TC_W2_ON(void);
+void TC_W3_ON(void);
+void TC_W4_ON(void);
+void TC_W1_OFF(void);
+void TC_W2_OFF(void);
+void TC_W3_OFF(void);
+void TC_W4_OFF(void);
+void TC_Nominal_wheel_speed_execute(void);
+void TC_MTR_ON(void);
+void Pitch_Torquer_ON(void);
+void Yaw_Torquer_ON(void);
+void TC_MTR_OFF(void);
+void Pitch_Torquer_OFF(void);
+void Yaw_Torquer_OFF(void);
+void rTC_HILS_ENABLE(void);									/* offset =    61 */ // replaced pitch torquer off (not used)
+void rTC_HILS_DISABLE(void);
+void TC_Detumbling_Mode_Select(void);
+void TC_Safe_Mode_Select(void);
+void TC_Threeaxis_Mode_Select(void);
+void payload_1_on(void);
+void payload_1_off(void);
+void rHeater1_on(void);
+void rHeater1_off(void);
+void rHeater2_on(void);
+void rHeater2_off(void);
+void rHeater3_on(void);
+void rHeater3_off(void);
+void rHeater4_on(void);
+void rHeater4_off(void);
+void rHeater5_on(void);
+void rHeater5_off(void);
+void rHeater6_on(void);
+void rHeater6_off(void);
+void RX_TX_deployed(void);
+void PL_K_CMD_STS(void);
+void PL_K_CMD_ACQ(void);
+void PL_K_CMD_HLT(void);
+void PL_K_DIAG(void);
+void PL_K_CMD_OFF(void);
+void PL_K_CMD_ON(void);
+void rTC_HILS_MODE_IDLE(void);
+void rTC_HILS_MODE_START(void);
+void rTC_HILS_MODE_STOP(void);
+void rSun_Ephemeris_update(void);
+void rTLE_Update(void);
+void TC_init_RW1(void);
+void TC_init_RW2(void);
+void TC_init_RW3(void);
+void TC_init_RW4(void);
+void TC_MTR_Yaw_Positive(void);
+void TC_MTR_Yaw_Negative(void);
+void TC_MTR_Pitch_Positive(void);
+void TC_MTR_Pitch_Negative(void);
+void TC_MTR_Roll_Positive(void);
+void TC_MTR_Roll_Negative(void);
+void rDifferentialTTC_Execute(void);
+void OBC_ON(void);
+void OBC_OFF(void);
+void Antenna_mechanism_ON(void);
+void Antenna_mechanism_OFF(void);
+void payload_2_on(void);
+void payload_2_off(void);
+void S_band_tx_on(void);
+void S_band_tx_off(void);
+void X_band_tx_on(void);
+void X_band_tx_off(void);
+void SA_DEPLOYMENT_MECHANISM_MAIN_ON(void);
+void SA_DEPLOYMENT_MECHANISM_MAIN_OFF(void);
+void SA_DEPLOYMENT_MECHANISM_RED_ON(void);
+void SA_DEPLOYMENT_MECHANISM_RED_OFF(void);
+void SA1_DEPLOYMENT_AND_SA2_DEPLOYMENT_REDUNDANT_SPARE_BUS_ON(void);
+void SA1_DEPLOYMENT_AND_SA2_DEPLOYMENT_REDUNDANT_SPARE_BUS_OFF(void);
+void Test_ON(void);
+void Test_OFF(void);
+void Antenna_mechanism_arm(void);
+void Antenna_deploy(void);
+void Antenna_mechanism_disarm(void);
+void rTC_Detumbling_ModePreprocessing_BDOT(void);
+void rTC_Detumbling_ModePreprocessing_GYRO(void);
+void rTC_SunAcquisition_ModePreprocessing(void);
+void rTC_ThreeAxis_ModePreprocessing(void);
+void rTC_Suspended_ModePreprocessing(void);
+void sunlit(void);
+void eclipse(void);
+void Sunlit_eclipse_both(void);
+void rTC_Safe_mode_PreProcessing(void);
+void TC_MTR_Roll_No_cuurent(void);
+void TC_MTR_Pitch_No_cuurent(void);
+void TC_MTR_Yaw_No_cuurent(void);
+void TC_pl_debug(void);
+void TC_pl_tm(void);
+void TC_TM_DS_EN(void);
+void Antenna_RESET_command(void);
+void Antenna_deploy_with_override(void);
+void Antenna_system_temp(void);
+void Antenna_deploy_status_report(void);
+void Antenna_deploy_activation_count(void);
+void Antenna_deploy_activation_time(void);
+void eeprom_en(void);
+void eeprom_dis(void);
+void TC_GPS1_NMEA_NMEA_GSV_Enable(void);
+void TC_GPS1_NMEA_NMEA_GSV_disable(void);
+void TC_GPS2_NMEA_NMEA_GSV_Enable(void);
+void TC_GPS2_NMEA_NMEA_GSV_disable(void);
+void TC_ATTC_CMD_clear(void);
+void rTC_ref_snv_bias_q_update(void);
+void rTC_ref_stn_bias_q_update(void);
+void rTC_ref_q_gnd_update(void);
+void TC_q_body_init(void);
+void rElapsedTimerAssign(void);
 
 // TC_history_view
-void rTC_write_tC_history();
+void rTC_write_tC_history(void);
 
 //Block Telecommand
-void Block_update();
-void gain_sets();
+void Block_update(void);
+void gain_sets(void);
 // TeleCommand
 
 // TLE based array

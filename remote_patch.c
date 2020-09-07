@@ -5,63 +5,63 @@
  *      Author: Ajeeth
  */
 #include "remote_patch.h"
-void rSus_mode_remote_entry_hook ()
+void rSus_mode_remote_entry_hook (void)
 {
 	nop();
 }
 
-void rSus_mode_remote_exit_hook ()
+void rSus_mode_remote_exit_hook (void)
 {
 	nop();
 }
 
-void rDBDOT_mode_remote_entry_hook ()
+void rDBDOT_mode_remote_entry_hook (void)
 {
 	nop();
 }
 
-void rDBDOT_mode_remote_exit_hook ()
+void rDBDOT_mode_remote_exit_hook (void)
 {
 	nop();
 }
 
-void rDGYRO_mode_remote_entry_hook ()
+void rDGYRO_mode_remote_entry_hook (void)
 {
 	nop();
 }
 
-void rDGYRO_mode_remote_exit_hook ()
+void rDGYRO_mode_remote_exit_hook (void)
 {
 	nop();
 }
 
-void rSACQ_mode_remote_entry_hook ()
+void rSACQ_mode_remote_entry_hook (void)
 {
 	nop();
 }
 
-void rSACQ_mode_remote_exit_hook ()
+void rSACQ_mode_remote_exit_hook (void)
 {
 	nop();
 }
 
-void r3AXIS_mode_remote_entry_hook ()
+void r3AXIS_mode_remote_entry_hook (void)
 {
 	nop();
 }
 
-void r3AXIS_mode_remote_exit_hook ()
+void r3AXIS_mode_remote_exit_hook (void)
 {
 
 	nop();
 }
 
-void rSAFE_mode_remote_entry_hook ()
+void rSAFE_mode_remote_entry_hook (void)
 {
 	nop();
 }
 
-void rSAFE_mode_remote_exit_hook()
+void rSAFE_mode_remote_exit_hook(void)
 {
 	nop();
 }
@@ -80,7 +80,7 @@ void rSAFE_mode_remote_exit_hook()
 #pragma GCC optimize ("O0")
 
 // Function having 1000 nops creating space of 200 (instructions) * 4 (bytes) = 800 Bytes
-void rRemote_patch_area_S1 ()
+void rRemote_patch_area_S1 (void)
 {
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
@@ -107,7 +107,7 @@ void rRemote_patch_area_S1 ()
 #pragma GCC optimize ("O0")
 
 // Function having 1000 nops creating space of 200 (instructions) * 4 (bytes) = 800 Bytes
-void rRemote_patch_area_S2 ()
+void rRemote_patch_area_S2 (void)
 {
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
@@ -135,7 +135,7 @@ void rRemote_patch_area_S2 ()
 #pragma GCC optimize ("O0")
 
 // Function having 1000 nops creating space of 200 (instructions) * 4 (bytes) = 800 Bytes
-void rRemote_patch_area_S3 ()
+void rRemote_patch_area_S3 (void)
 {
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
@@ -162,7 +162,7 @@ void rRemote_patch_area_S3 ()
 #pragma GCC optimize ("O0")
 
 // Function having 1000 nops creating space of 200 (instructions) * 4 (bytes) = 800 Bytes
-void rRemote_patch_area_S4 ()
+void rRemote_patch_area_S4 (void)
 {
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
@@ -189,7 +189,7 @@ void rRemote_patch_area_S4 ()
 #pragma GCC optimize ("O0")
 
 // Function having 1000 nops creating space of 200 (instructions) * 4 (bytes) = 800 Bytes
-void rRemote_patch_area_S5 ()
+void rRemote_patch_area_S5 (void)
 {
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
@@ -216,7 +216,7 @@ void rRemote_patch_area_S5 ()
 #pragma GCC optimize ("O0")
 
 // Function having 1000 nops creating space of 200 (instructions) * 4 (bytes) = 800 Bytes
-void rRemote_patch_area_S6 ()
+void rRemote_patch_area_S6 (void)
 {
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
@@ -244,7 +244,7 @@ void rRemote_patch_area_S6 ()
 #pragma GCC optimize ("O0")
 
 // Function having 1000 nops creating space of 1000 (instructions) * 4 (bytes) = 4000 Bytes
-void rRemote_patch_area_L1 ()
+void rRemote_patch_area_L1 (void)
 {
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
@@ -353,7 +353,7 @@ void rRemote_patch_area_L1 ()
 #pragma GCC optimize ("O0")
 
 // Function having 1000 nops creating space of 1000 (instructions) * 4 (bytes) = 4000 Bytes
-void rRemote_patch_area_L2 ()
+void rRemote_patch_area_L2 (void)
 {
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();
 	nop ();	nop (); nop (); nop (); nop (); nop ();	nop (); nop (); nop (); nop ();

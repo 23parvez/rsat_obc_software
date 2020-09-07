@@ -6,7 +6,7 @@ extern double TC_KP[3];
 extern float RW_Wheel_Speed[4];
 extern double TC_wh_speed_cutoff;
 
-///Dutycycle Generation
+//Dutycycle Generation
 extern int DutyCycleGenEnable, TorquerPolaritySetFlag;
 extern int Roll_MTR_Pol_Reversal, Pitch_MTR_Pol_Reversal, Yaw_MTR_Pol_Reversal;
 extern int DPM_Polarity[3], Ton[3], Toff[3], DPM_Pol_prev[3];
@@ -17,7 +17,7 @@ extern int i_lict, j_lict;
 extern unsigned int TorquerDutyCycle[3];
 
 
-///Angular Momentum Dumping
+//Angular Momentum Dumping
 extern int f_Momentum_Dumping;
 extern int dumping_on;
 extern double delta_HB[3];
@@ -25,7 +25,7 @@ extern double DPM[3];
 extern double TC_MDk;
 extern double TC_Hmax;
 
-///Speed based Momentum Dumping
+//Speed based Momentum Dumping
 extern double TC_max_whsp_spdump, TC_min_whsp_spdump, TC_SpeedDumpLimit, temp_lic;
 extern double TC_SpeedDumpTime;
 
@@ -42,7 +42,7 @@ extern double Pse_Inv_Dist_Mat[4][3];
 
 
 
-///Linear Controller
+//Linear Controller
 
 extern double Tc[3],Qerror[4];
 extern double RWSpeed_RPM[4], RWSpeed_RAD[4];
@@ -52,7 +52,7 @@ extern double T_RW[4];
 extern double B2wh_mat[4][3], wh2B_mat[3][4];
 
 
-///wheel dynamic friction
+//wheel dynamic friction
 
 extern double speedDFCch;
 extern int TachoHyst[4], DFCCount[4], FirstSpeed[4];
@@ -62,15 +62,15 @@ DFCGainSL[4], LPFK1SL[4], LPFK2SL[4], WhMom0[4], ActWhMom[4], LossWhMom[4], Loss
 extern int DFCCountLimSL[4], DFCCountLimSL[4], DFCcountHigh, DFCcountLow;
 
 
-///wheel spin updown
+//wheel spin updown
 extern int wheel_spin_logic, spin_up_avg_count, spin_up_avg_count_2;
 extern double del_v0[4], del_v0a, T_RW_spin[4];
 extern float TC_RW_Nominal[4];
 
-/// for dynamics
+// for dynamics
 extern int tor_counter;
 
-///wheel auto reconfiguration
+//wheel auto reconfiguration
 extern int wheel_index[4], wheel_index_ARCsum, Wheel_Config, RW_ARC_Logic, RW_ARC_Count, count_arc_w0, count_arc_w1, count_arc_w2, count_arc_w3;
 extern int TC_ARC_Time_Cycle;
 extern double pres_exp_whsp_ch[4], exp_whsp_ch[4], ch_obs_whsp[4], prev_obs_whsp_ch[4], diff_obs_exp_ch[4];

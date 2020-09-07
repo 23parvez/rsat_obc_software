@@ -33,6 +33,7 @@ unsigned int GPS_OBT_Read_2;
 unsigned long int GPS_Status_Data;
 //unsigned long int GPS_Data;
 unsigned short GPS_Data;
+unsigned int GPS_counter;
 unsigned int GPS_count_TM;
 
 unsigned long int GPS_Buffer_Data[106];
@@ -42,17 +43,12 @@ unsigned long int GPS_Data_Read_Status;
 unsigned long int GPS_Config_Status;
 unsigned long int GPS_Locations;
 
-//void rHAL_GPS_POWER(unsigned long int GPS_No,unsigned long int GPS_Power);
-//void rHAL_GPS_Read(struct HAL_GPS_registers GPS_No, unsigned long int* GPS_Addr, unsigned int No_of_Bytes);
-//unsigned int rHAL_GPS_Read(struct HAL_GPS_registers GPS_No, unsigned long int* GPS_Addr,unsigned int No_of_Bytes);
 unsigned int rHAL_GPS_Read(struct HAL_GPS_registers GPS_No, unsigned int No_of_Bytes);
 
-//void rHAL_GPS_Read(struct HAL_GPS_registers , unsigned long int* , unsigned int );
-//unsigned long int rHAL_GPS_Config(struct HAL_GPS_registers GPS_No,unsigned long int Config_Type);
-void ST_TM_gps_data();
-void rGPS_Buffer_Init();
-void GPS_1_DATA();
-void rGPS_OBT_timer();
+void ST_TM_gps_data(void);
+void rGPS_Buffer_Init(void);
+void GPS_1_DATA(void);
+void rGPS_OBT_timer(void);
 
 #pragma pack(1)
 union GPS_Config_Message

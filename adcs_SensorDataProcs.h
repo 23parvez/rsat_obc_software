@@ -92,33 +92,33 @@ extern unsigned int imu1_db_checksum_obc;
 extern unsigned int imu2_db_checksum_obc;
 
 
-/// Sun Sensor
+// Sun Sensor
 
 
-///16 Cells' output (Main and Redundant)
+//16 Cells' output (Main and Redundant)
 extern double SS_M1, SS_M2, SS_M3, SS_M4, SS_M5, SS_M6, SS_M7, SS_M8;
 
 extern double SB_MAIN[3], SB_RED[3], SS_prcd_data[3];
-///6 Active sensors' output after multiplying by constants
+//6 Active sensors' output after multiplying by constants
 extern double ss_temp[3];
 extern double SC1, SC2, SC3, SC4, SC5, SC6, SC7, SC8;
 
-///6 Cells' Imax Factors
+//6 Cells' Imax Factors
 extern double SC1ImaxF, SC2ImaxF, SC3ImaxF, SC4ImaxF, SC5ImaxF, SC6ImaxF;
 
 extern double comb1, comb2, temp11, temp12;
 
-extern double ele1, az1, ele2; ///Elevation and azimuth angles
+extern double ele1, az1, ele2; //Elevation and azimuth angles
 
-///6 Active sensors' output after multiplying by constants
+//6 Active sensors' output after multiplying by constants
 
 extern int TC_SS_Main_Cells_Sel, Panel_Deployment;
 
-extern double sun_sf[3],S_BODY[3], S_BODYn[3]; ///SunSensor data in sensor frame
+extern double sun_sf[3],S_BODY[3], S_BODYn[3]; //SunSensor data in sensor frame
 
 extern double ss2b[3][3];
 
-extern double Ang_Deviation; ///arccos(dot(S_BODY,[0,-1,0]))
+extern double Ang_Deviation; //arccos(dot(S_BODY,[0,-1,0]))
 
 extern double Roll_ang_err, Yaw_ang_err;
 extern int sun_quadrant;
@@ -140,7 +140,7 @@ extern int SunNPP_SAMtransit;
 
 
 
-///BDOT Computation
+//BDOT Computation
 
 extern int BDOT_Counter;
 extern int Det_BDOT_MC_Count;

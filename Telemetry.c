@@ -23,7 +23,7 @@ unsigned int real_tm_wait = 1;
 unsigned int real_tm_finish;
 unsigned int flag_for_test;
  // selection between real_TM and storage TM dumping
-void rTM_Real_st_write()
+void rTM_Real_st_write(void)
 {
 
 	if (TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Dump_enable_disable)      // Enable storage_TM_dumping
@@ -135,7 +135,7 @@ void rHAL_TM_HW_Status_Update(void)
 }
 
 
-void rTM_Address_Table_Init()
+void rTM_Address_Table_Init(void)
 {
 	//SUB FRAME 0
 	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.FrameSynch;                //Copy address of Framesync
@@ -1625,13 +1625,17 @@ void rTM_Address_Table_Init()
 	TM_Table[TM_Table_Row_No].Length_Field = sizeof(TM.Buffer.TM_TC_Buffer);  //64 byte
 	TM_Table_Row_No++;
 
-	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_mode_selection[0];//Copy address of TMTC_Buffer
-	TM_Table[TM_Table_Row_No].Length_Field = sizeof(TM.Buffer.TM_mode_selection);  /* 6 byte */
-	TM_Table_Row_No++;
+//	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_mode_selection[0];//Copy address of TMTC_Buffer
+//	TM_Table[TM_Table_Row_No].Length_Field = sizeof(TM.Buffer.TM_mode_selection);  /* 6 byte */
+//	TM_Table_Row_No++;
 
-	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)& TM.Buffer.TM_station_tracking_mode;//Copy address of TMTC_Buffer
+	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)&TM.Buffer.TM_mode_selection;//Copy address of TMTC_Buffer
 	TM_Table[TM_Table_Row_No].Length_Field = 1;  /* 1 byte */
 	TM_Table_Row_No++;
+//
+//	TM_Table[TM_Table_Row_No].Addr_Field   = (unsigned char*)& TM.Buffer.TM_station_tracking_mode;//Copy address of TMTC_Buffer
+//	TM_Table[TM_Table_Row_No].Length_Field = 1;  /* 1 byte */
+//	TM_Table_Row_No++;
 
 	TM_Table[TM_Table_Row_No].Addr_Field   = NULL; /* End of Subframe15 */
 	TM_Table[TM_Table_Row_No].Length_Field = 0;
@@ -1647,7 +1651,7 @@ void rTM_Address_Table_Init()
 unsigned int cp_cnt,cp_cnt1;
 
 // Copy the Real_Time_TM to 256 buffer
-void rTM_Copy_Subframe()
+void rTM_Copy_Subframe(void)
 {
 	unsigned char* pl_tm_buffer_ptr;
 	unsigned char tempdata;
@@ -1691,7 +1695,7 @@ void rTM_Copy_Subframe()
 
 // Storage_telemetry
 
-void Storage_Telemetry_Write()
+void Storage_Telemetry_Write(void)
 {
 	//TC_boolean_u.TC_Boolean_Table.TC_NormalStorage_Sampling_Rate_Select = 0;
 	if(TC_boolean_u.TC_Boolean_Table.TC_Storage_TM_Enable_Disable == TRUE)                       // enable_disable_storage_telemetry
@@ -1709,7 +1713,7 @@ void Storage_Telemetry_Write()
 unsigned int real_storage,TC_OBT_Start;
 unsigned int sampling_rate_count;
 unsigned int normal_count1;
-void StorageTelemetry()
+void StorageTelemetry(void)
 {
 	unsigned int Sampling_Rate = Sampling_Rate_Select();
 	unsigned int Frame_Address = Frame_Address_Select();  // frame address select
@@ -1945,7 +1949,7 @@ void ST_Copy_Subframe(unsigned int frame_addr,unsigned int Sampling_Rate )
 // Normal Storage Function
 
 
-void rTCH_full_dump_cpy_buf()
+void rTCH_full_dump_cpy_buf(void)
 {
 
 	unsigned int buf256_index;
@@ -1990,7 +1994,7 @@ void rTCH_full_dump_cpy_buf()
 		}
 }
 
-void rTCH_dump_cpy_buf()
+void rTCH_dump_cpy_buf(void)
 {
 	unsigned int buf256_index;
 	unsigned int TCH_cpy_index;
@@ -2046,7 +2050,7 @@ void rTCH_dump_cpy_buf()
 	ST_TCH_frame_count++;
 }
 
-void TC_Hist_dumping()
+void TC_Hist_dumping(void)
 {
 
 	rt_tm_frame_finish = 0;
@@ -2184,7 +2188,7 @@ int copy_frame(  unsigned int Circular)
 unsigned char filler_byte = 0x00;
 
 // Storage Telemetry frame table definition containing four normal storage frames
-void Norm_ST_1_Table_Init()
+void Norm_ST_1_Table_Init(void)
 {
 	unsigned int frame_1_filler_index = 0;
 	unsigned int frame_2_filler_index = 0;
@@ -2484,7 +2488,7 @@ void Norm_ST_1_Table_Init()
 
 unsigned char test_st_sp   = 0x00;
 
-void Spec_ST_Table_Init()
+void Spec_ST_Table_Init(void)
 {
 	// SUB FRAME 0
 	Spec_ST_Table[Spec_ST_Table_Row_No].Addr_Field   = (unsigned char*)&ST_special.ST_SP_Buffer.FrameSynch;
@@ -2684,7 +2688,7 @@ void Spec_ST_Table_Init()
 }
 
 
-void ST_DUMPING()
+void ST_DUMPING(void)
 {
 		unsigned long int tempdata;
 		//static unsigned short* inter_TM_ST_NS_Write_Source_Addr = (unsigned short*)Storage;
@@ -2754,12 +2758,12 @@ void ST_DUMPING()
 }
 
 /****************************************************************
- *@function name ST_full_dump()
+ *@function name ST_full_dump(void)
  *@return type   NONE
  *@Description   This function will dump full storage memory
  ****************************************************************
  */
-void ST_full_dump()
+void ST_full_dump(void)
 {
 		unsigned long int tempdata;
 		static unsigned short* inter_TM_ST_NS_Write_Source_Addr = (unsigned short*)Storage;

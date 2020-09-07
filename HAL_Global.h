@@ -356,7 +356,7 @@ unsigned long int inter_at697_var;
 
 //scrubing of SRAM
 unsigned long int ram_scrub_addr;					    // SRAM running pointer address(Power on ram_scrub_addr = 0x40000000)
-void s_ram_scrub();
+void s_ram_scrub(void);
 
 //EEPROM checksum
 unsigned char eeprom_flag, ee_blk_no;
@@ -364,7 +364,7 @@ unsigned int eeprom_chksum, eeprom_cur_addr, eeprom_blk_end_addr;
 unsigned int chksum_arr[8];
 void prom_chksum(void);
 
-void EEprom_read(); //EEprom testing routine
+void EEprom_read(void); //EEprom testing routine
 
 //MUX_output_raed
 unsigned short MUX_1;
@@ -384,14 +384,14 @@ unsigned long int checksum_u32(unsigned long int *db_start_address,unsigned long
 //void checksum_u8(void);
 void checksum_u8(unsigned char* db_start_address,unsigned short size_of_data);
 unsigned char chksum8(const unsigned char *buff, unsigned int len);
-void rOutput_Latch_Update();
-void ST_output_update();
-void STS_reg_TM();
-void NMI_interrupt_test();
-void EEPROM_RST();
-void GPIO();
-void EEPROM_RES();
-void MUX_Output();
+void rOutput_Latch_Update(void);
+void ST_output_update(void);
+void STS_reg_TM(void);
+void NMI_interrupt_test(void);
+void EEPROM_RST(void);
+void GPIO(void);
+void EEPROM_RES(void);
+void MUX_Output(void);
 
 //GPS
 #define GPS_1 1
@@ -426,7 +426,7 @@ unsigned long int IO_Latch_Register_5_Data;
 unsigned char chk_sum_u8;		//Check sum (8 bits)
 
 
-extern void UTP_selection();
-extern void LTP_selection();
+extern void UTP_selection(void);
+extern void LTP_selection(void);
 
 #endif //HAL_GLOBAL

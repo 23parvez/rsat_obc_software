@@ -48,18 +48,18 @@ void rOrbit_Initialization(void)
 {
     if (CB_OrbitModel == Enable)
     {
-        ///----------------------Initialization------------------------------------------------------------
+        //----------------------Initialization------------------------------------------------------------
         //DeltaT computation using TLE data added on 4-3-2016
         Day_Of_Year_DeltaT = epochdays_sel + (Tsince/1440.0);
-        if(((int)epochyr_sel % 4) == 0)///epochyr is not got by GPS, how to implement this logic?
+        if(((int)epochyr_sel % 4) == 0)//epochyr is not got by GPS, how to implement this logic?
         {
-            Delta_T = (((2000.0 + (float)epochyr_sel) + ((float)Day_Of_Year_DeltaT / 366.0)) - 2015.0);/// replace (2000.0 + epochyr_sel) with year_sel
-            ///DeltaT_MFC = DeltaT_Updated;
+            Delta_T = (((2000.0 + (float)epochyr_sel) + ((float)Day_Of_Year_DeltaT / 366.0)) - 2015.0);// replace (2000.0 + epochyr_sel) with year_sel
+            //DeltaT_MFC = DeltaT_Updated;
         }
         else
         {
             Delta_T = (((2000.0 + (float)epochyr_sel) + ((float)Day_Of_Year_DeltaT / 365.0)) - 2015.0);
-            ///DeltaT_MFC = DeltaT_Updated;
+            //DeltaT_MFC = DeltaT_Updated;
         }
 
         //Orbit frequency computation added on 4-3-16
@@ -593,7 +593,7 @@ void rOrbitalElements_computation(const double Pos_ECI_in[3], const double Vel_E
 		//Block4: compute the square of the magnitude of the velocity vector
 		velmagsq = velmag * velmag;
 
-		/// Compute the Eccentricity
+		// Compute the Eccentricity
 		rdtv = (Pos_ECI_in[0] * Vel_ECI_in[0]) + (Pos_ECI_in[1] * Vel_ECI_in[1]) + (Pos_ECI_in[2] * Vel_ECI_in[2]);
 
 		/*if(fabs(radialdistance) <= c_dividebyzerovalue)
@@ -627,7 +627,7 @@ void rOrbitalElements_computation(const double Pos_ECI_in[3], const double Vel_E
         {
             ecc = c_dividebyzerovalue;
         }
-		///Compute the semimajor axis
+		//Compute the semimajor axis
 		semi_den = (c_twomu-(radialdistance*velmagsq));
 
 		if(fabs(semi_den) <= c_dividebyzerovalue)
@@ -642,32 +642,32 @@ void rOrbitalElements_computation(const double Pos_ECI_in[3], const double Vel_E
             semimajoraxis = c_dividebyzerovalue;
         }
 
-		Alti = radialdistance - c_radiusearthkm; ///Correction required Alti = semimajoraxis - c_radiusearthkm;
+		Alti = radialdistance - c_radiusearthkm; //Correction required Alti = semimajoraxis - c_radiusearthkm;
 
-		///Compute the X,Y,Z component of the angular momentum
+		//Compute the X,Y,Z component of the angular momentum
 		rCross_Product(Pos_ECI_in, Vel_ECI_in);
 		angmomentumvec[0] = Cross_Product[0];
 		angmomentumvec[1] = Cross_Product[1];
 		angmomentumvec[2] = Cross_Product[2];
 
-		/// compute square of the magnitude of angular momentum vector
+		// compute square of the magnitude of angular momentum vector
 		angmomentumvecmag = sqrt((angmomentumvec[0] * angmomentumvec[0]) + (angmomentumvec[1] * angmomentumvec[1]) + (angmomentumvec[2] * angmomentumvec[2]));
 
 		delta_hmag = sqrt((angmomentumvec[1] * angmomentumvec[1]) + (angmomentumvec[0] * angmomentumvec[0]));
 
-        /// compute the inverse of the square of angular momentum vector magnitude
+        // compute the inverse of the square of angular momentum vector magnitude
 		if(fabs(angmomentumvecmag) <= c_dividebyzerovalue)
         {
             angmomentumvecmag = c_dividebyzerovalue;
         }
 		invangmomentumvecmag = 1.0 / angmomentumvecmag;
 
-		///compute Inclination
+		//compute Inclination
 		inclination_temp = angmomentumvec[2] * invangmomentumvecmag;
 		inclination = acos(inclination_temp);
 
 
-		/// Right Ascension of ascending node
+		// Right Ascension of ascending node
 		sinlongacnode = angmomentumvec[0] * invangmomentumvecmag;
 
 		if(delta_hmag <= c_dividebyzerovalue)
@@ -688,7 +688,7 @@ void rOrbitalElements_computation(const double Pos_ECI_in[3], const double Vel_E
             RAAN = c_Twopi - RAAN;
         }
 
-        ///compute True anomaly
+        //compute True anomaly
 		e_vecdtr = (Pos_ECI_in[0] * e_vec[0]) + (Pos_ECI_in[1] * e_vec[1]) + (Pos_ECI_in[2] * e_vec[2]);
 
 		ecc_r = ecc * radialdistance;
@@ -711,7 +711,7 @@ void rOrbitalElements_computation(const double Pos_ECI_in[3], const double Vel_E
             trueanomoly = c_Twopi - trueanomoly;
         }
 
-		///Compute the Argument of perigee
+		//Compute the Argument of perigee
         Ndte_vec = (-angmomentumvec[1]*e_vec[0]) + (angmomentumvec[0]*e_vec[1]);
 
         N_ecc = delta_hmag * ecc;
@@ -734,7 +734,7 @@ void rOrbitalElements_computation(const double Pos_ECI_in[3], const double Vel_E
             argofperigee = c_Twopi - argofperigee;
         }
 
-        ///Eccentric anomaly
+        //Eccentric anomaly
         omecc = 1.0 + (ecc*cos(trueanomoly));
 
         if(fabs(omecc) <= c_dividebyzerovalue)
@@ -747,7 +747,7 @@ void rOrbitalElements_computation(const double Pos_ECI_in[3], const double Vel_E
 		cose = ecc + (cos(trueanomoly)/omecc);
         eccanomaly = atan2(sine,cose);
 
-        ///Mean anomaly computation.
+        //Mean anomaly computation.
         mo = eccanomaly - (ecc*sin(eccanomaly));
         mo = fmod(mo,c_Twopi);
         if(mo <= 0.0)
@@ -755,7 +755,7 @@ void rOrbitalElements_computation(const double Pos_ECI_in[3], const double Vel_E
             mo = mo + c_Twopi;
         }
 
-		///Compute the longitude of the spacecraft using position in ECF frame
+		//Compute the longitude of the spacecraft using position in ECF frame
 
         longitude = 2.0*atan2((r_delta - Pos_ECEF_in[0]),Pos_ECEF_in[1]);
 
@@ -764,7 +764,7 @@ void rOrbitalElements_computation(const double Pos_ECI_in[3], const double Vel_E
 			longitude = longitude - c_Twopi;
 		}
 
-		///Compute the latitude of the satellite
+		//Compute the latitude of the satellite
 
 		mua_gcgd = pow((r_delta/c_radiusearthkm),2.0);
 
@@ -929,18 +929,18 @@ void rECEFtoECItoECEF(void)
 {
     if (CB_OrbitModel == Enable)
     {
-        /// compute julian day of UT1 JDUT1
+        // compute julian day of UT1 JDUT1
         UT1 = jd_time * c_min_per_day;
 
         UTC_EE = (UT1*60.0) - ADCS_TC_data_command_Table.TC_delUT1_ECEF2ECI;
 
-        /// compute julian day of UTC JDUTC
+        // compute julian day of UTC JDUTC
 
         TAI = UTC_EE + ADCS_TC_data_command_Table.TC_delAT_ECEF2ECI;
 
         TDT = TAI + 32.184;
 
-        /// compute julian day of TDT JDTDT
+        // compute julian day of TDT JDTDT
         JDTDT = Julian_day + (TDT/c_Day_To_Seconds);
 
         TTDT = (JDTDT - 2451545.0) / 36525.0;
@@ -958,7 +958,7 @@ void rECEFtoECItoECEF(void)
 
         TDB = TDT + ((0.00165800000 * sine1) + (0.000013850000 * sine2));
 
-        /// compute julian day of TDB JDTDB
+        // compute julian day of TDB JDTDB
         JDTDB = Julian_day + (TDB/c_Day_To_Seconds);
 
         TTDB = (JDTDB - 2451545.0) / 36525.0;
@@ -966,7 +966,7 @@ void rECEFtoECItoECEF(void)
         TTDB2=TTDB*TTDB;
         TTDB3=TTDB2*TTDB;
 
-        /// Precession
+        // Precession
 
         zeta= (0.011180860*TTDB) + (1.464E-6*TTDB2)+ ( 8.7E-8*TTDB3);
         z_prsn = (0.011180860*TTDB) + (5.308E-6 * TTDB2)+ (8.9E-8*TTDB3);
@@ -1148,9 +1148,9 @@ static void rGPSDataProcessing(void)
 {
     if (CB_OrbitModel == Enable)
     {
-        if((f_GPS_Valid_Data ==1) && ((Major_Cycle_Count % TC_GPS_pulse_duration) == 0))
+        if((f_GPS_Valid_Data ==1)) //&& ((Major_Cycle_Count % TC_GPS_pulse_duration) == 0))
         {
-        	Pos_ECEF_GPS[0] =(*((int*)(GPS_TM_Buffer_Addr_USC+160))) * 0.00001;
+        	/*Pos_ECEF_GPS[0] =(*((int*)(GPS_TM_Buffer_Addr_USC+160))) * 0.00001;
 			Pos_ECEF_GPS[1] = (*((int*)(GPS_TM_Buffer_Addr_USC+164))) * 0.00001;
 			Pos_ECEF_GPS[2] = (*((int*)(GPS_TM_Buffer_Addr_USC+168))) * 0.00001;
 			Vel_ECEF_GPS[0] = (*((int*)(GPS_TM_Buffer_Addr_USC+172))) * 0.00001;
@@ -1161,7 +1161,7 @@ static void rGPSDataProcessing(void)
 			UTC_day_GPS = *(GPS_TM_Buffer_Addr_USC+150);
 			UTC_hr_GPS = *(GPS_TM_Buffer_Addr_USC+154);
 			UTC_min_GPS = *(GPS_TM_Buffer_Addr_USC+155);
-			UTC_sec_GPS = (*((unsigned short*)(GPS_TM_Buffer_Addr_USC+156))) * 0.001;
+			UTC_sec_GPS = (*((unsigned short*)(GPS_TM_Buffer_Addr_USC+156))) * 0.001;*/
 			GPS_PPS_OBT = *(GPS_TM_Buffer_Addr_USC+208);
 
 
@@ -1256,7 +1256,7 @@ static void rGPSDataProcessing(void)
             latitude_GPS = latitude;
             no_GPS = no;
 
-            ///rGPS_data_validity();
+            //rGPS_data_validity();
             GPS_Elements_Available = 1;
             f_GPS_Valid_Data = 0; //RESET BY OBC DISCUSSED 11 SEP
             gps_pulse_mic_cnt = 0;

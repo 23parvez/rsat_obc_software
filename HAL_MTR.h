@@ -21,7 +21,7 @@ unsigned int MTR_Reset_Flag = 0;
 void rHAL_MTR_ON(void);
 void rHAL_MTR_OFF(void);
 void rHAL_MTR(void);
-void MTR_Monitoring();
+void MTR_Monitoring(void);
 void rHAL_MTR_TC(unsigned long int MTR_Axis,int MTR_Polarity);
 
 

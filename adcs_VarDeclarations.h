@@ -67,7 +67,7 @@ extern void rHILS_packets(void);
 #define RWHEEL2 2
 #define RWHEEL3 3
 
-/*///Orbit Model
+/*//Orbit Model
 extern const double c_twomu;
 extern const double c_tsince_min;
 extern const double c_OMEGAE;
@@ -104,7 +104,7 @@ extern const double fc[5][5];
 extern const double nut[106][10];
 
 
-///IGRF
+//IGRF
 extern const int c_Nmax;
 extern const int c_Kmax;
 extern const double c_Pibytwo;
@@ -119,7 +119,7 @@ extern const double c_gsval[104];
 extern const double c_hval[104];
 extern const double c_hsval[104];
 
-///Sun Model
+//Sun Model
 extern const double c_L_Msun1;
 extern const double c_L_Msun2;
 extern const double c_Msun1;
@@ -137,13 +137,13 @@ extern const double c_KDset3;
 
 extern const int c_DPM_Pol_LookUpTable[27][3];
 
-///Kalman Filter
+//Kalman Filter
 extern const double c_I_nine_cross_nine[9][9];
 extern const double c_I_three_cross_three[3][3];
 extern const double  c_rk_T[9][9];
 extern const double c_rk[9][9];
 
-///16 Imax extern constants of for all sensors (Main and Redundant cells) ( NOTE: extern constant = Overall_Imax / Individual_Imax)
+//16 Imax extern constants of for all sensors (Main and Redundant cells) ( NOTE: extern constant = Overall_Imax / Individual_Imax)
 extern const double c_Imax_RPD_Red;
 extern const double c_Imax_RND_Red;
 extern const double c_Imax_RPND_Red;
@@ -162,13 +162,13 @@ extern const double c_Imax_PN_Main;
 extern const double c_Imax_YP_Main;
 extern const double c_Imax_YN_Main;
 
-///---------------------------------------------------------------------------------------------------------------------------
-extern const double c_SSThrsld; ///Sunsensor threshold value
-extern const double c_Sunlit_Thrsld; ///Threshold for sunlit detection
-extern const double c_AngDev_SMtransit_thrsld; /// (30 degrees) Threshold for sun presence in negative pitch side
-extern const double c_AngDev_SAMtransit_thrsld; /// (30 degrees) Threshold for sun presence in negative pitch side
+//---------------------------------------------------------------------------------------------------------------------------
+extern const double c_SSThrsld; //Sunsensor threshold value
+extern const double c_Sunlit_Thrsld; //Threshold for sunlit detection
+extern const double c_AngDev_SMtransit_thrsld; // (30 degrees) Threshold for sun presence in negative pitch side
+extern const double c_AngDev_SAMtransit_thrsld; // (30 degrees) Threshold for sun presence in negative pitch side
 
-///SunSensor's Misalignment Correction Matrices
+//SunSensor's Misalignment Correction Matrices
 extern const double c_misaln_cor125[3][3];
 extern const double c_misaln_cor126[3][3];
 extern const double c_misaln_cor325[3][3];
@@ -178,19 +178,19 @@ extern const double c_misaln_cor346[3][3];
 extern const double c_misaln_cor145[3][3];
 extern const double c_misaln_cor146[3][3];
 
-///Sun Sensor to Body frame conversion for all the 8 quadrants
+//Sun Sensor to Body frame conversion for all the 8 quadrants
 extern const double c_ss2b1256[3][3];
 extern const double c_ss2b2356[3][3];
 extern const double c_ss2b3456[3][3];
 extern const double c_ss2b4156[3][3];
 
-///Quest
+//Quest
 extern const double c_wks_mag;
 extern const double c_wkm_mag;
 extern const double c_wks_sunmag;
 extern const double c_wkm_sunmag;
 
-/// Linear Controller
+// Linear Controller
 extern const double c_MOI_wh;
 extern const double c_DPMMAX;
 extern const double c_RPM2RADpS;
@@ -220,7 +220,7 @@ extern const double c_B2wh_mat_1034[4][3];
 extern const double c_B2wh_mat_0234[4][3];
 
 
-///ADandEstimation
+//ADandEstimation
 extern const int c_I_four_cross_four[4][4];
 extern const unsigned int c_FFFF;
 extern const double c_Resol_DelThta;
@@ -230,21 +230,21 @@ extern const double c_TM_Resol_w;
 extern const double c_TM_Resol_B;
 extern const double c_TM_RW_Resol;*/
 
-///----------AD and Estimation---------------
+//----------AD and Estimation---------------
 
-/*/// Quest Data Processing
-extern int sc_qst; ///sample count for magAD data processing(MC)
-extern int dc_qst; ///data count for magAD data processing (sec) NOTE: NOT MC
-extern int wc_qst; ///wait period count for magAD data processing (sec) NOTE: NOT MC
-extern int mat_mag_DataCounter, mat_sm_DataCounter; ///data counter for magAD and sunmagAD to track the filling matrices
-extern int TC_wp_QDP; ///Telecommand for Wait period selection in QDP
-extern double NMB_mag[3][24]; ///Measurement Matrix (Magnetic field) for magAD
-extern double NRB_mag[3][24]; ///Reference Matrix (Magnetic field) for magAD
-extern double NMB_sunmag[3][8]; ///Measurement Matrix (Magnetic field) for sunmagAD
-extern double NRB_sunmag[3][8]; ///Reference Matrix (Magnetic field) for sunmagAD
-extern double NMS[3][8]; ///Measurement Matrix (sun sensor) for sunmagAD
-extern double NRS[3][8];  ///Reference Matrix (sun model) for sunmagAD
-extern int f_DataSort_MAG,f_DataSort_SUNMAG; ///Flags that are raised to tell data matrices are ready for Quaternion computation in QUEST
+/*// Quest Data Processing
+extern int sc_qst; //sample count for magAD data processing(MC)
+extern int dc_qst; //data count for magAD data processing (sec) NOTE: NOT MC
+extern int wc_qst; //wait period count for magAD data processing (sec) NOTE: NOT MC
+extern int mat_mag_DataCounter, mat_sm_DataCounter; //data counter for magAD and sunmagAD to track the filling matrices
+extern int TC_wp_QDP; //Telecommand for Wait period selection in QDP
+extern double NMB_mag[3][24]; //Measurement Matrix (Magnetic field) for magAD
+extern double NRB_mag[3][24]; //Reference Matrix (Magnetic field) for magAD
+extern double NMB_sunmag[3][8]; //Measurement Matrix (Magnetic field) for sunmagAD
+extern double NRB_sunmag[3][8]; //Reference Matrix (Magnetic field) for sunmagAD
+extern double NMS[3][8]; //Measurement Matrix (sun sensor) for sunmagAD
+extern double NRS[3][8];  //Reference Matrix (sun model) for sunmagAD
+extern int f_DataSort_MAG,f_DataSort_SUNMAG; //Flags that are raised to tell data matrices are ready for Quaternion computation in QUEST
 extern int i_QDP;
 extern int OBC_Quest_update, Quest_update_available, w_q_update_satisfy;
 
@@ -271,10 +271,10 @@ extern double alpha_I_DAD[3][3], beta_S_DAD[3][3], sumX_DAD[3][3];
 extern int TC_SunMagAD;
 extern double trace_S_DAD, adj_S_DAD[3][3];
 
-/// Qgyro
+// Qgyro
 
-extern double Del_Y_theta, Del_R_theta, Del_P_theta; ///Small angle obtained by extern integrating Gyro data over a periof of time (mc/MC)
-extern double Del_Q[4]; ///Delta Qs
+extern double Del_Y_theta, Del_R_theta, Del_P_theta; //Small angle obtained by extern integrating Gyro data over a periof of time (mc/MC)
+extern double Del_Q[4]; //Delta Qs
 extern double q_prop_out[4],Qprop_prev[4];
 extern double Qbody[4];
 
@@ -290,7 +290,7 @@ extern double sin_of_W_norm_Delta_by2_and_W_norm;
 extern double sin_of_W_norm_Delta_by2_W_norm_and_big_omega[4][4];
 extern double cos_and_sin[4][4];
 
-///Kalman Filter
+//Kalman Filter
 extern int i_kf, j_kf, k_kf;
 extern double sigma_v;
 extern double sigma_u;
@@ -388,7 +388,7 @@ extern void rEKFDynamics(void);
 extern void rEKF_dy_int(double kfq_dy[4], double kfw_dy[3], double kfv_dy[4]);
 */
 
-/*///New variables
+/*//New variables
 
 extern int GPSDataReady_NA_count;
 extern int TC_GPS2TLE_Switch;
@@ -406,18 +406,18 @@ extern unsigned int f_GPS_Valid_Data;
 
 
 
-///Julian Day
+//Julian Day
 extern double jd_time, tut;
 extern double pps_deltaT, Julian_day;
 
-///ast_args
+//ast_args
 extern double tt[4], f[5];
 
-///main
+//main
 extern int i_god, j_god;
 extern int k, i, j, ktr, TLE_Select;
 
-///rOrbitalElements_generation_GPS
+//rOrbitalElements_generation_GPS
 extern unsigned int GPS_Select, GPSDataReady, TC_GPS_pulse_duration;
 extern int i_jday, lmonth[13], year_GPS, UTC_mon_GPS, tempdays, Numofdays, UTC_day_GPS, UTC_hr_GPS, UTC_min_GPS;
 extern int pps_delta_utc;
@@ -433,14 +433,14 @@ extern double angmomentumvecmag, delta_hmag, invangmomentumvecmag;
 extern double inclination_GPS, sinlongacnode, coslongacnode, nodeo_GPS, e_vecdtr, tempta, trueanomoly_GPS, Ndte_vec, N_ecc;
 extern double temparg, argpo_GPS, omecc, sine, cose, eccanomaly_GPS, mo_GPS, Orbit_Period, no_GPS, longitude_GPS, latitude_GPS;
 
-///Orbital Elements generation TLE
+//Orbital Elements generation TLE
 extern double sec_TLE_tc, no_TLE_tc, ecc_TLE_tc, trueanomoly_TLE_tc, epochdays_TLE_tc;
 extern int minute_TLE_tc, hr_TLE_tc, day_TLE_tc, mon_TLE_tc, year_TLE_tc, Epochyear_TLE_tc, TC_TLE_Elements_select;
 extern int epochyr, dayofyr, inttemp;
 extern double epochdays, temp_jday, ibexp_TLE_tc, bstar_TLE_tc, inclination_TLE_tc, nodeo_TLE_tc, argpo_TLE_tc;
 extern double mo_TLE_tc, ibexp_tc, bstar_tc, inclo_tc, nodeo_tc, argpo_tc, mo_tc;
 
-///Orbit Initialization and Propagation
+//Orbit Initialization and Propagation
 extern double Tsince_GPS, epochdays_sel, inclination_sel, nodeo_sel, trueanomoly_sel, mo_sel, argpo_sel;
 extern double ecc_sel, no_sel, ibexp_sel, bstar_sel, sec_sel;
 extern int year_sel, mon_sel, days_sel, hr_sel, minute_sel, epochyr_sel;
@@ -484,18 +484,18 @@ extern double del_temp;
 extern double Pos_ECI[3], Vel_ECI[3], Pos_ECEF[3], Vel_ECEF_temp[3], Vel_ECEF[3];
 extern double Pos_ECIn[3], Vel_ECIn[3], Pos_ECEFn[3], Vel_ECEFn[3];
 
-///Orbital elements computation
+//Orbital elements computation
 extern double semimajoraxis, ecc, Alti, inclination_temp, inclination, RAAN, trueanomoly, argofperigee, eccanomaly, ecc_r;
 extern double longitude, latitude_temp, latitude ,longitude_tan_num, longitude_tan_den;
 extern double xa_gcgd, mua_gcgd,ra_gcgd,l_gcgd,dlambda_gcgd,h_gcgd,den_gcgd,rhoa_gcgd,dmu_gcgd,gd_gcgd;
 
-///Ecef to ECI to ecef
+//Ecef to ECI to ecef
 extern double UT1, UTC_EE, TC_delUT1, TAI, JDTDT, M_quad, sine1, sine2, TDB, TDT, TTDB, JDTDB, TTDB2, TTDB3, zeta, z, theta;
 extern double pre_temp[3][3], precession[3][3], eps, dpsi, nut_temp[3][3], xin_temp, nutation[3][3], tut1, gmst0, gmst_, gast;
 extern double sidereal[3][3], TC_xp, TC_yp, polarmotion[3][3], nut_sid_temp[3][3], ECEFtoECI[3][3], ECItoECEF[3][3],ang;
 extern double TC_delAT, TTDT, deps;
 
-///NED to ECEF
+//NED to ECEF
 extern double NEDtoECEF[3][3];
 
 extern void rnut_iau1980(double TTDBin, const double *fin);
@@ -516,27 +516,27 @@ extern void rGPSDataProcessing(void);
 
 /*
 extern int i_comr, j_comr, k_comr;
-///Rotation matrices
+//Rotation matrices
 extern double Rx[3][3], Ry[3][3], Rz[3][3];
 
-///mat inverse
+//mat inverse
 extern double determinant, Invmatout33[3][3];
 
-///mat multiplication
+//mat multiplication
 extern double Matout31[3], Matout33[3][3], Matout441[4];
 
-///Cross product
+//Cross product
 extern double Cross_Product[3];
 
-///Vector Normalization
+//Vector Normalization
 extern double Norm_out[3], vecnorm_mag;
-extern double out_Quat_norm[4]; ///Global variable (Normalized Quaternion)
-extern double mat_mult[3][3]; ///Global variable (matrix multipication of 2 matrices[3][3])
-extern double mat_adj[3][3]; ///Global variable (Adjoint of matrix[3][3])
-extern double DCM2Q_out[4]; ///Global variable (RM to Quaternion Conversion)
+extern double out_Quat_norm[4]; //Global variable (Normalized Quaternion)
+extern double mat_mult[3][3]; //Global variable (matrix multipication of 2 matrices[3][3])
+extern double mat_adj[3][3]; //Global variable (Adjoint of matrix[3][3])
+extern double DCM2Q_out[4]; //Global variable (RM to Quaternion Conversion)
 extern double Matout341[3];
 extern double Matout431[4];
-extern double out_Quat_mult[4]; ///Global Variable of the Out_Quat from Q Multiplication Routine
+extern double out_Quat_mult[4]; //Global Variable of the Out_Quat from Q Multiplication Routine
 
 extern void rMatMul3x3(double mat331[3][3], double mat332[3][3]);
 extern void rMatMul3x1(double mat33[3][3], double vec31[3]);
@@ -559,7 +559,7 @@ extern void rzRot(double th);
 */
 
 
-/*///Dutycycle Generation
+/*//Dutycycle Generation
 extern int DutyCycleGenEnable, TorquerPolaritySetFlag;
 extern int Roll_MTR_Pol_Reversal, Pitch_MTR_Pol_Reversal, Yaw_MTR_Pol_Reversal;
 extern int DPM_Polarity[3], Ton[3], Toff[3], DPM_Pol_prev[3];
@@ -567,11 +567,11 @@ extern int Roll_MTREnable, Pitch_MTREnable, Yaw_MTREnable;
 extern unsigned int MTR_ActuationCycle;
 
 extern unsigned int TorquerDutyCycle[3];
-///extern double DutyCycle_Roll;
-///extern double DutyCycle_Pitch;
-///extern double DutyCycle_Yaw;
+//extern double DutyCycle_Roll;
+//extern double DutyCycle_Pitch;
+//extern double DutyCycle_Yaw;
 
-///Linear controller
+//Linear controller
 extern int i_lict, j_lict;
 extern float RW_Wheel_Speed[4];
 extern double TC_KR[3];
@@ -597,7 +597,7 @@ extern double speedDFCch;
 
 extern float TC_RW_Nominal[4];
 
-///Angular Momentum Dumping
+//Angular Momentum Dumping
 extern int f_Momentum_Dumping;
 extern int dumping_on;
 extern double delta_HB[3];
@@ -606,7 +606,7 @@ extern double TC_Hmax;
 extern double DPM[3];
 extern double TC_MDk;
 
-///Speed based Momentum Dumping
+//Speed based Momentum Dumping
 extern double TC_max_whsp_spdump, TC_min_whsp_spdump, TC_SpeedDumpLimit, temp_lic;
 extern double TC_SpeedDumpTime;
 extern int check_dump_wh[4];
@@ -619,7 +619,7 @@ extern double T_RWBn[3], tau_ms, min_TW, Bsq;
 extern double u_perp[3];
 extern double Pse_Inv_Dist_Mat[4][3];
 
-///Two RW control
+//Two RW control
 
 extern double Twof_veh[3][3], Tv_wof[3][3], Tcv_temp[3], Tcv[3], Tdeficit_temp1[3], Tdeficit_temp2[3], Tdeficit[3], Tdefnorm;
 extern double alpha_2RW_temp[3], alpha_2RW_tempnorm, alpha_2RW, B_Tef_ANG, mu_m_temp[3], mu_m[3];
@@ -639,13 +639,13 @@ extern void rTorquer_Polarity_Check(void);
 */
 
 /*
-///Det gyro
+//Det gyro
 
 extern double gyrodet_w[3], gyrodet_B[3];
 
 
 
-///Detumbling
+//Detumbling
 
 extern double TC_GYRO_Det_Min_Thresh;
 
@@ -654,7 +654,7 @@ extern double TC_GYRO_Det_Min_Thresh;
 
 extern int Susp_cnt;
 //extern int Suspended_ModePreprocessing;
-///Detumbling_ModePreprocessing
+//Detumbling_ModePreprocessing
 
 extern int GYRO_max_threshold_count;
 extern int Torquer_Shutdown;
@@ -663,16 +663,16 @@ extern int BDOT_Threshold_Count;
 //extern int SunAcquisition_ModePreprocessing;
 
 
-///rDetumbling_ModePreprocessing_GYRO_Logic
+//rDetumbling_ModePreprocessing_GYRO_Logic
 
 extern double Tdet[3];
 extern int GYRO_Threshold_Count;
 
-///////////////BDOT Computation
+//////////BDOT Computation
 
 
 
-///GYRO ext Computation
+//GYRO ext Computation
 
 extern int GYRO_Counter;
 extern double gyrodet_w[3];
@@ -682,13 +682,13 @@ extern unsigned int GPS_PPS_OBT;
 extern unsigned int GPS_READ_OBT;
 
 
-///Rate reduction routine
+//Rate reduction routine
 extern int BDOT_Reduction_Count, BDOT_Norm_Count;
 extern double BDOTnorm;
 extern double TC_BDOT_Norm_Threshold;
 extern double TC_BDOT_Det_Thresh;
 
-///SunAcquisition_ModePreprocessing
+//SunAcquisition_ModePreprocessing
 
 extern int SunAcquisition2ThreeAxis_autotransit;
 extern double SunAcq_Ang_Thres;
@@ -698,15 +698,15 @@ extern int SunAcq2DetMode_counter;
 
 extern int ThreeAxis2DetMode_counter, f_threeaxis2safe;
 
-/// Timer based sunlit/eclipse
+// Timer based sunlit/eclipse
 
 extern int entrytime2eclipse;
 
-/// Autotransit
+// Autotransit
 
 extern int TC_AutoTransitAnyMode2Det;
 
-/// Control Bytes
+// Control Bytes
 
 extern unsigned int CB_Detumbling_Mode;
 extern unsigned int CB_Q_propagation;
@@ -756,13 +756,13 @@ enum SpaceCraftMode_Select Spacecraft_Mode;
 
 extern int i_pini, j_pini;
 
-/// Power on
+// Power on
 
 void rADCS_Pon_vars(void);
 
 */
 
-/*/// IGRF model
+/*// IGRF model
 
 extern int i_rfc, j_rfc;
 
@@ -781,11 +781,11 @@ extern double g[15][16], h[15][16];
 extern double REF_FRAME_DCM[3][3];
 extern int DeltaT_MFC, DeltaT_Updated;
 
-///Sun Model
+//Sun Model
 extern double S_ECI[3], S_ECIn[3];
 extern double L_Msun, Msun, L_Ecliptic, Sun_Dis, Epsilon;
 
-/// Ref quaternions
+// Ref quaternions
 extern double SUN_ECI_mag, X_SVO2ECI_mag, Z_SVO2ECI_mag, Y_EPO2ECI_mag, X_EPO2ECI_mag, Z_SFAO2ECI_mag, X_SFAO2ECI_mag;
 extern double X_SFDO2ECI_mag, Z_SFDO2ECI_mag;
 extern double Y_SVO2ECI[3], Z_SVO2ECI[3], X_SVO2ECI[3], R_SVO2ECI[3][3], Q_SVO2ECI[4];
@@ -806,19 +806,19 @@ extern double TC_long_station, TC_lat_station;
 extern double X_SPO2ECI_mag, Y_SPO2ECI_mag;
 extern double R_SPO2ECI[3][3], Q_SPO2ECI[4];
 
-///Ref Vector Generation
+//Ref Vector Generation
 extern double Q_REF[4], Q_REF_conj[4], Q_StP2ECI[4], R_StP2ECI[3][3];
 extern double Q_svn_off[4], Q_stn_off[4], Q_REF_GND[4];
 extern double B_REF[3], S_REF[3], B_REFn[3], S_REFn[3];
 
-/// Ref Gyro
+// Ref Gyro
 
 extern double w_REF[3], w_REF_prev[3];
 extern double Q_REF_pres[4], Q_REF_prev[4], Q_REF_prev_conj[4];
 extern double Q_REF_diff[4], QRD_vect_norm;
 extern double Q_angle, Q_axis[3];
 
-/// Onboard Eclipse Algorithm
+// Onboard Eclipse Algorithm
 extern double theta1_se, theta2_se;
 extern double psi_sl_ecl;
 extern int elapsed_running_timer;
@@ -834,7 +834,7 @@ extern double adotb;
 extern double distsqrd;
 extern double tmin;
 
-///Ref Vector Generation
+//Ref Vector Generation
 extern double Q_REF[4], Q_StP2ECI[4], R_StP2ECI[3][3];
 extern double B_REF[3], S_REF[3], B_REFn[3], S_REFn[3];
 
@@ -849,7 +849,7 @@ extern void rSl_Ecl_OnBrd_detection(void);
 */
 
 /*
-///IMU
+//IMU
 
 //Definitions
 
@@ -918,7 +918,7 @@ extern unsigned int imu2_db_checksum_obc;
 
 
 
-/// Sun Sensor
+// Sun Sensor
 
 struct SunSensor_Database
 {
@@ -944,30 +944,30 @@ struct SunSensor_Database
 
 //extern struct SunSensor_Database SS_Main_2Exe_DB;
 
-///16 Cells' output (Main and Redundant)
+//16 Cells' output (Main and Redundant)
 extern double SS_M1, SS_M2, SS_M3, SS_M4, SS_M5, SS_M6, SS_M7, SS_M8;
 
 extern double SB_MAIN[3], SB_RED[3], SS_prcd_data[3];
-///6 Active sensors' output after multiplying by constants
+//6 Active sensors' output after multiplying by constants
 extern double ss_temp[3];
 extern double SC1, SC2, SC3, SC4, SC5, SC6, SC7, SC8;
 
-///6 Cells' Imax Factors
+//6 Cells' Imax Factors
 extern double SC1ImaxF, SC2ImaxF, SC3ImaxF, SC4ImaxF, SC5ImaxF, SC6ImaxF;
 
 extern double comb1, comb2, temp11, temp12;
 
-extern double ele1, az1, ele2; ///Elevation and azimuth angles
+extern double ele1, az1, ele2; //Elevation and azimuth angles
 
-///6 Active sensors' output after multiplying by constants
+//6 Active sensors' output after multiplying by constants
 
 extern int TC_SS_Main_Cells_Sel, Panel_Deployment;
 
-extern double sun_sf[3],S_BODY[3], S_BODYn[3]; ///SunSensor data in sensor frame
+extern double sun_sf[3],S_BODY[3], S_BODYn[3]; //SunSensor data in sensor frame
 
 extern double ss2b[3][3];
 
-extern double Ang_Deviation; ///arccos(dot(S_BODY,[0,-1,0]))
+extern double Ang_Deviation; //arccos(dot(S_BODY,[0,-1,0]))
 
 extern double Roll_ang_err, Yaw_ang_err;
 extern int sun_quadrant;
@@ -989,7 +989,7 @@ extern int SunNPP_SAMtransit;
 
 
 
-///BDOT Computation
+//BDOT Computation
 
 extern int BDOT_Counter;
 extern double BDOT[3],Bpresent[3];

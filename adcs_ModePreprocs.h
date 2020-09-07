@@ -12,14 +12,14 @@ extern void rScModeSelection(void);
 
 extern int Susp_cnt;
 
-///Detumbling_ModePreprocessing
+//Detumbling_ModePreprocessing
 
 extern int GYRO_max_threshold_count;
 extern int Torquer_Shutdown;
 
 extern int BDOT_Threshold_Count;
 
-///rDetumbling_ModePreprocessing_GYRO_Logic
+//rDetumbling_ModePreprocessing_GYRO_Logic
 
 extern double Tdet[3];
 extern int GYRO_Threshold_Count;
@@ -31,13 +31,13 @@ extern double gyrodet_B[3];
 
 
 
-///Rate reduction routine
+//Rate reduction routine
 extern int BDOT_Reduction_Count, BDOT_Norm_Count;
 extern double BDOTnorm;
 extern double TC_BDOT_Norm_Threshold;
 extern double TC_BDOT_Det_Thresh;
 
-///SunAcquisition_ModePreprocessing
+//SunAcquisition_ModePreprocessing
 
 extern int SunAcquisition2ThreeAxis_autotransit;
 extern double SunAcq_Ang_Thres;
@@ -47,11 +47,11 @@ extern int SunAcq2DetMode_counter;
 
 extern int ThreeAxis2DetMode_counter, f_threeaxis2safe;
 
-/// Timer based sunlit/eclipse
+// Timer based sunlit/eclipse
 
 extern int entrytime2eclipse;
 
-/// Autotransit
+// Autotransit
 
 extern int TC_AutoTransitAnyMode2Det;
 
@@ -62,7 +62,7 @@ extern double TC_comd_pitch_rate;
 
 extern int i_pini, j_pini;
 
-/// Control Bytes
+// Control Bytes
 
 extern unsigned int CB_Detumbling_Mode;
 extern unsigned int CB_Q_propagation;
@@ -102,7 +102,7 @@ enum SpaceCraftMode_Select
 };
 extern enum SpaceCraftMode_Select Spacecraft_Mode;
 
-/// Power on
+// Power on
 
 void rADCS_Pon_vars(void);
 

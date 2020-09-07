@@ -92,7 +92,7 @@ void rMagFieldComp(void)
 		ct_magad=cos(co_dec);
 		cl_magad[1]=cos(longitude);
 		sl_magad[1]=sin(longitude);
-		///Alti = 514.5628;
+		//Alti = 514.5628;
 		B_Rho = c_radiusearthkm*(1.0-(1.0/298.257223563));
 		Rho = sqrt((c_radiusearthkm*c_radiusearthkm*st_magad*st_magad) + (B_Rho*B_Rho*ct_magad*ct_magad));
 
@@ -102,7 +102,7 @@ void rMagFieldComp(void)
 		}
 
 		Alti_Mod = sqrt((Alti*Alti) + (2.0*Alti*Rho) + (((pow(c_radiusearthkm,4.0)
-                * (st_magad*st_magad)) + (pow(B_Rho,4.0) * (ct_magad*ct_magad)))/ (Rho*Rho)));
+		                * (st_magad*st_magad)) + (pow(B_Rho,4.0) * (ct_magad*ct_magad)))/ (Rho*Rho)));
 
 		if(fabs(Alti_Mod) <= c_dividebyzerovalue)
 		{
@@ -120,7 +120,7 @@ void rMagFieldComp(void)
 		q_magad[3]=ct_magad;
 
 
-		A_R = pow((c_a / Alti_Mod),2.0);///c_Kmax+1
+		A_R = pow((c_a / Alti_Mod),2.0);//c_Kmax+1
 
 		for(K_MAGAD=2;K_MAGAD<106;K_MAGAD++)
 		{
@@ -241,7 +241,7 @@ void rSun_Ephemeris(void)
         Sun_Dis = (c_Sun_Dis1*c_D2R) - (c_Sun_Dis2*c_D2R * cos(Msun)) - (c_Sun_Dis3*c_D2R * cos(2.0 * Msun)); //distance to Sun in AUs
         Epsilon = (c_Epsilon1*c_D2R) - (c_Epsilon2*c_D2R * tut); //obliquity of the eclipse
 
-        ///Sun vector in ECI frame in AUs
+        //Sun vector in ECI frame in AUs
         S_ECI[0] = cos(L_Ecliptic);
         S_ECI[1] = cos(Epsilon) * sin(L_Ecliptic);
         S_ECI[2] = sin(Epsilon) * sin(L_Ecliptic);
@@ -257,7 +257,7 @@ void rReferenceQuatComputation(void)
 {
     if (CB_ReferenceQuatComputation == Enable)
     {
-        ///---------------------------------------SVO to ECI Transformation--------------------------------------------------
+        //---------------------------------------SVO to ECI Transformation--------------------------------------------------
         Y_SVO2ECI[0] = -1.0*S_ECIn[0];
         Y_SVO2ECI[1] = -1.0*S_ECIn[1];
         Y_SVO2ECI[2] = -1.0*S_ECIn[2];
@@ -307,7 +307,7 @@ void rReferenceQuatComputation(void)
         Q_SVO2ECI[2] = out_Quat_norm[2];
         Q_SVO2ECI[3] = out_Quat_norm[3];
 
-        ///---------------------------------------MDRF to ECI Transformation--------------------------------------------------
+        //---------------------------------------MDRF to ECI Transformation--------------------------------------------------
 
 		Y_MDO2ECI[0] = -1.0*S_ECIn[0];
 		Y_MDO2ECI[1] = -1.0*S_ECIn[1];
@@ -367,7 +367,7 @@ void rReferenceQuatComputation(void)
 		Q_MDO2ECI[2] = out_Quat_norm[2];
 		Q_MDO2ECI[3] = out_Quat_norm[3];
 
-        ///---------------------------------------SPO to ECI Transformation--------------------------------------------------
+        //---------------------------------------SPO to ECI Transformation--------------------------------------------------
 
         STATION_ECEF[0] = c_radiusearthkm * (cos(ADCS_TC_data_command_Table.TC_ECEF_stationLongitude) * cos(ADCS_TC_data_command_Table.TC_ECEF_stationlatitude));
         STATION_ECEF[1] = c_radiusearthkm * (sin(ADCS_TC_data_command_Table.TC_ECEF_stationLongitude) * cos(ADCS_TC_data_command_Table.TC_ECEF_stationlatitude));
@@ -454,7 +454,7 @@ void rReferenceQuatComputation(void)
         Q_StP2ECI[3] = out_Quat_norm[3];
 
 
-        ///---------------------------------------EPO to ECI Transformation--------------------------------------------------
+        //---------------------------------------EPO to ECI Transformation--------------------------------------------------
         Z_EPO2ECI[0] = -Pos_ECIn[0];
         Z_EPO2ECI[1] = -Pos_ECIn[1];
         Z_EPO2ECI[2] = -Pos_ECIn[2];
@@ -500,7 +500,7 @@ void rReferenceQuatComputation(void)
         Q_EPO2ECI[2] = out_Quat_norm[2];
         Q_EPO2ECI[3] = out_Quat_norm[3];
 
-        ///---------------------------------------SFAO to ECI Transformation--------------------------------------------------
+        //---------------------------------------SFAO to ECI Transformation--------------------------------------------------
         Y_SFAO2ECI[0] = -S_ECIn[0];
         Y_SFAO2ECI[1] = -S_ECIn[1];
         Y_SFAO2ECI[2] = -S_ECIn[2];
@@ -555,7 +555,7 @@ void rReferenceQuatComputation(void)
         Q_SFAO2ECI[2] = out_Quat_norm[2];
         Q_SFAO2ECI[3] = out_Quat_norm[3];
 
-        ///---------------------------------------SFDO to ECI Transformation--------------------------------------------------
+        //---------------------------------------SFDO to ECI Transformation--------------------------------------------------
         Y_SFDO2ECI[0] = -S_ECIn[0];
         Y_SFDO2ECI[1] = -S_ECIn[1];
         Y_SFDO2ECI[2] = -S_ECIn[2];
@@ -747,7 +747,7 @@ void rRefVectorGeneration(void)
             f_station_tracking_enabled = 0;
             Station_tracking_mode = 0;
         }
-        TM.Buffer.TM_station_tracking_mode = Station_tracking_mode;
+       // TM.Buffer.TM_station_tracking_mode = Station_tracking_mode;
         if ((f_station_tracking_enabled == 0) && (f_station_tracking_enabled_pre == 1))
 		{
 			f_aft_statn_wait = 1;
@@ -836,13 +836,13 @@ void rRefRate_Computation(void)
 		Q_REF_pres[2] = Q_REF[2];
 		Q_REF_pres[3] = Q_REF[3];
 
-		///Computation of conjugate of Reference Quaternion in previous time cycle
+		//Computation of conjugate of Reference Quaternion in previous time cycle
 		Q_REF_prev_conj[0] = ((-1.0) * Q_REF_prev[0]);
 		Q_REF_prev_conj[1] = ((-1.0) * Q_REF_prev[1]);
 		Q_REF_prev_conj[2] = ((-1.0) * Q_REF_prev[2]);
 		Q_REF_prev_conj[3] = Q_REF_prev[3];
 
-		///Computation of Delta_Q between reference quaternion in two consecutive time step.
+		//Computation of Delta_Q between reference quaternion in two consecutive time step.
 		rQs_Multiplication(Q_REF_prev_conj, Q_REF_pres);
 		Q_REF_diff[0] = out_Quat_mult[0];
 		Q_REF_diff[1] = out_Quat_mult[1];
@@ -863,7 +863,9 @@ void rRefRate_Computation(void)
 			{
 				w_REF[i_rfc] = (2.0 * (Q_REF_diff[i_rfc] / c_MaC));
 			}
+
 			QRD_vect_norm = sqrt((w_REF[0]*w_REF[0]) + (w_REF[1]*w_REF[1]) + (w_REF[2]*w_REF[2]));
+
 			if (fabs(QRD_vect_norm) > 0.01)
 			{
 				for (i_rfc=0; i_rfc<3;i_rfc++)
@@ -897,10 +899,10 @@ void rSl_Ecl_OnBrd_detection(void)
 			theta1_se = acos((c_radiusearthkm) / radialdistance);
 			theta2_se = acos((c_radiusearthkm) / (magrsun));
 
-			///Angle between s/c position vector and Sun position vector (radians)
+			//Angle between s/c position vector and Sun position vector (radians)
 			psi_sl_ecl = acos(((Pos_ECI[0] * rsun[0]) + (Pos_ECI[1] * rsun[1]) + (Pos_ECI[2] * rsun[2])) / (radialdistance * magrsun));
 
-			///If psi is >= thetal+theta2_se, the s/c is in eclipse, otherwise it's in sunlight
+			//If psi is >= thetal+theta2_se, the s/c is in eclipse, otherwise it's in sunlight
 			if(psi_sl_ecl <= (theta1_se + theta2_se))
 			{
 				f_Sunlit_Presence_orbit = True;

@@ -9,15 +9,15 @@ void rHAL_TM_HW_Status_Update(void);
 
  // TM Sub-frame Routines
 void rTM_Address_Table_Init(void);
-void Norm_ST_1_Table_Init();
-void TC_hist_view();
-void Spec_ST_Table_Init();
-void rTM_Copy_Subframe();
-void ST_DUMPING();
-void ST_full_dump();
-void TC_Hist_dumping();
+void Norm_ST_1_Table_Init(void);
+void TC_hist_view(void);
+void Spec_ST_Table_Init(void);
+void rTM_Copy_Subframe(void);
+void ST_DUMPING(void);
+void ST_full_dump(void);
+void TC_Hist_dumping(void);
 void rHAL_ST_TM_Write(void);
-void rTM_Real_st_write();
+void rTM_Real_st_write(void);
 
 #define TMTC_BUFFER_SIZE 16
 #define circuar_spec 0
@@ -154,16 +154,16 @@ unsigned int TCH_dump_finish;
 
 
 //void Special_ST( unsigned int Sampling_Rate, unsigned int OBT_start_time );
-int Frame_Address_Select ();
-int Sampling_Rate_Select();
+int Frame_Address_Select (void);
+int Sampling_Rate_Select(void);
 //void Normal_ST( unsigned int Sampling_Rate);
 void ST_Copy_Subframe(unsigned int frame_addr,unsigned int Sampling_Rate );
-void StorageTelemetry();
+void StorageTelemetry(void);
 int copy_frame(  unsigned int Circular );
-void rTC_final_storage();
-void Storage_Telemetry_Write();
-void rTCH_full_dump_cpy_buf();
-void rTCH_dump_cpy_buf();
+void rTC_final_storage(void);
+void Storage_Telemetry_Write(void);
+void rTCH_full_dump_cpy_buf(void);
+void rTCH_dump_cpy_buf(void);
 
 // Defining Normal Sampling Rates
 #define Normal_Sampling_Rate_A 48	// 6 Secs sampling interval
