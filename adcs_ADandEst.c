@@ -190,7 +190,10 @@ void rDAD_quest(void)
     {
     	if ((TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == 1) && (TC_boolean_u.TC_Boolean_Table.TC_EKFControl_Enable == 1))
 		{
-			if((fabs(w_k[0]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll) && ((w_k[1]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch) && ((w_k[1]*c_R2D) >= ADCS_TC_data_command_Table.TC_wAD_BODYminThPitch) && (fabs(w_k[2]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw))
+			if((fabs(w_k[0]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll) &&
+					((w_k[1]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch) &&
+					((w_k[1]*c_R2D) >= ADCS_TC_data_command_Table.TC_wAD_BODYminThPitch) &&
+					(fabs(w_k[2]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw))
 			{
 				wAD_updatecount++;
 			}
@@ -201,7 +204,10 @@ void rDAD_quest(void)
 		}
 		else
 		{
-			if((fabs(w_BODYdeg[0]) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll) && (w_BODYdeg[1] <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch) && (w_BODYdeg[1] >= ADCS_TC_data_command_Table.TC_wAD_BODYminThPitch) && (fabs(w_BODYdeg[2]) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw))
+			if((fabs(w_BODYdeg[0]) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll) &&
+					(w_BODYdeg[1] <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch) &&
+					(w_BODYdeg[1] >= ADCS_TC_data_command_Table.TC_wAD_BODYminThPitch) &&
+					(fabs(w_BODYdeg[2]) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw))
 			{
 				wAD_updatecount++;
 			}

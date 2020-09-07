@@ -291,7 +291,7 @@ void rIMUDataProcessing(void)
 			{
 				for(i_MatEq = 0; i_MatEq < 27; i_MatEq++)
 				{
-					if((DPM_Polarity[0] == c_DPM_Pol_LookUpTable[i][0]) && (DPM_Polarity[1] == c_DPM_Pol_LookUpTable[i_MatEq][1]) && (DPM_Polarity[2] == c_DPM_Pol_LookUpTable[i_MatEq][2]))  // Actual polarity status from rHAL_MTR
+					if((DPM_Polarity[0] == c_DPM_Pol_LookUpTable[i_MatEq][0]) && (DPM_Polarity[1] == c_DPM_Pol_LookUpTable[i_MatEq][1]) && (DPM_Polarity[2] == c_DPM_Pol_LookUpTable[i_MatEq][2]))  // Actual polarity status from rHAL_MTR
 					{
 						PolCheck_LUT = i_MatEq;
 						break;

@@ -789,7 +789,7 @@ void rOrbitalElements_computation(const double Pos_ECI_in[3], const double Vel_E
 
 		latitude_temp = (1.0 - c_ecc_ellip)*(Pos_ECEF_in[2]/(gd_gcgd - l_gcgd));
 
-		latitude = atan(latitude_temp/((1-c_ecc_ellip)*r_delta/(gd_gcgd+l_gcgd)));
+		latitude = atan(latitude_temp/((1.0-c_ecc_ellip)*r_delta/(gd_gcgd+l_gcgd)));
 
         Orbit_Period = c_Twopi*sqrt(pow(semimajoraxis,3.0)/c_mu);
 
