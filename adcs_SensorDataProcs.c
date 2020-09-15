@@ -527,17 +527,19 @@ static double rTheta_Limit(const double var_theta_lim)
 {
 	if(var_theta_lim >= 9.424777961)					        // (9.424777961 rad = 540 deg)
 	{
+
         inter_theta = var_theta_lim - 6.283185307;	        // (6.283185307 rad = 360 deg)
 	}
 
 	else if(var_theta_lim <= -9.424777961)					// (9.424777961 rad = 540 deg)
 	{
+
         inter_theta = var_theta_lim + 6.283185307;	        // (6.283185307 rad = 360 deg)
 	}
 
 	else
 	{
-		//
+		inter_theta = var_theta_lim;
 	}
 	return inter_theta;
 }
@@ -588,50 +590,51 @@ void rBDOT_Computation(void)
 
 void rSunSensorDataProcessing(void)
 {
+
+	rSS_Read_Data(&ADC_Buffer[14]);
+
+	for (i_MatEq = 0; i_MatEq < 8;i_MatEq++)
+	{
+		SSMAIN_ARRAY[i_MatEq] = SS_Data[i_MatEq];
+	}
+
+	for (i_MatEq = 8; i_MatEq < 15;i_MatEq++)
+	{
+		SSREDT_ARRAY[i_MatEq-8] = SS_Data[i_MatEq];
+	}
+
+	rSunSensorVectorComp(SSMAIN_ARRAY,&SS_Main_2Exe_DB);
+	SB_MAIN[0] = SS_prcd_data[0];
+	SB_MAIN[1] = SS_prcd_data[1];
+	SB_MAIN[2] = SS_prcd_data[2];
+
+	rSunSensorVectorComp(SSREDT_ARRAY,&SS_Main_2Exe_DB);
+	SB_RED[0] = SS_prcd_data[0];
+	SB_RED[1] = SS_prcd_data[1];
+	SB_RED[2] = SS_prcd_data[2];
+
+	TM.Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
+	TM.Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
+	TM.Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
+
+	ST_normal.ST_NM_Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
+	ST_normal.ST_NM_Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
+	ST_normal.ST_NM_Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
+
+	//for special_str s_body datatype(int) as to be changed to datatype(short)
+
+	ST_special.ST_SP_Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
+	ST_special.ST_SP_Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
+	ST_special.ST_SP_Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
+
+	//--------------------------------------------------------------------
+
+	/*TM.Buffer.TM_S_BODY_Red[0] = (int)(SB_RED[0]/4.65661287E-7);
+	TM.Buffer.TM_S_BODY_Red[1] = (int)(SB_RED[1]/4.65661287E-7);
+	TM.Buffer.TM_S_BODY_Red[2] = (int)(SB_RED[2]/4.65661287E-7);*/
+
 	if (f_Sunlit_Presence == 1)
 	{
-		rSS_Read_Data(ADC_Buffer);
-
-		for (i_MatEq = 0; i_MatEq < 8;i_MatEq++)
-		{
-			SSMAIN_ARRAY[i_MatEq] = SS_Data[i_MatEq];
-		}
-
-		for (i_MatEq = 8; i_MatEq < 15;i_MatEq++)
-		{
-			SSREDT_ARRAY[i_MatEq-8] = SS_Data[i_MatEq];
-		}
-
-		rSunSensorVectorComp(SSMAIN_ARRAY,&SS_Main_2Exe_DB);
-		SB_MAIN[0] = SS_prcd_data[0];
-		SB_MAIN[1] = SS_prcd_data[1];
-		SB_MAIN[2] = SS_prcd_data[2];
-
-		rSunSensorVectorComp(SSREDT_ARRAY,&SS_Main_2Exe_DB);
-		SB_RED[0] = SS_prcd_data[0];
-		SB_RED[1] = SS_prcd_data[1];
-		SB_RED[2] = SS_prcd_data[2];
-
-		TM.Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
-		TM.Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
-		TM.Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
-
-		ST_normal.ST_NM_Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
-		ST_normal.ST_NM_Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
-		ST_normal.ST_NM_Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
-
-		//for special_str s_body datatype(int) as to be changed to datatype(short)
-
-		ST_special.ST_SP_Buffer.TM_S_BODY_Main[0] = (int)(SB_MAIN[0]/4.65661287E-7);
-		ST_special.ST_SP_Buffer.TM_S_BODY_Main[1] = (int)(SB_MAIN[1]/4.65661287E-7);
-		ST_special.ST_SP_Buffer.TM_S_BODY_Main[2] = (int)(SB_MAIN[2]/4.65661287E-7);
-
-		//--------------------------------------------------------------------
-
-		/*TM.Buffer.TM_S_BODY_Red[0] = (int)(SB_RED[0]/4.65661287E-7);
-		TM.Buffer.TM_S_BODY_Red[1] = (int)(SB_RED[1]/4.65661287E-7);
-		TM.Buffer.TM_S_BODY_Red[2] = (int)(SB_RED[2]/4.65661287E-7);*/
-
 		if (TC_boolean_u.TC_Boolean_Table.TC_SS_Cells_Sel == TC_Main_Cells)
 		{
 			S_BODY[0] = SB_MAIN[0];

@@ -117,7 +117,7 @@ extern double Xk_plus_temp[3];
 extern double Xk_plus[9];
 extern double Yk_minus_hk_Kk[9];
 extern double Yk_minus_hk[3];
-extern double Kk_matrix[9][9];
+extern double Kk_matrix[9][3];
 extern double K_temp[3][3];
 extern double pk_HkT_Hk_Rk[3][3];
 extern double pk_HkT_Hk[3][3];
@@ -131,6 +131,7 @@ extern double qk_minus[4], hk_xk_minus[3];
 extern int TC_KalmanFilter_ENABLE;
 extern double sun_noise;
 extern double mag_noise;
+extern double w_ekf1[3];
 
 // Extended Kalman Filter 2
 
@@ -154,6 +155,7 @@ extern void rDAD_quest(void);
 extern void rErrorComputation(void);
 extern void rExtendedKalmanFilter1_p1(void);
 extern void rExtendedKalmanFilter1_p2(void);
+extern void rExtendedKalmanFilter1_Prop(void);
 extern void rQuestDataProcessing(void);
 
 extern void rExtendedKalmanFilter2_p1(void);

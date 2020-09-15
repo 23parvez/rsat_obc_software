@@ -398,7 +398,7 @@ union ST_output_status
 	unsigned short TM_Bus_current;
 	unsigned short TM_SA_current;
 	unsigned short TM_AGC;
-	unsigned short ang_momtm[0];
+	unsigned short ang_momtm[3];
 	struct TM_SP_GPS_STRUCTURE TM_GPS;
 	unsigned short TM_Tsince;
 	char TM_wheel_index_ARCsum;

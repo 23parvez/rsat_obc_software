@@ -276,7 +276,7 @@ extern union TC_Hist *TC_hist_read_ptr;
 
 #define TC_data_command_MAX_LIMIT 27
 #define ADCS_TC_data_command_MAX_LIMIT 64
-#define TC_func_exe_MAX_LIMIT 156
+#define TC_func_exe_MAX_LIMIT 154
 extern float Resol_Table[TC_data_command_MAX_LIMIT];
 extern float Resol_Table_Adcs[ADCS_TC_data_command_MAX_LIMIT];
 extern void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])(void);
@@ -293,8 +293,6 @@ extern void rInit_Block(void);
 
 //GPS
 extern unsigned long int GPS_Data_Read_Status;
-
-extern unsigned short GPS_RCVD_DATA[256];
 
 extern unsigned int GPS_count_TM;
 
@@ -406,7 +404,7 @@ extern unsigned long int inter_TM_Pl_Buffer;
 extern void MUX_Output(void);        //EPS_card_MUX_switch_status
 
 //TC_Definitions
-unsigned long int rHAL_GPS_Config(struct HAL_GPS_registers GPS_No,unsigned long int Config_Type);
+extern void rHAL_GPS_Config(struct HAL_GPS_registers GPS_No,unsigned long int Config_Type);
 //extern void rHAL_GPS_POWER(unsigned long int GPS_No,unsigned long int GPS_Power);
 
 //SS

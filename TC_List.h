@@ -96,6 +96,7 @@ unsigned int Remote_data_addr;
 			uint8 TC_Sunlitdec_timer_based;										  /* offset =   80  */
 			uint8 TC_BIST_override;												  /* offset =   81  */
 
+
 	    };
 
 #define TC_BOOLEAN_MAX_LIMIT 82
@@ -198,6 +199,7 @@ unsigned int Remote_data_addr;
 			uint8 TC_Sunlitdec_Orbit_based						  :1;
 			uint8 TC_Sunlitdec_timer_based						  :1;
 			uint8 TC_BIST_override								  :1;
+
 	    };
 
 	union TMTC_boolean_U
@@ -216,30 +218,30 @@ unsigned int Remote_data_addr;
 	    	uint8 TC_BDOT_Det_Thresh_set;									 //offset =    2//
 	    	uint8 TC_GYRO_Det_Min_Thres_set;						         //offset =    3//
 	    	uint8 TC_W1_Commanded_Nominal_Speed;						     //offset =    4//
-	    	uint8 TC_W2_Commanded_Nominal_Speed;						    //offset =    5//
+	    	uint8 TC_W2_Commanded_Nominal_Speed;						     //offset =    5//
 	    	uint8 TC_W3_Commanded_Nominal_Speed;						     //offset =    6//
-	    	uint8 TC_W4_Commanded_Nominal_Speed;						 //offset =    7//
+	    	uint8 TC_W4_Commanded_Nominal_Speed;						     //offset =    7//
 	    	uint8 TC_momentum_dumping_gain_set;								 //offset =    8//
-	    	uint8 TC_PanelD_Status_Sel;									 //offset =    9//
-	    	uint8 TC_Gyro_LPF_Gain_IMU1;								 //offset =    10//
-	    	uint8 TC_Gyro_LPF_Gain_IMU2;								 //offset =    11//
-	    	uint8 TC_Mag_LPF_Gain_IMU1;									 //offset =    12//
-	    	uint8 TC_Mag_LPF_Gain_IMU2;									 //offset =    13//
-	    	uint8 TC_SS_Currents_LPF_Gain;								 //offset =    14//
+	    	uint8 TC_PanelD_Status_Sel;									     //offset =    9//
+	    	uint8 TC_Gyro_LPF_Gain_IMU1;								     //offset =    10//
+	    	uint8 TC_Gyro_LPF_Gain_IMU2;								     //offset =    11//
+	    	uint8 TC_Mag_LPF_Gain_IMU1;									     //offset =    12//
+	    	uint8 TC_Mag_LPF_Gain_IMU2;									     //offset =    13//
+	    	uint8 TC_SS_Currents_LPF_Gain;								     //offset =    14//
 	    	uint8 TC_GPS_pulse_duration_set;								 //offset =    15//
 	    	uint8 TC_KP_set;										         //offset =    16//
 	    	uint8 TC_KR_set;											     //offset =    17//
 	    	/************ Added on 26 JULY 2019 *******************/
-	    	uint8 TC_GPS_Validity_Altitude_Threshold;					         //offset =    18//
-	    	uint8 TC_Wheel_Cutoff_Threshold;						        	//offset =    19//
-	    	uint8 TC_Wh_SpinUD_Thrsld;								     //offset =    20//
+	    	uint8 TC_GPS_Validity_Altitude_Threshold;					     //offset =    18//
+	    	uint8 TC_Wheel_Cutoff_Threshold;						         //offset =    19//
+	    	uint8 TC_Wh_SpinUD_Thrsld;								     	 //offset =    20//
 	    	uint8 TC_comd_pitch_rate_set;						             //offset =    21//
-	    	uint8 TC_AngDev_SafeModetransit_Thrsld;						 //offset =    22//
+	    	uint8 TC_AngDev_SafeModetransit_Thrsld;							 //offset =    22//
 	    	uint8 TC_AngMomDump_Thrsld_set;						             //offset =    23//
-	    	uint8 TC_SpeedDump_Thrsld;						             //offset =    24//
-	    	uint8 TC_SpeedDump_TimeSelect;							     //offset =    25//
-	    	uint8 TC_special_Sampling_rate_Select;                       //offset =    26//
-	    	uint8 TC_ST_Format_Selection;                                //offset =    27//
+	    	uint8 TC_SpeedDump_Thrsld;						            	 //offset =    24//
+	    	uint8 TC_SpeedDump_TimeSelect;							    	 //offset =    25//
+	    	uint8 TC_special_Sampling_rate_Select;                       	 //offset =    26//
+	    	uint8 TC_ST_Format_Selection;                                  	//offset =    27//
 
 	    };
 
@@ -382,7 +384,7 @@ unsigned int Remote_data_addr;
 			float TC_magMin_angle;														/*offset = 48*/
 			float TC_magMax_angle;														/*offset = 49*/
 			float TC_GYRO_Det_Max_Thresh;												/*offset = 50*/
-			float TC_PanelD_Status_Sel;                                                 /*offset = 51*/// REMOVE
+			int HILS_MODE_SELECT;                                                 /*offset = 51*/// REMOVE
 			float TC_wAD_BODYminThRoll;                                                 /*offset = 52*/
 			float TC_wAD_BODYminThPitch;                                                /*offset = 53*/
 			float TC_wAD_BODYminThYaw;                                                  /*offset = 54*/
@@ -411,9 +413,9 @@ float Resol_Table[TC_data_command_MAX_LIMIT];
 double gain_set[300];
 //List of Function execute commands
 
-#define TC_func_exe_MAX_LIMIT 156
+#define TC_func_exe_MAX_LIMIT 154
 
-void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])();
+void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])(void);
 
 #endif // TC_LIST
 

@@ -21,9 +21,9 @@ enum SpaceCraftMode_Select Spacecraft_Mode;
 //----------AD and Estimation---------------
 
 // Quest Data Processing
-int sc_qst; //sample count for magAD data processing(MC)
-int dc_qst; //data count for magAD data processing (sec) NOTE: NOT MC
-int wc_qst; //wait period count for magAD data processing (sec) NOTE: NOT MC
+int sc_qst;                                //sample count for magAD data processing(MC)
+int dc_qst;                                //data count for magAD data processing (sec) NOTE: NOT MC
+int wc_qst;                                //wait period count for magAD data processing (sec) NOTE: NOT MC
 int mat_mag_DataCounter, mat_sm_DataCounter; //data counter for magAD and sunmagAD to track the filling matrices
 int TC_wp_QDP; //Telecommand for Wait period selection in QDP
 double NMB_mag[3][24]; //Measurement Matrix (Magnetic field) for magAD
@@ -134,7 +134,7 @@ double Xk_plus_temp[3];
 double Xk_plus[9];
 double Yk_minus_hk_Kk[9];
 double Yk_minus_hk[3];
-double Kk_matrix[9][9];
+double Kk_matrix[9][3];
 double K_temp[3][3];
 double pk_HkT_Hk_Rk[3][3];
 double pk_HkT_Hk[3][3];
@@ -148,6 +148,7 @@ double qk_minus[4], hk_xk_minus[3];
 int TC_KalmanFilter_ENABLE;
 double sun_noise;
 double mag_noise;
+double w_ekf1[3];
 
 // Extended Kalman Filter 2
 

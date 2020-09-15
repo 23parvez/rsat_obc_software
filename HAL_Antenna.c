@@ -8,8 +8,8 @@
 
 SA1_status_t SA1_status = SA1_NOT_DEPLOYED;
 SA2_status_t SA2_status = SA2_NOT_DEPLOYED;
-SA1_status_t rHAL_SA1_Deploy_status_check();
-SA2_status_t rHAL_SA2_Deploy_status_check();
+SA1_status_t rHAL_SA1_Deploy_status_check(void);
+SA2_status_t rHAL_SA2_Deploy_status_check(void);
 
 void antennaCommand1(void)
 {                                                                             /* Antenna_ARM_command */

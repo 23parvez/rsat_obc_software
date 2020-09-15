@@ -274,7 +274,6 @@ void rHAL_MTR_TC(unsigned long int MTR_Axis,int MTR_Polarity)
 						MTR_LATCH_REGISTER = tempdata;
 						TM.Buffer.TM_MTR.Roll_Polarity = input_latch_1.FP_MTR2_mon1_mon2;
 
-
 				}
 				else if(MTR_Polarity == No_Current)
 				{

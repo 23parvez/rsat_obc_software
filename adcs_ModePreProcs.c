@@ -69,7 +69,7 @@ void rScModeSelection(void)
 
 }
 
-/*
+
 unsigned short Check_sum_data =0;
 void rHILS_packets(void)
 {
@@ -113,7 +113,7 @@ void rHILS_packets(void)
 	HILS_packet.Footer    = 0x7ffe;
 	rHILS_payload(&HILS_packet);
 }
-*/
+
 
 static void rSuspended_ModePreprocessing(void)
 {
@@ -199,20 +199,11 @@ static void rDetumbling_ModePreprocessing_BDOT_Logic(void)
             {
                 entrytime2eclipse = ADCS_TC_data_command_Table.TC_eclipse_entrytime - elapsed_running_timer;
                 //entrytime2eclipse = 1000; // test
-                if (entrytime2eclipse > 7032)
-				{
-					f_RW_nominal = 1;
-					//Turn on TW
-					//Ping command
-					//Enable all RW
-
-					if (f_RW_control == 1)
-					{
-						f_RW_nominal = 0;
-						Spacecraft_Mode = SunAcquisition_ModePreprocessing;
-						return;
-					}
-				}
+                if (entrytime2eclipse < 7032) // 15 mins
+                {
+                	Spacecraft_Mode = SunAcquisition_ModePreprocessing;
+                	return;
+                }
             }
         }
 
@@ -290,20 +281,11 @@ static void rDetumbling_ModePreprocessing_GYRO_Logic(void)
             {
                 entrytime2eclipse = ADCS_TC_data_command_Table.TC_eclipse_entrytime - elapsed_running_timer;
                 //entrytime2eclipse = 1000; // test
-                if (entrytime2eclipse > 7032)
-				{
-					f_RW_nominal = 1;
-					//Turn on TW
-					//Ping command
-					//Enable all RW
-
-					if (f_RW_control == 1)
-					{
-						f_RW_nominal = 0;
-						Spacecraft_Mode = SunAcquisition_ModePreprocessing;
-						return;
-					}
-				}
+                if (entrytime2eclipse < 7032) //15mins
+                {
+                	Spacecraft_Mode = SunAcquisition_ModePreprocessing;
+                	return;
+                }
             }
         }
         else
@@ -453,7 +435,7 @@ static void rSunAcquisition_ModePreprocessing(void)
 		Qerror[2] = 0.0;
 
 		w_REF[0] = 0.0;
-		w_REF[1] = -1.0 * TC_comd_pitch_rate * c_D2R;
+		w_REF[1] = -1.0*TC_comd_pitch_rate * c_D2R;
 		w_REF[2] = 0.0;
     }
 
@@ -532,7 +514,7 @@ static void rThreeAxis_ModePreprocessing(void)
 	{
     	if ((SunNPP_SMtransit == True) || (f_threeaxis2safe == True) || (f_battery_safemode == True)) //ADD BATTERY CONDITION
     	{
-    		//Spacecraft_Mode = Safe_ModePreprocessing;
+    		Spacecraft_Mode = Safe_ModePreprocessing;
     		return;
     	}
 

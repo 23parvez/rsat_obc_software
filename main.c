@@ -49,8 +49,8 @@ int main (void)
 	bcc_flush_cache();
 	bcc_int_clear(FDI_NMI_INT_LEVEL);                         /* Clear Interrupt */
 	bcc_int_unmask(FDI_NMI_INT_LEVEL);                        /* Unmask Interrupt */
-
-    OBC_Process();                                            /* OBC Processing Routine */
+	//__label__  empty;
+    	OBC_Process();                                           /* OBC Processing Routine */
 	return 0;
 }
 
@@ -59,7 +59,7 @@ void OBC_Process()
 	rADCS_Pon_vars();
 	/* inputs for GPS......*/
 
-	Pos_ECEF_GPS[0] = 6426.417462;
+	/*Pos_ECEF_GPS[0] = 6426.417462;
 	Pos_ECEF_GPS[1] = 2493.913765;
 	Pos_ECEF_GPS[2] = -1.124572057;
 	Vel_ECEF_GPS[0] = 0.529197934;
@@ -72,7 +72,7 @@ void OBC_Process()
 	UTC_min_GPS     = 6;
 	UTC_sec_GPS     = 4.664;
 
-	f_GPS_Valid_Data = 1;
+	f_GPS_Valid_Data = 1;*/
 
 
 	rMinCycle_Flag_Reset();			            //Reset Minor Cycle Flag
@@ -107,7 +107,7 @@ void OBC_Process()
 		rAbsoluteTTC_Execute();					       /* Execution of Absolute Time Tag Commands */
 		/* ADCS routines    */
 
-		rIMUDataProcessing();                          /* Read the IMU data first */
+		//rIMUDataProcessing();                          /* Read the IMU data first */
 		//rpl_read() ;
 		//rpl_tm_write();
 		rTM_Real_st_write();
@@ -120,10 +120,10 @@ void OBC_Process()
 
 		// ADCS Processing begins here
 
-		rErrorComputation();
-		rLinearController();
+		rScModeSelection();
+		//rErrorComputation();
+		//rLinearController();
 		rHAL_MTR();
-		//rHILS_packets();
 		// ADCS Processing ends here
 
 		pl_tx_tm();
@@ -172,6 +172,8 @@ void OBC_Process()
 		rBDOT_Computation();
 		rHAL_MTR();
 
+		rHILS_packets();
+
 		//ADCS routines********//
 		//Thermister_select();
 		rHAL_ADC_Read(ADC_Buffer);				       // Set ADC Read Enable
@@ -191,6 +193,9 @@ void OBC_Process()
 		rECEFtoECItoECEF();
 		rOrbit_Propagation();
 
+		rExtendedKalmanFilter1_Prop();
+		rExtendedKalmanFilter2_Prop();
+
 		GPIO_pins.PIO_6 = 0;
 		IODAT = GPIO_pins.data;
 
@@ -202,7 +207,7 @@ void OBC_Process()
 		GPIO_pins.PIO_6 = 1;
 		IODAT = GPIO_pins.data;
 		STS_reg_TM();
-		rIMUDataProcessing();
+		//rIMUDataProcessing();
 
 		//rpl_read() ;
 		//rpl_tm_write();
@@ -216,10 +221,9 @@ void OBC_Process()
 
 		 //ADCS routines begins//
 
-		rErrorComputation();
-		rLinearController();
+		//rErrorComputation();
+		//rLinearController();
 		rHAL_MTR();
-		//rHILS_packets();
 
 		rHAL_ADC_StatusREG_Enable();			      // Set ADC Status Register
 		rHAL_TM_HW_Status_Update();				      // Update HW status of OBC to TM GBL Buffer
@@ -259,6 +263,7 @@ void OBC_Process()
 		s_ram_scrub();                                 // scrubing SRAM
 
 		rRemote_data_view();
+		rHAL_MTR();
 
 		rErrorComputation();
 		rLinearController();
@@ -267,7 +272,13 @@ void OBC_Process()
 		rDAD_quest();
 
 		rAngularMomentumDumping();
-		rHAL_MTR();
+
+		rExtendedKalmanFilter1_Prop();
+		rExtendedKalmanFilter2_Prop();
+
+
+
+		rHILS_packets();
 		//ADCS routines********//
 
 		rHAL_ADC_Read(ADC_Buffer);				      // Set ADC Read Enable
@@ -286,7 +297,7 @@ void OBC_Process()
 		IODAT = GPIO_pins.data;
 		rHAL_TC_Read();							       // Read TC from FPGA Buffer
 		rTelecommand();
-		rIMUDataProcessing();
+		//rIMUDataProcessing();
 		//rpl_read() ;
 		//rpl_tm_write();
 							       // TM_Write Minor Cycle 5
@@ -297,13 +308,12 @@ void OBC_Process()
 		s_ram_scrub();                                 // scrubing SRAM
 		//ADCS routines begins//
 
-		rErrorComputation();
-		rLinearController();
+		//rErrorComputation();
+		//rLinearController();
 		rDutyCycleGeneration();
-		rScModeSelection();
 		rHAL_MTR();
 		rExtendedKalmanFilter1_p1(); // ON 01/09/2020
-		//rHILS_packets();
+
 		//ADCS routines ends//
 
 		rRW_Data_Write();
@@ -333,13 +343,21 @@ void OBC_Process()
 
 		s_ram_scrub();                                 // scrubing SRAM
 
+		rHAL_MTR();
+
 		//ADCS routines begins//
 
 		rErrorComputation();
 		rLinearController();
-		rHAL_MTR();
+
+
+		rHILS_packets();
+
+		rExtendedKalmanFilter1_Prop();
 		rExtendedKalmanFilter1_p2(); // On 01-09-2020
 		rExtendedKalmanFilter2_p1(); // On 01-09-2020
+
+		rExtendedKalmanFilter2_Prop();
 		//ADCS routines ends//
 
 		rHAL_ADC_Read(ADC_Buffer);				       // Set ADC Read Enable
@@ -355,7 +373,7 @@ void OBC_Process()
 		//ADCS routines********//
 		GPIO_pins.PIO_6 = 1;
 		IODAT = GPIO_pins.data;
-		rIMUDataProcessing();
+		//rIMUDataProcessing();
 
 		//pl_tx_tm_2();                            // write last 2 TM bytes
 		rTM_Real_st_write();
@@ -367,11 +385,9 @@ void OBC_Process()
 		//Storage_Telemetry_Write();
 		rRW_Data_Read();
 		//ADCS routines begins//
-		rErrorComputation();
-		rLinearController();
+		//rErrorComputation();
+		//rLinearController();
 		rHAL_MTR();
-		rExtendedKalmanFilter2_Prop(); // On 01-09-2020
-		//rHILS_packets();
 		//ADCS routines ends//
 		rRW_Data_Write();
 
@@ -399,11 +415,18 @@ void OBC_Process()
 		rRW_Data_Request();
 
 		s_ram_scrub();                                 // scrubing SRAM
+		rHAL_MTR();
 		//ADCS routines begins//
 		rErrorComputation();
 		rLinearController();
-		rHAL_MTR();
+
+		rHILS_packets();
+
 		rExtendedKalmanFilter2_p2(); // On 01-09-2020
+
+		rExtendedKalmanFilter1_Prop();
+		rExtendedKalmanFilter2_Prop();
+
 		//ADCS routines ends//
 
 		//PL_TM_read();                                  // Read the Payload data

@@ -13,7 +13,8 @@
 #define BIST_DATA 0x7F
 
 #define Buffer_inc(a) a = a + 0x00000004
-
+#define EXTRACT_LSB(word) (word & 0x00FF)
+#define EXTRACT_MSB(word) ((word & 0xFF00) >> 8)
 
 
 unsigned int GPS_msg_header;
@@ -31,12 +32,11 @@ unsigned int GPS_OBT_Read_1;
 unsigned int GPS_OBT_Read_2;
 
 unsigned long int GPS_Status_Data;
-//unsigned long int GPS_Data;
 unsigned short GPS_Data;
-unsigned int GPS_counter;
 unsigned int GPS_count_TM;
 
 unsigned long int GPS_Buffer_Data[106];
+
 unsigned long int GPS_Addr_Count;
 unsigned long int* GPS_Buffer_Addr;
 unsigned long int GPS_Data_Read_Status;
@@ -44,6 +44,7 @@ unsigned long int GPS_Config_Status;
 unsigned long int GPS_Locations;
 
 unsigned int rHAL_GPS_Read(struct HAL_GPS_registers GPS_No, unsigned int No_of_Bytes);
+void rHAL_GPS_Config(struct HAL_GPS_registers GPS_No,unsigned long int Config_Type);
 
 void ST_TM_gps_data(void);
 void rGPS_Buffer_Init(void);
@@ -96,7 +97,11 @@ unsigned int* GPS2_ptr;
 unsigned char* GPS_TM_Buffer_Addr_USC;
 unsigned char *db_gps_start_address ;
 
-unsigned short GPS_RCVD_DATA[256];
+union GPS_RCVD_DATA_U
+{
+	unsigned short GPS_DATA_16bit[256];
+	unsigned char GPS_DATA_8bit[512];
+}GPS_RCVD_DATA;
 
 //Function Declarations
 void rGPS_TM_Extract(void);

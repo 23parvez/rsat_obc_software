@@ -25,7 +25,7 @@ extern unsigned char NSP_addr_table[4];
 BlkExe_Stat BlkExe_Status = BLK_Disabled;
 
 //Initialization of Function Table-------------------------
-void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])() = {
+void(*FuncExecute_Table[TC_func_exe_MAX_LIMIT])(void) = {
 		TC_IMU1_On,                                         			/* offset =    0  */
 		TC_IMU2_On,    													/* offset =    1  */
 		TC_IMU1_Off,													/* offset =    2  */
@@ -732,7 +732,7 @@ void rADCS_Data_TC(void)
 			case 50: ADCS_TC_data_command_Table.TC_GYRO_Det_Max_Thresh						=
 					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
 						break;
-			case 51: ADCS_TC_data_command_Table.TC_PanelD_Status_Sel					    = u_TC.DataCommand.Data;// REMOVE
+			case 51: ADCS_TC_data_command_Table.HILS_MODE_SELECT					    = u_TC.DataCommand.Data;
 						break;
 			case 52: ADCS_TC_data_command_Table.TC_wAD_BODYminThRoll						=
 					(float)(u_TC.DataCommand.Data * Resol_Table[u_TC.DataCommand.offset_addr]);
@@ -1265,31 +1265,31 @@ void TMTC_Assignment(void)
 	TMTC_boolean_u.Boolean_Table.TC_BIST_override							   = TC_boolean_u.TC_Boolean_Table.TC_BIST_override;
 
 	//Gain Select command TMTC Assignment
-	TMTC_gain_select_u.gain_select_Table.TC_detumbling_bdot_gain_set               = TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain_set;
-	TMTC_gain_select_u.gain_select_Table.TC_detumbling_rate_gain_set               = TC_gain_select_u.TC_gain_select_Table.TC_detumbling_rate_gain_set;
-	TMTC_gain_select_u.gain_select_Table.TC_BDOT_Det_Thresh_set                    = TC_gain_select_u.TC_gain_select_Table.TC_BDOT_Det_Thresh_set;
-	TMTC_gain_select_u.gain_select_Table.TC_GYRO_Det_Min_Thres_set                 = TC_gain_select_u.TC_gain_select_Table.TC_GYRO_Det_Min_Thres_set;
+	TMTC_gain_select_u.gain_select_Table.TC_detumbling_bdot_gain_set           = TC_gain_select_u.TC_gain_select_Table.TC_detumbling_bdot_gain_set;
+	TMTC_gain_select_u.gain_select_Table.TC_detumbling_rate_gain_set           = TC_gain_select_u.TC_gain_select_Table.TC_detumbling_rate_gain_set;
+	TMTC_gain_select_u.gain_select_Table.TC_BDOT_Det_Thresh_set                = TC_gain_select_u.TC_gain_select_Table.TC_BDOT_Det_Thresh_set;
+	TMTC_gain_select_u.gain_select_Table.TC_GYRO_Det_Min_Thres_set             = TC_gain_select_u.TC_gain_select_Table.TC_GYRO_Det_Min_Thres_set;
 	TMTC_gain_select_u.gain_select_Table.TC_W1_Commanded_Nominal_Speed         = TC_gain_select_u.TC_gain_select_Table.TC_W1_Commanded_Nominal_Speed;
 	TMTC_gain_select_u.gain_select_Table.TC_W2_Commanded_Nominal_Speed         = TC_gain_select_u.TC_gain_select_Table.TC_W2_Commanded_Nominal_Speed;
 	TMTC_gain_select_u.gain_select_Table.TC_W3_Commanded_Nominal_Speed         = TC_gain_select_u.TC_gain_select_Table.TC_W3_Commanded_Nominal_Speed;
 	TMTC_gain_select_u.gain_select_Table.TC_W4_Commanded_Nominal_Speed         = TC_gain_select_u.TC_gain_select_Table.TC_W4_Commanded_Nominal_Speed;
-	TMTC_gain_select_u.gain_select_Table.TC_momentum_dumping_gain_set              = TC_gain_select_u.TC_gain_select_Table.TC_momentum_dumping_gain_set;
+	TMTC_gain_select_u.gain_select_Table.TC_momentum_dumping_gain_set          = TC_gain_select_u.TC_gain_select_Table.TC_momentum_dumping_gain_set;
 	TMTC_gain_select_u.gain_select_Table.TC_PanelD_Status_Sel                  = TC_gain_select_u.TC_gain_select_Table.TC_PanelD_Status_Sel;
 	TMTC_gain_select_u.gain_select_Table.TC_Gyro_LPF_Gain_IMU1                 = TC_gain_select_u.TC_gain_select_Table.TC_Gyro_LPF_Gain_IMU1;
 	TMTC_gain_select_u.gain_select_Table.TC_Gyro_LPF_Gain_IMU2                 = TC_gain_select_u.TC_gain_select_Table.TC_Gyro_LPF_Gain_IMU2;
 	TMTC_gain_select_u.gain_select_Table.TC_Mag_LPF_Gain_IMU1                  = TC_gain_select_u.TC_gain_select_Table.TC_Mag_LPF_Gain_IMU1;
 	TMTC_gain_select_u.gain_select_Table.TC_Mag_LPF_Gain_IMU2                  = TC_gain_select_u.TC_gain_select_Table.TC_Mag_LPF_Gain_IMU2;
 	TMTC_gain_select_u.gain_select_Table.TC_SS_Currents_LPF_Gain               = TC_gain_select_u.TC_gain_select_Table.TC_SS_Currents_LPF_Gain; //Remove
-	TMTC_gain_select_u.gain_select_Table.TC_GPS_pulse_duration_set                 = TC_gain_select_u.TC_gain_select_Table.TC_GPS_pulse_duration_set;
-	TMTC_gain_select_u.gain_select_Table.TC_KP_set                                 = TC_gain_select_u.TC_gain_select_Table.TC_KP_set;
-	TMTC_gain_select_u.gain_select_Table.TC_KR_set                          	   = TC_gain_select_u.TC_gain_select_Table.TC_KR_set;
+	TMTC_gain_select_u.gain_select_Table.TC_GPS_pulse_duration_set             = TC_gain_select_u.TC_gain_select_Table.TC_GPS_pulse_duration_set;
+	TMTC_gain_select_u.gain_select_Table.TC_KP_set                             = TC_gain_select_u.TC_gain_select_Table.TC_KP_set;
+	TMTC_gain_select_u.gain_select_Table.TC_KR_set                             = TC_gain_select_u.TC_gain_select_Table.TC_KR_set;
 	/************************************************* Added on 26 JULY 2019 *****************************************************************/
 	TMTC_gain_select_u.gain_select_Table.TC_GPS_Validity_Altitude_Threshold    = TC_gain_select_u.TC_gain_select_Table.TC_GPS_Validity_Altitude_Threshold; //Remove
 	TMTC_gain_select_u.gain_select_Table.TC_Wheel_Cutoff_Threshold			   = TC_gain_select_u.TC_gain_select_Table.TC_Wheel_Cutoff_Threshold;
 	TMTC_gain_select_u.gain_select_Table.TC_Wh_SpinUD_Thrsld				   = TC_gain_select_u.TC_gain_select_Table.TC_Wh_SpinUD_Thrsld; //Remove
-	TMTC_gain_select_u.gain_select_Table.TC_comd_pitch_rate_set					   = TC_gain_select_u.TC_gain_select_Table.TC_comd_pitch_rate_set;
+	TMTC_gain_select_u.gain_select_Table.TC_comd_pitch_rate_set				   = TC_gain_select_u.TC_gain_select_Table.TC_comd_pitch_rate_set;
 	TMTC_gain_select_u.gain_select_Table.TC_AngDev_SafeModetransit_Thrsld	   = TC_gain_select_u.TC_gain_select_Table.TC_AngDev_SafeModetransit_Thrsld; //Remove
-	TMTC_gain_select_u.gain_select_Table.TC_AngMomDump_Thrsld_set				   = TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld_set;
+	TMTC_gain_select_u.gain_select_Table.TC_AngMomDump_Thrsld_set			   = TC_gain_select_u.TC_gain_select_Table.TC_AngMomDump_Thrsld_set;
 	TMTC_gain_select_u.gain_select_Table.TC_SpeedDump_Thrsld				   = TC_gain_select_u.TC_gain_select_Table.TC_SpeedDump_Thrsld;
 	TMTC_gain_select_u.gain_select_Table.TC_SpeedDump_TimeSelect			   = TC_gain_select_u.TC_gain_select_Table.TC_SpeedDump_TimeSelect;
 	TMTC_gain_select_u.gain_select_Table.TC_special_Sampling_rate_Select       = TC_gain_select_u.TC_gain_select_Table.TC_special_Sampling_rate_Select;
@@ -1387,6 +1387,7 @@ void TC_IMU1_On(void)
 	Out_Latch_2.IMU1_RESET = 1;
 	IO_LATCH_REGISTER_2 = Out_Latch_2.data;
 	REG32(IMU_1_STATUS_REGISTER_1) = IMU_ON;
+	rIMU_Angle_Reset();
 }
 void TC_IMU2_On(void)
 {
@@ -1394,6 +1395,7 @@ void TC_IMU2_On(void)
 	Out_Latch_2.IMU2_RESET = 1;
 	IO_LATCH_REGISTER_2 =  Out_Latch_2.data;
 	REG32(IMU_2_STATUS_REGISTER_1) = IMU_ON;
+	rIMU_Angle_Reset();
 }
 void TC_IMU1_Off(void)
 {
@@ -1731,7 +1733,7 @@ void TC_W4_OFF(void)
 }
 void TC_Nominal_wheel_speed_execute(void)
 {
-	//to be done
+	f_RW_nominal = 1;
 }
 void TC_MTR_ON(void)
 {
@@ -1903,30 +1905,9 @@ void rSun_Ephemeris_update(void)
 	S_ECIn[2] = Norm_out[2];
 }
 
-/*void rTLE_Update(void)
-{
-	long long int TLE_E_DAY_temp1;
-	long long int  no_TLE_temp1;
 
-	Epochyear_TLE_tc = (int)TC_TLE_data[0];
-
-	TLE_E_DAY_temp1 = ((int)(TC_TLE_data[1]) & 0xFFFFFFFF);
-	epochdays_TLE_tc = (double)(((TLE_E_DAY_temp1 << 32) | (int)TC_TLE_data[2]) & 0xFFFFFFFFFFFFFFFF);
-
-	ibexp_TLE_tc = (double)TC_TLE_data[3];
-	bstar_TLE_tc = (double)TC_TLE_data[4];
-	inclination_TLE_tc = (double)TC_TLE_data[5];
-	nodeo_TLE_tc = (double)TC_TLE_data[6];
-	ecc_TLE_tc = (double)TC_TLE_data[7];
-	argpo_TLE_tc = (double)TC_TLE_data[8];
-	mo_TLE_tc = (double)TC_TLE_data[9];
-
-	no_TLE_temp1 = ((int)(TC_TLE_data[10]) & 0xFFFFFFFF);
-	no_TLE_tc = (double)(((no_TLE_temp1 << 32) | (int)TC_TLE_data[11]) & 0xFFFFFFFFFFFFFFFF);
-	Tsince_TLE_tc = (double)TC_TLE_data[12];
-}*/
-
-unsigned char TLE_chksum;
+int count_tle;
+char TLE_chksum;
 void rTLE_Update(void)
 {
 	unsigned char* TLE_ptr;
@@ -1949,9 +1930,11 @@ void rTLE_Update(void)
 	if(chksum_tle == TLE_chksum)
 	{
 		TLE_Data_Available = 1;
+		count_tle = 1;
 	}
 	else
 	{
+		count_tle = 2;
 		TLE_Data_Available = 0;
 	}
 

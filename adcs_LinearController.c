@@ -635,111 +635,98 @@ static void rWheel_Auto_Reconfiguration(void)
 
             RW_ARC_Count = RW_ARC_Count + 1;
 
-            if ((Major_Cycle_Count % 800) == 0)
-            {
-                for (i_lict=0; i_lict<=3; i_lict++)
-                {
-                    pres_exp_whsp_ch[i_lict] = exp_whsp_ch[i_lict];
-                    ch_obs_whsp[i_lict] = (RWSpeed_RPM[i_lict]) - (prev_obs_whsp_ch[i_lict]);
-                    prev_obs_whsp_ch[i_lict] = RWSpeed_RPM[i_lict];
-                    diff_obs_exp_ch[i_lict] = ch_obs_whsp[i_lict] - pres_exp_whsp_ch[i_lict];
-                }
+			if (Major_Cycle_Count !=0)
+			{
+				if ((Major_Cycle_Count % 800) == 0)
+				{
+					for (i_lict=0; i_lict<=3; i_lict++)
+					{
+						pres_exp_whsp_ch[i_lict] = exp_whsp_ch[i_lict];
+						ch_obs_whsp[i_lict] = (RWSpeed_RPM[i_lict]) - (prev_obs_whsp_ch[i_lict]);
+						prev_obs_whsp_ch[i_lict] = RWSpeed_RPM[i_lict];
+						diff_obs_exp_ch[i_lict] = ch_obs_whsp[i_lict] - pres_exp_whsp_ch[i_lict];
+					}
 
-                if (fabs(diff_obs_exp_ch[0]) >= TC_ARC_RPM_Thres)
-                {
-                    count_arc_w0 = count_arc_w0 + 1;
-                    if (count_arc_w0 > TC_ARC_Time_Cycle)
-                    {
-                        wheel_index[0] = 0;
-                    }
-                }
-                else
-                {
-                    count_arc_w0 = 0;
-                }
+					if (fabs(diff_obs_exp_ch[0]) >= TC_ARC_RPM_Thres)
+					{
+						count_arc_w0 = count_arc_w0 + 1;
+						if (count_arc_w0 > TC_ARC_Time_Cycle)
+						{
+							wheel_index[0] = 0;
+						}
+					}
+					else
+					{
+						count_arc_w0 = 0;
+					}
 
-                if (fabs(diff_obs_exp_ch[1]) >= TC_ARC_RPM_Thres)
-                {
-                    count_arc_w1 = count_arc_w1 + 1;
-                    if (count_arc_w1 > TC_ARC_Time_Cycle)
-                    {
-                        wheel_index[1] = 0;
-                    }
-                }
-                else
-                {
-                    count_arc_w1 = 0;
-                }
+					if (fabs(diff_obs_exp_ch[1]) >= TC_ARC_RPM_Thres)
+					{
+						count_arc_w1 = count_arc_w1 + 1;
+						if (count_arc_w1 > TC_ARC_Time_Cycle)
+						{
+							wheel_index[1] = 0;
+						}
+					}
+					else
+					{
+						count_arc_w1 = 0;
+					}
 
-                if (fabs(diff_obs_exp_ch[2]) >= TC_ARC_RPM_Thres)
-                {
-                    count_arc_w2 = count_arc_w2 + 1;
-                    if (count_arc_w2 > TC_ARC_Time_Cycle)
-                    {
-                        wheel_index[2] = 0;
-                    }
-                }
-                else
-                {
-                    count_arc_w2 = 0;
-                }
+					if (fabs(diff_obs_exp_ch[2]) >= TC_ARC_RPM_Thres)
+					{
+						count_arc_w2 = count_arc_w2 + 1;
+						if (count_arc_w2 > TC_ARC_Time_Cycle)
+						{
+							wheel_index[2] = 0;
+						}
+					}
+					else
+					{
+						count_arc_w2 = 0;
+					}
 
-                if (fabs(diff_obs_exp_ch[3]) >= TC_ARC_RPM_Thres)
-                {
-                    count_arc_w3 = count_arc_w3 + 1;
+					if (fabs(diff_obs_exp_ch[3]) >= TC_ARC_RPM_Thres)
+					{
+						count_arc_w3 = count_arc_w3 + 1;
 
-                    if (count_arc_w3 > TC_ARC_Time_Cycle)
-                    {
-                        wheel_index[3] = 0;
-                    }
-                }
-                else
-                {
-                    count_arc_w3 = 0;
-                }
+						if (count_arc_w3 > TC_ARC_Time_Cycle)
+						{
+							wheel_index[3] = 0;
+						}
+					}
+					else
+					{
+						count_arc_w3 = 0;
+					}
 
 
-                exp_whsp_ch[0] = 0.0;
-                exp_whsp_ch[1] = 0.0;
-                exp_whsp_ch[2] = 0.0;
-                exp_whsp_ch[3] = 0.0;
+					exp_whsp_ch[0] = 0.0;
+					exp_whsp_ch[1] = 0.0;
+					exp_whsp_ch[2] = 0.0;
+					exp_whsp_ch[3] = 0.0;
 
-            }
+				}
+			}
 
             if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW1_enable == 1)
 			{
 				wheel_index[0] = 1;
-			}
-			else
-			{
-				wheel_index[0] = 0;
 			}
 
 			if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW2_enable == 1)
 			{
 				wheel_index[1] = 2;
 			}
-			else
-			{
-				wheel_index[1] = 0;
-			}
 
 			if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW3_enable == 1)
 			{
 				wheel_index[2] = 4;
 			}
-			else
-			{
-				wheel_index[2] = 0;
-			}
 
 			if (TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW4_enable == 1)
 			{
 				wheel_index[3] = 8;
-			}
-			else
-			{
-				wheel_index[3] = 0;
 			}
 
             wheel_index_ARCsum = wheel_index[0] + wheel_index[1] + wheel_index[2] + wheel_index[3];

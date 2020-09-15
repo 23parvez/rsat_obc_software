@@ -383,7 +383,7 @@ unsigned long int checksum_u32(unsigned long int *db_start_address,unsigned long
 //unsigned char checksum_u8(unsigned char* db_start_address,unsigned int size_of_db);
 //void checksum_u8(void);
 void checksum_u8(unsigned char* db_start_address,unsigned short size_of_data);
-unsigned char chksum8(const unsigned char *buff, unsigned int len);
+unsigned char chksum8( unsigned char *buff, unsigned int len);
 void rOutput_Latch_Update(void);
 void ST_output_update(void);
 void STS_reg_TM(void);

@@ -670,8 +670,8 @@ const double c_Imax_YP_Main = 1.060224293620740;
 const double c_Imax_YN_Main = 1.075774928880186;
 
 //---------------------------------------------------------------------------------------------------------------------------
-const double c_SSThrsld = 0.5; //Sunsensor threshold value
-const double c_Sunlit_Thrsld = 0.5; //Threshold for sunlit detection
+const double c_SSThrsld = 0.2; //Sunsensor threshold value
+const double c_Sunlit_Thrsld = 0.2; //Threshold for sunlit detection
 const double c_AngDev_SMtransit_thrsld = 0.52359877559; // (30 degrees) Threshold for sun presence in negative pitch side
 const double c_AngDev_SAMtransit_thrsld = 0.52359877559; // (30 degrees) Threshold for sun presence in negative pitch side
 

@@ -215,10 +215,10 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.Tc_nominal_speed_rw1_00 = 157.0796; //1500
 
 	//offset 05
-	GAIN_DATA_SET.Tc_nominal_speed_rw2_01 = 104.7197; //1000rpm
-	GAIN_DATA_SET.Tc_nominal_speed_rw2_10 = 209.4395; //2000
-	GAIN_DATA_SET.Tc_nominal_speed_rw2_11 = 261.7993; //2500
-	GAIN_DATA_SET.Tc_nominal_speed_rw2_00 = 157.0796; //1500
+	GAIN_DATA_SET.Tc_nominal_speed_rw2_01 = -104.7197; //1000rpm
+	GAIN_DATA_SET.Tc_nominal_speed_rw2_10 = -209.4395; //2000
+	GAIN_DATA_SET.Tc_nominal_speed_rw2_11 = -261.7993; //2500
+	GAIN_DATA_SET.Tc_nominal_speed_rw2_00 = -157.0796; //1500
 
 	//offset 06
 	GAIN_DATA_SET.Tc_nominal_speed_rw3_01 = 104.7197; //1000rpm
@@ -227,10 +227,10 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.Tc_nominal_speed_rw3_00 = 157.0796; //1500
 
 	//offset 07
-	GAIN_DATA_SET.Tc_nominal_speed_rw4_01 = 104.7197; //1000rpm
-	GAIN_DATA_SET.Tc_nominal_speed_rw4_10 = 209.4395; //2000
-	GAIN_DATA_SET.Tc_nominal_speed_rw4_11 = 261.7993; //2500
-	GAIN_DATA_SET.Tc_nominal_speed_rw4_00 = 157.0796; //1500
+	GAIN_DATA_SET.Tc_nominal_speed_rw4_01 = -104.7197; //1000rpm
+	GAIN_DATA_SET.Tc_nominal_speed_rw4_10 = -209.4395; //2000
+	GAIN_DATA_SET.Tc_nominal_speed_rw4_11 = -261.7993; //2500
+	GAIN_DATA_SET.Tc_nominal_speed_rw4_00 = -157.0796; //1500
 
 	//offset 08
 	GAIN_DATA_SET.TC_momentum_dumping_gain_0_00 = 0.001;
@@ -239,10 +239,10 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.TC_momentum_dumping_gain_0_11 = 0.01;
 
 	//offset 09//TBD
-	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_00;
-	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_01;
-	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_10;
-	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_11;
+	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_00 = 0;
+	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_01 = 0;
+	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_10 = 0;
+	GAIN_DATA_SET.TC_PanelD_Status_Sel_0_11 = 0;
 
 	//offset 10
 	GAIN_DATA_SET.TC_Gyro_LPF_Gain_IMU1_0_00 = 0.0;
@@ -323,33 +323,33 @@ void rPOR_Init(void)
 	GAIN_DATA_SET.TC_KP_1_00 = 0.002362;
 	GAIN_DATA_SET.TC_KP_2_00 = 0.00211722;
 
-	GAIN_DATA_SET.TC_KP_0_01;
-	GAIN_DATA_SET.TC_KP_1_01;
-	GAIN_DATA_SET.TC_KP_2_01;
+	GAIN_DATA_SET.TC_KP_0_01 = 0;
+	GAIN_DATA_SET.TC_KP_1_01 = 0;
+	GAIN_DATA_SET.TC_KP_2_01 = 0;
 
-	GAIN_DATA_SET.TC_KP_0_10;
-	GAIN_DATA_SET.TC_KP_1_10;
-	GAIN_DATA_SET.TC_KP_2_10;
+	GAIN_DATA_SET.TC_KP_0_10 = 0;
+	GAIN_DATA_SET.TC_KP_1_10 = 0;
+	GAIN_DATA_SET.TC_KP_2_10 = 0;
 
-	GAIN_DATA_SET.TC_KP_0_11;
-	GAIN_DATA_SET.TC_KP_1_11;
-	GAIN_DATA_SET.TC_KP_2_11;
+	GAIN_DATA_SET.TC_KP_0_11 = 0;
+	GAIN_DATA_SET.TC_KP_1_11 = 0;
+	GAIN_DATA_SET.TC_KP_2_11 = 0;
 	//offset 17
 	GAIN_DATA_SET.TC_KR_0_00 = 0.0373666;
 	GAIN_DATA_SET.TC_KR_1_00 = 0.04252567;
 	GAIN_DATA_SET.TC_KR_2_00 = 0.0381176;
 
-	GAIN_DATA_SET.TC_KR_0_01;
-	GAIN_DATA_SET.TC_KR_1_01;
-	GAIN_DATA_SET.TC_KR_2_01;
+	GAIN_DATA_SET.TC_KR_0_01 = 0;
+	GAIN_DATA_SET.TC_KR_1_01 = 0;
+	GAIN_DATA_SET.TC_KR_2_01 = 0;
 
-	GAIN_DATA_SET.TC_KR_0_10;
-	GAIN_DATA_SET.TC_KR_1_10;
-	GAIN_DATA_SET.TC_KR_2_10;
+	GAIN_DATA_SET.TC_KR_0_10 = 0;
+	GAIN_DATA_SET.TC_KR_1_10 = 0;
+	GAIN_DATA_SET.TC_KR_2_10 = 0;
 
-	GAIN_DATA_SET.TC_KR_0_11;
-	GAIN_DATA_SET.TC_KR_1_11;
-	GAIN_DATA_SET.TC_KR_2_11;
+	GAIN_DATA_SET.TC_KR_0_11 = 0;
+	GAIN_DATA_SET.TC_KR_1_11 = 0;
+	GAIN_DATA_SET.TC_KR_2_11 = 0;
 
 	//offset 18
 	GAIN_DATA_SET.TC_GPS_Validity_Altitude_Threshold_0_00 = 50.0;
@@ -446,8 +446,8 @@ void rPOR_Init(void)
 	 }
 
 	 // Battery safe mode default voltage Value
-	 	TC_data_command_Table.TC_power_safe_LTP = 0x03CE;		// 14v LTP
-	 	TC_data_command_Table.TC_power_safe_UTP = 0x03E7;		// 14.5 UTP (calculate the corresponding hex )
+	 	TC_data_command_Table.TC_power_safe_LTP = 0x057A;		// 14v LTP
+	 	TC_data_command_Table.TC_power_safe_UTP = 0x05AC;		// 14.5 UTP (calculate the corresponding hex )
 	 //---
 
 	 	TC_boolean_u.TC_Boolean_Table.TC_sram_scrub_enable_disable = False;
@@ -488,20 +488,6 @@ void rPOR_Init(void)
 	    TC_boolean_u.TC_Boolean_Table.TC_RW_Speed_sel = 0;
 
 	    /****************************************************/
-
-
-	    /*************************testing************************/
-
-	   // TC_GPS1_ON();
-	   // TC_boolean_u.TC_Boolean_Table.TC_GPS12_Select = GPS_1;
-	    TC_IMU2_On();
-	    TC_boolean_u.TC_Boolean_Table.TC_GPS_TLE_Select = True;
-	    rTC_ThreeAxis_ModePreprocessing();
-	    TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable = Enable;
-	    TC_boolean_u.TC_Boolean_Table.TC_EKFControl_Enable = Enable;
-
-
-	    /********************************************************/
 
 }
 

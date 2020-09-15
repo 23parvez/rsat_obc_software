@@ -54,9 +54,9 @@ void rGPS_Buffer_Init(void)
 }
 
 unsigned int gps_ready_bit = 0;
-unsigned long int gpstestbuff[17];
-unsigned short maha;
+
 unsigned char GPS_GSV_FLAG = 0;
+unsigned int GPS_ST_2;
 unsigned int rHAL_GPS_Read (struct HAL_GPS_registers GPS_No, unsigned int No_of_Bytes)
 {
 	unsigned int temp_data;
@@ -75,14 +75,15 @@ unsigned int rHAL_GPS_Read (struct HAL_GPS_registers GPS_No, unsigned int No_of_
 
 		GPS_Buffer_Addr = (unsigned long int*)GPS_No.GPS_Buffer_addr;
 		GPS_Status_Data = REG32(GPS_No.GPS_Status_Register_1);
+		GPS_ST_2 = REG32(GPS_No.GPS_Status_Register_2);
 		temp_data = GPS_Status_Data;
 		TM.Buffer.TM_GPS_Status  =  (unsigned short)temp_data;
 
-		if (GPS_Status_Data & 0x00000008)//0b0000_0000_0000_1000 ------Check Data Ready Bit
+		if (GPS_Status_Data & 0x0000008)//0b0000_0000_0000_1000 ------Check Data Ready Bit
 		{
 
 			  gps_ready_bit = GPS_Status_Data;
-			  REG32(GPS_No.GPS_Status_Register_1) = (GPS_Status_Data | 0x00000400);//0b0000_0000_0010_0000 ---------Set Read Enable Bit
+			  REG32(GPS_No.GPS_Status_Register_2) = (GPS_ST_2 | 0x00000400);//0b0000_0000_0010_0000 ---------Set Read Enable Bit
 
 			  if(GPS_GSV_FLAG)
 			  {
@@ -90,25 +91,33 @@ unsigned int rHAL_GPS_Read (struct HAL_GPS_registers GPS_No, unsigned int No_of_
 				  {
 					  GPS_Data = REG32(GPS_Buffer_Addr);
 					  GPS_Data = GPS_Data & 0x0000FFFF;
-					  GPS_RCVD_DATA[GPS_Addr_Count] = GPS_Data;
+					  GPS_RCVD_DATA.GPS_DATA_16bit[GPS_Addr_Count] = GPS_Data;
 					  GPS_Buffer_Addr++;
 				  }
-				  REG32(GPS_No.GPS_Status_Register_1) = (GPS_Status_Data & 0x0000FBFF);//0b1111_1111_1101_1111------------Reset Read Enable Bit
-				  for(GPS_Addr_Count=0; GPS_Addr_Count<=GPS_Locations; GPS_Addr_Count++)
+				  GPS_ST_2 = REG32(GPS_No.GPS_Status_Register_2);
+				  REG32(GPS_No.GPS_Status_Register_2) = (GPS_ST_2 & 0x0000F9FF); // 0b1111_1111_1101_1111------------Reset Read Enable Bit
+				  for(GPS_Addr_Count=0; GPS_Addr_Count<=No_of_Bytes; GPS_Addr_Count++)
 				  {
-					  GPS_counter++;
-					  if(GPS_Addr_Count < 108)
-					  {
-					       if( (GPS_RCVD_DATA[GPS_Addr_Count] == 0x00003F3F) && (GPS_RCVD_DATA[GPS_counter] == 0x0000AF01))//Check for Valid Message header(0x3F3F) and Identifier(0xAF01))
-					       {
-					    	   GPS_count_TM = GPS_Addr_Count;
-					    	   GPS_Data_Read_Status = TRUE;
-					       }
-					  }
-					  else
-					  {
-						  GPS_Data_Read_Status = FALSE;
-					  }
+					 if(GPS_Addr_Count < 216)
+					 {
+						 if ((GPS_RCVD_DATA.GPS_DATA_8bit[GPS_Addr_Count] == 0x3f) &&
+							(GPS_RCVD_DATA.GPS_DATA_8bit[GPS_Addr_Count+1] == 0x3f) &&
+							(GPS_RCVD_DATA.GPS_DATA_8bit[GPS_Addr_Count+2] == 0xAF) &&
+							(GPS_RCVD_DATA.GPS_DATA_8bit[GPS_Addr_Count+3] == 0x01))
+						 {
+							 GPS_count_TM = GPS_Addr_Count;
+							 GPS_Data_Read_Status = TRUE;
+							break;
+						 }
+						 else
+						 {
+							 GPS_Data_Read_Status = FALSE;
+						 }
+					 }
+					 else
+					 {
+						 GPS_Data_Read_Status = FALSE;
+					 }
 				  }
 			  }
 			  else
@@ -117,14 +126,14 @@ unsigned int rHAL_GPS_Read (struct HAL_GPS_registers GPS_No, unsigned int No_of_
 				  {
 					  GPS_Data = REG32(GPS_Buffer_Addr);
 					  GPS_Data = GPS_Data & 0x0000FFFF;
-					  GPS_RCVD_DATA[GPS_Addr_Count] = GPS_Data;
+					  GPS_RCVD_DATA.GPS_DATA_16bit[GPS_Addr_Count] = GPS_Data;
 					  GPS_Buffer_Addr++;
 				  }
-
-				  REG32(GPS_No.GPS_Status_Register_1) = (GPS_Status_Data & 0x0000FBFF);//0b1111_1111_1101_1111------------Reset Read Enable Bit
+				  GPS_ST_2 = REG32(GPS_No.GPS_Status_Register_2);
+				  REG32(GPS_No.GPS_Status_Register_2) = (GPS_ST_2 & 0x0000F9FF); // 0b1111_1111_1101_1111------------Reset Read Enable Bit
 
 				  //------------------------------Data Formating--------------------------------------------
-				  if((GPS_RCVD_DATA[0] == 0x00003F3F) && (GPS_RCVD_DATA[1] == 0x0000AF01)) //Check for Valid Message header(0x3F3F) and Identifier(0xAF01)
+				  if((GPS_RCVD_DATA.GPS_DATA_16bit[0]  == 0x00003F3F) && (GPS_RCVD_DATA.GPS_DATA_16bit[1]  == 0x0000AF01)) //Check for Valid Message header(0x3F3F) and Identifier(0xAF01)
 				  {
 
 					  GPS_Data_Read_Status = TRUE;
@@ -179,7 +188,7 @@ void rGPS_OBT_timer(void)
 	TM.Buffer.TM_GPS_OBT_Read_1   = GPS_READ_OBT;
 }
 
-unsigned long int rHAL_GPS_Config(struct HAL_GPS_registers GPS_No,unsigned long int Config_Type)
+void rHAL_GPS_Config(struct HAL_GPS_registers GPS_No,unsigned long int Config_Type)
 {
 		 if(Config_Type == NMEA_GSA_Enable)         //change to GSA
 		 {
@@ -593,65 +602,83 @@ unsigned long int rHAL_GPS_Config(struct HAL_GPS_registers GPS_No,unsigned long 
 
 		 }
 
-  return 0;
 }
+
+
 
 void rGPS_TM_Extract(void)
 {
-	if(GPS_Data_Read_Status == TRUE) //Transfer to TM Buffer Only after checking the availability and validity of GPS data
+
+	if (GPS_Data_Read_Status) //Transfer to TM Buffer Only after checking the availability and validity of GPS data
 	{
-//		if (GPS_GSV_FLAG)
-//		{
-//			GPS_TM_Buffer_Addr_USC = (unsigned char*)&GPS_RCVD_DATA[GPS_count_TM];
-//			db_gps_start_address = (unsigned char*)&GPS_RCVD_DATA[GPS_count_TM];
-//		}
-//		else
-//		{
-//			GPS_TM_Buffer_Addr_USC = (unsigned char*)GPS_RCVD_DATA;
-//			db_gps_start_address = (unsigned char*)GPS_RCVD_DATA;
-//		}
+		if (GPS_GSV_FLAG)
+		{
+			GPS_TM_Buffer_Addr_USC = &GPS_RCVD_DATA.GPS_DATA_8bit[GPS_count_TM];
+			db_gps_start_address = &GPS_RCVD_DATA.GPS_DATA_8bit[GPS_count_TM];
+		}
+		else
+		{
+			GPS_TM_Buffer_Addr_USC = &GPS_RCVD_DATA.GPS_DATA_8bit[0];
+			db_gps_start_address = &GPS_RCVD_DATA.GPS_DATA_8bit[0];
+		}
 
-		GPS_TM_Buffer_Addr_USC = (unsigned char*)&GPS_RCVD_DATA[0];
-		db_gps_start_address = (unsigned char*)&GPS_RCVD_DATA[0];
 
-		TM.Buffer.TM_GPS.TM_No_Of_Sat 					= *(GPS_TM_Buffer_Addr_USC+4);
-		ST_normal.ST_NM_Buffer.TM_No_Of_Sat 			= *(GPS_TM_Buffer_Addr_USC+4);
+
+		TM.Buffer.TM_GPS.TM_No_Of_Sat 					=
+		ST_normal.ST_NM_Buffer.TM_No_Of_Sat 			=
 		ST_special.ST_SP_Buffer.TM_GPS.TM_No_Of_Sat 	= *(GPS_TM_Buffer_Addr_USC+4);
-		TM.Buffer.TM_GPS.TM_UTC_Day 					= *(GPS_TM_Buffer_Addr_USC+150);
-		ST_special.ST_SP_Buffer.TM_GPS.TM_UTC_Day 		= *(GPS_TM_Buffer_Addr_USC+150);
+
+		TM.Buffer.TM_GPS.TM_UTC_Day 					=
+		ST_special.ST_SP_Buffer.TM_GPS.TM_UTC_Day 		=
 		ST_normal.ST_NM_Buffer.TM_GPS.TM_UTC_Day 		= *(GPS_TM_Buffer_Addr_USC+150);
-		TM.Buffer.TM_GPS.TM_UTC_Month 					= *(GPS_TM_Buffer_Addr_USC+151);
+
+		TM.Buffer.TM_GPS.TM_UTC_Month 					=
 		ST_normal.ST_NM_Buffer.TM_GPS.TM_UTC_month 		= *(GPS_TM_Buffer_Addr_USC+151);
-		TM.Buffer.TM_GPS.TM_UTC_Year 					= *((unsigned short*)(GPS_TM_Buffer_Addr_USC+152));
+
+		TM.Buffer.TM_GPS.TM_UTC_Year 					=
 		ST_special.ST_SP_Buffer.TM_GPS.TM_UTC_Year 		= *((unsigned short*)(GPS_TM_Buffer_Addr_USC+152));
-		TM.Buffer.TM_GPS.TM_UTC_hour 					= *(GPS_TM_Buffer_Addr_USC+154);
-		ST_special.ST_SP_Buffer.TM_GPS.TM_UTC_hour 		= *(GPS_TM_Buffer_Addr_USC+154);
+
+		TM.Buffer.TM_GPS.TM_UTC_hour 					=
+		ST_special.ST_SP_Buffer.TM_GPS.TM_UTC_hour 		=
 		ST_normal.ST_NM_Buffer.TM_GPS.TM_UTC_hour 		= *(GPS_TM_Buffer_Addr_USC+154);
-		TM.Buffer.TM_GPS.TM_UTC_Min 					= *(GPS_TM_Buffer_Addr_USC+155);
-		ST_special.ST_SP_Buffer.TM_GPS.TM_UTC_Min 		= *(GPS_TM_Buffer_Addr_USC+155);
+
+		TM.Buffer.TM_GPS.TM_UTC_Min 					=
+		ST_special.ST_SP_Buffer.TM_GPS.TM_UTC_Min 		=
 		ST_normal.ST_NM_Buffer.TM_GPS.TM_UTC_Min 		= *(GPS_TM_Buffer_Addr_USC+155);
-		TM.Buffer.TM_GPS.TM_UTC_Sec 					= *((unsigned short*)(GPS_TM_Buffer_Addr_USC+156));
-		ST_special.ST_SP_Buffer.TM_GPS.TM_UTC_Sec 		= *((unsigned short*)(GPS_TM_Buffer_Addr_USC+156));
+
+		TM.Buffer.TM_GPS.TM_UTC_Sec 					=
+		ST_special.ST_SP_Buffer.TM_GPS.TM_UTC_Sec 		=
 		ST_normal.ST_NM_Buffer.TM_GPS.TM_UTC_Sec 		= *((unsigned short*)(GPS_TM_Buffer_Addr_USC+156));
+
 		TM.Buffer.TM_GPS.TM_GPSWeek 					= *((unsigned short*)(GPS_TM_Buffer_Addr_USC+158));
-		TM.Buffer.TM_GPS.TM_GPS_Xpos 					= *((int*)(GPS_TM_Buffer_Addr_USC+160));
+
+		TM.Buffer.TM_GPS.TM_GPS_Xpos 					=
 		ST_special.ST_SP_Buffer.TM_GPS.TM_GPS_Xpos 		= *((int*)(GPS_TM_Buffer_Addr_USC+160));
-		TM.Buffer.TM_GPS.TM_GPS_Ypos 					= *((int*)(GPS_TM_Buffer_Addr_USC+164));
+
+		TM.Buffer.TM_GPS.TM_GPS_Ypos 					=
 		ST_special.ST_SP_Buffer.TM_GPS.TM_GPS_Ypos 		= *((int*)(GPS_TM_Buffer_Addr_USC+164));
-		TM.Buffer.TM_GPS.TM_GPS_Zpos 					= *((int*)(GPS_TM_Buffer_Addr_USC+168));
+
+		TM.Buffer.TM_GPS.TM_GPS_Zpos 					=
 		ST_special.ST_SP_Buffer.TM_GPS.TM_GPS_Zpos 		= *((int*)(GPS_TM_Buffer_Addr_USC+168));
-		TM.Buffer.TM_GPS.TM_GPS_XVel 					= *((int*)(GPS_TM_Buffer_Addr_USC+172));
+
+		TM.Buffer.TM_GPS.TM_GPS_XVel 					=
 		ST_special.ST_SP_Buffer.TM_GPS.TM_GPS_XVel 		= *((int*)(GPS_TM_Buffer_Addr_USC+172));
-		TM.Buffer.TM_GPS.TM_GPS_YVel 					= *((int*)(GPS_TM_Buffer_Addr_USC+176));
+
+		TM.Buffer.TM_GPS.TM_GPS_YVel 					=
 		ST_special.ST_SP_Buffer.TM_GPS.TM_GPS_YVel 		= *((int*)(GPS_TM_Buffer_Addr_USC+176));
-		TM.Buffer.TM_GPS.TM_GPS_ZVel 					= *((int*)(GPS_TM_Buffer_Addr_USC+180));
+
+		TM.Buffer.TM_GPS.TM_GPS_ZVel 					=
 		ST_special.ST_SP_Buffer.TM_GPS.TM_GPS_ZVel 		= *((int*)(GPS_TM_Buffer_Addr_USC+180));
+
 		TM.Buffer.TM_GPS.TM_No_Of_Sat_InFix 			= *(GPS_TM_Buffer_Addr_USC+185);
-		TM.Buffer.TM_GPS.TM_Pos_Validity 				= *(GPS_TM_Buffer_Addr_USC+186);
+
+		TM.Buffer.TM_GPS.TM_Pos_Validity 				=
 		ST_special.ST_SP_Buffer.TM_GPS.TM_Pos_Validity 	= *(GPS_TM_Buffer_Addr_USC+186);
-		TM.Buffer.TM_GPS.TM_BIST_Info 					= *(GPS_TM_Buffer_Addr_USC+203);
-		ST_normal.ST_NM_Buffer.TM_GPS.TM_BIST_Info 		= *(GPS_TM_Buffer_Addr_USC+203);
+
+		TM.Buffer.TM_GPS.TM_BIST_Info 					=
+		ST_normal.ST_NM_Buffer.TM_GPS.TM_BIST_Info 		=
 		bist_data  										= *(GPS_TM_Buffer_Addr_USC+203);
+
 		TM.Buffer.TM_GPS.TM_CheckSum 					= *(GPS_TM_Buffer_Addr_USC+204);
 
 		//Computation of On board Checksum of GPS data
@@ -692,7 +719,6 @@ void ST_TM_gps_data(void)
 	unsigned int gps_data_copy_index;
 	unsigned int tempdata;
 	unsigned char *GPS_TM_Buffer_Addr;
-	GPS_TM_Buffer_Addr = (unsigned char*)GPS_RCVD_DATA;
 
 	if(TC_boolean_u.TC_Boolean_Table.TC_GPS12_Select == GPS_1)
 	{
@@ -702,6 +728,17 @@ void ST_TM_gps_data(void)
 	{
 		gps_data_length = GPS2_STATUS_REGISTER2 & 0x000001FF;
 	}
+
+	if(GPS_GSV_FLAG)
+	{
+		GPS_TM_Buffer_Addr = &GPS_RCVD_DATA.GPS_DATA_8bit[GPS_count_TM];
+		gps_data_length = gps_data_length - GPS_count_TM;
+	}
+	else
+	{
+		GPS_TM_Buffer_Addr = &GPS_RCVD_DATA.GPS_DATA_8bit[0];
+	}
+
 	for(gps_data_copy_index = 0; gps_data_copy_index <= gps_data_length; gps_data_copy_index++)
 	{
 		ST_special.ST_SP_Buffer.ST_TM_GPS_RCVD_DATA[gps_data_copy_index] = *GPS_TM_Buffer_Addr++;

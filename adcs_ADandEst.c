@@ -127,6 +127,7 @@ void rQuestDataProcessing(void)
         {
             //f_Momentum_Dumping = 1;
             TC_SunMagAD = Enable;
+            w_q_update_satisfy = 1;
 
             //Shift and Assign
             mat_sm_DataCounter++;
@@ -190,30 +191,62 @@ void rDAD_quest(void)
     {
     	if ((TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == 1) && (TC_boolean_u.TC_Boolean_Table.TC_EKFControl_Enable == 1))
 		{
-			if((fabs(w_k[0]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll) &&
-					((w_k[1]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch) &&
-					((w_k[1]*c_R2D) >= ADCS_TC_data_command_Table.TC_wAD_BODYminThPitch) &&
-					(fabs(w_k[2]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw))
-			{
-				wAD_updatecount++;
-			}
-			else
-			{
-				wAD_updatecount = 0;
-			}
+    		if (TC_boolean_u.TC_Boolean_Table.TC_Sun_Varying_Mode == 1)
+    		{
+				if((fabs(w_k[0]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll) &&
+						((w_k[1]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch) &&
+						((w_k[1]*c_R2D) >= ADCS_TC_data_command_Table.TC_wAD_BODYminThPitch) &&
+						(fabs(w_k[2]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw))
+				{
+					wAD_updatecount++;
+				}
+				else
+				{
+					wAD_updatecount = 0;
+				}
+    		}
+    		else
+    		{
+    			if((fabs(w_k[0]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll) &&
+						(fabs(w_k[1]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch) &&
+						(fabs(w_k[2]*c_R2D) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw))
+				{
+					wAD_updatecount++;
+				}
+				else
+				{
+					wAD_updatecount = 0;
+				}
+    		}
 		}
 		else
 		{
-			if((fabs(w_BODYdeg[0]) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll) &&
-					(w_BODYdeg[1] <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch) &&
-					(w_BODYdeg[1] >= ADCS_TC_data_command_Table.TC_wAD_BODYminThPitch) &&
-					(fabs(w_BODYdeg[2]) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw))
+			if (TC_boolean_u.TC_Boolean_Table.TC_Sun_Varying_Mode == 1)
 			{
-				wAD_updatecount++;
+				if((fabs(w_BODYdeg[0]) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll) &&
+						(w_BODYdeg[1] <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch) &&
+						(w_BODYdeg[1] >= ADCS_TC_data_command_Table.TC_wAD_BODYminThPitch) &&
+						(fabs(w_BODYdeg[2]) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw))
+				{
+					wAD_updatecount++;
+				}
+				else
+				{
+					wAD_updatecount = 0;
+				}
 			}
 			else
 			{
-				wAD_updatecount = 0;
+				if((fabs(w_BODYdeg[0]) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll) &&
+					(fabs(w_BODYdeg[1]) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch) &&
+					(fabs(w_BODYdeg[2]) <= ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw))
+				{
+					wAD_updatecount++;
+				}
+				else
+				{
+					wAD_updatecount = 0;
+				}
 			}
 		}
 
@@ -269,7 +302,6 @@ void rDAD_quest(void)
         }
         else
         {
-        	w_q_update_satisfy = 1;
             if(f_DataSort_SUNMAG == True)
             {
                 //Computation of transpose of NRB_sunmag
@@ -547,10 +579,10 @@ void rDAD_quest(void)
             Qbody[1] = Qquest_update[1];
             Qbody[2] = Qquest_update[2];
             Qbody[3] = Qquest_update[3];
-            Quest_update_available = 0;
-            //w_q_update_satisfy = 0;
+            //Quest_update_available = 0;
+            w_q_update_satisfy = 0;
 
-            //OBC_Quest_update = 0;
+            OBC_Quest_update = 0;
         }
     }
 }
@@ -561,59 +593,26 @@ void rErrorComputation(void)
     {
         if (TC_boolean_u.TC_Boolean_Table.TC_EKFControl_Enable == Enable)
         {
-        	if (TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == 1)
-			{
-        		rQs_Multiplication(Q_REF_conj,qk_plus);
-				Qerror[0] = out_Quat_mult[0];
-				Qerror[1] = out_Quat_mult[1];
-				Qerror[2] = out_Quat_mult[2];
-				Qerror[3] = out_Quat_mult[3];
-			}
-        	else if (TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == 1)
-			{
-				rQ_Propagation(qk_plus, w_BODY);
-				qk_minus[0] = q_prop_out[0];
-				qk_minus[1] = q_prop_out[1];
-				qk_minus[2] = q_prop_out[2];
-				qk_minus[3] = q_prop_out[3];
+			rQs_Multiplication(Q_REF_conj,qk_minus);
+			Qerror[0] = out_Quat_mult[0];
+			Qerror[1] = out_Quat_mult[1];
+			Qerror[2] = out_Quat_mult[2];
+			Qerror[3] = out_Quat_mult[3];
 
-				rQs_Normalization(qk_minus);
-				qk_minus[0] = out_Quat_norm[0];
-				qk_minus[1] = out_Quat_norm[1];
-				qk_minus[2] = out_Quat_norm[2];
-				qk_minus[3] = out_Quat_norm[3];
+			TM.Buffer.TM_Q_EKF[0] = (int)(qk_minus[0]/4.65661287E-7);
+			TM.Buffer.TM_Q_EKF[1] = (int)(qk_minus[1]/4.65661287E-7);
+			TM.Buffer.TM_Q_EKF[2] = (int)(qk_minus[2]/4.65661287E-7);
+			TM.Buffer.TM_Q_EKF[3] = (int)(qk_minus[3]/4.65661287E-7);
 
-				qk_plus[0] = qk_minus[0];
-				qk_plus[1] = qk_minus[1];
-				qk_plus[2] = qk_minus[2];
-				qk_plus[3] = qk_minus[3];
+			ST_normal.ST_NM_Buffer.TM_Q_EKF[0] = (int)(qk_minus[0]/4.65661287E-7);
+			ST_normal.ST_NM_Buffer.TM_Q_EKF[1] = (int)(qk_minus[1]/4.65661287E-7);
+			ST_normal.ST_NM_Buffer.TM_Q_EKF[2] = (int)(qk_minus[2]/4.65661287E-7);
+			ST_normal.ST_NM_Buffer.TM_Q_EKF[3] = (int)(qk_minus[3]/4.65661287E-7);
 
-				rQs_Multiplication(Q_REF_conj,qk_minus);
-				Qerror[0] = out_Quat_mult[0];
-				Qerror[1] = out_Quat_mult[1];
-				Qerror[2] = out_Quat_mult[2];
-				Qerror[3] = out_Quat_mult[3];
-
-				TM.Buffer.TM_Q_EKF[0] = (int)(qk_minus[0]/4.65661287E-7);
-				TM.Buffer.TM_Q_EKF[1] = (int)(qk_minus[1]/4.65661287E-7);
-				TM.Buffer.TM_Q_EKF[2] = (int)(qk_minus[2]/4.65661287E-7);
-				TM.Buffer.TM_Q_EKF[3] = (int)(qk_minus[3]/4.65661287E-7);
-
-				ST_normal.ST_NM_Buffer.TM_Q_EKF[0] = (int)(qk_minus[0]/4.65661287E-7);
-				ST_normal.ST_NM_Buffer.TM_Q_EKF[1] = (int)(qk_minus[1]/4.65661287E-7);
-				ST_normal.ST_NM_Buffer.TM_Q_EKF[2] = (int)(qk_minus[2]/4.65661287E-7);
-				ST_normal.ST_NM_Buffer.TM_Q_EKF[3] = (int)(qk_minus[3]/4.65661287E-7);
-
-				ST_special.ST_SP_Buffer.TM_Q_EKF[0] = (int)(qk_minus[0]/4.65661287E-7);
-				ST_special.ST_SP_Buffer.TM_Q_EKF[1] = (int)(qk_minus[1]/4.65661287E-7);
-				ST_special.ST_SP_Buffer.TM_Q_EKF[2] = (int)(qk_minus[2]/4.65661287E-7);
-				ST_special.ST_SP_Buffer.TM_Q_EKF[3] = (int)(qk_minus[3]/4.65661287E-7);
-
-			}
-        	else
-			{
-				//
-			}
+			ST_special.ST_SP_Buffer.TM_Q_EKF[0] = (int)(qk_minus[0]/4.65661287E-7);
+			ST_special.ST_SP_Buffer.TM_Q_EKF[1] = (int)(qk_minus[1]/4.65661287E-7);
+			ST_special.ST_SP_Buffer.TM_Q_EKF[2] = (int)(qk_minus[2]/4.65661287E-7);
+			ST_special.ST_SP_Buffer.TM_Q_EKF[3] = (int)(qk_minus[3]/4.65661287E-7);
         }
         else
         {
@@ -672,7 +671,7 @@ void rExtendedKalmanFilter1_p1(void)
 {
     if (CB_ExtendedKalmanFilter == Enable)
     {
-        if (TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == Enable)
+        if ((TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == Enable)  && (f_station_tracking_enabled == 0))
         {
             qk_DCM[0][0] = (qk_minus[3] * qk_minus[3]) + (qk_minus[0] * qk_minus[0]) - (qk_minus[1] * qk_minus[1]) - (qk_minus[2] * qk_minus[2]);
             qk_DCM[0][1] = 2.0 * ((qk_minus[0] * qk_minus[1]) + (qk_minus[3] * qk_minus[2]));
@@ -838,7 +837,7 @@ void rExtendedKalmanFilter1_p1(void)
                 }
             }
 
-            if (TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable == 1)
+            if (f_Sunlit_Presence == 1)
 			{
 				for (i_kf = 0; i_kf < 3; i_kf++)
 				{
@@ -847,9 +846,20 @@ void rExtendedKalmanFilter1_p1(void)
 			}
 			else
 			{
-				Yk_minus_hk[0] = Yk[0] - (s_hk[0]+Xk_plus[6]);
-				Yk_minus_hk[1] = Yk[1] - (s_hk[1]+Xk_plus[7]);
-				Yk_minus_hk[2] = Yk[2] - (s_hk[2]+Xk_plus[8]);
+				if (TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable == 1)
+				{
+					for (i_kf = 0; i_kf < 3; i_kf++)
+					{
+						Yk_minus_hk[i_kf] = Yk[i_kf] - s_hk[i_kf];
+					}
+				}
+				else
+				{
+					Yk_minus_hk[0] = Yk[0] - (s_hk[0]+Xk_plus[6]);
+					Yk_minus_hk[1] = Yk[1] - (s_hk[1]+Xk_plus[7]);
+					Yk_minus_hk[2] = Yk[2] - (s_hk[2]+Xk_plus[8]);
+				}
+
 			}
 
             for (i_kf = 0; i_kf < 9; i_kf++)
@@ -979,13 +989,53 @@ void rExtendedKalmanFilter1_p1(void)
         }
     }
 }
-void rExtendedKalmanFilter1_p2(void)
+
+void rExtendedKalmanFilter1_Prop(void)
 {
     if (CB_ExtendedKalmanFilter == Enable)
     {
         if (TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == Enable)
         {
-            mod_of_Wk1 = sqrt((w_BODY[0] * w_BODY[0]) + (w_BODY[1] * w_BODY[1]) + (w_BODY[2] * w_BODY[2]));
+            if (TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable == Enable)
+            {
+                w_ekf1[0] = w_BODY[0];
+                w_ekf1[1] = w_BODY[1];
+                w_ekf1[2] = w_BODY[2];
+            }
+            else
+            {
+                w_ekf1[0] = w_BODY[0] - Xk[3];
+                w_ekf1[1] = w_BODY[1] - Xk[4];
+                w_ekf1[2] = w_BODY[2] - Xk[5];
+            }
+
+            rQ_Propagation(qk_plus,w_ekf1);
+            qk_minus[0] = q_prop_out[0];
+            qk_minus[1] = q_prop_out[1];
+            qk_minus[2] = q_prop_out[2];
+            qk_minus[3] = q_prop_out[3];
+
+            rQs_Normalization(qk_minus);
+            qk_minus[0] = out_Quat_norm[0];
+            qk_minus[1] = out_Quat_norm[1];
+            qk_minus[2] = out_Quat_norm[2];
+            qk_minus[3] = out_Quat_norm[3];
+
+            qk_plus[0] = qk_minus[0];
+            qk_plus[1] = qk_minus[1];
+            qk_plus[2] = qk_minus[2];
+            qk_plus[3] = qk_minus[3];
+        }
+    }
+}
+
+void rExtendedKalmanFilter1_p2(void)
+{
+    if (CB_ExtendedKalmanFilter == Enable)
+    {
+        if ((TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable == Enable)  && (f_station_tracking_enabled == 0))
+        {
+            mod_of_Wk1 = sqrt((w_ekf1[0] * w_ekf1[0]) + (w_ekf1[1] * w_ekf1[1]) + (w_ekf1[2] * w_ekf1[2]));
 
             sine_of_Wk1_Delta = sin(mod_of_Wk1 * c_MaC);
 
@@ -995,12 +1045,12 @@ void rExtendedKalmanFilter1_p2(void)
             Wk1_one[0][0] = 0.0;
             Wk1_one[1][1] = 0.0;
             Wk1_one[2][2] = 0.0;
-            Wk1_one[0][1] = -1.0 * w_BODY[2];
-            Wk1_one[0][2] =  w_BODY[1];
-            Wk1_one[1][0] =  w_BODY[2];
-            Wk1_one[2][0] = -1.0 * w_BODY[1];
-            Wk1_one[2][1] =  w_BODY[0];
-            Wk1_one[1][2] = -1.0 * w_BODY[0];
+            Wk1_one[0][1] = -1.0 * w_ekf1[2];
+            Wk1_one[0][2] =  w_ekf1[1];
+            Wk1_one[1][0] =  w_ekf1[2];
+            Wk1_one[2][0] = -1.0 * w_ekf1[1];
+            Wk1_one[2][1] =  w_ekf1[0];
+            Wk1_one[1][2] = -1.0 * w_ekf1[0];
 
             for (i_kf = 0; i_kf < 3; i_kf++)
             {
@@ -1241,7 +1291,7 @@ void rExtendedKalmanFilter2_p1(void)
 {
 	if (CB_ExtendedKalmanFilter == 1)
 	{
-		if (TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == Enable)
+		if ((TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == Enable)  && (f_station_tracking_enabled == 0))
 		{
 			qk_DCM[0][0] = (qk_minus[3] * qk_minus[3]) + (qk_minus[0] * qk_minus[0]) - (qk_minus[1] * qk_minus[1]) - (qk_minus[2] * qk_minus[2]);
 			qk_DCM[0][1] = 2.0 * ((qk_minus[0] * qk_minus[1]) + (qk_minus[3] * qk_minus[2]));
@@ -1622,8 +1672,6 @@ void rExtendedKalmanFilter2_p1(void)
 						}
 					}
 
-
-
 					if (TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable == 1)
 					{
 						for (i_kf = 0; i_kf < 3; i_kf++)
@@ -1747,7 +1795,7 @@ void rExtendedKalmanFilter2_p1(void)
 				{
 					if ((Quest_update_available == 1) && (w_q_update_satisfy == 1) && (OBC_Quest_update == 1))
 					{
-						Quest_update_available = 0;
+
 						Rk[0][0] = 0.000097*0.000097;
 						Rk[1][1] = 0.000097*0.000097;
 						Rk[2][2] = 0.000097*0.000097;
@@ -1961,6 +2009,10 @@ void rExtendedKalmanFilter2_p1(void)
 			ST_special.ST_SP_Buffer.TM_Error_EKF[1] = (int)(Xk[1]/4.19095159E-7);
 			ST_special.ST_SP_Buffer.TM_Error_EKF[2] = (int)(Xk[2]/4.19095159E-7);
 		}
+		else
+		{
+			Quest_update_available = 0;
+		}
 	}
 }
 
@@ -2051,7 +2103,7 @@ void rExtendedKalmanFilter2_p2(void)
 {
     if (CB_ExtendedKalmanFilter == 1)
     {
-		if ((TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == Enable)&& (f_EKF2_prop_en == 1))
+		if ((TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable == Enable)&& (f_EKF2_prop_en == 1)  && (f_station_tracking_enabled == 0))
 		{
 			f_EKF2_prop_en = 0;
 

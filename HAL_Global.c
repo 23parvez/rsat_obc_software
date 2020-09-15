@@ -29,12 +29,22 @@ unsigned long int checksum_u32(unsigned long int *db_start_address,unsigned long
 	return inter_at697f_checksum;
 }
 
-unsigned char chksum8(const unsigned char *buff, unsigned int len)
+/*unsigned char chksum8(const unsigned char *buff, unsigned int len)
 {
     unsigned int xor_8;       // nothing gained in using smaller types!
     for ( xor_8 = 0 ; len != 0 ; len-- )
     	xor_8 = xor_8 ^ (*(buff++));
     return (unsigned char)xor_8;
+}*/
+
+unsigned char chksum8(unsigned char *buff, unsigned int len)
+{
+    unsigned char xor_8 = 0;       // nothing gained in using smaller types!
+    while (len-- > 0)
+    {
+    	xor_8 = xor_8 ^ (*(buff++));
+    }
+    return xor_8;
 }
 
 void rOutput_Latch_Update(void)
@@ -413,21 +423,4 @@ void prom_chksum(void)
 	}
 }
 
-/*unsigned int eeprom_array[10];
-unsigned int *ptr_eeprom;
-unsigned int eeprom_count;
-void EEprom_read(void)
-{
-	Out_latch_5.SA2_DEPLOY	 = 0;
-	IO_LATCH_REGISTER_5 = Out_latch_5.data;
 
-	Out_latch_4.EEPROM_RESET = 0;
-	IO_LATCH_REGISTER_4 = Out_latch_4.data;
-
-	ptr_eeprom = EEPROM_START_ADDR;
-	for(i=0;i<=9;i++)
-	{
-		eeprom_count++;
-		eeprom_array[i] = *ptr_eeprom++;
-	}
-}*/

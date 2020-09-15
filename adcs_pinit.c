@@ -237,7 +237,7 @@ void rADCS_Pon_vars(void)
 
 	// Sun Sensors //
 
-	SS_Main_2Exe_DB.DB_Imax_RPD = 1.0;//1.073296595956431;
+	SS_Main_2Exe_DB.DB_Imax_RPD = 1.0;
 	SS_Main_2Exe_DB.DB_Imax_RND = 1.0;
 	SS_Main_2Exe_DB.DB_Imax_RPND = 1.0;
 	SS_Main_2Exe_DB.DB_Imax_RNND = 1.0;
@@ -246,7 +246,7 @@ void rADCS_Pon_vars(void)
 	SS_Main_2Exe_DB.DB_Imax_YP = 1.0;
 	SS_Main_2Exe_DB.DB_Imax_YN = 1.0;
 
-	SS_Redundant_2Exe_DB.DB_Imax_RPD = 1.0;//1.073296595956431;
+	SS_Redundant_2Exe_DB.DB_Imax_RPD = 1.0;
 	SS_Redundant_2Exe_DB.DB_Imax_RND = 1.0;
 	SS_Redundant_2Exe_DB.DB_Imax_RPND = 1.0;
 	SS_Redundant_2Exe_DB.DB_Imax_RNND = 1.0;
@@ -255,6 +255,7 @@ void rADCS_Pon_vars(void)
 	SS_Redundant_2Exe_DB.DB_Imax_YP = 1.0;
 	SS_Redundant_2Exe_DB.DB_Imax_YN = 1.0;
 
+	// ///////////Commented for HILS
 	/*SS_Main_2Exe_DB.DB_Imax_RPD = 7.4536;//1.073296595956431;
 	SS_Main_2Exe_DB.DB_Imax_RND = 6.8237;//1.172387413685503;
 	SS_Main_2Exe_DB.DB_Imax_RPND = 6.9977;//1.143227326266195;
@@ -274,7 +275,7 @@ void rADCS_Pon_vars(void)
 	SS_Redundant_2Exe_DB.DB_Imax_YN = 6.9909;//1.144345150026632;*/
 
 
-	/*SS_Main_2Exe_DB.DB_misaln_cor125[0][0] = 1.0;
+	SS_Main_2Exe_DB.DB_misaln_cor125[0][0] = 1.0;
 	SS_Main_2Exe_DB.DB_misaln_cor125[0][1] = 0.0;
 	SS_Main_2Exe_DB.DB_misaln_cor125[0][2] = 0.0;
 	SS_Main_2Exe_DB.DB_misaln_cor125[1][0] = 0.0;
@@ -282,9 +283,21 @@ void rADCS_Pon_vars(void)
 	SS_Main_2Exe_DB.DB_misaln_cor125[1][2] = 0.0;
 	SS_Main_2Exe_DB.DB_misaln_cor125[2][0] = 0.0;
 	SS_Main_2Exe_DB.DB_misaln_cor125[2][1] = 0.0;
-	SS_Main_2Exe_DB.DB_misaln_cor125[2][2] = 1.0;*/
+	SS_Main_2Exe_DB.DB_misaln_cor125[2][2] = 1.0;
 
-	SS_Main_2Exe_DB.DB_misaln_cor125[0][0] = 1.0;
+	SS_Redundant_2Exe_DB.DB_misaln_cor125[0][0] = 1.0;
+	SS_Redundant_2Exe_DB.DB_misaln_cor125[0][1] = 0.0;
+	SS_Redundant_2Exe_DB.DB_misaln_cor125[0][2] = 0.0;
+	SS_Redundant_2Exe_DB.DB_misaln_cor125[1][0] = 0.0;
+	SS_Redundant_2Exe_DB.DB_misaln_cor125[1][1] = 1.0;
+	SS_Redundant_2Exe_DB.DB_misaln_cor125[1][2] = 0.0;
+	SS_Redundant_2Exe_DB.DB_misaln_cor125[2][0] = 0.0;
+	SS_Redundant_2Exe_DB.DB_misaln_cor125[2][1] = 0.0;
+	SS_Redundant_2Exe_DB.DB_misaln_cor125[2][2] = 1.0;
+
+
+	// ///////////Commented for HILS
+	/*SS_Main_2Exe_DB.DB_misaln_cor125[0][0] = 1.0;
 	SS_Main_2Exe_DB.DB_misaln_cor125[0][1] = -0.005235963831420;
 	SS_Main_2Exe_DB.DB_misaln_cor125[0][2] = 0.005235963831420;
 	SS_Main_2Exe_DB.DB_misaln_cor125[1][0] = 0.005235963831420;
@@ -302,7 +315,7 @@ void rADCS_Pon_vars(void)
 	SS_Redundant_2Exe_DB.DB_misaln_cor125[1][2] = -0.005235963831420;
 	SS_Redundant_2Exe_DB.DB_misaln_cor125[2][0] = -0.005235963831420;
 	SS_Redundant_2Exe_DB.DB_misaln_cor125[2][1] = 0.005235963831420;
-	SS_Redundant_2Exe_DB.DB_misaln_cor125[2][2] = 1.0;
+	SS_Redundant_2Exe_DB.DB_misaln_cor125[2][2] = 1.0;*/
 
 	for (i_pini = 0; i_pini < 3; i_pini++)
 	{
@@ -544,7 +557,7 @@ void rADCS_Pon_vars(void)
 		{
 			pk_HkT[i_pini][j_pini] = 0.0;
 			Hk_temp[i_pini][j_pini] = 0.0;
-
+			Kk_matrix[i_pini][j_pini] = 0.0;
 		}
 	}
 
@@ -563,7 +576,6 @@ void rADCS_Pon_vars(void)
 			pk_plus[i_pini][j_pini] = 0.0;
 			Kk_Hk_with_minus_one[i_pini][j_pini] = 0.0;
 			Kk_Hk[i_pini][j_pini] = 0.0;
-			Kk_matrix[i_pini][j_pini] = 0.0;
 			pk[i_pini][j_pini] = 0.0;
 		}
 	}
@@ -609,7 +621,6 @@ void rADCS_Pon_vars(void)
 			Rk[i_pini][j_pini] = 0.0;
 			Wk1[i_pini][j_pini] = 0.0;
 			phi_12_temp3[i_pini][j_pini] = 0.0;
-
 		}
 	}
 
@@ -683,6 +694,7 @@ void rADCS_Pon_vars(void)
 		s_hk[i_pini] = 0.0;
 		qk_minus[i_pini] = 0.0;
 		hk_xk_minus[i_pini] = 0.0;
+		w_ekf1[i_pini] = 0.0;
 	}
 
 	qk_plus[3] = 1.0;
@@ -1523,7 +1535,7 @@ void rADCS_Pon_vars(void)
 		for (j_pini = 0; j_pini < 3; j_pini++)
 		{
 			Pse_Inv_Dist_Mat[i_pini][j_pini] = 0.0;
-			B2wh_mat[i_pini][j_pini] = 0.0;
+			//B2wh_mat[i_pini][j_pini] = 0.0;
 
 		}
 	}
@@ -1532,10 +1544,36 @@ void rADCS_Pon_vars(void)
 	{
 		for (j_pini = 0; j_pini < 4; j_pini++)
 		{
-			wh2B_mat[i_pini][j_pini] = 0.0;
+			//wh2B_mat[i_pini][j_pini] = 0.0;
 
 		}
 	}
+
+	wh2B_mat[0][0] = 0.5774;
+	wh2B_mat[0][1] = -0.5774;
+	wh2B_mat[0][2] = -0.5774;
+	wh2B_mat[0][3] = 0.5774;
+	wh2B_mat[1][0] = 0.5774;
+	wh2B_mat[1][1] = 0.5774;
+	wh2B_mat[1][2] = -0.5774;
+	wh2B_mat[1][3] = -0.5774;
+	wh2B_mat[2][0] = 0.5774;
+	wh2B_mat[2][1] = 0.5774;
+	wh2B_mat[2][2] = 0.5774;
+	wh2B_mat[2][3] = 0.5774;
+
+	B2wh_mat[0][0] = 0.4330;
+	B2wh_mat[0][1] = 0.4330;
+	B2wh_mat[0][2] = 0.4330;
+	B2wh_mat[1][0] = -0.4330;
+	B2wh_mat[1][1] = 0.4330;
+	B2wh_mat[1][2] = 0.4330;
+	B2wh_mat[2][0] = -0.4330;
+	B2wh_mat[2][1] = -0.4330;
+	B2wh_mat[2][2] = 0.4330;
+	B2wh_mat[3][0] = 0.4330;
+	B2wh_mat[3][1] = -0.4330;
+	B2wh_mat[3][2] = 0.4330;
 
 	//wheel dynamic friction
 
@@ -1591,10 +1629,10 @@ void rADCS_Pon_vars(void)
 		diff_obs_exp_ch[i_pini] = 0.0;
 	}
 
-	for (i_pini = 0; i_pini < 4; i_pini++)
-	{
-	wheel_index[i_pini] = 0;
-	}
+	wheel_index[0] = 1;
+	wheel_index[1] = 2;
+	wheel_index[2] = 4;
+	wheel_index[3] = 8;
 
 	wheel_index_ARCsum = 0;
 	Wheel_Config = 0;
@@ -1640,7 +1678,9 @@ void rADCS_Pon_vars(void)
 	//SunAcquisition_ModePreprocessing
 
 	SunAcquisition2ThreeAxis_autotransit = 0;
+	SunAcq_Ang_Thres = 0.01;
 	SunAcq3ThreeAx_trsit_cnt = 0;
+	SunAcq2ThreeAx_trsit_cnt_thres = 28125;//14063;//2344;
 
 	SunAcq2DetMode_counter = 0;
 
@@ -1655,8 +1695,8 @@ void rADCS_Pon_vars(void)
 
 	TC_SpeedDumpLimit = 1500.0;
 	TC_min_whsp_spdump = 1000.0;
-	TC_ARC_RPM_Thres = 0.0;
-	TC_ARC_Time_Cycle = 0.0;
+	TC_ARC_RPM_Thres = 50.0;
+	TC_ARC_Time_Cycle = 3;
 
 	R_MDO_CB[0][0] = 1.0;
 	R_MDO_CB[0][1] = 0.0;
@@ -1671,9 +1711,6 @@ void rADCS_Pon_vars(void)
 	pbk = 0.000999000999;
 	qqbk = 0.999000999;
 
-	SunAcq_Ang_Thres = 0.1;
-	SunAcq2ThreeAx_trsit_cnt_thres = 28125;//14063;//2344;
-
 	// Telecommands INIT
 
 	TC_boolean_u.TC_Boolean_Table.Roll_Torquer_Polarity_Reversal = 0;
@@ -1682,9 +1719,9 @@ void rADCS_Pon_vars(void)
 	TC_boolean_u.TC_Boolean_Table.Roll_Torquer_Enable_or_Disable = 1;
 	TC_boolean_u.TC_Boolean_Table.Pitch_Torquer_Enable_or_Disable = 1;
 	TC_boolean_u.TC_Boolean_Table.Yaw_Torquer_Enable_or_Disable = 1;
-	TC_boolean_u.TC_Boolean_Table.TC_Sus2det_transit_en_dis = Enable;
-	TC_boolean_u.TC_Boolean_Table.TC_AutoTransit_Det2SunAquisition = Enable;
-	TC_boolean_u.TC_Boolean_Table.TC_SunAq2DetMode_autotransit = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_Sus2det_transit_en_dis = Disable; // For HILS
+	TC_boolean_u.TC_Boolean_Table.TC_AutoTransit_Det2SunAquisition Disable; // For HILS
+	TC_boolean_u.TC_Boolean_Table.TC_SunAq2DetMode_autotransit = Disable; // For HILS
 	TC_boolean_u.TC_Boolean_Table.TC_mom_dumping_ang_mom_based = Enable;
 	//TC_boolean_u.TC_Boolean_Table.TC_IMU_Select = IMU1;
 	TC_boolean_u.TC_Boolean_Table.TC_SS_Cells_Sel = TC_Main_Cells;
@@ -1692,13 +1729,13 @@ void rADCS_Pon_vars(void)
 	TC_boolean_u.TC_Boolean_Table.TC_GPS_TLE_Select = 1;
 	TC_boolean_u.TC_Boolean_Table.TC_EKF_Drift_Compensation_Enable_or_Disable = Disable;
 	TC_boolean_u.TC_Boolean_Table.TC_EKF_MagBias_Compensation_Enable_or_Disable = Disable;
-	TC_boolean_u.TC_Boolean_Table.TC_Mag_Torquer_Bias_Enable_or_Disable = Enable;
-	TC_boolean_u.TC_Boolean_Table.TC_Sun_Ephemeris_en_dis = Enable;
-	TC_boolean_u.TC_Boolean_Table.TC_Mag_Refeci_en_dis = Enable;
-	TC_boolean_u.TC_Boolean_Table.TC_Wheel_AutoReConfig_Logic = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_Mag_Torquer_Bias_Enable_or_Disable = Disable; // For HILS
+	TC_boolean_u.TC_Boolean_Table.TC_Sun_Ephemeris_en_dis = Disable; // For HILS
+	TC_boolean_u.TC_Boolean_Table.TC_Mag_Refeci_en_dis = Disable; // For HILS
+	TC_boolean_u.TC_Boolean_Table.TC_Wheel_AutoReConfig_Logic = Disable; // For HILS
 	TC_boolean_u.TC_Boolean_Table.TC_Wheel_SpinUpDown_Logic = Disable;
-	TC_boolean_u.TC_Boolean_Table.TC_ThreeAxis2SafeMode_autotransit = Enable;
-	TC_boolean_u.TC_Boolean_Table.TC_SunAq2ThreeAxis_autotransit = Enable;
+	TC_boolean_u.TC_Boolean_Table.TC_ThreeAxis2SafeMode_autotransit = Disable; // For HILS
+	TC_boolean_u.TC_Boolean_Table.TC_SunAq2ThreeAxis_autotransit = Disable; // For HILS
 	TC_boolean_u.TC_Boolean_Table.TC_Det_AutoTransitionBDOTtoGYRO = Enable;
 	TC_boolean_u.TC_Boolean_Table.TC_Speed_Dumping = Disable;
 	TC_boolean_u.TC_Boolean_Table.TC_Sun_Varying_Mode = Disable;
@@ -1713,10 +1750,10 @@ void rADCS_Pon_vars(void)
 	TC_boolean_u.TC_Boolean_Table.magAD = Enable; //check
 	TC_boolean_u.TC_Boolean_Table.TC_EKF1_Enable = Disable;
 	TC_boolean_u.TC_Boolean_Table.TC_EKF2_Enable = Disable;
-	TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW1_enable = 1;
-	TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW2_enable = 1;
-	TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW3_enable = 1;
-	TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW4_enable = 1;
+	TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW1_enable = 0;
+	TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW2_enable = 0;
+	TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW3_enable = 0;
+	TC_boolean_u.TC_Boolean_Table.TC_wheel_index_ground_RW4_enable = 0;
 	TC_boolean_u.TC_Boolean_Table.TC_GND_Drift_Compensation_Enable_or_Disable = Enable;
 	TC_boolean_u.TC_Boolean_Table.TC_GND_MagBias_Compensation_Enable_or_Disable = Enable;
 	TC_boolean_u.TC_Boolean_Table.TC_H8Backup_H4_Main = 0;
@@ -1765,7 +1802,7 @@ void rADCS_Pon_vars(void)
 	ADCS_TC_data_command_Table.TC_Det_GYRO_Compute_Count = 3;
 
 	ADCS_TC_data_command_Table.TC_wAD_BODYmaxThRoll = 0.1;
-	ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch = 0.001;
+	ADCS_TC_data_command_Table.TC_wAD_BODYmaxThPitch = 0.1;
 	ADCS_TC_data_command_Table.TC_wAD_BODYmaxThYaw = 0.1;
 	ADCS_TC_data_command_Table.TC_magMin_angle = 45.0;
 	ADCS_TC_data_command_Table.TC_magMax_angle = 135.0;
@@ -1803,6 +1840,11 @@ void rADCS_Pon_vars(void)
 	TC_RW_Nominal[1] = GAIN_DATA_SET.Tc_nominal_speed_rw2_00;
 	TC_RW_Nominal[2] = GAIN_DATA_SET.Tc_nominal_speed_rw3_00;
 	TC_RW_Nominal[3] = GAIN_DATA_SET.Tc_nominal_speed_rw4_00;
+
+	exp_whsp_ch[0] = GAIN_DATA_SET.Tc_nominal_speed_rw1_00;
+	exp_whsp_ch[1] = GAIN_DATA_SET.Tc_nominal_speed_rw2_00;
+	exp_whsp_ch[2] = GAIN_DATA_SET.Tc_nominal_speed_rw3_00;
+	exp_whsp_ch[3] = GAIN_DATA_SET.Tc_nominal_speed_rw4_00;
 
 	TC_momentum_dumping_gain = GAIN_DATA_SET.TC_momentum_dumping_gain_0_00;
 
@@ -1843,18 +1885,14 @@ void rADCS_Pon_vars(void)
 	rElapsedTimerAssign();
 
 
+	/*************************testing************************/
+
+	TC_IMU1_On();
+	TC_boolean_u.TC_Boolean_Table.TC_IMU_Select = IMU1;
+	TC_boolean_u.TC_Boolean_Table.TC_GPS_TLE_Select = True;
+
+	ADCS_TC_data_command_Table.HILS_MODE_SELECT = 1;
 
 
-
-	//   TEST
-
-	hils_mode_select = 1;
-
-	//TC_IMU2_On();
-	//TC_boolean_u.TC_Boolean_Table.TC_IMU_Select = IMU2;
-
-
-
-
-
+	/********************************************************/
 }

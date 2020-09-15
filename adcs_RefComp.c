@@ -863,9 +863,7 @@ void rRefRate_Computation(void)
 			{
 				w_REF[i_rfc] = (2.0 * (Q_REF_diff[i_rfc] / c_MaC));
 			}
-
 			QRD_vect_norm = sqrt((w_REF[0]*w_REF[0]) + (w_REF[1]*w_REF[1]) + (w_REF[2]*w_REF[2]));
-
 			if (fabs(QRD_vect_norm) > 0.01)
 			{
 				for (i_rfc=0; i_rfc<3;i_rfc++)
